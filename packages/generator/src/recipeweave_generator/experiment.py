@@ -18,7 +18,10 @@ def prepare(root: Path) -> None:
     excluded = set(pilot["ordinals"])
     samples = []
     versions = {}
-    for cohort, file, seed in [("baseline", "v2_baseline.json", 916203), ("revised", "v3_reviewed.json", 723401)]:
+    for cohort, file, seed in [
+        ("baseline", "v2_baseline.json", 916203),
+        ("revised", "v3_reviewed.json", 723401),
+    ]:
         space = Space.load(root / "data/catalog" / file)
         rng = random.Random(seed)
         ordinals = []
@@ -48,7 +51,9 @@ def prepare(root: Path) -> None:
         {
             "version": 1,
             "cohorts": versions,
-            "protocol_sha256": hashlib.sha256((root / "experiments/PROTOCOL.md").read_bytes()).hexdigest(),
+            "protocol_sha256": hashlib.sha256(
+                (root / "experiments/PROTOCOL.md").read_bytes()
+            ).hexdigest(),
             "primary_endpoint": "both_pass",
             "alpha": 0.05,
             "method": "SRS without replacement",

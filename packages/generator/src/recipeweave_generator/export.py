@@ -22,9 +22,12 @@ def file_hash(path: Path) -> str:
     return h.hexdigest()
 
 
-def atomic_json(path: Path, value: Any) -> None:
+def atomic_json(path: Path, value: Any, compact: bool = False) -> None:
     temp = path.with_suffix(path.suffix + ".tmp")
-    temp.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n")
+    if compact:
+        temp.write_bytes(canonical(value) + b"\n")
+    else:
+        temp.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n")
     os.replace(temp, path)
 
 
@@ -53,7 +56,16 @@ def export_all(space: Space, output: Path, shard_size: int = 1_000_000) -> dict[
         "status": "incomplete",
         "shards": [],
         "dictionary_sha256": hashlib.sha256(canonical(dictionary)).hexdigest(),
-        "columns": ["ordinal", "template", "main", "support1", "support2", "support3", "flavor", "route"],
+        "columns": [
+            "ordinal",
+            "template",
+            "main",
+            "support1",
+            "support2",
+            "support3",
+            "flavor",
+            "route",
+        ],
         "note": "0-based dictionary indexes; blank means absent. Hypotheses, not cooked recipes.",
     }
     if path.exists():
@@ -71,22 +83,48 @@ def export_all(space: Space, output: Path, shard_size: int = 1_000_000) -> dict[
         dest = output / name
         if start in seen:
             entry = seen[start]
-            if entry["stop"] != stop or entry["rows"] != stop - start or file_hash(dest) != entry["sha256"]:
+            if (
+                entry["stop"] != stop
+                or entry["rows"] != stop - start
+                or file_hash(dest) != entry["sha256"]
+            ):
                 raise ValueError("completed shard is corrupt; recover before resuming")
             continue
         temp = dest.with_suffix(".tmp")
         count = 0
-        with temp.open("wb") as raw, gzip.GzipFile(filename="", fileobj=raw, mode="wb", mtime=0, compresslevel=6) as gz:
+        with (
+            temp.open("wb") as raw,
+            gzip.GzipFile(filename="", fileobj=raw, mode="wb", mtime=0, compresslevel=6) as gz,
+        ):
             with io.TextIOWrapper(gz, encoding="utf-8", newline="") as text:
                 writer = csv.writer(text, lineterminator="\n")
                 writer.writerow(manifest["columns"])
                 for ordinal, (t, main, aux, flavor, route) in space.iter_range(start, stop):
-                    writer.writerow([ordinal, t, food_idx[main], *[food_idx[x] for x in aux], *[""] * (3 - len(aux)), flavor_idx[flavor], route_idx[route]])
+                    writer.writerow(
+                        [
+                            ordinal,
+                            t,
+                            food_idx[main],
+                            *[food_idx[x] for x in aux],
+                            *[""] * (3 - len(aux)),
+                            flavor_idx[flavor],
+                            route_idx[route],
+                        ]
+                    )
                     count += 1
         if count != stop - start:
             raise AssertionError("incomplete shard")
         os.replace(temp, dest)
-        manifest["shards"].append({"file": name, "start": start, "stop": stop, "rows": count, "bytes": dest.stat().st_size, "sha256": file_hash(dest)})
+        manifest["shards"].append(
+            {
+                "file": name,
+                "start": start,
+                "stop": stop,
+                "rows": count,
+                "bytes": dest.stat().st_size,
+                "sha256": file_hash(dest),
+            }
+        )
         atomic_json(path, manifest)
     manifest["status"] = "complete"
     atomic_json(path, manifest)
@@ -96,7 +134,10 @@ def export_all(space: Space, output: Path, shard_size: int = 1_000_000) -> dict[
 def verify_all(output: Path, space: Space | None = None) -> dict[str, int]:
     m = json.loads((output / "manifest.json").read_text())
     d = json.loads((output / "dictionary.json").read_text())
-    if m["status"] != "complete" or hashlib.sha256(canonical(d)).hexdigest() != m["dictionary_sha256"]:
+    if (
+        m["status"] != "complete"
+        or hashlib.sha256(canonical(d)).hexdigest() != m["dictionary_sha256"]
+    ):
         raise ValueError("incomplete export or dictionary corruption")
     if space is not None and (space.digest != m["definition_sha256"] or space.total != m["total"]):
         raise ValueError("definition mismatch")
@@ -124,7 +165,9 @@ def verify_all(output: Path, space: Space | None = None) -> dict[str, int]:
                     raise ValueError("repeated ingredient")
                 if any(not 0 <= x < len(d["foods"]) for x in ingredient_ids):
                     raise ValueError("unknown food")
-                if not 0 <= int(row[6]) < len(d["flavors"]) or not 0 <= int(row[7]) < len(d["routes"]):
+                if not 0 <= int(row[6]) < len(d["flavors"]) or not 0 <= int(row[7]) < len(
+                    d["routes"]
+                ):
                     raise ValueError("unknown flavor or route")
                 if space and expected in check_ordinals:
                     point = (
@@ -135,7 +178,9 @@ def verify_all(output: Path, space: Space | None = None) -> dict[str, int]:
                         d["routes"][int(row[7])],
                     )
                     if point != space.point(expected):
-                        raise ValueError("materialized design point differs from ordinal definition")
+                        raise ValueError(
+                            "materialized design point differs from ordinal definition"
+                        )
                     checked_points += 1
                 expected += 1
                 count += 1
@@ -143,4 +188,8 @@ def verify_all(output: Path, space: Space | None = None) -> dict[str, int]:
             raise ValueError("shard count mismatch")
     if expected != m["total"]:
         raise ValueError("total count mismatch")
-    return {"rows_verified": expected, "shards_verified": len(m["shards"]), "decoded_points_matched": checked_points}
+    return {
+        "rows_verified": expected,
+        "shards_verified": len(m["shards"]),
+        "decoded_points_matched": checked_points,
+    }

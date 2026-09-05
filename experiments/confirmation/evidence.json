@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "study": "RecipeWeave confirmation",
+  "design_sha256": "a42e75c6a4bf738dcb5d36146fc9096542b27738c73376c8449d36d808632bf9",
+  "protocol_sha256": "641c8cf2917cd5a1a9c1ef5421c268b571cd731286a3e3a3cf5ee085b3d7d465",
+  "samples_key_sha256": "5434b8ba35c76013018eb125b181496576d9062ce52c4df0f2460a765259b4c9",
+  "blinded_inputs": {
+    "blind_0.json": {
+      "sha256": "8e6f186d422b52f440afd7504ee16008f9550dc7a0fb8a2418532709e4b3f2bb",
+      "rows": 400
+    },
+    "blind_1.json": {
+      "sha256": "7c134eb77a236972e53102c59da5b283c4980bce38bf04456bc63a37b27bad62",
+      "rows": 400
+    }
+  },
+  "ratings": {
+    "files": {
+      "judge_a0.json": {
+        "sha256": "35c70d945bff22cc27352b5c23b4fe2f854a6156a88bbd3c247667f059bb9f3b",
+        "rows": 400,
+        "judge": "judge_a"
+      },
+      "judge_a1.json": {
+        "sha256": "fce08bcd9882c3a0918a36b5a2d92429eb0f249efa851a3311b4c7e70c497726",
+        "rows": 400,
+        "judge": "judge_a"
+      },
+      "judge_b0.json": {
+        "sha256": "eb653ad76b1d80178396768b3c5adae8324c13713a0fd7c7a8107252377bf34e",
+        "rows": 400,
+        "judge": "judge_b"
+      },
+      "judge_b1.json": {
+        "sha256": "bdeb4a00e379d63a19222abe3e9e63e9a6a43aee28c8820f07adc6bb36bf2b51",
+        "rows": 400,
+        "judge": "judge_b"
+      }
+    },
+    "coverage": {
+      "judge_a": 800,
+      "judge_b": 800
+    },
+    "model": "gpt-5.6-luna",
+    "actual_model": "gpt-5.6-luna",
+    "workers_per_item": 2,
+    "human_results": 0,
+    "human_labels": 0,
+    "human_reviewed": false
+  },
+  "validation": {
+    "n": 800,
+    "ids_sha256": "d51592f15d51afd2f0f58bc82a86fbb472b10e034871e5365d4f094908cbc24c",
+    "by_cohort": {
+      "baseline": 400,
+      "revised": 400
+    },
+    "ordinals_match_frozen_seeds": true,
+    "baseline_excludes_pilot": true,
+    "blinded_inputs_match_sample_key": true,
+    "definition_digests": {
+      "baseline": "486f8f288d2c26241959cbb70216aab27a712f0a7ff39f3a9783820924339782",
+      "revised": "495dc6b22638ff029c75913a13aef616c425049eacddc6389a6a26257e56da36"
+    }
+  },
+  "judge_model": "gpt-5.6-luna",
+  "actual_model": "gpt-5.6-luna",
+  "workers_per_item": 2,
+  "human_results": 0,
+  "human_labels": 0,
+  "human_reviewed": false,
+  "all_results_present": true
+}

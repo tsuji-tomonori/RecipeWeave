@@ -1,0 +1,602 @@
+[
+  {
+    "id": "P000",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "焼肉だれで炒め合わせれば麺と肉・長芋を一皿にまとめられる"
+  },
+  {
+    "id": "P001",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "豆サラダに加熱した肉・練り物・三つ葉を合わせられる"
+  },
+  {
+    "id": "P002",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ハンバーグを崩して豆腐・鮭・セロリとサルサで一皿にできる"
+  },
+  {
+    "id": "P003",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "たいと野菜を別加熱してキムチ汁に合流できる"
+  },
+  {
+    "id": "P004",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "鮭・とうもろこし・椎茸をトマトアンチョビ汁にまとめられる"
+  },
+  {
+    "id": "P005",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ごぼうサラダに炒めた肉・にんにくを加えカレー風にできる"
+  },
+  {
+    "id": "P006",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ビーフンにがんもどき・かつお・芽ものを炒め足せる"
+  },
+  {
+    "id": "P007",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "揚げ魚を主に肉と芋を加え豆板醤味でまとめられる"
+  },
+  {
+    "id": "P008",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ちゃんぽんに魚・牛肉・大葉を具として加えられる"
+  },
+  {
+    "id": "P009",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "炊飯後にごぼう・牛肉・納豆を混ぜ込み味を整えられる"
+  },
+  {
+    "id": "P010",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "焼そばにかまぼこ・野菜・鮭を加えごま味噌で仕上げられる"
+  },
+  {
+    "id": "P011",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "具を下茹でして食パンに載せ照り焼き味で焼ける"
+  },
+  {
+    "id": "P012",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ドリアへ魚・卵・きくらげを加えカレーヨーグルト味にできる"
+  },
+  {
+    "id": "P013",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "もち米にほたて・野菜を別加熱してコチュジャン味で合わせられる"
+  },
+  {
+    "id": "P014",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ハヤシに豆腐・牛すじ・豚肉を加え黒酢でまとめられる"
+  },
+  {
+    "id": "P015",
+    "verdict": "uncertain",
+    "reason_code": "STRUCTURE_UNCLEAR",
+    "reason": "油そばを別構造へ変える手順と芋・燻製牡蠣の収まりが曖昧"
+  },
+  {
+    "id": "P016",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "豆カレーを土台に青菜・きのこ・じゃこを煮込みトマト風にできる"
+  },
+  {
+    "id": "P017",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "砂肝と根菜・コーンを別加熱し汁に合流できる"
+  },
+  {
+    "id": "P018",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "焼売を崩して肉・魚・ほうれん草のレモンハーブ料理にできる"
+  },
+  {
+    "id": "P019",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "味付き煮物二種にキムチクリームが重なり味の衝突が大きい"
+  },
+  {
+    "id": "P020",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "春雨を中心に豆苗・ベーコン・えびを黒酢和えにできる"
+  },
+  {
+    "id": "P021",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "油そばに蟹つみれ・牛肉・きゅうりを加えバジル麺にできる"
+  },
+  {
+    "id": "P022",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "お好み焼きへ肉・練り物・コーンを加えコチュジャン味にできる"
+  },
+  {
+    "id": "P023",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ミートボールにツナ・トマト・そら豆を塩麹レモンで合わせられる"
+  },
+  {
+    "id": "P024",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "角煮にあさり・レバー・ピーマンを加えて一皿に煮込める"
+  },
+  {
+    "id": "P025",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ラーメンに焼き肉・焼き鳥・黄パプリカを加え黒酢で調整できる"
+  },
+  {
+    "id": "P026",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "餃子を主に野菜と焼き芋を添え花椒ごま味で再構成できる"
+  },
+  {
+    "id": "P027",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "そばを牛肉・ほたてと和え、しょうが味噌でまとめられる"
+  },
+  {
+    "id": "P028",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ポテトサラダにアンチョビ・きのこ・ねぎを加えサルサ風にできる"
+  },
+  {
+    "id": "P029",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "餃子を焼き崩し豚肉・そら豆・玉ねぎと甘辛味にできる"
+  },
+  {
+    "id": "P030",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "肉巻きおにぎりにきのこ類を加えめんつゆ味でまとめられる"
+  },
+  {
+    "id": "P031",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "ペペロンチーノと照り焼きの方向が異なり魚介・手羽も多く味が散る"
+  },
+  {
+    "id": "P032",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "チャウダー乳味にレバー・ローストビーフ・ゆず味噌を重ねる衝突が大きい"
+  },
+  {
+    "id": "P033",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ペペロンチーノに肉・サラミ・焼き芋を加え塩味でまとめられる"
+  },
+  {
+    "id": "P034",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "グラタンに魚二種とねぎを加えガーリックオイルで焼ける"
+  },
+  {
+    "id": "P035",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "麻婆味に魚・鶏とマスタードクリームが重なり方向が衝突する"
+  },
+  {
+    "id": "P036",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "トマト肉ソースに魚・もつと麻婆風味を合わせるのは味の衝突が大きい"
+  },
+  {
+    "id": "P037",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "チャウダーにさんま・蒸し鶏・ごま油塩を足す構成は乳味とぶつかる"
+  },
+  {
+    "id": "P038",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ひよこ豆カレーに野菜・ベーコン・いかを加え黒酢で締められる"
+  },
+  {
+    "id": "P039",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ひやむぎを炒め、玉ねぎ・しょうが・きくらげをコンソメでまとめられる"
+  },
+  {
+    "id": "P040",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "バゲットに加熱した豆腐・鮭・レバーを載せて焼ける"
+  },
+  {
+    "id": "P041",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ごぼうサラダに豆・厚揚げ・赤玉ねぎを味噌甘辛で加えられる"
+  },
+  {
+    "id": "P042",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "焼きビーフンに鮭・豆腐・コーンを加えしょうが味噌でまとめられる"
+  },
+  {
+    "id": "P043",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "玄米に長芋・そぼろ・しょうがを加えトマトクミン味にできる"
+  },
+  {
+    "id": "P044",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "エビチリに肉・練り物・手羽中を具として足せる"
+  },
+  {
+    "id": "P045",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "醤油ラーメンに塩さば・鮭缶・豚角煮とサルサが重なり塩味と酸味が衝突する"
+  },
+  {
+    "id": "P046",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "米に卵・納豆・ブロッコリーを炊き込み梅味噌で調えられる"
+  },
+  {
+    "id": "P047",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "かぼちゃサラダを主に肉・アスパラ・牡蠣をバルサミコ醤油で合わせられる"
+  },
+  {
+    "id": "P048",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "豆腐をつなぎにパン粉・コーン・三つ葉の焼き料理を作れる"
+  },
+  {
+    "id": "P049",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "焼そばに魚缶・卵・焼き芋を加え甜麺醤ごま味にできる"
+  },
+  {
+    "id": "P050",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "食パンにツナとさつま芋を載せ、にらとしょうが味噌で焼ける"
+  },
+  {
+    "id": "P051",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "つくねを卵・そぼろ・里芋と白だしで煮る構成にできる"
+  },
+  {
+    "id": "P052",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "焼売にさつま芋・豆腐・にんにくをしょうが醤油で加えられる"
+  },
+  {
+    "id": "P053",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "豚骨麺に豚肉・揚げ物・さつま芋を加えしょうが味噌でまとめられる"
+  },
+  {
+    "id": "P054",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "皿うどんにほたて・揚げボール・かつおを具追加できる"
+  },
+  {
+    "id": "P055",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "春雨サラダに肉二種・ちくわを甘辛味で合わせられる"
+  },
+  {
+    "id": "P056",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "アラビアータに練り物・豚肉・レタスをしょうが醤油で加えられる"
+  },
+  {
+    "id": "P057",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "パン粉をつなぎに鶏そぼろと香味野菜を蒸して焼き固められる"
+  },
+  {
+    "id": "P058",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "カレーに味噌煮魚とさんまを重ね、さらに黒酢で味が散りやすい"
+  },
+  {
+    "id": "P059",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "焼きおにぎりを崩し、きのこ・野菜・ごぼう巻を黒酢和えにできる"
+  },
+  {
+    "id": "P060",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "担々麺の胡麻辛味にさば・レバーとぽん酢を重ねる衝突が大きい"
+  },
+  {
+    "id": "P061",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "担々麺に豚肉・椎茸・ベーコンを足しスイートチリで調えられる"
+  },
+  {
+    "id": "P062",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "餃子を主にかつお・ツナ・ごぼう巻をキムチ味で再構成できる"
+  },
+  {
+    "id": "P063",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "パックご飯にツナ・長芋・えのきを加えトマト風にできる"
+  },
+  {
+    "id": "P064",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "春雨に牛肉・なす・かぼちゃを加えしょうが醤油で一皿にできる"
+  },
+  {
+    "id": "P065",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "グリーンカレーとコチュジャンの強い味付けが重なり、豆腐・魚介とも衝突しやすい"
+  },
+  {
+    "id": "P066",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "春雨サラダにそぼろ・コンビーフ・つみれをコチュジャンでまとめられる"
+  },
+  {
+    "id": "P067",
+    "verdict": "uncertain",
+    "reason_code": "STRUCTURE_UNCLEAR",
+    "reason": "かき揚げに骨付き肉・豚バラ・めかじきを足す具の処理と一体化が曖昧"
+  },
+  {
+    "id": "P068",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "カレーうどんにソーセージ・かぼちゃ・納豆を黒酢で調整できる"
+  },
+  {
+    "id": "P069",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "がんもどきと野菜を先焼きしてトマト汁で煮る構成が明確"
+  },
+  {
+    "id": "P070",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "たらこソースとハニーマスタードにソーセージ・ツナが重なり味が散る"
+  },
+  {
+    "id": "P071",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "炒め物キットに魚介・練り物・ツナを加えカレー味でまとめられる"
+  },
+  {
+    "id": "P072",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ペペロンチーノに牛そぼろ・じゃが芋・三つ葉を照り焼き味で加えられる"
+  },
+  {
+    "id": "P073",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "肉巻きおにぎりに魚三種を少量ずつ加え塩こしょうで一皿にできる"
+  },
+  {
+    "id": "P074",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ラーメンにかれい・揚げボール・芽ものを加え塩レモンで仕上げられる"
+  },
+  {
+    "id": "P075",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ハヤシにきのこ・しじみ・つみれを加えレモンねぎ塩で調整できる"
+  },
+  {
+    "id": "P076",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ピラフに茄子・しじみ・ねぎを加えトマトコチュジャン味にできる"
+  },
+  {
+    "id": "P077",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "シーフード麺にランチョンミート・鶏そぼろ・カリフラワーを足せる"
+  },
+  {
+    "id": "P078",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "たらこソースを軸に青菜・ちくわぶ・まぐろを甘辛醤油でまとめられる"
+  },
+  {
+    "id": "P079",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "卵と野菜を別加熱し、コチュジャン甘酢の汁物に合流できる"
+  },
+  {
+    "id": "P080",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ペンネを汁麺に仕立て、野菜と山芋をスイートチリでまとめられる"
+  },
+  {
+    "id": "P081",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "切り干し大根煮に豚肉・さば缶・ほうれん草を足しマスタードで調えられる"
+  },
+  {
+    "id": "P082",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ハンバーグを崩してもつ・そぼろ・もやしをバルサミコ醤油で再構成できる"
+  },
+  {
+    "id": "P083",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "担々麺に豆腐・燻製鶏・ブロッコリーを加え梅しそで締められる"
+  },
+  {
+    "id": "P084",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "蒸し鶏と野菜を直接煮て塩こしょうの汁物にできる"
+  },
+  {
+    "id": "P085",
+    "verdict": "uncertain",
+    "reason_code": "SEASONING_MULTIPLY",
+    "reason": "味噌ラーメンにアンチョビとしょうが味噌を重ね、既製味付けが過多"
+  },
+  {
+    "id": "P086",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "カルボナーラに魚介三種とキムチクリームを重ねるため乳味・辛味が衝突する"
+  },
+  {
+    "id": "P087",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "チャウダーに長芋・かまぼこ類を加えオリーブレモンでまとめられる"
+  },
+  {
+    "id": "P088",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ハンバーグに枝豆・ねぎ・豚肉を加えクリーム仕立てにできる"
+  },
+  {
+    "id": "P089",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "小籠包を崩し、鶏・ほたて・ねぎを味噌甘辛で一皿に再構成できる"
+  },
+  {
+    "id": "P090",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ワンタンにきゅうり・鮭・豚肉を加えごまぽん酢和えにできる"
+  },
+  {
+    "id": "P091",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "焼そばに砂肝・塩さば・アンチョビを重ね、塩味とレモンハーブが散りやすい"
+  },
+  {
+    "id": "P092",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "フォーの香味構造に味噌チーズを加え、魚介とも味の方向が衝突する"
+  },
+  {
+    "id": "P093",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "茶碗蒸しに山芋・豚・牛を入れカレー風の蒸し料理にできる"
+  },
+  {
+    "id": "P094",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ロールパンにちくわ・もやし・大葉を詰め蒸して焼き目を付けられる"
+  },
+  {
+    "id": "P095",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "お好み焼きに砂肝・もやし・三つ葉を入れ照り焼き山椒で仕上げられる"
+  },
+  {
+    "id": "P096",
+    "verdict": "uncertain",
+    "reason_code": "FLAVOR_CONFLICT",
+    "reason": "そば炒めに砂肝・レバーを合わせカレーヨーグルトにする味と食感の衝突が大きい"
+  },
+  {
+    "id": "P097",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "お好み焼きの具としてツナ・牛ひき肉・まいたけを加えぽん酢で調えられる"
+  },
+  {
+    "id": "P098",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "中華麺にレバー・ベーコン・レタスを入れ味噌甘辛汁にできる"
+  },
+  {
+    "id": "P099",
+    "verdict": "pass",
+    "reason_code": "OK",
+    "reason": "ナポリタンに揚げボール・ぶり・ピーマンを加え甘酸味でまとめられる"
+  }
+]

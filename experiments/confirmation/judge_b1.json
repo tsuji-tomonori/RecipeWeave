@@ -1,0 +1,2402 @@
+[
+  {
+    "id": "C0400",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "あじ・もやし・水菜を白だし味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0401",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ツナ缶・なめこ・大根をスイートチリ味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0402",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ジャージャー麺に明太子・なると・ツナを重ね、醤油甘辛との味が多重でまとまりにくい"
+  },
+  {
+    "id": "C0403",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ピラフ・鶏ひき肉・小ねぎ・イカ天練り物をナンプラーレモン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0404",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "肉じゃが・チンゲン菜・ランチョンミート・絹ごし豆腐を味噌クリーム味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0405",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チルド小籠包・にんにく・塩鮭・豚もも肉をコンソメ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0406",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カニ風味かまぼこ・大根・じゃがいもを味噌甘辛味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0407",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "エビフライ・ズッキーニ・ブロッコリー・白菜をコチュジャン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0408",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "マカロニ・木綿豆腐・かぶをトマト味で麺と具を別加熱して炒め合わせられる"
+  },
+  {
+    "id": "C0409",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "豚ひき肉・里芋・マッシュルームをバルサミコ醤油味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0410",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ミートソースに牛肉・長芋・ほたてを加える構成で、五香粉甘辛の味の焦点が定まりにくい"
+  },
+  {
+    "id": "C0411",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "焼き鳥・さんま蒲焼缶・スナップえんどう・手羽元をオレンジ醤油味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0412",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さつま揚げ・えのき・豆苗をスイートチリ味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0413",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ロースハム・ほうれん草・とうもろこしをスイートチリ味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0414",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "小籠包・れんこん・にら・長ねぎを味噌チーズ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0415",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "魚肉ソーセージ・春菊・エリンギをアンチョビトマト味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0416",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ツナ缶・ピーマン・まいたけをごま味噌味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0417",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さば・大根・セロリをカレー味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0418",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "メンチカツ・生しいたけ・小松菜をごま味噌味で揚げ物を温め野菜あんをかけられる"
+  },
+  {
+    "id": "C0419",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "筑前煮・セロリ・カニ風味かまぼこ・さんまを塩麹レモン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0420",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "豚角煮にあさり・燻製鶏・かにを加えてクリーム仕立てにするため味と具の収まりが不確か"
+  },
+  {
+    "id": "C0421",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "焼きビーフン・トマト・ぶなしめじ・ほたてを味噌甘辛味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0422",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏むね肉・グリーンアスパラ・きくらげを梅しそ味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0423",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "冷凍えび餃子・れんこん・なすをカレー味で市販品と野菜をスープに合流できる"
+  },
+  {
+    "id": "C0424",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛バラ肉・グリーンアスパラ・赤玉ねぎを梅味噌味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0425",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "たこ焼きへ鶏・ぶり・塩さばを同時に加えるため魚介味が過密で一体化が難しい"
+  },
+  {
+    "id": "C0426",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チルド焼そばセット・ソーセージハンバーグ・鶏ささみ・かに缶をマスタードクリーム味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0427",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ペンネ・サニーレタス・焼き芋・鶏レバーをコチュジャン甘酢味で麺に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0428",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛肩ロース・グリーンアスパラ・まいたけをアンチョビトマト味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0429",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ひじき煮にトマト・かつお・生ハムを加え甜麺醤にする組合せの味衝突が大きい"
+  },
+  {
+    "id": "C0430",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "手羽先・れんこん・そら豆をごま味噌味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0431",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "味噌カレーうどんに魚つみれ・卵・鮭を加えナンプラーレモンにするため味付けが重なる"
+  },
+  {
+    "id": "C0432",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鮭水煮缶・絹さや・水菜をカレー味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0433",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "調理済み大豆・スナップえんどう・もやしを山椒醤油味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0434",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛バラ肉・かぼちゃ・絹さやをレモンハーブ味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0435",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "親子丼の具・かぶ・黄パプリカ・ツナ水煮缶を塩麹レモン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0436",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "天ぷら・生おから・鶏卵・牛こま切れをサルサ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0437",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "筑前煮・マッシュルーム・かぶ・さつま揚げをめんつゆ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0438",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "豚ヒレ肉・ブロッコリー・さつまいもをトマトクミン味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0439",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "オートミール・鶏そぼろ・ミックスベジタブル・納豆をカレー味でご飯に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0440",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ペペロンチーノソース・いわし蒲焼缶・合いびき肉・生ハムを塩麹レモン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0441",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "焼き豚・きくらげをナンプラーレモン味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0442",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ピザ・合いびき肉・にんにく・大葉を焦がしねぎ醤油味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0443",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チルド皿うどんセット・鶏卵・アボカド・チョリソーを黒酢しょうが味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0444",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "たい・大根・絹さやを粒マスタード味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0445",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さわら・にんにく・えのき・そら豆をオイスター味で具を順に加熱して汁物にまとめられる"
+  },
+  {
+    "id": "C0446",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ひよこ豆カレーへ牛肉・手羽先・鶏肉を加えマスタードクリームにする構成が過密"
+  },
+  {
+    "id": "C0447",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ロールキャベツ・たらこ・しらす・もやしを豆板醤味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0448",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さんま・長ねぎ・えのきをナンプラーレモン味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0449",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "パスタにちくわ・鶏レバー・まぐろを加える山椒照り焼きの味と具の焦点が不明確"
+  },
+  {
+    "id": "C0450",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ペンネ・サラミ・あさり・なめこをトマトクミン味で麺に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0451",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "炊き込み指定でうずら卵・山芋・レタスを同時加熱するため構造と食感が定まりにくい"
+  },
+  {
+    "id": "C0452",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "乾燥スパゲッティ・いか・ズッキーニをクリーム味で具を加熱して一皿にまとめられる"
+  },
+  {
+    "id": "C0453",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ロールパン・牛切り落とし・なめこ・蒸し鶏をにんにく醤油味で具を加熱してパンと一緒に仕上げられる"
+  },
+  {
+    "id": "C0454",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "バゲット・枝豆・レタス・塩さばを照り焼き味で具を加熱してパンと一緒に仕上げられる"
+  },
+  {
+    "id": "C0455",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チルドパスタセット・枝豆・たらをにんにく味噌味で具を加えて一皿に再構成できる"
+  },
+  {
+    "id": "C0456",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "いわし・さつまいも・トマトをねぎ塩レモン味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0457",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏むね肉・なめこ・セロリを黒酢味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0458",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ベーコン・長ねぎ・とうもろこしをレモンハーブ味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0459",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "つみれ・なめこ・エリンギをトマトクミン味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0460",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "あさり・なめこ・なすをカレー味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0461",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "赤飯に鶏ひき肉・牛しぐれ・チョリソーを加え梅しそにするため味が多重"
+  },
+  {
+    "id": "C0462",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "油揚げ・パプリカ・きくらげを醤油甘辛味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0463",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ひじき煮にランチョンミート・砂肝・さばを加えキムチクリームにする味の衝突"
+  },
+  {
+    "id": "C0464",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チルドチキンナゲット・大根・サラダチキン・きのこミックスを味噌甘辛味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0465",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "唐揚げ・チンゲン菜・にら・しいたけを豆板醤味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0466",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "スパゲッティに牛肉・えび・ぶりを合わせるレモンクミンで主材が過密"
+  },
+  {
+    "id": "C0467",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "かぼちゃスープへ焼き豆腐・オクラ・アンチョビを加えトマトクミンにする構成が曖昧"
+  },
+  {
+    "id": "C0468",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "合いびき肉・絹さや・きくらげを粒マスタード味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0469",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "春雨サラダに焼き芋・牛肉・かにかまを加え麻婆風にするため味と構造が不明確"
+  },
+  {
+    "id": "C0470",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ツナ缶・れんこん・セロリをしょうが醤油味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0471",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "手羽先・なめこ・じゃがいもをにんにく醤油味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0472",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "そば・里芋・ちくわをカレー味で具を加熱して一皿にまとめられる"
+  },
+  {
+    "id": "C0473",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛丼の具・油揚げ・黒はんぺん・牛こま切れを五香粉甘辛味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0474",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "イングリッシュマフィン・豚もつ・ゆでだこ・笹かまぼこをぽん酢味で具を加熱してパンと一緒に仕上げられる"
+  },
+  {
+    "id": "C0475",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "コロッケ・油揚げ・かいわれ大根・ちくわをキムチクリーム味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0476",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ライスバーガー・赤玉ねぎ・ぶり・アボカドをバジル味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0477",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "トルティーヤ・スモークチキン・生鮭・しいたけをガーリックオイル味で具を加熱してパンと一緒に仕上げられる"
+  },
+  {
+    "id": "C0478",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "魚肉ソーセージ・グリーンアスパラ・セロリを味噌クリーム味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0479",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏ひき肉・グリーンアスパラ・とうもろこしを梅味噌味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0480",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チルド小籠包・鶏そぼろ・しょうが・レタスをサルサ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0481",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チキンナゲット・にんじん・いんげんをトマトクミン味で揚げ物を温め野菜あんをかけられる"
+  },
+  {
+    "id": "C0482",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ロースハム・赤玉ねぎ・さつまいもをぽん酢味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0483",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "砂肝・赤玉ねぎ・かぶをマスタードクリーム味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0484",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "うずら卵・ぶなしめじ・長ねぎをゆず味噌味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0485",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "クラムチャウダー・焼き豆腐・かに缶・たらをクリーム味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0486",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "パスタ・牛切り落とし・大根・山芋を醤油麹味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0487",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "かれい・ブロッコリー・水菜を塩こしょう味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0488",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ワンタンに鶏皮・豆腐・ごぼう巻を加えマスタードクリームにする具のまとまりが不確か"
+  },
+  {
+    "id": "C0489",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "パックおこわ・明太子・黄パプリカ・豆苗をトマトコチュジャン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0490",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "冷やし中華セット・大豆・アスパラ・さんま蒲焼缶を豆板醤味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0491",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チルド小籠包・ほたて水煮缶・揚げボール・エリンギをごま味噌味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0492",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "中華生麺・さば・えのきを甜麺醤味で麺と具を別加熱して炒め合わせられる"
+  },
+  {
+    "id": "C0493",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "豚もつ・豆苗・水菜を醤油甘辛味で具を蒸して焼き目を付けられる"
+  },
+  {
+    "id": "C0494",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ウインナー・ごぼう・しいたけ・じゃがいもをトマトクミン味で具を順に加熱して汁物にまとめられる"
+  },
+  {
+    "id": "C0495",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛バラ肉・まいたけ・たけのこをチーズ黒こしょう味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0496",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ナポリタンソースに卵・しじみ・牛肉を加えガーリックオイルにする味が衝突しやすい"
+  },
+  {
+    "id": "C0497",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "あじ・長ねぎ・いんげんをにんにく味噌味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0498",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "肉じゃが・にんにく・カリフラワー・豚もも肉をしょうが醤油味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0499",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "たら・にら・エリンギを味噌クリーム味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0500",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ドライカレーに豆腐・しじみ・さんま蒲焼を加えて黒酢にする味の重なりが大きい"
+  },
+  {
+    "id": "C0501",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "味噌カップ麺にカレー味を重ね、はんぺん・ほうれん草・ローストポークを再構成するため味付けが多重"
+  },
+  {
+    "id": "C0502",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "豚ひき肉・にら・きくらげを味噌甘辛味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0503",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チルドパスタセット・さつま揚げ・山芋・つみれを塩レモン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0504",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "パック赤飯・かに缶・にら・豚バラ肉を黒酢味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0505",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ソーセージ・ピーマン・水菜をカレー味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0506",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "豚ヒレ肉・赤玉ねぎ・セロリを味噌クリーム味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0507",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "袋ビーフン・さば味噌煮缶・赤パプリカ・豚バラ肉を黒酢しょうが味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0508",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "うどん・豚角煮・アスパラ・いかを塩こしょう味で麺に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0509",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ひよこ豆缶・パプリカ・かぶを粒マスタード味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0510",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛バラ肉・絹さや・豆苗をねぎ塩レモン味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0511",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "いわし水煮缶・サニーレタス・焼き芋・スナップえんどうを醤油麹味で具を順に加熱して汁物にまとめられる"
+  },
+  {
+    "id": "C0512",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "水餃子・生おから・鶏そぼろ・コーンを花椒ごま味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0513",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "焼き魚にいわし蒲焼・鮭缶・パプリカを足す魚三種構成で味と具の焦点が曖昧"
+  },
+  {
+    "id": "C0514",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ごぼうサラダ・サラダチキン・鶏むね肉・かぼちゃをトマトコチュジャン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0515",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ハンバーグ・アスパラ・ミックスベジタブル・コーンをにんにく味噌味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0516",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ピラフ・手羽中・マッシュルーム・にらをコンソメ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0517",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "麻婆豆腐にれんこん・カリフラワー・まぐろを加えねぎ塩レモンにするため味が衝突"
+  },
+  {
+    "id": "C0518",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さんま・ほうれん草・ピーマンをバルサミコ醤油味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0519",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "がんもどき・れんこん・ズッキーニをレモンクミン味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0520",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "焼きビーフン・豚もつ・マッシュルーム・充填豆腐を塩レモン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0521",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "かぼちゃスープにいわし・さつまいも・塩さばを加える魚と甘味の組合せが不確か"
+  },
+  {
+    "id": "C0522",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "切り干し大根煮・れんこん・魚肉ソーセージ・牛ひき肉をカレー味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0523",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップそば・スモークチキン・ツナ水煮缶・まいたけをしょうが味噌味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0524",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "トルティーヤ・豚ひき肉・オクラを甜麺醤味で具を別加熱して載せて焼ける"
+  },
+  {
+    "id": "C0525",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さば水煮缶・エリンギ・キャベツをレモンクミン味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0526",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "袋ラーメン（塩）・絹さや・生ハム・ローストポークをにんにく黒酢味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0527",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ランチョンミート・ブロッコリー・豆苗をアンチョビトマト味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0528",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "かぼちゃスープへ豚角煮・あじ・しめじを加えコチュジャンにする一皿構成が曖昧"
+  },
+  {
+    "id": "C0529",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "かつお・にんじん・かぶをごま油塩味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0530",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "小籠包にハム・ソーセージハンバーグ・鶏そぼろを足す三種加工肉で味が過密"
+  },
+  {
+    "id": "C0531",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ちくわ・ほうれん草・えのきをにんにく味噌味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0532",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏もも肉・里芋・ズッキーニをねぎ塩レモン味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0533",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "トルティーヤ・カニ風味かまぼこ・トマトをぽん酢味で具を加熱してパンに挟める"
+  },
+  {
+    "id": "C0534",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "もつ煮・鶏ひき肉・豚もつ・ベーコンを花椒ごま味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0535",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ツナ缶・里芋・ごぼうを梅しそ味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0536",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏もも肉・とうもろこし・かぼちゃを胡麻ドレッシング味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0537",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ひやむぎ・長ねぎ・鶏むね肉を黒酢味で麺と具を別加熱して炒め合わせられる"
+  },
+  {
+    "id": "C0538",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チョリソー・さつまいも・ブロッコリー・コーンをごま味噌味で具を順に加熱して汁物にまとめられる"
+  },
+  {
+    "id": "C0539",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏むね肉・なめこ・かぼちゃを黒酢味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0540",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "油揚げ・れんこん・セロリをにんにく味噌味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0541",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "焼きおにぎりにさば缶・牛肉・なめこを加えてキムチクリームにする具のまとまりが不確か"
+  },
+  {
+    "id": "C0542",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "焼売・鮭・チーズ入りかまぼこ・焼き鳥缶を甜麺醤ごま味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0543",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "肉まんにかに入りつみれ・納豆・水菜を加えバルサミコ醤油にする構造が定まりにくい"
+  },
+  {
+    "id": "C0544",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "かれい・かぼちゃ・長芋を醤油甘辛味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0545",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "手羽中・ぶなしめじ・たけのこを豆板醤味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0546",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "チキンナゲットにたらこ・燻製鶏・コンビーフを加える三種肉魚で味が過密"
+  },
+  {
+    "id": "C0547",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "味噌ラーメンにいわし蒲焼・手羽先・牛肉を加え花椒ごまにする構成が過密"
+  },
+  {
+    "id": "C0548",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "チキンナゲットに鶏皮・かに缶・牛ひき肉を加え味噌クリームにする具が多すぎる"
+  },
+  {
+    "id": "C0549",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ツナ缶・そら豆・きくらげを鶏ガラ塩味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0550",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "そばにあさり・ベーコン・牛すじを加え燻製トマトにする味と食材の焦点が不明確"
+  },
+  {
+    "id": "C0551",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "牛丼の具へウインナー・さわら・コーンを足してスイートチリにするため味が衝突"
+  },
+  {
+    "id": "C0552",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "茶碗蒸しに豚ひき肉・焼き芋・いかを加えトマトクミンへ再構成する構造が曖昧"
+  },
+  {
+    "id": "C0553",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "中華まん・ひきわり納豆・水菜・白菜を黒酢しょうが味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0554",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さわら・長ねぎ・もやしを塩レモン味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0555",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ピザクラスト・厚揚げ・ズッキーニを塩こしょう味で具を別加熱して載せて焼ける"
+  },
+  {
+    "id": "C0556",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏卵・ブロッコリー・小松菜をごま味噌味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0557",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "水餃子に豚もつ・あじ・さばを加えハニーマスタードにする具と味が過密"
+  },
+  {
+    "id": "C0558",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "バゲットにたい・豚バラ・里芋を載せ蒸して焼く構成で具の一体化が不確か"
+  },
+  {
+    "id": "C0559",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さば・じゃがいもをアンチョビトマト味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0560",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "もち麦・豚こま切れ・かぶをゆず味噌味で具を別加熱してご飯に混ぜ込める"
+  },
+  {
+    "id": "C0561",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さば水煮缶・スナップえんどう・絹さやを梅しそ味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0562",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "玄米・キャベツ・レタス・ぶなしめじをコチュジャン甘酢味でご飯に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0563",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ミニオムレツ・にんじん・鶏そぼろ・あさりをクリーム味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0564",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップ春雨・しらす・ブロッコリースプラウト・コーンをガーリックオイル味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0565",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップ焼そば（ソース）・ほうれん草・さつまいもを元の味を活かす味で野菜を別加熱して麺に和えられる"
+  },
+  {
+    "id": "C0566",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "そばに牛肉・しらす・さわらを加え味噌クリームにする魚肉の重なりが大きい"
+  },
+  {
+    "id": "C0567",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "焼きビーフン・サラダチキン・合いびき肉・長ねぎを五香粉甘辛味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0568",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "バゲットに長芋・鮭・チョリソーを加え山椒照り焼きにする具と味が過密"
+  },
+  {
+    "id": "C0569",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "そば・まいたけをトマトクミン味で麺と具を別加熱して炒め合わせられる"
+  },
+  {
+    "id": "C0570",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ミートソース・牛切り落とし・さつまいも・生ハムをトマトクミン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0571",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "押し麦を牡蠣・豚肩肉・生鮭とカレーヨーグルトで炊き込むため加熱と味が不確か"
+  },
+  {
+    "id": "C0572",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "油揚げ・長ねぎ・えのきをカレー味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0573",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "肉まんにがんもどき・アボカド・さばを加え味噌クリームへ再構成するまとまりが曖昧"
+  },
+  {
+    "id": "C0574",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "たい・グリーンアスパラ・スナップえんどうを梅しそ味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0575",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ごぼうサラダ・ゆでだこ・笹かまぼこを豆板醤味で具を加えて一皿に再構成できる"
+  },
+  {
+    "id": "C0576",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛ひき肉・長芋・チンゲン菜を黒酢味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0577",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛もも肉・ブロッコリー・ズッキーニをねぎ塩レモン味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0578",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "はんぺん・かぼちゃ・小松菜を塩こしょう味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0579",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "がんもどき・とうもろこし・キャベツを粒マスタード味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0580",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "あじ・赤玉ねぎ・玉ねぎを黒酢味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0581",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チーズ入りかまぼこ・れんこん・赤玉ねぎ・もやしを甜麺醤ごま味で具を順に加熱して汁物にまとめられる"
+  },
+  {
+    "id": "C0582",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ミックスビーンズ缶・にんじん・エリンギを味噌クリーム味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0583",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ミートボール・サニーレタス・とうもろこし・ミックスベジタブルを白だし味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0584",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "厚揚げ・カリフラワー・きくらげを玉ねぎドレッシング味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0585",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "合いびき肉・ブロッコリー・さつまいもを豆板醤味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0586",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "木綿豆腐・にら・カリフラワーを味噌甘辛味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0587",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ロースハム・じゃがいも・小松菜を塩こしょう味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0588",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "肉巻きおにぎりにスペアリブ・サラミ・塩さばを加える三種肉魚で味が過密"
+  },
+  {
+    "id": "C0589",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップラーメン（塩）・しらす・にんじん・にんにくをマスタードクリーム味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0590",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "冷麺セット・ごぼう・サラミ・えびをオリーブレモン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0591",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛肩ロース・なめこ・赤玉ねぎをレモンクミン味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0592",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "カップフォーにキャベツ・明太子・小ねぎを足しハニーマスタードにする味の焦点が不明確"
+  },
+  {
+    "id": "C0593",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "唐揚げ・牛バラ肉・大根・なると巻をしょうが醤油味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0594",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "手羽元・にら・ごぼうをごま油塩味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0595",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "筑前煮に手羽中・魚肉ソーセージ・しょうがを加え味噌クリームにする構成が過密"
+  },
+  {
+    "id": "C0596",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "焼き豆腐・長ねぎ・小松菜をしょうが醤油味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0597",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ライスバーガー・焼き豆腐・枝豆・しらすをクリーム味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0598",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "厚揚げ・もやし・トマトをにんにく醤油味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0599",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "おでんに牛肉・鮭缶・牛すじを加えてサルサへ再構成する味の衝突が大きい"
+  },
+  {
+    "id": "C0600",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "たら・長ねぎ・エリンギをごま味噌味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0601",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "そば・そら豆・油揚げをレモンクミン味で麺と具を別加熱して炒め合わせられる"
+  },
+  {
+    "id": "C0602",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "醤油カップ麺にチーズかまぼこ・えのき・牛しぐれを加え焼肉だれにする味が多重"
+  },
+  {
+    "id": "C0603",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ミートボール・サラミ・大葉・牛こま切れをトマトクミン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0604",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "焼きおにぎりに砂肝・ごぼう・さんまを加え豆板醤にする具のまとまりが不確か"
+  },
+  {
+    "id": "C0605",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "クロワッサン・生鮭・たらをオレンジ醤油味で具を加熱して一皿にまとめられる"
+  },
+  {
+    "id": "C0606",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "焼そば麺に大豆・長芋・鶏レバーを加え汁麺にする構造と食感が定まりにくい"
+  },
+  {
+    "id": "C0607",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "蒸し焼そば麺・スナップえんどう・いかをバルサミコ醤油味で麺と具を別加熱して炒め合わせられる"
+  },
+  {
+    "id": "C0608",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "そば・しらす・セロリ・ベーコンをにんにく黒酢味で麺に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0609",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップラーメン（醤油）・牛バラ肉・木綿豆腐・里芋を焼肉だれ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0610",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "バターチキンカレーに鶏レバー・山芋・鶏ももを加えごま油塩にする味付けが衝突"
+  },
+  {
+    "id": "C0611",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "あさり・かぶ・たけのこをレモンクミン味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0612",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "もち麦・牡蠣・ブロッコリー・焼き鳥缶をめんつゆ味でご飯に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0613",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ミネストローネ・きくらげ・塩鮭・里芋をキムチ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0614",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "袋とんこつラーメン・ちりめんじゃこ・スナップえんどう・玉ねぎを味噌チーズ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0615",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さば・もやし・絹さやをめんつゆ味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0616",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "麻婆豆腐・キャベツ・枝豆・しじみをトマト味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0617",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "袋とんこつラーメン・赤パプリカ・スナップえんどう・ローストポークを梅しそ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0618",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "生鮭・まいたけ・チンゲン菜をぽん酢味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0619",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛もも肉・長芋・さつまいもを豆板醤味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0620",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛こま切れ・小松菜・カリフラワーをレモンハーブ味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0621",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "いか・セロリ・白菜を梅しそ味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0622",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "いわし・もやし・長芋を黒酢味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0623",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "木綿豆腐・かぼちゃ・オクラをオリーブレモン味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0624",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ピザクラスト・ごぼう・ベーコンをカレー味で具を別加熱して載せて焼ける"
+  },
+  {
+    "id": "C0625",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "玄米・かぶ・ちくわをトマト味で具を別加熱してご飯に混ぜ込める"
+  },
+  {
+    "id": "C0626",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "イカ天練り物・かいわれ大根・ぶなしめじ・ブロッコリースプラウトを甜麺醤味で具を順に加熱して汁物にまとめられる"
+  },
+  {
+    "id": "C0627",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ワンタン・絹さや・さつまいもをクリーム味で市販品と野菜をスープに合流できる"
+  },
+  {
+    "id": "C0628",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "肉まんにチンゲン菜・牡蠣・焼き鳥缶を加えコチュジャンにする具が過密"
+  },
+  {
+    "id": "C0629",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ポテトサラダ・にんにく・コンビーフ・ブロッコリーを甜麺醤味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0630",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "うずら卵・なめこ・チンゲン菜をカレー味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0631",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "オートミールカップにじゃこ・さば味噌煮・ほたてを加えサルサにする魚介と味が多重"
+  },
+  {
+    "id": "C0632",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ロールパン・もやし・ちくわをごま油塩味で具を別加熱して載せて焼ける"
+  },
+  {
+    "id": "C0633",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ひやむぎにたらこ・卵・牛肉を加えアンチョビトマトにする味の焦点が不明確"
+  },
+  {
+    "id": "C0634",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ちくわ・長ねぎ・水菜をオイスター味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0635",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ゆでだこ・ごぼう・たけのこを梅しそ味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0636",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "チキンナゲットにきのこ・オイルサーディン・厚揚げを加えコチュジャン甘酢にする構成が曖昧"
+  },
+  {
+    "id": "C0637",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "かぼちゃスープにかれい・にら・さつま揚げを加え焼肉だれにする味が衝突"
+  },
+  {
+    "id": "C0638",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さつま揚げ・ブロッコリー・長芋をしょうが味噌味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0639",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "生鮭・にら・豆苗を味噌甘辛味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0640",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ゆでだこ・ぶなしめじ・豆苗を山椒醤油味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0641",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "いか・春菊・とうもろこしを玉ねぎドレッシング味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0642",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "冷麺セット・かに缶・カニ風味かまぼこ・納豆をごま味噌味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0643",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛ステーキ用肉・オクラ・豆苗をオイスター味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0644",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップうどん・黒はんぺん・トマト・ほうれん草を黒酢しょうが味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0645",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "もち米にいんげん・ぶり・ツナ缶を混ぜ込む魚二種で一皿の味が過密"
+  },
+  {
+    "id": "C0646",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏皮・白菜・きくらげをスイートチリ味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0647",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "マカロニサラダに合いびき肉・豆苗・手羽先を加えオイスター味にする構造が不確か"
+  },
+  {
+    "id": "C0648",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ペンネ・もやし・ぶなしめじ・牛こま切れを焦がしねぎ醤油味で麺に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0649",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鮭水煮缶・生しいたけ・さつまいもをゆず味噌味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0650",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "うどん・生おから・小ねぎ・ちくわをレモンハーブ味で麺に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0651",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "豚ロース・スナップえんどう・マッシュルームをアンチョビトマト味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0652",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "親子丼の具・大豆・黄パプリカ・もやしを梅しそ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0653",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "クラムチャウダーにハム・イカ天・豚肉を加え味噌チーズにする具と味が過密"
+  },
+  {
+    "id": "C0654",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛バラ肉・ほうれん草・マッシュルームを黒酢しょうが味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0655",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ライスバーガー・ランチョンミート・合いびき肉・えのきをごま味噌味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0656",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップ油そば・大根・セロリ・カニ入りつみれをオイスター味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0657",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チルドパスタセット・いわし蒲焼缶・ズッキーニ・さんまをしょうが醤油味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0658",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ランチョンミート・いんげん・絹さやをガーリックオイル味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0659",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牡蠣・絹さや・カリフラワー・ミックスベジタブルを醤油麹味で具を順に加熱して汁物にまとめられる"
+  },
+  {
+    "id": "C0660",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "クロワッサン・カニ風味かまぼこ・レバーペースト・イカ天練り物をレモンハーブ味で具を加熱してパンと一緒に仕上げられる"
+  },
+  {
+    "id": "C0661",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ごぼうサラダに肉そぼろ・ローストビーフ・ぶりを足す三種主材でまとまりにくい"
+  },
+  {
+    "id": "C0662",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "手羽元・グリーンアスパラ・にんじんをカレー味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0663",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ミートボールにランチョンミート・あさり・イカ天を加える味と具の重なりが大きい"
+  },
+  {
+    "id": "C0664",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏ひき肉・里芋・そら豆をレモンハーブ味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0665",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ぶり・ブロッコリー・里芋をトマト味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0666",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "焼きおにぎり・スモークチキン・エリンギ・厚揚げを味噌甘辛味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0667",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "コンビーフ・スナップえんどう・水菜を味噌だし味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0668",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "かぼちゃサラダ・枝豆・さつま揚げ・山芋をマスタードクリーム味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0669",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "中華まん・セロリ・ゆでだこ・ごぼう巻を黒酢味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0670",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏むね肉・長芋・豆苗を塩レモン味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0671",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "焼きビーフン・ゆでだこ・しじみ・大葉をトマトクミン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0672",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ロールパン・かまぼこ・水菜を黒酢しょうが味で具を加熱してパンに挟める"
+  },
+  {
+    "id": "C0673",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "もち麦・小松菜・かれい・白菜を醤油甘辛味でご飯に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0674",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "手羽元・ブロッコリー・チンゲン菜をめんつゆ味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0675",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ほたて・えのき・豆苗を味噌クリーム味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0676",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ピザ・赤玉ねぎ・ロースハム・赤パプリカを焦がしねぎ醤油味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0677",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "カップカレーうどんにごぼう・牛ステーキ・アンチョビを加え山椒照り焼きにする味が多重"
+  },
+  {
+    "id": "C0678",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "豚バラ肉・玉ねぎ・カリフラワーをごま味噌味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0679",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "たい・春菊・水菜をバルサミコ醤油味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0680",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "豚ヒレ肉・春菊・チンゲン菜をにんにく味噌味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0681",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏もも肉・里芋・なすをコチュジャン味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0682",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "マカロニ・かまぼこ・春菊・めかじきをねぎ塩レモン味で麺に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0683",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "冷凍エビフライ・にら・小松菜をクリーム味で揚げ物を温め野菜あんをかけられる"
+  },
+  {
+    "id": "C0684",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ぶり・大根・かぶをゆず味噌味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0685",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップそば・セロリ・絹ごし豆腐・鮭水煮缶をガーリックオイル味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0686",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "コロッケ・まいたけ・さつまいもをカレー味で揚げ物を温め野菜あんをかけられる"
+  },
+  {
+    "id": "C0687",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏卵・にんじん・玉ねぎをカレー味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0688",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛ステーキ用肉・グリーンアスパラ・小松菜をしょうが味噌味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0689",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "即席焼そばに燻製鶏・もやし・鮭缶を加えハニーマスタードにする主材が過密"
+  },
+  {
+    "id": "C0690",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "オートミール・生おから・むきえび・がんもどきをにんにく黒酢味でご飯に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0691",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "冷麺に鶏ひき肉・ほたて缶・豚肉を加える三種主材で一皿の焦点が不明確"
+  },
+  {
+    "id": "C0692",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鮭水煮缶・かぼちゃ・トマトを黒酢味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0693",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "チルド肉団子に黒はんぺん・レタス・鶏皮を加え味噌甘辛にする具が過密"
+  },
+  {
+    "id": "C0694",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "担々麺に魚肉ソーセージ・ほたてを加えレモンクミンにする味の衝突が大きい"
+  },
+  {
+    "id": "C0695",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "手羽先・生しいたけ・パプリカを山椒醤油味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0696",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "玄米ご飯・鮭・アスパラ・オクラを甜麺醤ごま味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0697",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ロールキャベツ・かぶ・鶏卵・なすをキムチ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0698",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "かつお・セロリ・チンゲン菜をにんにく味噌味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0699",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛こま切れ・絹さや・長芋をマスタードクリーム味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0700",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "酢豚にえのき・あさり・アンチョビを加えトマト味へ再構成する魚介味が過密"
+  },
+  {
+    "id": "C0701",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ロースハム・ほうれん草・水菜を梅味噌味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0702",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "厚揚げ・スナップえんどう・オクラを鶏ガラ塩味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0703",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "フライドポテト・セロリ・豆苗・鮭水煮缶をにんにく味噌味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0704",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏むね肉・じゃがいも・パプリカをごま味噌味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0705",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "冷やし中華にキャベツ・牛しぐれ・さんま蒲焼を加えクリームにする味と構造が不確か"
+  },
+  {
+    "id": "C0706",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "かまぼこ・焼き芋・ブロッコリーを白だし味で具を加熱して一皿にまとめられる"
+  },
+  {
+    "id": "C0707",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "チキン南蛮にいわし缶・えのき・あじを加える魚介三種で味が過密"
+  },
+  {
+    "id": "C0708",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "イングリッシュマフィン・鶏皮・ほたて水煮缶・しいたけを味噌チーズ味で具を加熱してパンと一緒に仕上げられる"
+  },
+  {
+    "id": "C0709",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップラーメン（シーフード）・砂肝・れんこん・かいわれ大根をレモンハーブ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0710",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "筑前煮に絹さや・かれい・燻製牡蠣を加えコチュジャン甘酢にする味が多重"
+  },
+  {
+    "id": "C0711",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "カレーにいわし・鶏ひき肉・鶏そぼろを加え梅しそにする主材と味の焦点が曖昧"
+  },
+  {
+    "id": "C0712",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "担々麺にかに入りつみれ・サラミ・ゆでだこを加えチーズ黒こしょうにする具が過密"
+  },
+  {
+    "id": "C0713",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鮭水煮缶・れんこん・とうもろこしを甜麺醤味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0714",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さんま・なめこ・たけのこを鶏ガラ塩味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0715",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "天ぷらに鶏肉・魚肉ソーセージ・レタスを加え山椒照り焼きにする構造が定まりにくい"
+  },
+  {
+    "id": "C0716",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ひよこ豆缶・にらを豆板醤味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0717",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "餃子・生おから・豚もも肉・ブロッコリースプラウトをマスタードクリーム味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0718",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "茶碗蒸しに黒はんぺん・牛肩肉・イカ天を加えにんにく味噌へ再構成する味が過密"
+  },
+  {
+    "id": "C0719",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛肩ロース・とうもろこし・えのきをレモンクミン味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0720",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カニ風味かまぼこ・なめこ・赤玉ねぎを塩レモン味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0721",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "そうめん・にんにく・焼き芋・牛こま切れをクリーム味で麺に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0722",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "もち米・スナップえんどう・ソーセージを黒酢味で具を別加熱してご飯に混ぜ込める"
+  },
+  {
+    "id": "C0723",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "冷麺セット・ミニトマト・ウインナー・アボカドを甜麺醤ごま味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0724",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "クロワッサン・さわら・玉ねぎ・水菜をしょうが醤油味で具を加熱してパンと一緒に仕上げられる"
+  },
+  {
+    "id": "C0725",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "あさり・えのき・たけのこをしょうが醤油味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0726",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さつま揚げ・いんげん・さつまいもをゆず味噌味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0727",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "クラムチャウダー・はんぺん・なると巻・蒸し鶏を味噌クリーム味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0728",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "合いびき肉・えのき・さつまいもを味噌クリーム味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0729",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ハッシュドポテト・生鮭・焼き芋・白菜を照り焼き味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0730",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "まぐろ切り身・里芋・えのきを醤油だし味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0731",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "押し麦・たら・水菜を梅しそ味で具を別加熱してご飯に混ぜ込める"
+  },
+  {
+    "id": "C0732",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "豚肩ロース・そら豆・カリフラワーをにんにく醤油味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0733",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "食パンに豚レバー・さつまいも・豚ヒレを載せる三種肉構成で具と味が不確か"
+  },
+  {
+    "id": "C0734",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "めかじき・里芋・ピーマンをごま味噌味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0735",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "たこ焼き・黒はんぺん・小ねぎ・カリフラワーをレモンクミン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0736",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "あじ・れんこん・大葉・ピーマンを麻婆風味で具を順に加熱して汁物にまとめられる"
+  },
+  {
+    "id": "C0737",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏つくね・ミニトマト・いんげんを味噌クリーム味で具を加えて一皿に再構成できる"
+  },
+  {
+    "id": "C0738",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "かれい・ピーマン・キャベツをトマトクミン味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0739",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "カップフォーにあさり缶・ベーコン・生ハムを加え甜麺醤ごまにする具が過密"
+  },
+  {
+    "id": "C0740",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "かぼちゃサラダ・うずら卵・ゆでだこ・塩さばを醤油麹味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0741",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "サラダチキン・ごぼう・セロリをチーズ黒こしょう味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0742",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "切り干し大根煮に鶏そぼろ・ローストビーフ・ごぼう巻を加える主材三種でまとまりにくい"
+  },
+  {
+    "id": "C0743",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "いか・にら・トマトをアンチョビトマト味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0744",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "はんぺん・赤玉ねぎ・小松菜を黒酢味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0745",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "あじ・とうもろこし・さつまいもを甜麺醤味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0746",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "厚揚げ・絹さや・トマトを粒マスタード味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0747",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "袋ビーフン・ツナ油漬け缶・シーフードミックス・揚げボールをりんご生姜味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0748",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "手羽元・ごぼう・まいたけを味噌クリーム味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0749",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "焼き魚に赤パプリカ・あじ・豚バラを加える魚肉混在で一皿の構造が不明確"
+  },
+  {
+    "id": "C0750",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さば水煮缶・パプリカ・豆苗をしょうが醤油味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0751",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "中華生麺・小松菜・鶏むね肉をスイートチリ味で麺と具を別加熱して炒め合わせられる"
+  },
+  {
+    "id": "C0752",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "牛ひき肉・セロリ・もやしをバルサミコ醤油味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0753",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップ油そば・大豆・さつまいも・鶏そぼろをコンソメ味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0754",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "袋担々麺・生おから・鶏ささみ・カニ風味かまぼこを山椒照り焼き味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0755",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ライスバーガーに牛ステーキ・燻製鶏・手羽元を加える肉三種で成形と味が過密"
+  },
+  {
+    "id": "C0756",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ロールキャベツにおから・かれい・鶏レバーを加えぽん酢にする具の一体化が不確か"
+  },
+  {
+    "id": "C0757",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ナポリタンソースにしらす・えのき・豆苗を加えカレーヨーグルトにする味付けが多重"
+  },
+  {
+    "id": "C0758",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "トルティーヤにランチョンミート・ソーセージハンバーグ・塩鮭を直焼きする主材が過密"
+  },
+  {
+    "id": "C0759",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "麻婆豆腐にツナ・赤パプリカ・ごぼう巻を加え味噌チーズへ再構成する味が衝突"
+  },
+  {
+    "id": "C0760",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "かれい・長ねぎ・れんこんを豆板醤味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0761",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "ミートボールにたらこ・はんぺん・さば味噌煮を加え塩レモンにする魚介味が過密"
+  },
+  {
+    "id": "C0762",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "がんもどき・まいたけ・水菜をチーズ黒こしょう味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0763",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "オートミール・豚ひき肉・さつまいもをレモンハーブ味で具を別加熱してご飯に混ぜ込める"
+  },
+  {
+    "id": "C0764",
+    "verdict": "fail",
+    "reason_code": "clear_failure",
+    "reason": "パン粉はパン料理の土台にならず、たい・カリフラワー・鶏レバーを直焼きしても指定構造を保てない"
+  },
+  {
+    "id": "C0765",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "うどん・ピーマン・ソーセージを醤油甘辛味で麺と具を別加熱して炒め合わせられる"
+  },
+  {
+    "id": "C0766",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "エビフライ・ちくわぶ・充填豆腐・豆苗を麻婆風味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0767",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "豚肩ロース・もやし・じゃがいもを醤油甘辛味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0768",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "焼そば麺に鶏ささみ・しじみ・塩鮭を加え味噌チーズにする魚介と味が過密"
+  },
+  {
+    "id": "C0769",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "木綿豆腐・ごぼう・たけのこを粒マスタード味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0770",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "いか・グリーンアスパラ・セロリをごま油塩味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0771",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "酢豚に油揚げ・かに缶・里芋を加え味噌甘辛にする構造と味が不確か"
+  },
+  {
+    "id": "C0772",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "合いびき肉・長ねぎ・まいたけを梅しそ味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0773",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "きんぴらにチーズかまぼこ・さば缶・ぶりを加える魚介二種と味の焦点が曖昧"
+  },
+  {
+    "id": "C0774",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "厚揚げ・マッシュルーム・たけのこをクリーム味で加熱時間を調整して具だくさんスープにできる"
+  },
+  {
+    "id": "C0775",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "押し麦・カリフラワー・ツナ缶をナンプラーレモン味で具を別加熱してご飯に混ぜ込める"
+  },
+  {
+    "id": "C0776",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ミートボール・牛もも肉・牛すじ・なめこを塩麹レモン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0777",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "白身魚フライに鶏ひき肉・ほたて缶・あじを加える主材四種でまとまりにくい"
+  },
+  {
+    "id": "C0778",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "チキンナゲット・砂肝・かまぼこ・そら豆をレモンクミン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0779",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "サラダチキン・春菊・れんこんをチーズ黒こしょう味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0780",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "サラダチキン・赤玉ねぎ・まいたけをバルサミコ醤油味で下処理して炒め合わせられる"
+  },
+  {
+    "id": "C0781",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "春巻きに牛ステーキ・ほたて缶・牛しぐれを加える牛肉二種と具量が過密"
+  },
+  {
+    "id": "C0782",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "鶏もも肉・かぼちゃ・小松菜を玉ねぎドレッシング味で具を蒸して味付けを和えられる"
+  },
+  {
+    "id": "C0783",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "いわし水煮缶・エリンギ・トマトを梅しそ味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0784",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "たこ焼き・木綿豆腐・きくらげ・里芋をコチュジャン味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0785",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "もち麦・きくらげ・オクラ・水菜をにんにく黒酢味でご飯に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0786",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "手羽中・玉ねぎ・ズッキーニをめんつゆ味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0787",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "サラダチキン・赤玉ねぎをねぎ塩レモン味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0788",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ドリア・たらこ・木綿豆腐・あじを焦がしねぎ醤油味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0789",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "マカロニ・サラダチキン・あさり・イカ天練り物をコチュジャン甘酢味で麺に具を加えて一皿にできる"
+  },
+  {
+    "id": "C0790",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "あさり・ほうれん草・にらを粒マスタード味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0791",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "ワンタン・牛バラ肉・ちくわぶ・牛しぐれ煮を塩こしょう味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0792",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "即席オートミールカップ・砂肝・いわし蒲焼缶・マッシュルームをごまぽん酢味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0793",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "カップうどん・れんこん・マッシュルーム・長ねぎをゆず味噌味で具を加熱して完成品に組み込める"
+  },
+  {
+    "id": "C0794",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "あさり・かぶ・長芋をめんつゆ味で硬い具を先に加熱して主材と一緒に焼ける"
+  },
+  {
+    "id": "C0795",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "調理済み大豆・ブロッコリー・玉ねぎをコチュジャン味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0796",
+    "verdict": "uncertain",
+    "reason_code": "flavor_or_structure_uncertain",
+    "reason": "赤飯にウインナー・まぐろ・焼き鳥缶を加えコチュジャン甘酢にする主材が過密"
+  },
+  {
+    "id": "C0797",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "厚揚げ・ブロッコリー・パプリカをレモンハーブ味で加熱時間を分けて少量の煮汁で煮合わせられる"
+  },
+  {
+    "id": "C0798",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "乾燥スパゲッティ・マッシュルーム・ほたてをごま味噌味で麺と具を別加熱して炒め合わせられる"
+  },
+  {
+    "id": "C0799",
+    "verdict": "pass",
+    "reason_code": "compatible",
+    "reason": "さわら・にんじん・いんげんをめんつゆ味で硬い具を先に加熱して主材と一緒に焼ける"
+  }
+]

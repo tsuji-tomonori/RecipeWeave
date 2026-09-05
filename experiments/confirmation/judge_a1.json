@@ -1,0 +1,2402 @@
+[
+  {
+    "id": "C0400",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「あじ」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0401",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ツナ缶」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0402",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ジャージャー麺セット」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0403",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ピラフ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0404",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「肉じゃが」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0405",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チルド小籠包」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0406",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カニ風味かまぼこ」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0407",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「エビフライ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0408",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「マカロニ」と副材を必要加熱し、指定の具入り炒め麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0409",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「豚ひき肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0410",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ミートソース」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0411",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「焼き鳥」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0412",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さつま揚げ」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0413",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ロースハム」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0414",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「小籠包」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0415",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「魚肉ソーセージ」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0416",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ツナ缶」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0417",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さば」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0418",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「メンチカツ」と副材を必要加熱し、指定の市販揚げ物の野菜あんかけとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0419",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「筑前煮」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0420",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "煮豚に貝・燻製鶏・かにを重ねてクリーム味にするため、既存味の重なりが大きい。"
+  },
+  {
+    "id": "C0421",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「焼きビーフン」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0422",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏むね肉」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0423",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「冷凍えび餃子」と副材を必要加熱し、指定の市販餃子・団子の野菜スープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0424",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛バラ肉」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0425",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「たこ焼き」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0426",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チルド焼そばセット」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0427",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ペンネ」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0428",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛肩ロース」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0429",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ひじき煮」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0430",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「手羽先」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0431",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "味付きカレーうどんにナンプラー・レモンを重ねる指定で味の衝突が残る。"
+  },
+  {
+    "id": "C0432",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鮭水煮缶」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0433",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「調理済み大豆」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0434",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛バラ肉」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0435",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「親子丼の具」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0436",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「天ぷら」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0437",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「筑前煮」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0438",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「豚ヒレ肉」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0439",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「オートミール」と副材を必要加熱し、指定の3副材を使う具だくさんご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0440",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ペペロンチーノに蒲焼缶・ひき肉・生ハムと塩麹レモンを重ね、塩味と油味が過多になりやすい。"
+  },
+  {
+    "id": "C0441",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「焼き豚」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0442",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ピザ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0443",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チルド皿うどんセット」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0444",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「たい」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0445",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さわら」と副材を必要加熱し、指定の3副材を使う具だくさん汁物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0446",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "カレーに牛肉・手羽先・鶏もも肉を加え、さらにマスタードクリームで味が多重になる。"
+  },
+  {
+    "id": "C0447",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ロールキャベツ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0448",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さんま」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0449",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「パスタ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0450",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ペンネ」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0451",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「精白米」と副材を必要加熱し、指定の3副材を使う具だくさんご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0452",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「乾燥スパゲッティ」と副材を必要加熱し、指定の具入り汁麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0453",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ロールパン」と副材を必要加熱し、指定の3副材を使うパン料理として一皿にまとめられる。"
+  },
+  {
+    "id": "C0454",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「バゲット」と副材を必要加熱し、指定の3副材を使うパン料理として一皿にまとめられる。"
+  },
+  {
+    "id": "C0455",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チルドパスタセット」と副材を必要加熱し、指定の市販完成品のアレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0456",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「いわし」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0457",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏むね肉」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0458",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ベーコン」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0459",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「つみれ」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0460",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「あさり」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0461",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「パック赤飯」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0462",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「油揚げ」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0463",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ひじき煮、ランチョンミート、砂肝、さばにキムチクリームを合わせ味が多重。"
+  },
+  {
+    "id": "C0464",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チルドチキンナゲット」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0465",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「唐揚げ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0466",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「スパゲッティ」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0467",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "甘いかぼちゃスープに焼き豆腐・オクラ・アンチョビとトマトクミンを重ね味の方向が衝突する。"
+  },
+  {
+    "id": "C0468",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「合いびき肉」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0469",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「春雨サラダ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0470",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ツナ缶」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0471",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「手羽先」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0472",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「そば」と副材を必要加熱し、指定の具入り汁麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0473",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛丼の具」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0474",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「イングリッシュマフィン」と副材を必要加熱し、指定の3副材を使うパン料理として一皿にまとめられる。"
+  },
+  {
+    "id": "C0475",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「コロッケ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0476",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ライスバーガー」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0477",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「トルティーヤ」と副材を必要加熱し、指定の3副材を使うパン料理として一皿にまとめられる。"
+  },
+  {
+    "id": "C0478",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「魚肉ソーセージ」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0479",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏ひき肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0480",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チルド小籠包」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0481",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チキンナゲット」と副材を必要加熱し、指定の市販揚げ物の野菜あんかけとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0482",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ロースハム」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0483",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「砂肝」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0484",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「うずら卵」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0485",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「クラムチャウダー」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0486",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「パスタ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0487",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「かれい」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0488",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チルドワンタン」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0489",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「パックおこわ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0490",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「冷やし中華セット」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0491",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チルド小籠包」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0492",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「中華生麺」と副材を必要加熱し、指定の具入り炒め麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0493",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「豚もつ」と副材を必要加熱し、指定のたんぱく主材の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0494",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ウインナー」と副材を必要加熱し、指定の3副材を使う具だくさん汁物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0495",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛バラ肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0496",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ナポリタンソース」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0497",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「あじ」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0498",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「肉じゃが」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0499",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「たら」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0500",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「パックドライカレー」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0501",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "味噌味カップ麺をカレー味へ再構成する指定で既存味と追加味が重なる。"
+  },
+  {
+    "id": "C0502",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「豚ひき肉」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0503",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チルドパスタセット」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0504",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「パック赤飯」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0505",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ソーセージ」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0506",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「豚ヒレ肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0507",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "味噌煮缶・豚バラをビーフンに加え、黒酢しょうがまで重ねるため味が多重。"
+  },
+  {
+    "id": "C0508",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「うどん」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0509",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ひよこ豆缶」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0510",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛バラ肉」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0511",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「いわし水煮缶」と副材を必要加熱し、指定の3副材を使う具だくさん汁物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0512",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「水餃子」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0513",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "焼き魚に蒲焼缶と鮭水煮缶を加え、燻製パプリカトマトで魚味が過密。"
+  },
+  {
+    "id": "C0514",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ごぼうサラダ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0515",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ハンバーグ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0516",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ピラフ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0517",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "麻婆豆腐の辛い既存構造に魚とねぎ塩レモンを足す指定で味の軸が衝突する。"
+  },
+  {
+    "id": "C0518",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さんま」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0519",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「がんもどき」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0520",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「焼きビーフン」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0521",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "かぼちゃスープにいわし・塩さば・さつまいもを加え、ごま油塩でまとめるのは味が重い。"
+  },
+  {
+    "id": "C0522",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「切り干し大根煮」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0523",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カップそば」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0524",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「トルティーヤ」と副材を必要加熱し、指定の具を載せたオープントーストとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0525",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さば水煮缶」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0526",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "塩味袋麺に生ハム・ローストポークとにんにく黒酢を足し、既存塩味と重なりやすい。"
+  },
+  {
+    "id": "C0527",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ランチョンミート」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0528",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "かぼちゃスープに角煮・あじ・きのこを加えコチュジャン味にするため、甘味と魚肉味が衝突。"
+  },
+  {
+    "id": "C0529",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「かつお」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0530",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "小籠包にハム・ソーセージハンバーグ・鶏そぼろを加え、めんつゆまで重ねる。"
+  },
+  {
+    "id": "C0531",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ちくわ」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0532",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏もも肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0533",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「トルティーヤ」と副材を必要加熱し、指定の具入りサンドとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0534",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "もつ煮に鶏ひき肉・豚もつ・ベーコンを足し、花椒ごま味まで重ねて脂と味が過多。"
+  },
+  {
+    "id": "C0535",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ツナ缶」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0536",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏もも肉」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0537",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ひやむぎ」と副材を必要加熱し、指定の具入り炒め麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0538",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チョリソー」と副材を必要加熱し、指定の3副材を使う具だくさん汁物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0539",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏むね肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0540",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「油揚げ」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0541",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "焼きおにぎりにさば・牛肉・なめこを加えキムチクリームにするため味と具の方向が複雑。"
+  },
+  {
+    "id": "C0542",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "焼売に鮭・チーズかまぼこ・焼き鳥缶を足す多重加工品で、甜麺醤ごま味も重なる。"
+  },
+  {
+    "id": "C0543",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "肉まんに魚つみれ・納豆・水菜を加え、バルサミコ醤油でまとめる構造が不明確。"
+  },
+  {
+    "id": "C0544",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「かれい」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0545",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「手羽中」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0546",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ナゲットにたらこ・燻製鶏・コンビーフを足し、しょうが味噌まで加えるため塩味が過密。"
+  },
+  {
+    "id": "C0547",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "味噌ラーメンに蒲焼缶・手羽先・牛肉と花椒ごまを加え、既存味と具が過多。"
+  },
+  {
+    "id": "C0548",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ナゲットに鶏皮・かに缶・牛ひき肉を足す多重肉構成で味噌クリームも重い。"
+  },
+  {
+    "id": "C0549",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ツナ缶」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0550",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "そばにあさり・ベーコン・牛すじを加え、燻製パプリカトマトで味の方向が複雑。"
+  },
+  {
+    "id": "C0551",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛丼の具」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0552",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「茶碗蒸し」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0553",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「中華まん」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0554",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さわら」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0555",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ピザクラスト」と副材を必要加熱し、指定の具を載せたオープントーストとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0556",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏卵」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0557",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "水餃子に豚もつ・あじ・さばを加えハニーマスタードにする指定で具と味が衝突。"
+  },
+  {
+    "id": "C0558",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「バゲット」と副材を必要加熱し、指定の3副材を使うパン料理として一皿にまとめられる。"
+  },
+  {
+    "id": "C0559",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さば」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0560",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「もち麦」と副材を必要加熱し、指定の具入り混ぜご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0561",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さば水煮缶」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0562",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「玄米」と副材を必要加熱し、指定の3副材を使う具だくさんご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0563",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ミニオムレツ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0564",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カップ春雨」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0565",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カップ焼そば（ソース）」と副材を必要加熱し、指定の即席焼そば・まぜそばの野菜追加として一皿にまとめられる。"
+  },
+  {
+    "id": "C0566",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "そばに牛肉・しらす・さわらを足し、味噌クリームで和えるため魚肉と乳味が過多。"
+  },
+  {
+    "id": "C0567",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「焼きビーフン」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0568",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「バゲット」と副材を必要加熱し、指定の3副材を使うパン料理として一皿にまとめられる。"
+  },
+  {
+    "id": "C0569",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「そば」と副材を必要加熱し、指定の具入り炒め麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0570",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ミートソース」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0571",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "押し麦に牡蠣・豚肉・鮭を炊き込み、カレーヨーグルト味にする組合せが重い。"
+  },
+  {
+    "id": "C0572",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「油揚げ」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0573",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "肉まんにがんもどき・アボカド・さばを加え味噌クリームへ再構成する構造が曖昧。"
+  },
+  {
+    "id": "C0574",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「たい」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0575",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ごぼうサラダ」と副材を必要加熱し、指定の市販完成品のアレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0576",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛ひき肉」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0577",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛もも肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0578",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「はんぺん」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0579",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「がんもどき」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0580",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「あじ」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0581",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チーズ入りかまぼこ」と副材を必要加熱し、指定の3副材を使う具だくさん汁物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0582",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ミックスビーンズ缶」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0583",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ミートボール」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0584",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「厚揚げ」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0585",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「合いびき肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0586",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「木綿豆腐」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0587",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ロースハム」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0588",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "肉巻きおにぎりにスペアリブ・サラミ・塩さばを重ねキムチ味にするため塩味が過多。"
+  },
+  {
+    "id": "C0589",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "塩味カップ麺にしらす・にんにくとマスタードクリームを加え、既存味との重なりが大きい。"
+  },
+  {
+    "id": "C0590",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「冷麺セット」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0591",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛肩ロース」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0592",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "カップフォーに明太子を加えハニーマスタードでまとめるため、魚卵と甘酸味の軸が不明確。"
+  },
+  {
+    "id": "C0593",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「唐揚げ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0594",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「手羽元」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0595",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "筑前煮に手羽中・魚肉ソーセージを加え味噌クリームへ変えるため既存煮味と重なる。"
+  },
+  {
+    "id": "C0596",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「焼き豆腐」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0597",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ライスバーガー」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0598",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「厚揚げ」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0599",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "おでんに牛肉・鮭缶・牛すじを足してサルサ味へ再構成する指定で味が多重。"
+  },
+  {
+    "id": "C0600",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「たら」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0601",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「そば」と副材を必要加熱し、指定の具入り炒め麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0602",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "醤油カップ麺に牛しぐれ煮を足し焼肉だれで再構成するため醤油味が重なる。"
+  },
+  {
+    "id": "C0603",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ミートボールにサラミと牛肉を足す多重肉構成で、トマトクミンも既存味と競合しやすい。"
+  },
+  {
+    "id": "C0604",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「焼きおにぎり」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0605",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「クロワッサン」と副材を必要加熱し、指定のパンを土台とする食事として一皿にまとめられる。"
+  },
+  {
+    "id": "C0606",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「焼そば麺」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0607",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「蒸し焼そば麺」と副材を必要加熱し、指定の具入り炒め麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0608",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「そば」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0609",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カップラーメン（醤油）」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0610",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "バターチキンカレーに鶏レバー・鶏ももとごま油塩を重ね、既存カレー味と軸が衝突。"
+  },
+  {
+    "id": "C0611",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「あさり」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0612",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「もち麦」と副材を必要加熱し、指定の3副材を使う具だくさんご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0613",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ミネストローネのトマト味に塩鮭・里芋とキムチを重ねるため味の方向が複雑。"
+  },
+  {
+    "id": "C0614",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "とんこつラーメンにじゃこ・野菜を足し味噌チーズでまとめるため濃厚味が重なる。"
+  },
+  {
+    "id": "C0615",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さば」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0616",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "麻婆豆腐にしじみ・枝豆・キャベツを加えトマト味へ変える指定で既存辛味と衝突。"
+  },
+  {
+    "id": "C0617",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「袋とんこつラーメン」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0618",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「生鮭」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0619",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛もも肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0620",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛こま切れ」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0621",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「いか」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0622",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「いわし」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0623",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「木綿豆腐」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0624",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ピザクラスト」と副材を必要加熱し、指定の具を載せたオープントーストとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0625",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「玄米」と副材を必要加熱し、指定の具入り混ぜご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0626",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「イカ天練り物」と副材を必要加熱し、指定の3副材を使う具だくさん汁物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0627",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ワンタン」と副材を必要加熱し、指定の市販餃子・団子の野菜スープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0628",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "肉まんに牡蠣・焼き鳥缶を加えコチュジャン味へ再構成するため具と味が過密。"
+  },
+  {
+    "id": "C0629",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ポテトサラダのマヨ味にコンビーフと甜麺醤を足すため既存味と追加味が重なる。"
+  },
+  {
+    "id": "C0630",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「うずら卵」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0631",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "即席オートミールにじゃこ・さば味噌缶・ほたてとサルサを足し、塩味と魚味が過多。"
+  },
+  {
+    "id": "C0632",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ロールパン」と副材を必要加熱し、指定の具を載せたオープントーストとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0633",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ひやむぎにたらこ・卵・牛肉を加えアンチョビトマトにするため魚介味が過密。"
+  },
+  {
+    "id": "C0634",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ちくわ」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0635",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ゆでだこ」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0636",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「チキンナゲット」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0637",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "かぼちゃスープにかれい・にら・さつま揚げを加え焼肉だれにする指定で味が衝突。"
+  },
+  {
+    "id": "C0638",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さつま揚げ」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0639",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「生鮭」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0640",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ゆでだこ」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0641",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「いか」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0642",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "冷麺にかに缶・かにかま・納豆を加えごま味噌へ再構成するため具の匂いと味が複雑。"
+  },
+  {
+    "id": "C0643",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛ステーキ用肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0644",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カップうどん」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0645",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "もち米にぶり・ツナ缶を混ぜ込み塩麹レモンでまとめるため魚味が重なりやすい。"
+  },
+  {
+    "id": "C0646",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏皮」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0647",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "マカロニサラダに合いびき肉・手羽先を加えオイスター味にするため既存マヨ味と重い。"
+  },
+  {
+    "id": "C0648",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ペンネ」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0649",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鮭水煮缶」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0650",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「うどん」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0651",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「豚ロース」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0652",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「親子丼の具」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0653",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "クラムチャウダーのクリーム味にハム・練り物・豚肉と味噌チーズを加え多重。"
+  },
+  {
+    "id": "C0654",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛バラ肉」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0655",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ライスバーガーにランチョンミートと合いびき肉を重ね、ごま味噌でまとめるため具が過密。"
+  },
+  {
+    "id": "C0656",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カップ油そば」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0657",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "チルドパスタに蒲焼缶とさんまを足す多重魚構成で、しょうが醤油も重なる。"
+  },
+  {
+    "id": "C0658",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ランチョンミート」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0659",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牡蠣」と副材を必要加熱し、指定の3副材を使う具だくさん汁物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0660",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "クロワッサンにかにかま・レバーペースト・イカ天練り物を載せる多重加工品で味が曖昧。"
+  },
+  {
+    "id": "C0661",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ごぼうサラダにそぼろ・ローストビーフ・ぶりを加える多重肉魚構成で、ぽん酢との軸が不明。"
+  },
+  {
+    "id": "C0662",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「手羽元」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0663",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ミートボールにランチョンミート・あさり・イカ天を加え、加工品と照焼味が過密。"
+  },
+  {
+    "id": "C0664",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏ひき肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0665",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ぶり」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0666",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「焼きおにぎり」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0667",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「コンビーフ」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0668",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「かぼちゃサラダ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0669",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「中華まん」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0670",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏むね肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0671",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "焼きビーフンにたこ・しじみ・大葉を足しトマトクミンでまとめるため魚介味が複雑。"
+  },
+  {
+    "id": "C0672",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ロールパン」と副材を必要加熱し、指定の具入りサンドとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0673",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「もち麦」と副材を必要加熱し、指定の3副材を使う具だくさんご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0674",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「手羽元」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0675",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ほたて」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0676",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ピザ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0677",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "カレーうどんに牛肉・アンチョビを加え山椒照焼にするため既存カレーと味が衝突。"
+  },
+  {
+    "id": "C0678",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「豚バラ肉」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0679",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「たい」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0680",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「豚ヒレ肉」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0681",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏もも肉」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0682",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「マカロニ」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0683",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「冷凍エビフライ」と副材を必要加熱し、指定の市販揚げ物の野菜あんかけとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0684",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ぶり」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0685",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カップそば」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0686",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「コロッケ」と副材を必要加熱し、指定の市販揚げ物の野菜あんかけとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0687",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏卵」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0688",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛ステーキ用肉」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0689",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ソース焼そばにスモークチキン・鮭とハニーマスタードを重ね、添付味との競合が大きい。"
+  },
+  {
+    "id": "C0690",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「オートミール」と副材を必要加熱し、指定の3副材を使う具だくさんご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0691",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "冷麺に鶏ひき肉・ほたて・豚肉を加える多重たんぱく構成で、黒酢味のまとめ方が曖昧。"
+  },
+  {
+    "id": "C0692",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鮭水煮缶」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0693",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "肉団子に黒はんぺん・鶏皮を加え味噌甘辛へ再構成するため加工肉と脂が過多。"
+  },
+  {
+    "id": "C0694",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "担々麺に魚肉ソーセージ・ほたてを加えレモンクミンへ変えるため既存胡麻辛味と衝突。"
+  },
+  {
+    "id": "C0695",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「手羽先」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0696",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「玄米ご飯」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0697",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ロールキャベツ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0698",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「かつお」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0699",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛こま切れ」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0700",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "酢豚にあさり・アンチョビを足しトマト味へ変えるため既存甘酢と魚介味が重なる。"
+  },
+  {
+    "id": "C0701",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ロースハム」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0702",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「厚揚げ」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0703",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「フライドポテト」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0704",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏むね肉」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0705",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "冷やし中華に牛しぐれ煮・さんま蒲焼を加えクリーム味にする指定で温冷と味が曖昧。"
+  },
+  {
+    "id": "C0706",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「かまぼこ」と副材を必要加熱し、指定のたんぱく主材の焼き物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0707",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "チキン南蛮にいわし缶とあじを加えにんにく醤油へ変えるため既存甘酢・魚味が衝突。"
+  },
+  {
+    "id": "C0708",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「イングリッシュマフィン」と副材を必要加熱し、指定の3副材を使うパン料理として一皿にまとめられる。"
+  },
+  {
+    "id": "C0709",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カップラーメン（シーフード）」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0710",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「筑前煮」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0711",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "カレーにいわし・鶏肉を足し梅しそ味にするため既存カレーと酸味の軸が競合。"
+  },
+  {
+    "id": "C0712",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "担々麺に練り物・サラミ・たこを加えチーズ黒こしょうへ変えるため味が多重。"
+  },
+  {
+    "id": "C0713",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鮭水煮缶」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0714",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さんま」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0715",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「天ぷら」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0716",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ひよこ豆缶」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0717",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "餃子におから・豚肉・スプラウトを加えマスタードクリームへ再構成する構造が曖昧。"
+  },
+  {
+    "id": "C0718",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「茶碗蒸し」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0719",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛肩ロース」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0720",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カニ風味かまぼこ」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0721",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「そうめん」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0722",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「もち米」と副材を必要加熱し、指定の具入り混ぜご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0723",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「冷麺セット」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0724",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「クロワッサン」と副材を必要加熱し、指定の3副材を使うパン料理として一皿にまとめられる。"
+  },
+  {
+    "id": "C0725",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「あさり」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0726",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さつま揚げ」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0727",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「クラムチャウダー」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0728",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「合いびき肉」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0729",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ハッシュドポテト」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0730",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「まぐろ切り身」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0731",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「押し麦」と副材を必要加熱し、指定の具入り混ぜご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0732",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「豚肩ロース」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0733",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "食パンに豚レバー・豚ヒレ・さつまいもを直焼きするため、具の一体化と加熱順が不明確。"
+  },
+  {
+    "id": "C0734",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「めかじき」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0735",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「たこ焼き」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0736",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「あじ」と副材を必要加熱し、指定の3副材を使う具だくさん汁物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0737",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏つくね」と副材を必要加熱し、指定の市販完成品のアレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0738",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「かれい」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0739",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "カップフォーにあさり・ベーコン・生ハムを足し甜麺醤ごまへ変えるため塩味が過多。"
+  },
+  {
+    "id": "C0740",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "かぼちゃサラダにうずら卵・たこ・塩さばを加え醤油麹にするため既存サラダ味と魚味が複雑。"
+  },
+  {
+    "id": "C0741",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「サラダチキン」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0742",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "切り干し大根煮にそぼろ・ローストビーフ・ごぼう巻を足しレモンクミンへ変えるため味が多重。"
+  },
+  {
+    "id": "C0743",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「いか」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0744",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「はんぺん」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0745",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「あじ」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0746",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「厚揚げ」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0747",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "袋ビーフンにツナ・シーフード・揚げボールを足す多重魚介構成でりんご生姜味の軸が曖昧。"
+  },
+  {
+    "id": "C0748",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「手羽元」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0749",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "焼き魚にあじと豚バラを加える多重主材で、ねぎ塩レモンへまとめる構造が不明。"
+  },
+  {
+    "id": "C0750",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さば水煮缶」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0751",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「中華生麺」と副材を必要加熱し、指定の具入り炒め麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0752",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「牛ひき肉」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0753",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カップ油そば」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0754",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "担々麺の胡麻辛味におから・鶏・かにかまと山椒照焼を重ねるため味が競合。"
+  },
+  {
+    "id": "C0755",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ライスバーガーに牛ステーキ・燻製鶏・手羽元を加える多重肉構成で一体化が曖昧。"
+  },
+  {
+    "id": "C0756",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ロールキャベツにおから・かれい・鶏レバーを足しぽん酢へ変えるため構造と味が複雑。"
+  },
+  {
+    "id": "C0757",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ナポリタンソースのトマト味にしらす・きのこ・豆苗とカレーヨーグルトを重ねる。"
+  },
+  {
+    "id": "C0758",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "トルティーヤにランチョンミート・ソーセージハンバーグ・塩鮭を直焼きするため塩味が過多。"
+  },
+  {
+    "id": "C0759",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "麻婆豆腐にツナ・赤パプリカ・ごぼう巻を加え味噌チーズへ再構成するため既存辛味と競合。"
+  },
+  {
+    "id": "C0760",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「かれい」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0761",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ミートボールにたらこ・はんぺん・さば味噌煮缶を加え塩レモンにするため加工魚味が過多。"
+  },
+  {
+    "id": "C0762",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "がんもどき・まいたけ・水菜の煮物にチーズ黒こしょうを合わせるため煮汁味との相性が曖昧。"
+  },
+  {
+    "id": "C0763",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「オートミール」と副材を必要加熱し、指定の具入り混ぜご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0764",
+    "verdict": "fail",
+    "reason_code": "F_STRUCTURE",
+    "reason": "主材がパン粉でパン料理の土台にならず、直焼き経路だけでは全指定食材を一体化しにくい。"
+  },
+  {
+    "id": "C0765",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「うどん」と副材を必要加熱し、指定の具入り炒め麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0766",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「エビフライ」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0767",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「豚肩ロース」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0768",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「焼そば麺」と副材を必要加熱し、指定の3副材を使う具だくさん麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0769",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「木綿豆腐」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0770",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「いか」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0771",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「酢豚」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0772",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「合いびき肉」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0773",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「きんぴら」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0774",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「厚揚げ」と副材を必要加熱し、指定の主材と野菜の具だくさんスープとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0775",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「押し麦」と副材を必要加熱し、指定の具入り混ぜご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0776",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ミートボールに牛もも肉・牛すじ・なめこを加える多重牛肉構成で一皿の形が曖昧。"
+  },
+  {
+    "id": "C0777",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "白身魚フライに鶏ひき肉・ほたて・あじを加える多重たんぱく構成で味付軸が曖昧。"
+  },
+  {
+    "id": "C0778",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "チキンナゲットに砂肝・かまぼこ・そら豆を足しレモンクミンへ再構成するため具が過密。"
+  },
+  {
+    "id": "C0779",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「サラダチキン」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0780",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「サラダチキン」と副材を必要加熱し、指定の主材と野菜の炒め物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0781",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "春巻きに牛ステーキ・ほたて・牛しぐれ煮を加える多重具材で包み方と味が不明確。"
+  },
+  {
+    "id": "C0782",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「鶏もも肉」と副材を必要加熱し、指定の主材と野菜の蒸し物として一皿にまとめられる。"
+  },
+  {
+    "id": "C0783",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「いわし水煮缶」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0784",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「たこ焼き」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0785",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「もち麦」と副材を必要加熱し、指定の3副材を使う具だくさんご飯として一皿にまとめられる。"
+  },
+  {
+    "id": "C0786",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「手羽中」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0787",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「サラダチキン」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0788",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「ドリア」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0789",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "マカロニにサラダチキン・あさり・イカ天練り物を足しコチュジャン甘酢で和えるため味が過多。"
+  },
+  {
+    "id": "C0790",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「あさり」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0791",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "ワンタンに牛バラ・ちくわぶ・牛しぐれ煮を加える多重牛肉構成で具の一体化が曖昧。"
+  },
+  {
+    "id": "C0792",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "即席オートミールに砂肝・蒲焼缶・きのこをごまぽん酢で加え、既存味との軸が不明。"
+  },
+  {
+    "id": "C0793",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「カップうどん」と副材を必要加熱し、指定の3副材を使う完成品アレンジとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0794",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「あさり」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  },
+  {
+    "id": "C0795",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「調理済み大豆」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0796",
+    "verdict": "uncertain",
+    "reason_code": "U_FLAVOR_STRUCTURE",
+    "reason": "赤飯にウインナー・まぐろ・焼き鳥缶を加えコチュジャン甘酢にするため味と具が過密。"
+  },
+  {
+    "id": "C0797",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「厚揚げ」と副材を必要加熱し、指定の主材と野菜の煮物（煮汁少なめ）として一皿にまとめられる。"
+  },
+  {
+    "id": "C0798",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「乾燥スパゲッティ」と副材を必要加熱し、指定の具入り炒め麺として一皿にまとめられる。"
+  },
+  {
+    "id": "C0799",
+    "verdict": "pass",
+    "reason_code": "P_COMBINABLE",
+    "reason": "主材「さわら」と副材を必要加熱し、指定の主材と野菜のオーブン焼きとして一皿にまとめられる。"
+  }
+]

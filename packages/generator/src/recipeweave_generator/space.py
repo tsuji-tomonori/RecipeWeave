@@ -45,7 +45,9 @@ class Segment:
 
     @property
     def count(self) -> int:
-        size = len(self.choices) if self.choices is not None else math.comb(len(self.supports), self.k)
+        size = (
+            len(self.choices) if self.choices is not None else math.comb(len(self.supports), self.k)
+        )
         return size * len(self.flavors) * len(self.routes)
 
     def point(self, ordinal: int) -> tuple[int, str, tuple[str, ...], str, str]:
@@ -53,7 +55,11 @@ class Segment:
         ordinal //= len(self.routes)
         flavor = self.flavors[ordinal % len(self.flavors)]
         ordinal //= len(self.flavors)
-        aux = self.choices[ordinal] if self.choices is not None else unrank(self.supports, self.k, ordinal)
+        aux = (
+            self.choices[ordinal]
+            if self.choices is not None
+            else unrank(self.supports, self.k, ordinal)
+        )
         return self.template, self.main, aux, flavor, route
 
 
@@ -84,7 +90,11 @@ class Space:
                         continue
                     choices = None
                     if "support_sets" in block:
-                        raw = [tuple(sorted(x)) for x in block["support_sets"] if len(x) == k and main not in x]
+                        raw = [
+                            tuple(sorted(x))
+                            for x in block["support_sets"]
+                            if len(x) == k and main not in x
+                        ]
                         if len(raw) != len(set(raw)) or any(len(set(x)) != len(x) for x in raw):
                             raise ValueError("duplicate support set")
                         if any(x not in aux for choice in raw for x in choice):
@@ -92,7 +102,9 @@ class Space:
                         choices = tuple(sorted(raw))
                         if not choices:
                             continue
-                    segment = Segment(t, main, aux, k, tuple(block["flavors"]), tuple(block["routes"]), choices)
+                    segment = Segment(
+                        t, main, aux, k, tuple(block["flavors"]), tuple(block["routes"]), choices
+                    )
                     total += segment.count
                     self.segments.append(segment)
                     self.ends.append(total)
@@ -112,7 +124,13 @@ class Space:
 
     def describe(self, ordinal: int) -> dict[str, Any]:
         t, main, aux, flavor, route = self.point(ordinal)
-        return {"structure": self.blocks[t]["label"], "main": self.names[main], "supports": [self.names[x] for x in aux], "flavor": flavor, "route": route}
+        return {
+            "structure": self.blocks[t]["label"],
+            "main": self.names[main],
+            "supports": [self.names[x] for x in aux],
+            "flavor": flavor,
+            "route": route,
+        }
 
     def sample(self, n: int, seed: int) -> list[int]:
         if not 0 < n <= self.total:
@@ -132,13 +150,21 @@ class Space:
             if offset >= stop:
                 break
             # islice skips only within one bounded segment; no full-space prefix expansion.
-            choices = segment.choices if segment.choices is not None else itertools.combinations(segment.supports, segment.k)
+            choices = (
+                segment.choices
+                if segment.choices is not None
+                else itertools.combinations(segment.supports, segment.k)
+            )
             combinations = itertools.product(choices, segment.flavors, segment.routes)
             lo, hi = max(0, start - offset), min(segment.count, stop - offset)
-            for n, (aux, flavor, route) in enumerate(itertools.islice(combinations, lo, hi), offset + lo):
+            for n, (aux, flavor, route) in enumerate(
+                itertools.islice(combinations, lo, hi), offset + lo
+            ):
                 yield n, (segment.template, segment.main, aux, flavor, route)
             offset = end
 
     def signature(self, ordinal: int) -> str:
         t, main, aux, flavor, route = self.point(ordinal)
-        return hashlib.sha256(canonical([self.blocks[t]["code"], main, sorted(aux), flavor, route])).hexdigest()
+        return hashlib.sha256(
+            canonical([self.blocks[t]["code"], main, sorted(aux), flavor, route])
+        ).hexdigest()

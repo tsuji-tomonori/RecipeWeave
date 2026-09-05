@@ -13,7 +13,9 @@ from .export import atomic_json
 from .space import Space, canonical
 
 
-def compile_catalog(source: list[dict[str, Any]], policy: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+def compile_catalog(
+    source: list[dict[str, Any]], policy: dict[str, Any]
+) -> tuple[dict[str, Any], dict[str, Any]]:
     mapping: dict[str, str] = {}
     source_names = {row["name"] for row in source}
     for group in policy["aliases"]:
@@ -28,7 +30,9 @@ def compile_catalog(source: list[dict[str, Any]], policy: dict[str, Any]) -> tup
     for row in source:
         name = mapping.get(row["name"], row["name"])
         ident = "ingredient_" + hashlib.sha256(name.encode()).hexdigest()[:16]
-        record = identities.setdefault(name, {"id": ident, "name": name, "source_ids": [], "availability": []})
+        record = identities.setdefault(
+            name, {"id": ident, "name": name, "source_ids": [], "availability": []}
+        )
         record["source_ids"].append(row["id"])
         record["availability"].append(row["availability"])
         match = re.fullmatch(r"めんつゆ([234])倍", row["name"])
@@ -42,7 +46,6 @@ def compile_catalog(source: list[dict[str, Any]], policy: dict[str, Any]) -> tup
                 "availability": row["availability"],
                 "concentration_multiplier": int(match[1]) if match else None,
                 "conversion_reference": None,
-                "note": "倍率表示は保持するが、異なる商品の塩糖量や質量を推定しない。換算は商品版・根拠を確定後",
             }
         )
     pools = {}
@@ -51,9 +54,15 @@ def compile_catalog(source: list[dict[str, Any]], policy: dict[str, Any]) -> tup
         normalized = set(mapping.get(member, member) for member in members)
         if missing := normalized - identities.keys():
             raise ValueError(f"unknown pool members {name}: {missing}")
-        pools[name] = {identities[n]["id"]: n for n in sorted(normalized) if policy["availability"] in identities[n]["availability"]}
+        pools[name] = {
+            identities[n]["id"]: n
+            for n in sorted(normalized)
+            if policy["availability"] in identities[n]["availability"]
+        }
         excluded.extend(
-            {"pool": name, "name": n, "reason": "no_common_variant"} for n in sorted(normalized) if policy["availability"] not in identities[n]["availability"]
+            {"pool": name, "name": n, "reason": "no_common_variant"}
+            for n in sorted(normalized)
+            if policy["availability"] not in identities[n]["availability"]
         )
     blocks = []
     for template in policy["templates"]:
@@ -82,11 +91,17 @@ def compile_catalog(source: list[dict[str, Any]], policy: dict[str, Any]) -> tup
         "source_sha256": hashlib.sha256(canonical(source)).hexdigest(),
         "policy_sha256": hashlib.sha256(canonical(policy)).hexdigest(),
         "blocks": blocks,
-        "scope": "All candidates admitted by the explicit role and route policy; not all supermarket combinations",
+        "scope": (
+            "All candidates admitted by the explicit role and route policy; "
+            "not all supermarket combinations"
+        ),
     }
     space = Space(definition)
     active = set(space.names)
     report = {
+        "variant_note": (
+            "倍率表示を保持するが異なる商品の塩糖量や質量を推定しない。換算は商品版・根拠を確定後"
+        ),
         "source_foods": len(source),
         "culinary_identities": len(identities),
         "active_primary_support_identities": len(active),
@@ -96,18 +111,32 @@ def compile_catalog(source: list[dict[str, Any]], policy: dict[str, Any]) -> tup
         "identities": sorted(identities.values(), key=lambda x: x["id"]),
         "variants": variants,
         "not_enumerated": [
-            {"id": i["id"], "name": i["name"], "reason": "seasoning_or_unreviewed_role_or_noncommon; retained in catalog"}
+            {
+                "id": i["id"],
+                "name": i["name"],
+                "reason": "seasoning_or_unreviewed_role_or_noncommon; retained in catalog",
+            }
             for i in identities.values()
             if i["id"] not in active
         ],
         "excluded_from_pools": excluded,
-        "counts_by_template": [{"code": b["code"], "count": sum(s.count for s in space.segments if s.template == t)} for t, b in enumerate(blocks)],
+        "counts_by_template": [
+            {"code": b["code"], "count": sum(s.count for s in space.segments if s.template == t)}
+            for t, b in enumerate(blocks)
+        ],
     }
     return definition, report
 
 
 def compile_files(catalog_dir: Path) -> dict[str, Any]:
-    definition, report = compile_catalog(json.loads((catalog_dir / "source_foods.json").read_text()), json.loads((catalog_dir / "policy.json").read_text()))
-    atomic_json(catalog_dir / "v3_reviewed.json", definition)
-    atomic_json(catalog_dir / "normalization.json", report)
-    return {k: v for k, v in report.items() if k not in {"identities", "variants", "not_enumerated", "excluded_from_pools"}}
+    definition, report = compile_catalog(
+        json.loads((catalog_dir / "source_foods.json").read_text()),
+        json.loads((catalog_dir / "policy.json").read_text()),
+    )
+    atomic_json(catalog_dir / "v3_reviewed.json", definition, compact=True)
+    atomic_json(catalog_dir / "normalization.json", report, compact=True)
+    return {
+        k: v
+        for k, v in report.items()
+        if k not in {"identities", "variants", "not_enumerated", "excluded_from_pools"}
+    }

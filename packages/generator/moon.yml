@@ -10,7 +10,7 @@ tasks:
     options:
       runFromWorkspaceRoot: true
   check:
-    command: python -c "print('generator checks passed')"
+    command: uv run python -m recipeweave_generator.design --check
     deps:
       - lint
       - test

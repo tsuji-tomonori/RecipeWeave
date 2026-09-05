@@ -4,7 +4,6 @@ import math
 from pathlib import Path
 
 import pytest
-
 from recipeweave_generator.catalog import compile_catalog
 from recipeweave_generator.export import export_all, verify_all
 from recipeweave_generator.space import Space, unrank
@@ -98,5 +97,8 @@ def test_concentration_variants_do_not_multiply_candidates():
     assert {x["concentration_multiplier"] for x in tsuyu} == {2, 3, 4}
     assert len({v["identity_id"] for v in tsuyu}) == 1
     assert all(v["conversion_reference"] is None for v in tsuyu)
-    assert all(not any("めんつゆ2倍" in str(x) or "めんつゆ3倍" in str(x) for x in b["flavors"]) for b in definition["blocks"])
+    assert all(
+        not any("めんつゆ2倍" in str(x) or "めんつゆ3倍" in str(x) for x in b["flavors"])
+        for b in definition["blocks"]
+    )
     assert report["source_foods"] == 1005

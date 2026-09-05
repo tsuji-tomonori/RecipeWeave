@@ -11,3 +11,9 @@ portableなblocking guardrailは次の3本だけです。
 
 dev-standardは、このrepositoryのbranch、merge方式、CI/CD workflow、required check、PR template、commit形式を追加も変更もしません。既存のrepository指示と権限境界を優先してください。
 <!-- dev-standard:end -->
+
+## RecipeWeaveの開発規約
+
+Python依存はuv、monorepoのタスクはmoonを使用します。
+コミットは `feat: 食品同一性に基づく列挙を追加` のように、Conventional Commitsのtypeと日本語の説明で記録します。
+組み合わせ元・アルゴリズム・全量出力の定義digestを対応させ、評価結果を見て同じholdoutを再利用した最適化は行いません。

@@ -1,0 +1,1048 @@
+{
+  "population": {
+    "baseline": 25171059394,
+    "revised": 12069539
+  },
+  "population_by_cohort": {
+    "baseline": 25171059394,
+    "revised": 12069539
+  },
+  "n": 800,
+  "cohorts": {
+    "baseline": {
+      "n": 400,
+      "verdict_counts": {
+        "judge_a": {
+          "pass": 212,
+          "uncertain": 187,
+          "fail": 1
+        },
+        "judge_b": {
+          "pass": 206,
+          "uncertain": 193,
+          "fail": 1
+        }
+      },
+      "confusion_matrix": {
+        "pass": {
+          "pass": 164,
+          "uncertain": 48,
+          "fail": 0
+        },
+        "uncertain": {
+          "pass": 42,
+          "uncertain": 145,
+          "fail": 0
+        },
+        "fail": {
+          "pass": 0,
+          "uncertain": 0,
+          "fail": 1
+        }
+      },
+      "primary": {
+        "count": 164,
+        "n": 400,
+        "estimate": 0.41,
+        "proportion": 0.41,
+        "ci95": [
+          0.36287947761947204,
+          0.45883273536070124
+        ],
+        "ci": [
+          0.36287947761947204,
+          0.45883273536070124
+        ]
+      },
+      "primary_endpoint": {
+        "count": 164,
+        "n": 400,
+        "estimate": 0.41,
+        "proportion": 0.41,
+        "ci95": [
+          0.36287947761947204,
+          0.45883273536070124
+        ],
+        "ci": [
+          0.36287947761947204,
+          0.45883273536070124
+        ]
+      },
+      "secondary": {
+        "either_pass": {
+          "count": 254,
+          "n": 400,
+          "estimate": 0.635,
+          "proportion": 0.635,
+          "ci95": [
+            0.5867439222120918,
+            0.680687758317648
+          ],
+          "ci": [
+            0.5867439222120918,
+            0.680687758317648
+          ]
+        },
+        "agreement": {
+          "count": 310,
+          "n": 400,
+          "estimate": 0.775,
+          "proportion": 0.775,
+          "ci95": [
+            0.7315729789411186,
+            0.8131952591750183
+          ],
+          "ci": [
+            0.7315729789411186,
+            0.8131952591750183
+          ]
+        },
+        "judge_a_pass": {
+          "count": 212,
+          "n": 400,
+          "estimate": 0.53,
+          "proportion": 0.53,
+          "ci95": [
+            0.4810361559058216,
+            0.5783931064341206
+          ],
+          "ci": [
+            0.4810361559058216,
+            0.5783931064341206
+          ]
+        },
+        "judge_b_pass": {
+          "count": 206,
+          "n": 400,
+          "estimate": 0.515,
+          "proportion": 0.515,
+          "ci95": [
+            0.46611356033171036,
+            0.5636010708382608
+          ],
+          "ci": [
+            0.46611356033171036,
+            0.5636010708382608
+          ]
+        },
+        "cohen_kappa": 0.551323595393589,
+        "marginal_judge_pass": {
+          "judge_a": {
+            "count": 212,
+            "n": 400,
+            "estimate": 0.53,
+            "proportion": 0.53,
+            "ci95": [
+              0.4810361559058216,
+              0.5783931064341206
+            ],
+            "ci": [
+              0.4810361559058216,
+              0.5783931064341206
+            ]
+          },
+          "judge_b": {
+            "count": 206,
+            "n": 400,
+            "estimate": 0.515,
+            "proportion": 0.515,
+            "ci95": [
+              0.46611356033171036,
+              0.5636010708382608
+            ],
+            "ci": [
+              0.46611356033171036,
+              0.5636010708382608
+            ]
+          }
+        },
+        "cohen_kappa_note": null
+      },
+      "both_pass": {
+        "count": 164,
+        "n": 400,
+        "estimate": 0.41,
+        "proportion": 0.41,
+        "ci95": [
+          0.36287947761947204,
+          0.45883273536070124
+        ],
+        "ci": [
+          0.36287947761947204,
+          0.45883273536070124
+        ]
+      },
+      "either_pass": {
+        "count": 254,
+        "n": 400,
+        "estimate": 0.635,
+        "proportion": 0.635,
+        "ci95": [
+          0.5867439222120918,
+          0.680687758317648
+        ],
+        "ci": [
+          0.5867439222120918,
+          0.680687758317648
+        ]
+      },
+      "agreement": {
+        "count": 310,
+        "n": 400,
+        "estimate": 0.775,
+        "proportion": 0.775,
+        "ci95": [
+          0.7315729789411186,
+          0.8131952591750183
+        ],
+        "ci": [
+          0.7315729789411186,
+          0.8131952591750183
+        ]
+      },
+      "judge_a_pass": {
+        "count": 212,
+        "n": 400,
+        "estimate": 0.53,
+        "proportion": 0.53,
+        "ci95": [
+          0.4810361559058216,
+          0.5783931064341206
+        ],
+        "ci": [
+          0.4810361559058216,
+          0.5783931064341206
+        ]
+      },
+      "judge_b_pass": {
+        "count": 206,
+        "n": 400,
+        "estimate": 0.515,
+        "proportion": 0.515,
+        "ci95": [
+          0.46611356033171036,
+          0.5636010708382608
+        ],
+        "ci": [
+          0.46611356033171036,
+          0.5636010708382608
+        ]
+      },
+      "marginal_judge_pass": {
+        "judge_a": {
+          "count": 212,
+          "n": 400,
+          "estimate": 0.53,
+          "proportion": 0.53,
+          "ci95": [
+            0.4810361559058216,
+            0.5783931064341206
+          ],
+          "ci": [
+            0.4810361559058216,
+            0.5783931064341206
+          ]
+        },
+        "judge_b": {
+          "count": 206,
+          "n": 400,
+          "estimate": 0.515,
+          "proportion": 0.515,
+          "ci95": [
+            0.46611356033171036,
+            0.5636010708382608
+          ],
+          "ci": [
+            0.46611356033171036,
+            0.5636010708382608
+          ]
+        }
+      },
+      "marginaljudgepass": {
+        "judge_a": {
+          "count": 212,
+          "n": 400,
+          "estimate": 0.53,
+          "proportion": 0.53,
+          "ci95": [
+            0.4810361559058216,
+            0.5783931064341206
+          ],
+          "ci": [
+            0.4810361559058216,
+            0.5783931064341206
+          ]
+        },
+        "judge_b": {
+          "count": 206,
+          "n": 400,
+          "estimate": 0.515,
+          "proportion": 0.515,
+          "ci95": [
+            0.46611356033171036,
+            0.5636010708382608
+          ],
+          "ci": [
+            0.46611356033171036,
+            0.5636010708382608
+          ]
+        }
+      },
+      "cohen_kappa": 0.551323595393589,
+      "cohen_kappa_note": null,
+      "population": 25171059394,
+      "sampling_fraction": 1.5891265986816096e-08
+    },
+    "revised": {
+      "n": 400,
+      "verdict_counts": {
+        "judge_a": {
+          "pass": 398,
+          "uncertain": 2,
+          "fail": 0
+        },
+        "judge_b": {
+          "pass": 399,
+          "uncertain": 1,
+          "fail": 0
+        }
+      },
+      "confusion_matrix": {
+        "pass": {
+          "pass": 398,
+          "uncertain": 0,
+          "fail": 0
+        },
+        "uncertain": {
+          "pass": 1,
+          "uncertain": 1,
+          "fail": 0
+        },
+        "fail": {
+          "pass": 0,
+          "uncertain": 0,
+          "fail": 0
+        }
+      },
+      "primary": {
+        "count": 398,
+        "n": 400,
+        "estimate": 0.995,
+        "proportion": 0.995,
+        "ci95": [
+          0.9819550815637568,
+          0.9986277470452896
+        ],
+        "ci": [
+          0.9819550815637568,
+          0.9986277470452896
+        ]
+      },
+      "primary_endpoint": {
+        "count": 398,
+        "n": 400,
+        "estimate": 0.995,
+        "proportion": 0.995,
+        "ci95": [
+          0.9819550815637568,
+          0.9986277470452896
+        ],
+        "ci": [
+          0.9819550815637568,
+          0.9986277470452896
+        ]
+      },
+      "secondary": {
+        "either_pass": {
+          "count": 399,
+          "n": 400,
+          "estimate": 0.9975,
+          "proportion": 0.9975,
+          "ci95": [
+            0.9859767149241766,
+            0.9995585522131983
+          ],
+          "ci": [
+            0.9859767149241766,
+            0.9995585522131983
+          ]
+        },
+        "agreement": {
+          "count": 399,
+          "n": 400,
+          "estimate": 0.9975,
+          "proportion": 0.9975,
+          "ci95": [
+            0.9859767149241766,
+            0.9995585522131983
+          ],
+          "ci": [
+            0.9859767149241766,
+            0.9995585522131983
+          ]
+        },
+        "judge_a_pass": {
+          "count": 398,
+          "n": 400,
+          "estimate": 0.995,
+          "proportion": 0.995,
+          "ci95": [
+            0.9819550815637568,
+            0.9986277470452896
+          ],
+          "ci": [
+            0.9819550815637568,
+            0.9986277470452896
+          ]
+        },
+        "judge_b_pass": {
+          "count": 399,
+          "n": 400,
+          "estimate": 0.9975,
+          "proportion": 0.9975,
+          "ci95": [
+            0.9859767149241766,
+            0.9995585522131983
+          ],
+          "ci": [
+            0.9859767149241766,
+            0.9995585522131983
+          ]
+        },
+        "cohen_kappa": 0.6655518394648905,
+        "marginal_judge_pass": {
+          "judge_a": {
+            "count": 398,
+            "n": 400,
+            "estimate": 0.995,
+            "proportion": 0.995,
+            "ci95": [
+              0.9819550815637568,
+              0.9986277470452896
+            ],
+            "ci": [
+              0.9819550815637568,
+              0.9986277470452896
+            ]
+          },
+          "judge_b": {
+            "count": 399,
+            "n": 400,
+            "estimate": 0.9975,
+            "proportion": 0.9975,
+            "ci95": [
+              0.9859767149241766,
+              0.9995585522131983
+            ],
+            "ci": [
+              0.9859767149241766,
+              0.9995585522131983
+            ]
+          }
+        },
+        "cohen_kappa_note": null
+      },
+      "both_pass": {
+        "count": 398,
+        "n": 400,
+        "estimate": 0.995,
+        "proportion": 0.995,
+        "ci95": [
+          0.9819550815637568,
+          0.9986277470452896
+        ],
+        "ci": [
+          0.9819550815637568,
+          0.9986277470452896
+        ]
+      },
+      "either_pass": {
+        "count": 399,
+        "n": 400,
+        "estimate": 0.9975,
+        "proportion": 0.9975,
+        "ci95": [
+          0.9859767149241766,
+          0.9995585522131983
+        ],
+        "ci": [
+          0.9859767149241766,
+          0.9995585522131983
+        ]
+      },
+      "agreement": {
+        "count": 399,
+        "n": 400,
+        "estimate": 0.9975,
+        "proportion": 0.9975,
+        "ci95": [
+          0.9859767149241766,
+          0.9995585522131983
+        ],
+        "ci": [
+          0.9859767149241766,
+          0.9995585522131983
+        ]
+      },
+      "judge_a_pass": {
+        "count": 398,
+        "n": 400,
+        "estimate": 0.995,
+        "proportion": 0.995,
+        "ci95": [
+          0.9819550815637568,
+          0.9986277470452896
+        ],
+        "ci": [
+          0.9819550815637568,
+          0.9986277470452896
+        ]
+      },
+      "judge_b_pass": {
+        "count": 399,
+        "n": 400,
+        "estimate": 0.9975,
+        "proportion": 0.9975,
+        "ci95": [
+          0.9859767149241766,
+          0.9995585522131983
+        ],
+        "ci": [
+          0.9859767149241766,
+          0.9995585522131983
+        ]
+      },
+      "marginal_judge_pass": {
+        "judge_a": {
+          "count": 398,
+          "n": 400,
+          "estimate": 0.995,
+          "proportion": 0.995,
+          "ci95": [
+            0.9819550815637568,
+            0.9986277470452896
+          ],
+          "ci": [
+            0.9819550815637568,
+            0.9986277470452896
+          ]
+        },
+        "judge_b": {
+          "count": 399,
+          "n": 400,
+          "estimate": 0.9975,
+          "proportion": 0.9975,
+          "ci95": [
+            0.9859767149241766,
+            0.9995585522131983
+          ],
+          "ci": [
+            0.9859767149241766,
+            0.9995585522131983
+          ]
+        }
+      },
+      "marginaljudgepass": {
+        "judge_a": {
+          "count": 398,
+          "n": 400,
+          "estimate": 0.995,
+          "proportion": 0.995,
+          "ci95": [
+            0.9819550815637568,
+            0.9986277470452896
+          ],
+          "ci": [
+            0.9819550815637568,
+            0.9986277470452896
+          ]
+        },
+        "judge_b": {
+          "count": 399,
+          "n": 400,
+          "estimate": 0.9975,
+          "proportion": 0.9975,
+          "ci95": [
+            0.9859767149241766,
+            0.9995585522131983
+          ],
+          "ci": [
+            0.9859767149241766,
+            0.9995585522131983
+          ]
+        }
+      },
+      "cohen_kappa": 0.6655518394648905,
+      "cohen_kappa_note": null,
+      "population": 12069539,
+      "sampling_fraction": 3.314128236380859e-05
+    }
+  },
+  "comparisons": {
+    "primary": {
+      "count_a": 398,
+      "n_a": 400,
+      "count_b": 164,
+      "n_b": 400,
+      "estimate_a": 0.995,
+      "estimate_b": 0.41,
+      "difference": 0.585,
+      "ci95": [
+        0.5344549118131492,
+        0.6322599637964148
+      ],
+      "ci": [
+        0.5344549118131492,
+        0.6322599637964148
+      ],
+      "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
+      "test": "two-sided pooled two-proportion z test",
+      "alpha": 0.05,
+      "z": 18.096901167685107,
+      "z_statistic": 18.096901167685107,
+      "p_value": 3.3710804187436704e-73,
+      "reject": true
+    },
+    "either_pass": {
+      "count_a": 399,
+      "n_a": 400,
+      "count_b": 254,
+      "n_b": 400,
+      "estimate_a": 0.9975,
+      "estimate_b": 0.635,
+      "difference": 0.36250000000000004,
+      "ci95": [
+        0.3153814541923192,
+        0.41079996563857074
+      ],
+      "ci": [
+        0.3153814541923192,
+        0.41079996563857074
+      ],
+      "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
+      "test": "two-sided pooled two-proportion z test",
+      "alpha": 0.05,
+      "z": 13.237248983631183,
+      "z_statistic": 13.237248983631183,
+      "p_value": 5.347181263758995e-40,
+      "reject": true
+    },
+    "agreement": {
+      "count_a": 399,
+      "n_a": 400,
+      "count_b": 310,
+      "n_b": 400,
+      "estimate_a": 0.9975,
+      "estimate_b": 0.775,
+      "difference": 0.22250000000000003,
+      "ci95": [
+        0.1826043370479257,
+        0.26597578400975647
+      ],
+      "ci": [
+        0.1826043370479257,
+        0.26597578400975647
+      ],
+      "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
+      "test": "two-sided pooled two-proportion z test",
+      "alpha": 0.05,
+      "z": 9.910400061889142,
+      "z_statistic": 9.910400061889142,
+      "p_value": 3.751409939625493e-23,
+      "reject": true
+    },
+    "judge_a_pass": {
+      "count_a": 398,
+      "n_a": 400,
+      "count_b": 212,
+      "n_b": 400,
+      "estimate_a": 0.995,
+      "estimate_b": 0.53,
+      "difference": 0.46499999999999997,
+      "ci95": [
+        0.41487951868395156,
+        0.5140980506446398
+      ],
+      "ci": [
+        0.41487951868395156,
+        0.5140980506446398
+      ],
+      "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
+      "test": "two-sided pooled two-proportion z test",
+      "alpha": 0.05,
+      "z": 15.453121517178216,
+      "z_statistic": 15.453121517178216,
+      "p_value": 7.187660036802053e-54,
+      "reject": true
+    },
+    "judge_b_pass": {
+      "count_a": 399,
+      "n_a": 400,
+      "count_b": 206,
+      "n_b": 400,
+      "estimate_a": 0.9975,
+      "estimate_b": 0.515,
+      "difference": 0.48250000000000004,
+      "ci95": [
+        0.4325515246922958,
+        0.5314297621152586
+      ],
+      "ci": [
+        0.4325515246922958,
+        0.5314297621152586
+      ],
+      "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
+      "test": "two-sided pooled two-proportion z test",
+      "alpha": 0.05,
+      "z": 15.893052188356872,
+      "z_statistic": 15.893052188356872,
+      "p_value": 7.079493839466556e-57,
+      "reject": true
+    }
+  },
+  "comparison": {
+    "primary": {
+      "count_a": 398,
+      "n_a": 400,
+      "count_b": 164,
+      "n_b": 400,
+      "estimate_a": 0.995,
+      "estimate_b": 0.41,
+      "difference": 0.585,
+      "ci95": [
+        0.5344549118131492,
+        0.6322599637964148
+      ],
+      "ci": [
+        0.5344549118131492,
+        0.6322599637964148
+      ],
+      "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
+      "test": "two-sided pooled two-proportion z test",
+      "alpha": 0.05,
+      "z": 18.096901167685107,
+      "z_statistic": 18.096901167685107,
+      "p_value": 3.3710804187436704e-73,
+      "reject": true
+    },
+    "either_pass": {
+      "count_a": 399,
+      "n_a": 400,
+      "count_b": 254,
+      "n_b": 400,
+      "estimate_a": 0.9975,
+      "estimate_b": 0.635,
+      "difference": 0.36250000000000004,
+      "ci95": [
+        0.3153814541923192,
+        0.41079996563857074
+      ],
+      "ci": [
+        0.3153814541923192,
+        0.41079996563857074
+      ],
+      "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
+      "test": "two-sided pooled two-proportion z test",
+      "alpha": 0.05,
+      "z": 13.237248983631183,
+      "z_statistic": 13.237248983631183,
+      "p_value": 5.347181263758995e-40,
+      "reject": true
+    },
+    "agreement": {
+      "count_a": 399,
+      "n_a": 400,
+      "count_b": 310,
+      "n_b": 400,
+      "estimate_a": 0.9975,
+      "estimate_b": 0.775,
+      "difference": 0.22250000000000003,
+      "ci95": [
+        0.1826043370479257,
+        0.26597578400975647
+      ],
+      "ci": [
+        0.1826043370479257,
+        0.26597578400975647
+      ],
+      "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
+      "test": "two-sided pooled two-proportion z test",
+      "alpha": 0.05,
+      "z": 9.910400061889142,
+      "z_statistic": 9.910400061889142,
+      "p_value": 3.751409939625493e-23,
+      "reject": true
+    },
+    "judge_a_pass": {
+      "count_a": 398,
+      "n_a": 400,
+      "count_b": 212,
+      "n_b": 400,
+      "estimate_a": 0.995,
+      "estimate_b": 0.53,
+      "difference": 0.46499999999999997,
+      "ci95": [
+        0.41487951868395156,
+        0.5140980506446398
+      ],
+      "ci": [
+        0.41487951868395156,
+        0.5140980506446398
+      ],
+      "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
+      "test": "two-sided pooled two-proportion z test",
+      "alpha": 0.05,
+      "z": 15.453121517178216,
+      "z_statistic": 15.453121517178216,
+      "p_value": 7.187660036802053e-54,
+      "reject": true
+    },
+    "judge_b_pass": {
+      "count_a": 399,
+      "n_a": 400,
+      "count_b": 206,
+      "n_b": 400,
+      "estimate_a": 0.9975,
+      "estimate_b": 0.515,
+      "difference": 0.48250000000000004,
+      "ci95": [
+        0.4325515246922958,
+        0.5314297621152586
+      ],
+      "ci": [
+        0.4325515246922958,
+        0.5314297621152586
+      ],
+      "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
+      "test": "two-sided pooled two-proportion z test",
+      "alpha": 0.05,
+      "z": 15.893052188356872,
+      "z_statistic": 15.893052188356872,
+      "p_value": 7.079493839466556e-57,
+      "reject": true
+    }
+  },
+  "comparison_cohorts": [
+    "revised",
+    "baseline"
+  ],
+  "method": {
+    "sampling": "simple random sampling without replacement",
+    "confidence": 0.95,
+    "alpha": 0.05,
+    "wilson": "unweighted SRS Wilson score interval",
+    "comparison_ci": "Newcombe hybrid score difference interval",
+    "comparison_test": "two-sided pooled two-proportion z test",
+    "finite_population_correction_applied": false,
+    "finite_population_effect": "negligible for planned n=400; finite-population correction is not applied",
+    "finite_population_sampling_fraction_at_n400": {
+      "baseline": 1.5891265986816096e-08,
+      "revised": 3.314128236380859e-05
+    },
+    "worst_case_n_for_plus_minus_5pp": 385,
+    "approximate_worst_case_margin_at_n400": 0.048999099613501344,
+    "interpretation": "confidence applies to the model-judged sampled population; shared model bias is not removed and two judges do not double n",
+    "pilot": "development pilot is summarized separately and is not used to select the confirmatory comparison"
+  },
+  "comparison_direction": "revised minus baseline",
+  "template_breakdown": [
+    {
+      "cohort": "baseline",
+      "template": "3副材を使うパン料理",
+      "n": 20,
+      "both_pass": 6,
+      "both_pass_rate": 0.3
+    },
+    {
+      "cohort": "baseline",
+      "template": "3副材を使う具だくさんご飯",
+      "n": 24,
+      "both_pass": 17,
+      "both_pass_rate": 0.7083333333333334
+    },
+    {
+      "cohort": "baseline",
+      "template": "3副材を使う具だくさん汁物",
+      "n": 11,
+      "both_pass": 11,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "baseline",
+      "template": "3副材を使う具だくさん麺",
+      "n": 24,
+      "both_pass": 12,
+      "both_pass_rate": 0.5
+    },
+    {
+      "cohort": "baseline",
+      "template": "3副材を使う完成品アレンジ",
+      "n": 307,
+      "both_pass": 107,
+      "both_pass_rate": 0.3485342019543974
+    },
+    {
+      "cohort": "baseline",
+      "template": "たんぱく主材の焼き物",
+      "n": 1,
+      "both_pass": 1,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "baseline",
+      "template": "たんぱく主材の蒸し物",
+      "n": 1,
+      "both_pass": 1,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "baseline",
+      "template": "パンを土台とする食事",
+      "n": 2,
+      "both_pass": 1,
+      "both_pass_rate": 0.5
+    },
+    {
+      "cohort": "baseline",
+      "template": "市販完成品のアレンジ",
+      "n": 10,
+      "both_pass": 8,
+      "both_pass_rate": 0.8
+    },
+    {
+      "cohort": "revised",
+      "template": "主材と野菜のオーブン焼き",
+      "n": 87,
+      "both_pass": 87,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "主材と野菜の具だくさんスープ",
+      "n": 30,
+      "both_pass": 30,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "主材と野菜の炒め物",
+      "n": 88,
+      "both_pass": 88,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "主材と野菜の煮物（煮汁少なめ）",
+      "n": 104,
+      "both_pass": 102,
+      "both_pass_rate": 0.9807692307692307
+    },
+    {
+      "cohort": "revised",
+      "template": "主材と野菜の蒸し物",
+      "n": 39,
+      "both_pass": 39,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "具を載せたオープントースト",
+      "n": 8,
+      "both_pass": 8,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "具入りサンド",
+      "n": 3,
+      "both_pass": 3,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "具入り冷製和え麺",
+      "n": 2,
+      "both_pass": 2,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "具入り汁麺",
+      "n": 3,
+      "both_pass": 3,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "具入り混ぜご飯",
+      "n": 9,
+      "both_pass": 9,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "具入り炒め麺",
+      "n": 15,
+      "both_pass": 15,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "具入り雑炊・穀類スープ",
+      "n": 3,
+      "both_pass": 3,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "即席焼そば・まぜそばの野菜追加",
+      "n": 1,
+      "both_pass": 1,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "市販揚げ物の野菜あんかけ",
+      "n": 5,
+      "both_pass": 5,
+      "both_pass_rate": 1.0
+    },
+    {
+      "cohort": "revised",
+      "template": "市販餃子・団子の野菜スープ",
+      "n": 3,
+      "both_pass": 3,
+      "both_pass_rate": 1.0
+    }
+  ],
+  "validation": {
+    "protocol_sha256": "641c8cf2917cd5a1a9c1ef5421c268b571cd731286a3e3a3cf5ee085b3d7d465",
+    "populations": {
+      "baseline": 25171059394,
+      "revised": 12069539
+    },
+    "n": 800,
+    "ids_sha256": "d51592f15d51afd2f0f58bc82a86fbb472b10e034871e5365d4f094908cbc24c",
+    "by_cohort": {
+      "baseline": 400,
+      "revised": 400
+    },
+    "ordinals_match_frozen_seeds": true,
+    "baseline_excludes_pilot": true,
+    "blinded_inputs_match_sample_key": true
+  },
+  "catalog": {
+    "source_foods": 1005,
+    "culinary_identities": 936,
+    "active_primary_support_identities": 248,
+    "templates": 21,
+    "definition_sha256": "495dc6b22638ff029c75913a13aef616c425049eacddc6389a6a26257e56da36"
+  },
+  "export": {
+    "definition_sha256": "495dc6b22638ff029c75913a13aef616c425049eacddc6389a6a26257e56da36",
+    "total_hypotheses": 12069539,
+    "status": "complete",
+    "shards": 13,
+    "compressed_bytes": 53984785
+  }
+}

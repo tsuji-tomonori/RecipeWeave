@@ -41,9 +41,16 @@ def main() -> None:
         if args.command == "count":
             result = {"total": space.total, "sha256": space.digest}
         elif args.command == "show":
-            result = {"ordinal": args.ordinal, "signature": space.signature(args.ordinal), **space.describe(args.ordinal)}
+            result = {
+                "ordinal": args.ordinal,
+                "signature": space.signature(args.ordinal),
+                **space.describe(args.ordinal),
+            }
         elif args.command == "sample":
-            sample = [{"id": f"S{i:05d}", "ordinal": n, **space.describe(n)} for i, n in enumerate(space.sample(args.size, args.seed))]
+            sample = [
+                {"id": f"S{i:05d}", "ordinal": n, **space.describe(n)}
+                for i, n in enumerate(space.sample(args.size, args.seed))
+            ]
             atomic_json(args.output, sample)
             result = {"n": len(sample), "seed": args.seed, "definition_sha256": space.digest}
         else:

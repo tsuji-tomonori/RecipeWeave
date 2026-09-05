@@ -1,0 +1,2402 @@
+[
+  {
+    "id": "C0000",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "カルボナーラ、魚、ひき肉、めんつゆが重なり味付けの軸を定めにくい"
+  },
+  {
+    "id": "C0001",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0002",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0003",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "塩味麺に魚缶二種とレバーペースト、照り焼きで味が過密"
+  },
+  {
+    "id": "C0004",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0005",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "キッシュに納豆と黒酢を重ねる構成で風味と食感の調整が難しい"
+  },
+  {
+    "id": "C0006",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0007",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0008",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0009",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0010",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0011",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0012",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0013",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0014",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0015",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0016",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0017",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0018",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0019",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0020",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0021",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0022",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0023",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "カレーうどんにレタスと山椒照り焼きが重なり味の方向が割れる"
+  },
+  {
+    "id": "C0024",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0025",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "とんかつへたらこ、焼き芋、山芋を同時に具追加する構造が曖昧"
+  },
+  {
+    "id": "C0026",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0027",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0028",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "エビチリ、サラミ、燻製牡蠣、厚揚げに甘いマスタードで過密"
+  },
+  {
+    "id": "C0029",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0030",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0031",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0032",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "ハンバーグに山芋とカニ風味かまぼこをカレー具としてまとめにくい"
+  },
+  {
+    "id": "C0033",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0034",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0035",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0036",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "焼売、きゅうり、魚缶、豚バラを一皿へ再構成する形が定まりにくい"
+  },
+  {
+    "id": "C0037",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0038",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "おでんにきゅうり、しじみ、もやしとバルサミコ醤油で食感味が衝突"
+  },
+  {
+    "id": "C0039",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "豆カレーに根菜とポン酢を重ねるため酸味の扱いが不確定"
+  },
+  {
+    "id": "C0040",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0041",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0042",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "グリーンカレーとごまぽん酢、あさり、豆苗の味付けが衝突しやすい"
+  },
+  {
+    "id": "C0043",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0044",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0045",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "親子丼の具に豆腐と塩鮭を足し、鶏魚の味を一料理に整えにくい"
+  },
+  {
+    "id": "C0046",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0047",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0048",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0049",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "豆カレーに燻製牡蠣二種とポン酢を合わせ味が過密"
+  },
+  {
+    "id": "C0050",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0051",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "クロワッサンを蒸して焼き目にし、レバーと絹さやを一体化しにくい"
+  },
+  {
+    "id": "C0052",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0053",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0054",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0055",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "味噌カップ麺に燻製牡蠣、ぶり、つみれ、甘酢で具と味が過密"
+  },
+  {
+    "id": "C0056",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0057",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "天ぷらに豆腐、ローストビーフ、コーンを別料理へ再構成する形が曖昧"
+  },
+  {
+    "id": "C0058",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "ナポリタンに魚介と豆腐、レモンクミンを加え味の軸が定まらない"
+  },
+  {
+    "id": "C0059",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0060",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0061",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0062",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0063",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0064",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "酸辣湯麺、明太子、牛ひき肉にバルサミコ醤油で酸味が重なる"
+  },
+  {
+    "id": "C0065",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0066",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0067",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0068",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0069",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0070",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0071",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0072",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0073",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "トルティーヤを蒸して焼き目にし、じゃこ・かれい・そら豆を一体化しにくい"
+  },
+  {
+    "id": "C0074",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0075",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0076",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0077",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0078",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0079",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0080",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "アラビアータに鶏、かまぼこ、オイルサーディン、ポン酢で味が散る"
+  },
+  {
+    "id": "C0081",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0082",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0083",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0084",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0085",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0086",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0087",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0088",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0089",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0090",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0091",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0092",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0093",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "たらこソースとあさりにコチュジャン甘酢を重ね味が過密"
+  },
+  {
+    "id": "C0094",
+    "verdict": "pass",
+    "reason_code": "P-BREAD",
+    "reason": "具を加熱・水分調整してパンと一料理にまとめられる"
+  },
+  {
+    "id": "C0095",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0096",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0097",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0098",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0099",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0100",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "ロールパンを蒸して焼き目にし、つみれ・かぶ・三つ葉を具にする形が曖昧"
+  },
+  {
+    "id": "C0101",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0102",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "パン粉を主材に直焼きし、レバー・えび・レタスを一体化する方法が不確定"
+  },
+  {
+    "id": "C0103",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "肉じゃがを麻婆風へ再構成し、練り物とごぼう巻の味が重なる"
+  },
+  {
+    "id": "C0104",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0105",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ごぼうサラダに焼き豆腐、チーズかまぼこ、レバーペーストで具が過密"
+  },
+  {
+    "id": "C0106",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "春雨サラダへ手羽中、ぶり、たらを足し三種の主たんぱくが競合"
+  },
+  {
+    "id": "C0107",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0108",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0109",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "とんかつにかまぼこ、じゃこ、コンビーフを足し具と塩味が過密"
+  },
+  {
+    "id": "C0110",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0111",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "玄米の炊込みにえび、がんもどき、鶏肉とマスタードクリームで水分調整が難しい"
+  },
+  {
+    "id": "C0112",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0113",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0114",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0115",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0116",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0117",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0118",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "フライドポテトに生おからと肉類を具追加する形がまとまりにくい"
+  },
+  {
+    "id": "C0119",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0120",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0121",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0122",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "マカロニサラダにレバー、豚肩、蒸し鶏を足し具が過密"
+  },
+  {
+    "id": "C0123",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0124",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0125",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0126",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "切り干し大根煮に豆腐と魚二種、マスタードで味と食感が重なる"
+  },
+  {
+    "id": "C0127",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0128",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "麻婆豆腐に牛しぐれ、ツナ、大葉を重ね、ガーリック油で味が過密"
+  },
+  {
+    "id": "C0129",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0130",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0131",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0132",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ハヤシへ鮭、塩さば、豚肉を加えトマトとコチュジャンが衝突"
+  },
+  {
+    "id": "C0133",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0134",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0135",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ミートソースに鶏皮とさんまを足し、肉魚の味を整えにくい"
+  },
+  {
+    "id": "C0136",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0137",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0138",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0139",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0140",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0141",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0142",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0143",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0144",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0145",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0146",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0147",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ソース焼そばにハム、しじみ、納豆、味噌チーズで味が過密"
+  },
+  {
+    "id": "C0148",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0149",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ペペロンチーノへ牛肉と魚二種、ハニーマスタードで軸が定まりにくい"
+  },
+  {
+    "id": "C0150",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0151",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0152",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0153",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0154",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0155",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0156",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "ロールキャベツにさば味噌とアンチョビトマトを加え魚味が重なる"
+  },
+  {
+    "id": "C0157",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0158",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0159",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0160",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0161",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0162",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0163",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0164",
+    "verdict": "pass",
+    "reason_code": "P-BREAD",
+    "reason": "具を加熱・水分調整してパンと一料理にまとめられる"
+  },
+  {
+    "id": "C0165",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0166",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0167",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0168",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0169",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0170",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "えび餃子に練り物、牛ひき肉、つみれ、キムチで具が過密"
+  },
+  {
+    "id": "C0171",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0172",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "パン粉主材を直焼きでまとめる方法が不明確で具を保持しにくい"
+  },
+  {
+    "id": "C0173",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0174",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0175",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "味噌ラーメンにたらこ、揚げボール、手羽先、焼肉だれで味が過密"
+  },
+  {
+    "id": "C0176",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0177",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0178",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0179",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0180",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0181",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "バゲットに魚缶、レバーペースト、鶏肉を重ね醤油味を整えにくい"
+  },
+  {
+    "id": "C0182",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "切り干し大根煮にしらすとさんま、味噌クリームで魚味と構造が重なる"
+  },
+  {
+    "id": "C0183",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ロールキャベツへ鮭、じゃこ、牛ひき肉を具追加し一体化しにくい"
+  },
+  {
+    "id": "C0184",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0185",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0186",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0187",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0188",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0189",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "チキン南蛮にスペアリブと牛すじを足し、肉料理が過密"
+  },
+  {
+    "id": "C0190",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "肉巻きおにぎりに魚肉ソーセージとまぐろを重ね主材が過密"
+  },
+  {
+    "id": "C0191",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0192",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0193",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "即席リゾットにスペアリブとローストポークを足し肉量と構造が過密"
+  },
+  {
+    "id": "C0194",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0195",
+    "verdict": "pass",
+    "reason_code": "P-NOODLE",
+    "reason": "麺と具を必要加熱し、指定味で一料理にまとめられる"
+  },
+  {
+    "id": "C0196",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0197",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0198",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "豆カレーにたい、なめこ、クリームを加え風味と粘度が不確定"
+  },
+  {
+    "id": "C0199",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0200",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0201",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0202",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0203",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0204",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "もつ煮へ牛肉と塩鮭を足し、肉魚と鶏ガラ塩が重なる"
+  },
+  {
+    "id": "C0205",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0206",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0207",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "鶏つくねにローストビーフとめかじきを加え主材が過密"
+  },
+  {
+    "id": "C0208",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ソース焼そばに加工肉二種とさんま蒲焼を足し具が過密"
+  },
+  {
+    "id": "C0209",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "塩ラーメンにスペアリブ、かつお、塩鮭で肉魚が過密"
+  },
+  {
+    "id": "C0210",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "えび餃子に豚レバーとほたてを足し魚介と内臓の味が重なる"
+  },
+  {
+    "id": "C0211",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "焼きビーフンにチーズかまぼこと焼き芋を足す具のまとまりが不確定"
+  },
+  {
+    "id": "C0212",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0213",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ソース焼そばに油揚げ、あさり、手羽先、バジルを再構成し味が散る"
+  },
+  {
+    "id": "C0214",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0215",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0216",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "パン粉を主材に下茹で後焼きする生地構造が定まらない"
+  },
+  {
+    "id": "C0217",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0218",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0219",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ワンタンに燻製鶏、豚バラ、生ハムを足し肉と塩味が過密"
+  },
+  {
+    "id": "C0220",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0221",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "牛すじ煮にしらす、さんま、笹かまを加えキムチクリームで味が衝突"
+  },
+  {
+    "id": "C0222",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ミートボールに合いびき、ローストビーフ、ウインナーで肉が過密"
+  },
+  {
+    "id": "C0223",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "ひやむぎにじゃこ、さば味噌とりんご生姜を炒める味の軸が不確定"
+  },
+  {
+    "id": "C0224",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "食パンにごぼう、そら豆、牛すじを直焼きする具の一体化が難しい"
+  },
+  {
+    "id": "C0225",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0226",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0227",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0228",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0229",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0230",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0231",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0232",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0233",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0234",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0235",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0236",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0237",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "バターチキンカレーを照り焼き味へ再構成し、和風具材も重なる"
+  },
+  {
+    "id": "C0238",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0239",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "焼そばにしらす、燻製牡蠣、塩鮭で魚介と塩味が過密"
+  },
+  {
+    "id": "C0240",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "もち米に明太子、いわし缶、厚揚げ、りんご生姜で味が散る"
+  },
+  {
+    "id": "C0241",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0242",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0243",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0244",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0245",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0246",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0247",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "うどんに牛肉、つみれ、さんま蒲焼を合わせ主たんぱくが過密"
+  },
+  {
+    "id": "C0248",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0249",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "オムレツに蒲焼缶、しらす、さんまを加え魚味が過密"
+  },
+  {
+    "id": "C0250",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "味噌ラーメンに鶏ひき肉とさんま蒲焼、味噌チーズで具が過密"
+  },
+  {
+    "id": "C0251",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0252",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0253",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0254",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0255",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "中華まんに豚もつ、ベーコン、里芋を具追加し食感がまとまりにくい"
+  },
+  {
+    "id": "C0256",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "油そばにしじみとアンチョビ、甜麺醤で塩味と魚味が過密"
+  },
+  {
+    "id": "C0257",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0258",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0259",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0260",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0261",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0262",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0263",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0264",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0265",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0266",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "パン粉を蒸して焼き目にし、きのこ・ベーコン・春菊を保持する形が不確定"
+  },
+  {
+    "id": "C0267",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0268",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0269",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0270",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0271",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "筑前煮をカレーヨーグルトへ再構成し、和風具材との調和が不確定"
+  },
+  {
+    "id": "C0272",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0273",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0274",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0275",
+    "verdict": "pass",
+    "reason_code": "P-NOODLE",
+    "reason": "麺と具を必要加熱し、指定味で一料理にまとめられる"
+  },
+  {
+    "id": "C0276",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0277",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0278",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0279",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0280",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0281",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ペンネに牛肩肉、レバーペースト、焼き鳥缶、ゆず味噌で味が過密"
+  },
+  {
+    "id": "C0282",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0283",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0284",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0285",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0286",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0287",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "かぼちゃスープに鶏、豚角煮、さば味噌缶を足し具が過密"
+  },
+  {
+    "id": "C0288",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0289",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "牛丼の具にごぼう、豆腐、ローストポーク、スイートチリで主材が過密"
+  },
+  {
+    "id": "C0290",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0291",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0292",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0293",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0294",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "豆サラダに揚げボール、まぐろ、豚バラ、サルサで具が過密"
+  },
+  {
+    "id": "C0295",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0296",
+    "verdict": "pass",
+    "reason_code": "P-BREAD",
+    "reason": "具を加熱・水分調整してパンと一料理にまとめられる"
+  },
+  {
+    "id": "C0297",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0298",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0299",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "白身魚フライに魚二種を足し魚味と構造が過密"
+  },
+  {
+    "id": "C0300",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0301",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "切り干し大根煮に砂肝、ぶり、かに風味かまぼこで具が過密"
+  },
+  {
+    "id": "C0302",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0303",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0304",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0305",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "麻婆豆腐にたらこ、豚肩肉、甜麺醤ごまで味と具が過密"
+  },
+  {
+    "id": "C0306",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "ワンタンに焼き芋とさんま蒲焼、豆板醤で甘辛味が重なる"
+  },
+  {
+    "id": "C0307",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0308",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0309",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0310",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0311",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0312",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0313",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0314",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "小籠包に鶏皮と揚げボールを足し具と脂が過密"
+  },
+  {
+    "id": "C0315",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0316",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0317",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0318",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0319",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0320",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0321",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "牛丼の具に明太子とさば、味噌チーズで魚味と塩味が過密"
+  },
+  {
+    "id": "C0322",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0323",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0324",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "塩ラーメンに明太子、かに、オイルサーディン、クリームで魚味が過密"
+  },
+  {
+    "id": "C0325",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0326",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0327",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0328",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "鶏つくねに合いびき、つみれ、ステーキ肉を足し主材が過密"
+  },
+  {
+    "id": "C0329",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ワンタンにいわしと鶏そぼろを足し、甜麺醤ごまで具が過密"
+  },
+  {
+    "id": "C0330",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0331",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "おかゆに豚角煮、豆腐、牛肉を足し肉量と構造が過密"
+  },
+  {
+    "id": "C0332",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0333",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "カレーに牛肉とほたてを足しマスタードクリームで味が割れる"
+  },
+  {
+    "id": "C0334",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0335",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "ひよこ豆カレーに鶏レバー、ほたて、里芋、オイスターで味が過密"
+  },
+  {
+    "id": "C0336",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0337",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0338",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "マカロニサラダに魚つみれ、牛ひき肉、えびで具が過密"
+  },
+  {
+    "id": "C0339",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0340",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0341",
+    "verdict": "pass",
+    "reason_code": "P-NOODLE",
+    "reason": "麺と具を必要加熱し、指定味で一料理にまとめられる"
+  },
+  {
+    "id": "C0342",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0343",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0344",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0345",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "牛すじ煮にいか天練り物、なす、オクラを足しアンチョビトマトで味が散る"
+  },
+  {
+    "id": "C0346",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0347",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "酸辣湯麺にひき肉、ソーセージ、牛すじを足し具が過密"
+  },
+  {
+    "id": "C0348",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0349",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0350",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "牛すじ煮に大豆、いわし蒲焼、卵を足し具と味が過密"
+  },
+  {
+    "id": "C0351",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "ジャージャー麺に豆腐と豚肉二種、クリームを合わせる構造が不確定"
+  },
+  {
+    "id": "C0352",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0353",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0354",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0355",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0356",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0357",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0358",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0359",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0360",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0361",
+    "verdict": "pass",
+    "reason_code": "P-BREAD",
+    "reason": "具を加熱・水分調整してパンと一料理にまとめられる"
+  },
+  {
+    "id": "C0362",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0363",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "たこ焼きをセロリ、かまぼこ、いかと甜麺醤で別料理化する形が曖昧"
+  },
+  {
+    "id": "C0364",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0365",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0366",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0367",
+    "verdict": "pass",
+    "reason_code": "P-NOODLE",
+    "reason": "麺と具を必要加熱し、指定味で一料理にまとめられる"
+  },
+  {
+    "id": "C0368",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0369",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "豆カレーにランチョンミート、ウインナー、山芋、サルサで具が過密"
+  },
+  {
+    "id": "C0370",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0371",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0372",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0373",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0374",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "ハンバーグに牡蠣、ローストビーフ、じゃがいもを麻婆風で重ねる"
+  },
+  {
+    "id": "C0375",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "豚角煮にしじみとえびを加え肉魚介の味がまとまりにくい"
+  },
+  {
+    "id": "C0376",
+    "verdict": "pass",
+    "reason_code": "P-STEAM",
+    "reason": "主材と副材を必要加熱して蒸し、指定たれで一皿にできる"
+  },
+  {
+    "id": "C0377",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "ハヤシに大根、サラダチキン、ほたて、キムチで味が衝突"
+  },
+  {
+    "id": "C0378",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "冷やしラーメンに焼き豚、焼き芋、レバーペーストで具が過密"
+  },
+  {
+    "id": "C0379",
+    "verdict": "pass",
+    "reason_code": "P-NOODLE",
+    "reason": "麺と具を必要加熱し、指定味で一料理にまとめられる"
+  },
+  {
+    "id": "C0380",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "さわらと野菜の煮物にチーズ黒こしょうを合わせる構造が不確定"
+  },
+  {
+    "id": "C0381",
+    "verdict": "pass",
+    "reason_code": "P-BREAD",
+    "reason": "具を加熱・水分調整してパンと一料理にまとめられる"
+  },
+  {
+    "id": "C0382",
+    "verdict": "pass",
+    "reason_code": "P-RICE",
+    "reason": "穀類を炊飯し、別加熱した具を混ぜて一料理にできる"
+  },
+  {
+    "id": "C0383",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "チキン南蛮にツナ、塩さば、さばを足し魚味が過密"
+  },
+  {
+    "id": "C0384",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0385",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "醤油ラーメンをカレー再構成し、なると・コンビーフ・いかで味が散る"
+  },
+  {
+    "id": "C0386",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0387",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0388",
+    "verdict": "uncertain",
+    "reason_code": "U-FLAVOR",
+    "reason": "グリーンカレーに合いびき、たら、塩麹レモンで味の軸が割れる"
+  },
+  {
+    "id": "C0389",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0390",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "カップフォーに大根、もつ、ほたてを加え黒酢で味と具が過密"
+  },
+  {
+    "id": "C0391",
+    "verdict": "pass",
+    "reason_code": "P-STIR",
+    "reason": "食材を食べやすく下処理し、指定どおり炒め合わせて一皿にできる"
+  },
+  {
+    "id": "C0392",
+    "verdict": "pass",
+    "reason_code": "P-BRAISE",
+    "reason": "食材ごとの加熱時間を分け、少量の煮汁で一皿にまとめられる"
+  },
+  {
+    "id": "C0393",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0394",
+    "verdict": "uncertain",
+    "reason_code": "U-STRUCTURE",
+    "reason": "春巻きに納豆、牛すじ、ごぼう巻を具追加するまとまりが不確定"
+  },
+  {
+    "id": "C0395",
+    "verdict": "pass",
+    "reason_code": "P-ARRANGE",
+    "reason": "完成品へ副材を加熱して具として合わせ、一料理にできる"
+  },
+  {
+    "id": "C0396",
+    "verdict": "uncertain",
+    "reason_code": "U-MULTI",
+    "reason": "エビチリにチョリソーとローストポークを足し肉と辛味が過密"
+  },
+  {
+    "id": "C0397",
+    "verdict": "pass",
+    "reason_code": "P-SOUP",
+    "reason": "具材の加熱差を調整し、汁気のある一料理へまとめられる"
+  },
+  {
+    "id": "C0398",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  },
+  {
+    "id": "C0399",
+    "verdict": "pass",
+    "reason_code": "P-OVEN",
+    "reason": "硬い副材を先に加熱し、主材と焼いて指定味でまとめられる"
+  }
+]

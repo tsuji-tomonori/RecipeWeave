@@ -14,7 +14,7 @@ dev = [
 
 [tool.ruff]
 target-version = "py312"
-line-length = 160
+line-length = 100
 exclude = [
   ".dev-standard/",
   ".moon/",
@@ -23,7 +23,7 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F"]
+select = ["E", "F", "I", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["packages", "tests"]

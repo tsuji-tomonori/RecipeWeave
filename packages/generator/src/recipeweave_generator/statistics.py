@@ -11,7 +11,7 @@ Wilson score intervals (95 percent by default).  Since the baseline
 RecipeWeave population is 25,171,059,494 (the revised population is tracked
 separately) and the planned samples are 400, the finite
 population correction is negligible and is intentionally not applied.  For a
-pre-specified comparison, the difference interval is the conservative
+pre-specified comparison, the difference interval is the
 Newcombe hybrid score interval built from the two Wilson intervals.  The hypothesis test
 is the two-sided pooled two-proportion z test at alpha=.05; no comparison is
 selected from its observed result.
@@ -20,9 +20,9 @@ selected from its observed result.
 from __future__ import annotations
 
 import math
-from statistics import NormalDist
 from collections import Counter
 from collections.abc import Mapping, Sequence
+from statistics import NormalDist
 from typing import Any
 
 VERDICTS = ("pass", "uncertain", "fail")
@@ -69,11 +69,11 @@ def newcombe_difference_interval(
     n_b: int,
     confidence: float = 0.95,
 ) -> tuple[float, float]:
-    """Return the conservative Newcombe difference interval ``p_a - p_b``.
+    """Return the Newcombe hybrid score difference interval ``p_a - p_b``.
 
     This is Newcombe's hybrid score interval.  Each binomial proportion uses
     its Wilson limits, and the two resulting score distances are combined in
-    quadrature; this is conservative and behaves well near 0 and 1.
+    quadrature, including when an observed proportion is near 0 or 1.
     """
 
     a_lo, a_hi = wilson_interval(count_a, n_a, confidence)
@@ -88,7 +88,14 @@ def newcombe_difference_interval(
 def _measure(count: int, n: int, confidence: float) -> dict[str, Any]:
     lo, hi = wilson_interval(count, n, confidence)
     estimate = count / n
-    return {"count": count, "n": n, "estimate": estimate, "proportion": estimate, "ci95": [lo, hi], "ci": [lo, hi]}
+    return {
+        "count": count,
+        "n": n,
+        "estimate": estimate,
+        "proportion": estimate,
+        "ci95": [lo, hi],
+        "ci": [lo, hi],
+    }
 
 
 def compare_proportions(
@@ -129,7 +136,7 @@ def compare_proportions(
         "difference": difference,
         "ci95": [lo, hi],
         "ci": [lo, hi],
-        "method": "Newcombe difference of Wilson intervals",
+        "method": "Newcombe hybrid score interval (Wilson, no continuity correction)",
         "test": "two-sided pooled two-proportion z test",
         "alpha": alpha,
         "z": z_stat,
@@ -140,7 +147,7 @@ def compare_proportions(
 
 
 def _records(records: Sequence[Mapping[str, Any]], label: str) -> list[Mapping[str, Any]]:
-    if isinstance(records, (str, bytes)) or not isinstance(records, Sequence):
+    if isinstance(records, str | bytes) or not isinstance(records, Sequence):
         raise ValueError(f"{label} must be a sequence of records")
     out = list(records)
     if not out:
@@ -150,7 +157,9 @@ def _records(records: Sequence[Mapping[str, Any]], label: str) -> list[Mapping[s
     return out
 
 
-def _rating_map(ratings: Sequence[Mapping[str, Any]], label: str, sample_ids: set[Any]) -> dict[Any, str]:
+def _rating_map(
+    ratings: Sequence[Mapping[str, Any]], label: str, sample_ids: set[Any]
+) -> dict[Any, str]:
     rows = _records(ratings, label)
     out: dict[Any, str] = {}
     for row in rows:
@@ -198,7 +207,10 @@ def _summary(rows: list[tuple[str, str]], confidence: float) -> dict[str, Any]:
     kappa = None if expected == 1.0 else (observed - expected) / (1.0 - expected)
     result: dict[str, Any] = {
         "n": n,
-        "verdict_counts": {"judge_a": {v: a[v] for v in VERDICTS}, "judge_b": {v: b[v] for v in VERDICTS}},
+        "verdict_counts": {
+            "judge_a": {v: a[v] for v in VERDICTS},
+            "judge_b": {v: b[v] for v in VERDICTS},
+        },
         "confusion_matrix": {x: {y: cells[f"{x}/{y}"] for y in VERDICTS} for x in VERDICTS},
         "primary": primary,
         "primary_endpoint": primary,
@@ -248,7 +260,10 @@ def analyze(
     else:
         raise ValueError("population must be a positive integer or cohort mapping")
     if population is not None and isinstance(population, Mapping):
-        if any(not isinstance(value, int) or isinstance(value, bool) or value <= 0 for value in populations.values()):
+        if any(
+            not isinstance(value, int) or isinstance(value, bool) or value <= 0
+            for value in populations.values()
+        ):
             raise ValueError("each cohort population must be a positive integer")
     sample_ids: set[Any] = set()
     sample_cohorts: dict[Any, Any] = {}
@@ -303,7 +318,9 @@ def analyze(
             else:
                 x = sum(b == "pass" for _, b in left_rows)
                 y = sum(b == "pass" for _, b in right_rows)
-            comparisons[endpoint] = compare_proportions(x, len(left_rows), y, len(right_rows), alpha=alpha, confidence=confidence)
+            comparisons[endpoint] = compare_proportions(
+                x, len(left_rows), y, len(right_rows), alpha=alpha, confidence=confidence
+            )
     report = {
         "population": populations if populations else population,
         "population_by_cohort": populations,
@@ -317,18 +334,34 @@ def analyze(
             "confidence": confidence,
             "alpha": alpha,
             "wilson": "unweighted SRS Wilson score interval",
-            "comparison_ci": "Newcombe difference of Wilson intervals (conservative)",
+            "comparison_ci": "Newcombe hybrid score difference interval",
             "comparison_test": "two-sided pooled two-proportion z test",
             "finite_population_correction_applied": False,
-            "finite_population_effect": "negligible for planned n=400; finite-population correction is not applied",
-            "finite_population_sampling_fraction_at_n400": {name: 400 / size for name, size in populations.items()},
+            "finite_population_effect": (
+                "negligible for planned n=400; finite-population correction is not applied"
+            ),
+            "finite_population_sampling_fraction_at_n400": {
+                name: 400 / size for name, size in populations.items()
+            },
             "worst_case_n_for_plus_minus_5pp": WORST_CASE_N_5PP,
             "approximate_worst_case_margin_at_n400": DEFAULT_Z * math.sqrt(0.25 / 400),
-            "interpretation": "confidence applies to the model-judged sampled population; shared model bias is not removed and two judges do not double n",
-            "pilot": "development pilot is summarized separately and is not used to select the confirmatory comparison",
+            "interpretation": (
+                "confidence applies to the model-judged sampled population; "
+                "shared model bias is not removed and two judges do not double n"
+            ),
+            "pilot": (
+                "development pilot is summarized separately and is not used "
+                "to select the confirmatory comparison"
+            ),
         },
     }
     return report
 
 
-__all__ = ["VERDICTS", "wilson_interval", "newcombe_difference_interval", "compare_proportions", "analyze"]
+__all__ = [
+    "VERDICTS",
+    "wilson_interval",
+    "newcombe_difference_interval",
+    "compare_proportions",
+    "analyze",
+]
