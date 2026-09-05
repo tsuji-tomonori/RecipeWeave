@@ -13,6 +13,33 @@ from typing import Any
 
 from .space import Space, canonical
 
+COLS = ("ordinal", "template", "main", "support1", "support2", "support3", "flavor", "route")
+
+
+def _validate_manifest(manifest: dict[str, Any]) -> None:
+    """Accept only an ordered prefix of the declared, fixed-size shards."""
+    if manifest.get("schema_version") != 1 or manifest.get("columns") != list(COLS):
+        raise ValueError("unsupported manifest schema or columns")
+    if manifest.get("status") not in ("complete", "incomplete"):
+        raise ValueError("invalid manifest status")
+    for key in ("total", "shard_size"):
+        if type(manifest.get(key)) is not int or manifest[key] <= 0:
+            raise ValueError(f"invalid manifest {key}")
+    expected = 0
+    for index, entry in enumerate(manifest["shards"]):
+        stop = min(manifest["total"], expected + manifest["shard_size"])
+        if (
+            expected >= manifest["total"]
+            or entry["file"] != f"part-{index:05d}.csv.gz"
+            or entry["start"] != expected
+            or entry["stop"] != stop
+            or entry["rows"] != stop - expected
+        ):
+            raise ValueError("invalid, duplicate, or noncontiguous manifest shard")
+        expected = stop
+    if manifest["status"] == "complete" and expected != manifest["total"]:
+        raise ValueError("complete manifest has missing shards")
+
 
 def file_hash(path: Path) -> str:
     h = hashlib.sha256()
@@ -31,23 +58,24 @@ def atomic_json(path: Path, value: Any, compact: bool = False) -> None:
     os.replace(temp, path)
 
 
+def _dictionary(space: Space) -> dict[str, Any]:
+    return {
+        "foods": [{"id": x, "name": space.names[x]} for x in sorted(space.names)],
+        "templates": [{"id": b["code"], "name": b["label"]} for b in space.blocks],
+        "flavors": sorted({f for b in space.blocks for f in b["flavors"]}),
+        "routes": sorted({r for b in space.blocks for r in b["routes"]}),
+    }
+
+
 def export_all(space: Space, output: Path, shard_size: int = 1_000_000) -> dict[str, Any]:
     if shard_size <= 0:
         raise ValueError("shard size must be positive")
     output.mkdir(parents=True, exist_ok=True)
     path = output / "manifest.json"
-    foods = sorted(space.names)
-    food_idx = {x: i for i, x in enumerate(foods)}
-    flavors = sorted({f for b in space.blocks for f in b["flavors"]})
-    flavor_idx = {x: i for i, x in enumerate(flavors)}
-    routes = sorted({r for b in space.blocks for r in b["routes"]})
-    route_idx = {x: i for i, x in enumerate(routes)}
-    dictionary = {
-        "foods": [{"id": x, "name": space.names[x]} for x in foods],
-        "templates": [{"id": b["code"], "name": b["label"]} for b in space.blocks],
-        "flavors": flavors,
-        "routes": routes,
-    }
+    dictionary = _dictionary(space)
+    food_idx = {x["id"]: i for i, x in enumerate(dictionary["foods"])}
+    flavor_idx = {x: i for i, x in enumerate(dictionary["flavors"])}
+    route_idx = {x: i for i, x in enumerate(dictionary["routes"])}
     manifest = {
         "schema_version": 1,
         "definition_sha256": space.digest,
@@ -56,24 +84,24 @@ def export_all(space: Space, output: Path, shard_size: int = 1_000_000) -> dict[
         "status": "incomplete",
         "shards": [],
         "dictionary_sha256": hashlib.sha256(canonical(dictionary)).hexdigest(),
-        "columns": [
-            "ordinal",
-            "template",
-            "main",
-            "support1",
-            "support2",
-            "support3",
-            "flavor",
-            "route",
-        ],
+        "columns": list(COLS),
         "note": "0-based dictionary indexes; blank means absent. Hypotheses, not cooked recipes.",
     }
     if path.exists():
         existing = json.loads(path.read_text())
+        _validate_manifest(existing)
         for key in ("definition_sha256", "shard_size", "dictionary_sha256", "total"):
             if existing[key] != manifest[key]:
                 raise ValueError("cannot resume output from a different definition")
         manifest = existing
+        saved_dictionary = json.loads((output / "dictionary.json").read_text())
+        if saved_dictionary != dictionary:
+            raise ValueError("dictionary corruption; recover before resuming")
+        # Validate every completed file before changing any saved state.
+        for entry in manifest["shards"]:
+            shard = output / entry["file"]
+            if shard.stat().st_size != entry["bytes"] or file_hash(shard) != entry["sha256"]:
+                raise ValueError("completed shard is corrupt; recover before resuming")
     atomic_json(output / "dictionary.json", dictionary)
     atomic_json(path, manifest)
     seen = {entry["start"]: entry for entry in manifest["shards"]}
@@ -131,8 +159,13 @@ def export_all(space: Space, output: Path, shard_size: int = 1_000_000) -> dict[
     return manifest
 
 
-def verify_all(output: Path, space: Space | None = None) -> dict[str, int]:
+def verify_all(
+    output: Path, space: Space | None = None, *, full: bool = False
+) -> dict[str, int]:
+    if full and space is None:
+        raise ValueError("full verification requires a definition")
     m = json.loads((output / "manifest.json").read_text())
+    _validate_manifest(m)
     d = json.loads((output / "dictionary.json").read_text())
     if (
         m["status"] != "complete"
@@ -141,14 +174,21 @@ def verify_all(output: Path, space: Space | None = None) -> dict[str, int]:
         raise ValueError("incomplete export or dictionary corruption")
     if space is not None and (space.digest != m["definition_sha256"] or space.total != m["total"]):
         raise ValueError("definition mismatch")
+    if space is not None and d != _dictionary(space):
+        raise ValueError("dictionary does not match definition")
     check_ordinals = set(space.sample(min(1024, space.total), 92473)) if space else set()
     if space:
         check_ordinals.update(n for e in m["shards"] for n in (e["start"], e["stop"] - 1))
     checked_points = 0
+    expected_points = space.iter_range() if full and space is not None else None
     expected = 0
     for entry in m["shards"]:
         path = output / entry["file"]
-        if entry["start"] != expected or file_hash(path) != entry["sha256"]:
+        if (
+            entry["start"] != expected
+            or path.stat().st_size != entry["bytes"]
+            or file_hash(path) != entry["sha256"]
+        ):
             raise ValueError("noncontiguous or corrupt shard")
         count = 0
         with gzip.open(path, "rt", newline="") as f:
@@ -161,6 +201,8 @@ def verify_all(output: Path, space: Space | None = None) -> dict[str, int]:
                 if not 0 <= int(row[1]) < len(d["templates"]):
                     raise ValueError("invalid template")
                 ingredient_ids = [int(x) for x in row[2:6] if x]
+                if not row[2] or not row[3] or (row[5] and not row[4]):
+                    raise ValueError("missing main or noncontiguous support slots")
                 if len(set(ingredient_ids)) != len(ingredient_ids):
                     raise ValueError("repeated ingredient")
                 if any(not 0 <= x < len(d["foods"]) for x in ingredient_ids):
@@ -169,7 +211,7 @@ def verify_all(output: Path, space: Space | None = None) -> dict[str, int]:
                     d["routes"]
                 ):
                     raise ValueError("unknown flavor or route")
-                if space and expected in check_ordinals:
+                if space and (full or expected in check_ordinals):
                     point = (
                         int(row[1]),
                         d["foods"][int(row[2])]["id"],
@@ -177,7 +219,11 @@ def verify_all(output: Path, space: Space | None = None) -> dict[str, int]:
                         d["flavors"][int(row[6])],
                         d["routes"][int(row[7])],
                     )
-                    if point != space.point(expected):
+                    expected_point = (
+                        next(expected_points)[1]
+                        if expected_points is not None else space.point(expected)
+                    )
+                    if point != expected_point:
                         raise ValueError(
                             "materialized design point differs from ordinal definition"
                         )
