@@ -1,0 +1,13 @@
+[project]
+name = "recipeweave-generator"
+version = "0.1.0"
+description = "Deterministic recipe design enumeration and statistical evaluation"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+recipeweave = "recipeweave_generator.cli:main"
+
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"

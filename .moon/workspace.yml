@@ -1,0 +1,15 @@
+projects:
+  generator: packages/generator
+  frontend: frontend
+  backend: backend
+  database: database
+  infra: infra
+  batch: batch
+  scripts: scripts
+defaultProject: generator
+pipeline:
+  installDependencies: false
+vcs:
+  defaultBranch: main
+  provider: github
+telemetry: false

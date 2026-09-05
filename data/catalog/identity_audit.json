@@ -1,0 +1,2428 @@
+{
+  "schema_version": "catalog_review.v1",
+  "generated_from": {
+    "base_file": "/tmp/recipeweave-aa94/books.json",
+    "scale_file": "/tmp/recipeweave-aa94/scale_output.json",
+    "base_foods": 539,
+    "added_foods": 466,
+    "total_foods": 1005,
+    "source_unchanged": true
+  },
+  "scope_note": "名称と既存カタログ属性だけを監査した。全1005件へ無理に同一性を断定せず、確実または既存集約の再検討が必要な組を記録する。商品SKU、メーカー、店舗在庫、栄養値、安全性は未確認。",
+  "scale_snapshot": {
+    "reported_identity_count": 948,
+    "implied_collapsed_rows": 57,
+    "current_duplicate_identity_groups": 48,
+    "audit_note": "948はscale_outputの既存暫定値であり、品質保証済みの正解数ではない。"
+  },
+  "identity_mappings": [
+    {
+      "group_id": "I001",
+      "canonical_identity": "めんつゆ",
+      "members": [
+        {
+          "food_code": "food_2b68d2c56f",
+          "name": "めんつゆ2倍",
+          "category": "液体調味料",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "ml",
+          "availability": "common",
+          "role": "seasoning",
+          "modeling": "濃縮率・糖塩量・希釈水を商品版で保持",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_2b68d2c56f"
+        },
+        {
+          "food_code": "food_e0e4004b83",
+          "name": "めんつゆ3倍",
+          "category": "液体調味料",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "ml",
+          "availability": "common",
+          "role": "seasoning",
+          "modeling": "濃縮率・糖塩量・希釈水を商品版で保持",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_e0e4004b83"
+        },
+        {
+          "food_code": "food_6c7503e631",
+          "name": "めんつゆ4倍",
+          "category": "液体調味料",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "ml",
+          "availability": "common",
+          "role": "seasoning",
+          "modeling": "濃縮率・糖塩量・希釈水を商品版で保持",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_6c7503e631"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "concentration_multiplier",
+        "salt_sugar_per_ml",
+        "package_size",
+        "brand"
+      ],
+      "pairing_rule": "never_pair_members; choose one variant per identity; quantity conversion must use declared package dilution",
+      "rationale": "同じ調味料クラスの濃縮率違いで、料理組合せの独立軸にしない。2/3/4倍の名称だけでは実際の塩分・糖分を推定しない。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I002",
+      "canonical_identity": "ブロッコリー",
+      "members": [
+        {
+          "food_code": "food_bed0d9d62a",
+          "name": "ブロッコリー",
+          "category": "葉・茎野菜",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_bed0d9d62a"
+        },
+        {
+          "food_code": "food_98a47a6d2b",
+          "name": "冷凍ブロッコリー",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_bed0d9d62a"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "blanching",
+        "package_size"
+      ],
+      "pairing_rule": "never_pair_members; frozen route retains thaw/water release",
+      "rationale": "同一野菜の生鮮/冷凍。冷凍は下処理・水分が異なるため工程属性を残す。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I003",
+      "canonical_identity": "ほうれん草",
+      "members": [
+        {
+          "food_code": "food_ccce9c0c2e",
+          "name": "ほうれん草",
+          "category": "葉・茎野菜",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_ccce9c0c2e"
+        },
+        {
+          "food_code": "food_c58662839d",
+          "name": "冷凍ほうれん草",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_ccce9c0c2e"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "blanching",
+        "cut_size"
+      ],
+      "pairing_rule": "never_pair_members; retain thaw/drain route",
+      "rationale": "同一野菜の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I004",
+      "canonical_identity": "いんげん",
+      "members": [
+        {
+          "food_code": "food_5059191412",
+          "name": "いんげん",
+          "category": "果菜",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_5059191412"
+        },
+        {
+          "food_code": "food_f08aecae3e",
+          "name": "冷凍いんげん",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_5059191412"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "blanching",
+        "cut_size"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同一野菜の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I005",
+      "canonical_identity": "かぼちゃ",
+      "members": [
+        {
+          "food_code": "food_9c24f5bf45",
+          "name": "かぼちゃ",
+          "category": "果菜",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_9c24f5bf45"
+        },
+        {
+          "food_code": "food_b41a066297",
+          "name": "冷凍かぼちゃ",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_9c24f5bf45"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "blanching"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同一野菜の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I006",
+      "canonical_identity": "オクラ",
+      "members": [
+        {
+          "food_code": "food_d5e27e0e6a",
+          "name": "オクラ",
+          "category": "果菜",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_d5e27e0e6a"
+        },
+        {
+          "food_code": "food_473e870e81",
+          "name": "冷凍オクラ",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_d5e27e0e6a"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "blanching",
+        "cut_size"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同一野菜の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I007",
+      "canonical_identity": "そら豆",
+      "members": [
+        {
+          "food_code": "food_b54a776a0e",
+          "name": "そら豆",
+          "category": "季節野菜",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "seasonal",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_b54a776a0e"
+        },
+        {
+          "food_code": "food_f205bd9476",
+          "name": "冷凍そら豆",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_b54a776a0e"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "blanching"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同一豆の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I008",
+      "canonical_identity": "アボカド",
+      "members": [
+        {
+          "food_code": "food_dc0a069d6c",
+          "name": "アボカド",
+          "category": "果菜",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_dc0a069d6c"
+        },
+        {
+          "food_code": "food_357eec30a8",
+          "name": "冷凍アボカド",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_dc0a069d6c"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "oxidation"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同一果菜の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I009",
+      "canonical_identity": "ごぼう",
+      "members": [
+        {
+          "food_code": "food_4622e45e42",
+          "name": "ごぼう",
+          "category": "根・芋・球根",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_4622e45e42"
+        },
+        {
+          "food_code": "food_3c1c293984",
+          "name": "冷凍ごぼう",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_4622e45e42"
+        },
+        {
+          "food_code": "food_2e42f9e292",
+          "name": "冷凍ささがきごぼう",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_4622e45e42"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape",
+        "blanching"
+      ],
+      "pairing_rule": "never_pair_members; cut_shape remains in route",
+      "rationale": "同じ根菜だが、ささがきは切断形状を保持する。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I010",
+      "canonical_identity": "玉ねぎ",
+      "members": [
+        {
+          "food_code": "food_becf1c4a15",
+          "name": "玉ねぎ",
+          "category": "根・芋・球根",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_becf1c4a15"
+        },
+        {
+          "food_code": "food_4c683a1bba",
+          "name": "冷凍刻み玉ねぎ",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_becf1c4a15"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape"
+      ],
+      "pairing_rule": "never_pair_members; retain cut size",
+      "rationale": "同じ根菜の生鮮/冷凍刻み。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I011",
+      "canonical_identity": "にんにく",
+      "members": [
+        {
+          "food_code": "food_7d25864ee8",
+          "name": "にんにく",
+          "category": "根・芋・球根",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_7d25864ee8"
+        },
+        {
+          "food_code": "food_0fa229b0e4",
+          "name": "冷凍にんにく",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_7d25864ee8"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同じ原料の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I012",
+      "canonical_identity": "しょうが",
+      "members": [
+        {
+          "food_code": "food_91f8847840",
+          "name": "しょうが",
+          "category": "根・芋・球根",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_91f8847840"
+        },
+        {
+          "food_code": "food_d46257f09f",
+          "name": "冷凍しょうが",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_91f8847840"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同じ原料の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I013",
+      "canonical_identity": "れんこん",
+      "members": [
+        {
+          "food_code": "food_21431f2438",
+          "name": "れんこん",
+          "category": "根・芋・球根",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_21431f2438"
+        },
+        {
+          "food_code": "food_2e774fdb47",
+          "name": "冷凍れんこん",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_21431f2438"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape",
+        "blanching"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同じ根菜の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I014",
+      "canonical_identity": "里芋",
+      "members": [
+        {
+          "food_code": "food_f97023978f",
+          "name": "里芋",
+          "category": "根・芋・球根",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_f97023978f"
+        },
+        {
+          "food_code": "food_08ac989db2",
+          "name": "冷凍里芋",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_f97023978f"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "peeling",
+        "blanching"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同じ芋の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I015",
+      "canonical_identity": "いちご",
+      "members": [
+        {
+          "food_code": "food_4e32576299",
+          "name": "いちご",
+          "category": "季節果物",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "seasonal",
+          "role": "main/support/aroma",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_4e32576299"
+        },
+        {
+          "food_code": "food_32e18fe3cb",
+          "name": "冷凍いちご",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_4e32576299"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "sugar_addition"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同じ果実の生鮮/冷凍。砂糖添加の有無は別属性で要確認。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I016",
+      "canonical_identity": "パイナップル",
+      "members": [
+        {
+          "food_code": "food_03697fab69",
+          "name": "パイナップル",
+          "category": "果物",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support/aroma",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_03697fab69"
+        },
+        {
+          "food_code": "food_a73f050cb8",
+          "name": "冷凍パイナップル",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_03697fab69"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "sugar_addition"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同じ果実の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I017",
+      "canonical_identity": "たら",
+      "members": [
+        {
+          "food_code": "food_f0f6fdf7de",
+          "name": "たら",
+          "category": "魚",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_f0f6fdf7de"
+        },
+        {
+          "food_code": "food_325975e898",
+          "name": "冷凍たら",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_f0f6fdf7de"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "salted"
+      ],
+      "pairing_rule": "never_pair_members; salted must not inherit raw route",
+      "rationale": "同一魚の生鮮/冷凍。塩たら等の商品表示があれば別variant。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I018",
+      "canonical_identity": "生鮭",
+      "members": [
+        {
+          "food_code": "food_901297db57",
+          "name": "生鮭",
+          "category": "魚",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_901297db57"
+        },
+        {
+          "food_code": "food_59f5fa3af1",
+          "name": "冷凍鮭",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_03647f07d3"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "salted"
+      ],
+      "pairing_rule": "never_pair_members; salted/smoked/seasoned remain distinct",
+      "rationale": "同一魚の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I019",
+      "canonical_identity": "むきえび",
+      "members": [
+        {
+          "food_code": "food_89e30ebb06",
+          "name": "むきえび",
+          "category": "魚介",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_89e30ebb06"
+        },
+        {
+          "food_code": "food_6e698ef1c8",
+          "name": "冷凍むきえび",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_89e30ebb06"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "peeled",
+        "size_grade",
+        "preservative"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同一形態の生鮮/冷凍。殻付きえびとは別形態。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I020",
+      "canonical_identity": "いか",
+      "members": [
+        {
+          "food_code": "food_eda9dcc547",
+          "name": "いか",
+          "category": "魚介",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_eda9dcc547"
+        },
+        {
+          "food_code": "food_a61e691e21",
+          "name": "冷凍いか",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_eda9dcc547"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape",
+        "cleaned"
+      ],
+      "pairing_rule": "never_pair_members",
+      "rationale": "同一魚介の生鮮/冷凍。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I021",
+      "canonical_identity": "たけのこ",
+      "members": [
+        {
+          "food_code": "food_e19787dac1",
+          "name": "たけのこ",
+          "category": "季節野菜",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "seasonal",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_e19787dac1"
+        },
+        {
+          "food_code": "food_9ca701d1f7",
+          "name": "水煮たけのこ",
+          "category": "漬物・保存食",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_e19787dac1"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "preservation",
+        "cut_shape",
+        "salt_brine"
+      ],
+      "pairing_rule": "never_pair_members; canned/water-packed route drains and does not use raw timing",
+      "rationale": "同じたけのこ原料だが、水煮は保存液・下処理を伴う。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I022",
+      "canonical_identity": "焼きのり",
+      "members": [
+        {
+          "food_code": "food_878f67e649",
+          "name": "焼きのり",
+          "category": "海藻・乾物",
+          "kind": "processed",
+          "state": "dry",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_878f67e649"
+        },
+        {
+          "food_code": "food_3456bea5f9",
+          "name": "刻みのり",
+          "category": "海藻・乾物",
+          "kind": "processed",
+          "state": "dry",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_3456bea5f9"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "cut_shape",
+        "package_size"
+      ],
+      "pairing_rule": "never_pair_members; garnish form is a variant",
+      "rationale": "同じ海苔の切断形態。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I023",
+      "canonical_identity": "カット/ホールトマト缶",
+      "members": [
+        {
+          "food_code": "food_a26ae903cd",
+          "name": "カットトマト缶",
+          "category": "缶詰・瓶詰",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "総内容量・固形量・缶汁の使用/廃棄を分離",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_a26ae903cd"
+        },
+        {
+          "food_code": "food_e562129993",
+          "name": "ホールトマト缶",
+          "category": "缶詰・瓶詰",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "総内容量・固形量・缶汁の使用/廃棄を分離",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_e562129993"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "cut_shape",
+        "juice_ratio",
+        "package_size",
+        "brand"
+      ],
+      "pairing_rule": "never_pair_members; use one canned-tomato identity per candidate",
+      "rationale": "同じ缶詰トマトで切断形状が違う。生トマトとは保存・水分が異なるため別identity。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I024",
+      "canonical_identity": "ツナ缶",
+      "members": [
+        {
+          "food_code": "food_bf82ec41c9",
+          "name": "ツナ水煮缶",
+          "category": "缶詰・瓶詰",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "総内容量・固形量・缶汁の使用/廃棄を分離",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_bf82ec41c9"
+        },
+        {
+          "food_code": "food_0a7cc0d475",
+          "name": "ツナ油漬け缶",
+          "category": "缶詰・瓶詰",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "総内容量・固形量・缶汁の使用/廃棄を分離",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_0a7cc0d475"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "preserve_medium",
+        "drained_weight",
+        "oil_carryover",
+        "brand"
+      ],
+      "pairing_rule": "never pair members; oil medium changes quantity and fat",
+      "rationale": "同じ魚種クラスの缶詰だが、水煮/油漬けを味・油量なしで同一視しない。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I025",
+      "canonical_identity": "生バジル",
+      "members": [
+        {
+          "food_code": "food_1b27b9a6ae",
+          "name": "生バジル",
+          "category": "生ハーブ",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "store_dependent",
+          "role": "aroma/garnish",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_1b27b9a6ae"
+        },
+        {
+          "food_code": "food_b8dc023759",
+          "name": "乾燥バジル",
+          "category": "香辛料",
+          "kind": "processed",
+          "state": "dry",
+          "unit": "g",
+          "availability": "common",
+          "role": "aroma/seasoning",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_b8dc023759"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "fresh_dried",
+        "water_content",
+        "cut_size"
+      ],
+      "pairing_rule": "never pair members; use fresh/dried conversion only when explicitly configured",
+      "rationale": "同じハーブの生/乾燥。重量換算を固定値で仮定しない。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I026",
+      "canonical_identity": "生パセリ",
+      "members": [
+        {
+          "food_code": "food_c725393419",
+          "name": "生パセリ",
+          "category": "生ハーブ",
+          "kind": "basic",
+          "state": "raw",
+          "unit": "g",
+          "availability": "store_dependent",
+          "role": "aroma/garnish",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_c725393419"
+        },
+        {
+          "food_code": "food_b630d6ca8c",
+          "name": "乾燥パセリ",
+          "category": "香辛料",
+          "kind": "processed",
+          "state": "dry",
+          "unit": "g",
+          "availability": "common",
+          "role": "aroma/seasoning",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_b630d6ca8c"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "fresh_dried",
+        "water_content",
+        "cut_size"
+      ],
+      "pairing_rule": "never pair members",
+      "rationale": "同じハーブの生/乾燥。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I027",
+      "canonical_identity": "豆乳",
+      "members": [
+        {
+          "food_code": "food_c5fac15450",
+          "name": "無調整豆乳",
+          "category": "飲料",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "ml",
+          "availability": "common",
+          "role": "medium/aroma/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_c5fac15450"
+        },
+        {
+          "food_code": "food_eaa7278183",
+          "name": "調製豆乳",
+          "category": "飲料",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "ml",
+          "availability": "common",
+          "role": "medium/aroma/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_eaa7278183"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "sweetness",
+        "fat_solids",
+        "stabilizer",
+        "brand"
+      ],
+      "pairing_rule": "never pair members; sweetness and solids affect flavor/texture",
+      "rationale": "同じ豆乳系だが調製品の糖・添加物を無調整品として扱わない。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I028",
+      "canonical_identity": "牛乳",
+      "members": [
+        {
+          "food_code": "food_ce72cd6b4e",
+          "name": "牛乳",
+          "category": "乳製品",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_ce72cd6b4e"
+        },
+        {
+          "food_code": "food_76de44ae55",
+          "name": "低脂肪乳",
+          "category": "乳製品",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_76de44ae55"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "fat_percent",
+        "solids",
+        "brand"
+      ],
+      "pairing_rule": "never pair members; fat/solids affect emulsion and dessert texture",
+      "rationale": "同じ乳飲料系だが脂肪率を保持する。スキムミルク粉・エバミルクは別。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I029",
+      "canonical_identity": "バター",
+      "members": [
+        {
+          "food_code": "food_07507f45f2",
+          "name": "バター",
+          "category": "乳製品",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_07507f45f2"
+        },
+        {
+          "food_code": "food_348e4edea6",
+          "name": "無塩バター",
+          "category": "乳製品",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_348e4edea6"
+        },
+        {
+          "food_code": "food_4fe257bc2b",
+          "name": "発酵バター",
+          "category": "乳製品",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "store_dependent",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_4fe257bc2b"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "salted_unsalted",
+        "fermentation",
+        "fat_percent",
+        "brand"
+      ],
+      "pairing_rule": "never pair members; salt must enter seasoning budget",
+      "rationale": "同じバター系だが塩分・発酵風味を保持する。マーガリンは別。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I030",
+      "canonical_identity": "醤油",
+      "members": [
+        {
+          "food_code": "food_b07fd7d390",
+          "name": "濃口醤油",
+          "category": "液体調味料",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "ml",
+          "availability": "common",
+          "role": "seasoning",
+          "modeling": "濃縮率・糖塩量・希釈水を商品版で保持",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_b07fd7d390"
+        },
+        {
+          "food_code": "food_b2a9cb7684",
+          "name": "薄口醤油",
+          "category": "液体調味料",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "ml",
+          "availability": "common",
+          "role": "seasoning",
+          "modeling": "濃縮率・糖塩量・希釈水を商品版で保持",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_b2a9cb7684"
+        },
+        {
+          "food_code": "food_197109d3b5",
+          "name": "減塩醤油",
+          "category": "液体調味料",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "ml",
+          "availability": "common",
+          "role": "seasoning",
+          "modeling": "濃縮率・糖塩量・希釈水を商品版で保持",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_197109d3b5"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "style",
+        "salt_level",
+        "color",
+        "brand"
+      ],
+      "pairing_rule": "never pair members; route-specific salt/color substitution required",
+      "rationale": "同じ醤油系として数えるが、薄口/減塩を無調整の同量代替にしない。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I031",
+      "canonical_identity": "ケチャップ",
+      "members": [
+        {
+          "food_code": "food_aecde50b0f",
+          "name": "ケチャップ",
+          "category": "ペースト調味料",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "seasoning/aroma",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_aecde50b0f"
+        },
+        {
+          "food_code": "food_bc4ecd043e",
+          "name": "トマトケチャップ（減塩）",
+          "category": "ペースト調味料",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "seasoning/aroma",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_bc4ecd043e"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "salt_level",
+        "sugar_acidity",
+        "brand"
+      ],
+      "pairing_rule": "never pair members; salt/sugar values remain product_variant",
+      "rationale": "同じケチャップ系の減塩版。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I032",
+      "canonical_identity": "うどん",
+      "members": [
+        {
+          "food_code": "food_995ff025da",
+          "name": "乾燥うどん",
+          "category": "麺・粉",
+          "kind": "processed",
+          "state": "dry",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_9df6df12d7"
+        },
+        {
+          "food_code": "food_393dbab7a4",
+          "name": "ゆでうどん",
+          "category": "麺・粉",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_9df6df12d7"
+        },
+        {
+          "food_code": "food_47326358b2",
+          "name": "冷凍うどん",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_9df6df12d7"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "hydration_state",
+        "temperature_state",
+        "thickness",
+        "preboiled"
+      ],
+      "pairing_rule": "never pair members; route must use matching hydration/cook step",
+      "rationale": "同じ麺種だが、乾燥/ゆで/冷凍は水分と調理工程が異なる。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I033",
+      "canonical_identity": "そば",
+      "members": [
+        {
+          "food_code": "food_c5ed187398",
+          "name": "乾燥そば",
+          "category": "麺・粉",
+          "kind": "processed",
+          "state": "dry",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_aea7b47073"
+        },
+        {
+          "food_code": "food_1b87daf694",
+          "name": "ゆでそば",
+          "category": "麺・粉",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_aea7b47073"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "hydration_state",
+        "preboiled",
+        "thickness"
+      ],
+      "pairing_rule": "never pair members; matching cook route required",
+      "rationale": "同じ麺種の乾燥/ゆで。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I034",
+      "canonical_identity": "アーモンド",
+      "members": [
+        {
+          "food_code": "food_831c904674",
+          "name": "アーモンド",
+          "category": "ナッツ・種",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "texture/aroma/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_831c904674"
+        },
+        {
+          "food_code": "food_ac669a7e07",
+          "name": "アーモンドスライス",
+          "category": "ナッツ・種",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "store_dependent",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_831c904674"
+        },
+        {
+          "food_code": "food_7b02a8a922",
+          "name": "アーモンドパウダー",
+          "category": "ナッツ・種",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "store_dependent",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_831c904674"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "particle_size",
+        "cut_shape",
+        "roast",
+        "brand"
+      ],
+      "pairing_rule": "never pair members; particle_size affects texture and dosage",
+      "rationale": "同じナッツだが、切片/粉は食感・計量が異なる。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I035",
+      "canonical_identity": "あん",
+      "members": [
+        {
+          "food_code": "food_fa08574238",
+          "name": "あんこ缶",
+          "category": "缶詰・瓶詰",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "総内容量・固形量・缶汁の使用/廃棄を分離",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_fa08574238"
+        },
+        {
+          "food_code": "food_2d8319783a",
+          "name": "つぶあん",
+          "category": "菓子・デザート",
+          "kind": "ready_meal",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support/texture",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_2d8319783a"
+        },
+        {
+          "food_code": "food_f8f510dd9d",
+          "name": "こしあん",
+          "category": "菓子・デザート",
+          "kind": "ready_meal",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support/texture",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_f8f510dd9d"
+        },
+        {
+          "food_code": "food_536f0c11e8",
+          "name": "白あん",
+          "category": "菓子・デザート",
+          "kind": "ready_meal",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support/texture",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_536f0c11e8"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "bean_type",
+        "texture",
+        "sweetness",
+        "package_size"
+      ],
+      "pairing_rule": "never pair members; bean type/texture/sugar are explicit",
+      "rationale": "甘味材料として同系統だが、豆種・粒/こし・糖度を保持する。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I036",
+      "canonical_identity": "冷凍/チルド鶏つくね",
+      "members": [
+        {
+          "food_code": "food_74fd92cadc",
+          "name": "冷凍鶏つくね",
+          "category": "冷凍完成品",
+          "kind": "ready_meal",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_88f734dea1"
+        },
+        {
+          "food_code": "food_444304ba58",
+          "name": "チルド鶏つくね",
+          "category": "チルド・惣菜",
+          "kind": "ready_meal",
+          "state": "cooked",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_444304ba58"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "sauce",
+        "size",
+        "brand"
+      ],
+      "pairing_rule": "never pair members; route must distinguish frozen/chilled",
+      "rationale": "同一惣菜の保存状態差。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I037",
+      "canonical_identity": "冷凍/チルドワンタン",
+      "members": [
+        {
+          "food_code": "food_8083a1062e",
+          "name": "冷凍ワンタン",
+          "category": "冷凍完成品",
+          "kind": "ready_meal",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_0feb9fbad1"
+        },
+        {
+          "food_code": "food_8548e11616",
+          "name": "チルドワンタン",
+          "category": "チルド・惣菜",
+          "kind": "ready_meal",
+          "state": "cooked",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_8548e11616"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "filling",
+        "skin",
+        "brand"
+      ],
+      "pairing_rule": "never pair members",
+      "rationale": "同一惣菜の保存状態差。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I038",
+      "canonical_identity": "冷凍/チルド小籠包",
+      "members": [
+        {
+          "food_code": "food_ee3d76764d",
+          "name": "冷凍小籠包",
+          "category": "冷凍完成品",
+          "kind": "ready_meal",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_98562916c4"
+        },
+        {
+          "food_code": "food_149a88861c",
+          "name": "チルド小籠包",
+          "category": "チルド・惣菜",
+          "kind": "ready_meal",
+          "state": "cooked",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_149a88861c"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "filling",
+        "skin",
+        "brand"
+      ],
+      "pairing_rule": "never pair members",
+      "rationale": "同一惣菜の保存状態差。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I039",
+      "canonical_identity": "ハンバーグ（販売形態）",
+      "members": [
+        {
+          "food_code": "food_59a41b67af",
+          "name": "レトルトハンバーグ",
+          "category": "レトルト・常温惣菜",
+          "kind": "ready_meal",
+          "state": "cooked",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_d146b38f58"
+        },
+        {
+          "food_code": "food_ef6fdc58bb",
+          "name": "冷凍ハンバーグ",
+          "category": "冷凍完成品",
+          "kind": "ready_meal",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "調理済み/未加熱を商品版で確認し、表示方法で仕上げる",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_d146b38f58"
+        },
+        {
+          "food_code": "food_220b4c02b6",
+          "name": "チルドハンバーグ",
+          "category": "チルド・惣菜",
+          "kind": "ready_meal",
+          "state": "ready",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "商品・販売形態に応じfood_form/product_versionを追加。入手性は想定",
+          "collection": "新規整理",
+          "evidence": "S05・一般的な売場分類（個別SKU未調査）",
+          "existing_identity_id": "ident_220b4c02b6"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "retort_process",
+        "sauce",
+        "brand"
+      ],
+      "pairing_rule": "never pair members; ready-to-eat route and sauce are variant",
+      "rationale": "同じ料理型の販売形態差。生ひき肉とは別identity。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I040",
+      "canonical_identity": "筑前煮（販売形態）",
+      "members": [
+        {
+          "food_code": "food_96cdc93652",
+          "name": "レトルト筑前煮",
+          "category": "レトルト・常温惣菜",
+          "kind": "ready_meal",
+          "state": "cooked",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_57b41068dd"
+        },
+        {
+          "food_code": "food_7335a4577d",
+          "name": "惣菜筑前煮",
+          "category": "チルド・惣菜",
+          "kind": "ready_meal",
+          "state": "cooked",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_57b41068dd"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "retort_process",
+        "sauce",
+        "package_size"
+      ],
+      "pairing_rule": "never pair members; ready-to-eat route",
+      "rationale": "同じ完成惣菜の販売形態差。",
+      "confidence": "high"
+    },
+    {
+      "group_id": "I041",
+      "canonical_identity": "焼き芋",
+      "members": [
+        {
+          "food_code": "food_92d6adeac8",
+          "name": "焼き芋",
+          "category": "果物",
+          "kind": "processed",
+          "state": "ready",
+          "unit": "g",
+          "availability": "store_dependent",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_92d6adeac8"
+        },
+        {
+          "food_code": "food_1f71cd7841",
+          "name": "冷凍焼き芋",
+          "category": "冷凍素材",
+          "kind": "processed",
+          "state": "frozen",
+          "unit": "g",
+          "availability": "common",
+          "role": "main/support",
+          "modeling": "v2追加。汎用食品概念;商品仕様と数量換算は別途確認",
+          "collection": "v2拡張",
+          "evidence": "TOPVALU等の売場を参考に提案。個別在庫は未確認",
+          "existing_identity_id": "ident_92d6adeac8"
+        }
+      ],
+      "disposition": "merge_identity_preserve_variant",
+      "variant_dimensions": [
+        "temperature_state",
+        "cooking_state",
+        "package_size"
+      ],
+      "pairing_rule": "never pair members",
+      "rationale": "同じ加熱済み芋の常温/冷凍販売形態。生さつまいもとは別料理工程。",
+      "confidence": "high"
+    }
+  ],
+  "split_required": [
+    {
+      "group_id": "S001",
+      "names": [
+        "木綿豆腐",
+        "絹ごし豆腐",
+        "充填豆腐",
+        "焼き豆腐",
+        "厚揚げ",
+        "油揚げ",
+        "がんもどき"
+      ],
+      "food_codes": [
+        "food_75d6a24a4f",
+        "food_75a5c3b8a8",
+        "food_8c5b8a4fb3",
+        "food_1bf2d4b325",
+        "food_fbfaa3983b",
+        "food_0e1cfa819a",
+        "food_9827aa81fe"
+      ],
+      "rule": "keep_separate_identity",
+      "reason": "水分、凝固、表面加熱、形状、油含有が違い、同じ副材として置換すると工程・食感が変わる。 variants may share soy_family but must not be paired as independent foods."
+    },
+    {
+      "group_id": "S002",
+      "names": [
+        "鶏卵",
+        "温泉卵",
+        "ゆで卵",
+        "うずら卵"
+      ],
+      "food_codes": [
+        "food_7cd14b25a8",
+        "food_0c8cff3734",
+        "food_c4048ddf5f",
+        "food_0d1e540094"
+      ],
+      "rule": "keep_separate_identity",
+      "reason": "生/半加熱/加熱済みと卵種が異なる。raw eggをready-to-eat eggとして扱わない。"
+    },
+    {
+      "group_id": "S003",
+      "names": [
+        "大豆",
+        "蒸し大豆",
+        "水煮大豆",
+        "黒豆",
+        "蒸し黒豆"
+      ],
+      "food_codes": [
+        "food_140a69f2e5",
+        "food_5b8b88c0a4",
+        "food_f82ccbd302",
+        "food_55020caca8",
+        "food_e13720ba63"
+      ],
+      "rule": "keep_separate_identity",
+      "reason": "乾燥豆、加熱済み豆、豆種を一つに畳むと浸水・加熱工程と重量が壊れる。"
+    },
+    {
+      "group_id": "S004",
+      "names": [
+        "あさり",
+        "ボイルむきあさり",
+        "冷凍あさり"
+      ],
+      "food_codes": [
+        "food_9402a19e96",
+        "food_46db245ac4",
+        "food_c7ca99e0d2"
+      ],
+      "rule": "split_preboiled_from_raw",
+      "reason": "冷凍あさりは原料状態variantとして扱えるが、ボイルむきあさりは加熱済み・殻除去済みで生あさりの工程を共有しない。"
+    },
+    {
+      "group_id": "S005",
+      "names": [
+        "ほたて",
+        "蒸しほたて",
+        "ボイルベビーホタテ",
+        "冷凍ほたて"
+      ],
+      "food_codes": [
+        "food_e0e5508fef",
+        "food_6158c463e9",
+        "food_95b44673fb",
+        "food_bac8c78117"
+      ],
+      "rule": "split_cooked_and_size",
+      "reason": "蒸し/ボイル済みと生・冷凍、さらにベビーサイズを同じ調理適性として扱えない。species_familyは共有可。"
+    },
+    {
+      "group_id": "S006",
+      "names": [
+        "なす",
+        "冷凍揚げなす"
+      ],
+      "food_codes": [
+        "food_91d45dd5e9",
+        "food_5cb5604852"
+      ],
+      "rule": "split_pre_fried",
+      "reason": "冷凍揚げなすは油吸収・加熱済みで、生なすの炒め/煮込み工程とは異なる。identity familyを共有する場合も pre_cooked=true を必須にする。"
+    },
+    {
+      "group_id": "S007",
+      "names": [
+        "長芋",
+        "冷凍とろろ"
+      ],
+      "food_codes": [
+        "food_1475111669",
+        "food_f097bf1564"
+      ],
+      "rule": "split_grated",
+      "reason": "丸の長芋と冷凍すりおろしは形状・水分・用途が違う。"
+    },
+    {
+      "group_id": "S008",
+      "names": [
+        "ひよこ豆缶",
+        "蒸しひよこ豆",
+        "乾燥ひよこ豆"
+      ],
+      "food_codes": [
+        "food_9288d3ce35",
+        "food_74002c19be",
+        "food_0552491cc9"
+      ],
+      "rule": "split_dry_from_ready",
+      "reason": "乾燥品と缶/蒸し済みでは浸水・加熱・排液が違う。缶/蒸しは同系統でも保存液と下処理をvariantにする。"
+    },
+    {
+      "group_id": "S009",
+      "names": [
+        "舞茸以外のきのこミックス",
+        "冷凍きのこミックス"
+      ],
+      "food_codes": [
+        "food_0bc4e85d23",
+        "food_cbdffbf1e5"
+      ],
+      "rule": "do_not_merge_without_composition_snapshot",
+      "reason": "一方は内容構成が名称から決まらず、もう一方は冷凍品。混合物は構成リスト・重量比・状態がない限り同一性を計算に入れない。"
+    },
+    {
+      "group_id": "S010",
+      "names": [
+        "乾燥わかめ",
+        "塩蔵わかめ"
+      ],
+      "food_codes": [
+        "food_5a0da2643b",
+        "food_4f8ba2af06"
+      ],
+      "rule": "share_seaweed_family_but_preserve_salt_and_rehydration",
+      "reason": "既存identityの共有は可能だが、塩蔵を乾燥品として扱うと塩分・戻し工程が欠落する。"
+    },
+    {
+      "group_id": "S011",
+      "names": [
+        "米酢",
+        "穀物酢",
+        "黒酢",
+        "りんご酢"
+      ],
+      "food_codes": [
+        "food_26a7f7401d",
+        "food_cb158be1d6",
+        "food_383af4a1fc",
+        "food_a2a8fec84f"
+      ],
+      "rule": "keep_flavor_variants_separate",
+      "reason": "酸味・香り・原料が異なり、濃度だけの同一性ではない。酢familyタグは共有してよい。"
+    },
+    {
+      "group_id": "S012",
+      "names": [
+        "濃口醤油",
+        "薄口醤油",
+        "減塩醤油"
+      ],
+      "food_codes": [
+        "food_b07fd7d390",
+        "food_b2a9cb7684",
+        "food_197109d3b5"
+      ],
+      "rule": "identity_family_plus_noninterchangeable_variant",
+      "reason": "同じ醤油familyだが、色、塩分、風味が違う。identity数を一つにしてもvariant無しの組合せにしない。"
+    },
+    {
+      "group_id": "S013",
+      "names": [
+        "本みりん",
+        "みりん風調味料"
+      ],
+      "food_codes": [
+        "food_324c76bbff",
+        "food_4c38330556"
+      ],
+      "rule": "keep_alcohol_and_sugar_variant",
+      "reason": "アルコール・糖・加熱寄与が異なる。単純な同量置換をしない。"
+    },
+    {
+      "group_id": "S014",
+      "names": [
+        "冷凍シーフードミックス",
+        "えび",
+        "いか",
+        "あさり",
+        "ほたて"
+      ],
+      "food_codes": [
+        "food_e4cadd5652",
+        "food_edffb44ef0",
+        "food_eda9dcc547",
+        "food_9402a19e96",
+        "food_e0e5508fef"
+      ],
+      "rule": "composite_not_atomic_alias",
+      "reason": "ミックスは複数原料の混合物で、単一魚介identityと同一視できない。構成スナップショットがない組合せは除外。"
+    }
+  ],
+  "availability_findings": [
+    {
+      "severity": "high",
+      "food_names": [
+        "舞茸以外のきのこミックス"
+      ],
+      "food_codes": [
+        "food_0bc4e85d23"
+      ],
+      "issue": "名称が内容構成を規定しない。さらに「舞茸以外」は除外条件であり、安定した食品概念でない。",
+      "action": "composition_snapshot（構成、重量比、状態）が得られるまで store_dependent か候補除外。"
+    },
+    {
+      "severity": "medium",
+      "food_names": [
+        "牡蠣",
+        "しらす",
+        "生しらす",
+        "あゆ",
+        "うなぎ蒲焼",
+        "いくら",
+        "数の子"
+      ],
+      "food_codes": [
+        "food_7fbfd75a89",
+        "food_3644c89f87",
+        "food_6349f8b841",
+        "food_9185555e9b",
+        "food_3da5b5410d",
+        "food_b90e2e1a94",
+        "food_0446ec2134"
+      ],
+      "issue": "地域・季節・鮮度で売場依存が高い。common一律にせず seasonal/store_dependent と実測在庫を分離。",
+      "action": "availabilityは食品固有の断定でなく地域×日付×販売形態の観測値にする。"
+    },
+    {
+      "severity": "medium",
+      "food_names": [
+        "鶏レバー",
+        "豚レバー",
+        "豚もつ",
+        "牛すじ",
+        "牛タン"
+      ],
+      "food_codes": [
+        "food_9bf2aa89cc",
+        "food_2a4f8bce14",
+        "food_1e55fc8d81",
+        "food_d155396ac2",
+        "food_2f0ad611a9"
+      ],
+      "issue": "一般肉より売場・下処理依存が高いが、baseではcommon/store_dependentが混在。",
+      "action": "部位は common 断定を避け、store_dependent または小売観測で層別。"
+    },
+    {
+      "severity": "medium",
+      "food_names": [
+        "生バジル",
+        "生パセリ",
+        "パクチー",
+        "生ミント",
+        "銀だら",
+        "ほっけ",
+        "赤魚",
+        "わかさぎ",
+        "きす",
+        "にしん"
+      ],
+      "food_codes": [
+        "food_1b27b9a6ae",
+        "food_c725393419",
+        "food_8ccf7ef9fa",
+        "food_4d862d5e20",
+        "food_ca677215bb",
+        "food_0d7f9039e8",
+        "food_29405753b5",
+        "food_fc832365e1",
+        "food_d7352a3265",
+        "food_2e553a4bb9"
+      ],
+      "issue": "scaleではstore_dependentだが、季節性・冷凍代替・地域差を別軸にせず単一ラベルで扱うと誤る。",
+      "action": "availability_statusをcommon/seasonal/store_dependentの一値で固定せず、観測日・形態・地域を保持。"
+    }
+  ],
+  "variant_rules": [
+    {
+      "rule_id": "V001",
+      "dimension": "concentration",
+      "examples": [
+        "めんつゆ2倍",
+        "めんつゆ3倍",
+        "めんつゆ4倍"
+      ],
+      "requirement": "identityはめんつゆ一つ。product_variantにconcentration_multiplierを保存。レシピの希釈後量・原液量・塩糖量は商品表示値がある場合だけ計算し、数字の名称だけで栄養値を作らない。"
+    },
+    {
+      "rule_id": "V002",
+      "dimension": "brand_and_package",
+      "examples": [
+        "全食品"
+      ],
+      "requirement": "ブランド、メーカー、容量、容器、JAN/SKU、人数向け包装はidentity・料理組合せの軸にしない。product_variantまたは購買SKUにのみ保持。"
+    },
+    {
+      "rule_id": "V003",
+      "dimension": "salt_sugar_fat",
+      "examples": [
+        "減塩醤油",
+        "塩鮭",
+        "ツナ油漬け缶",
+        "無塩バター",
+        "調製豆乳"
+      ],
+      "requirement": "塩分・糖分・油脂の差はvariantとして保持し、同じ味付け候補の独立組合せにしない。味付け計算は商品表示があるものだけ。"
+    },
+    {
+      "rule_id": "V004",
+      "dimension": "preparation_and_temperature",
+      "examples": [
+        "生鮭/冷凍鮭",
+        "乾燥うどん/ゆでうどん/冷凍うどん",
+        "生野菜/冷凍野菜"
+      ],
+      "requirement": "raw, frozen, chilled, boiled, fried, dried, grated, canned, retort, ready_to_eatを状態属性にし、操作DAGで工程を一致させる。"
+    },
+    {
+      "rule_id": "V005",
+      "dimension": "cut_and_particle",
+      "examples": [
+        "焼きのり/刻みのり",
+        "ごぼう/冷凍ささがきごぼう",
+        "アーモンド/スライス/パウダー"
+      ],
+      "requirement": "切断・粒度・形状はvariantに保存し、同一identityのままでも組合せ候補を一つにする。"
+    },
+    {
+      "rule_id": "V006",
+      "dimension": "mixture_composition",
+      "examples": [
+        "冷凍シーフードミックス",
+        "ミックスナッツ",
+        "冷凍きのこミックス",
+        "ミックスベジタブル"
+      ],
+      "requirement": "混合物を単一原料の別名にしない。構成要素と重量比のスナップショットがない場合は厳密重複判定から除外または別composite identity。"
+    }
+  ],
+  "flavor_salt_heat_rules": [
+    {
+      "rule_id": "R001",
+      "type": "sweetness",
+      "rule": "甘い調味料・甘味食品はsweet flavor poolに限定し、savory templatesへ無条件に掛けない。めんつゆ・みりん・甘酢・たれは糖度をvariantにし、砂糖候補と同時選択時に過剰甘味の候補を落とす。"
+    },
+    {
+      "rule_id": "R002",
+      "type": "saltiness",
+      "rule": "塩鮭、塩さば、塩蔵わかめ、漬物、塩辛、味付け缶、減塩/薄口以外の調味料を「塩」一個として数えない。salt_budgetで既存塩分を引き、追加塩を任意掛合せから除外または量調整候補にする。"
+    },
+    {
+      "rule_id": "R003",
+      "type": "heating",
+      "rule": "raw protein/egg/seafood、冷凍品、乾燥豆、乾燥麺、ready-to-eat惣菜を同じroute集合に入れない。各variantに必要な解凍・戻し・加熱・排液・冷却操作が存在するrouteだけ許可する。"
+    },
+    {
+      "rule_id": "R004",
+      "type": "water_and_oil",
+      "rule": "冷凍野菜、缶汁、油漬け、揚げ済み品は水分・油分を工程入力へ渡す。追加油・追加液体を無条件に掛けず、drained/retained量が不明なら候補を保守的に棄却する。"
+    },
+    {
+      "rule_id": "R005",
+      "type": "compatibility",
+      "rule": "生鮮、乾物、加工済み、菓子・飲料は同じ料理familyに入るとは限らない。食品カテゴリだけでなく、flavor_pool×route×roleの適合辞書を通す。"
+    }
+  ],
+  "invalid_three_support_patterns": [
+    {
+      "pattern_id": "P001",
+      "name": "same_identity_variants",
+      "examples": [
+        "めんつゆ2倍 + めんつゆ3倍",
+        "ブロッコリー + 冷凍ブロッコリー",
+        "チルド鶏つくね + 冷凍鶏つくね"
+      ],
+      "reason": "同じidentityのvariant二重選択。"
+    },
+    {
+      "pattern_id": "P002",
+      "name": "raw_plus_prepared_same_material",
+      "examples": [
+        "鶏卵 + ゆで卵",
+        "大豆 + 蒸し大豆",
+        "あさり + ボイルむきあさり",
+        "なす + 冷凍揚げなす"
+      ],
+      "reason": "同一原料の下処理済みと未処理を副材に同時投入する重複。"
+    },
+    {
+      "pattern_id": "P003",
+      "name": "composite_plus_component",
+      "examples": [
+        "冷凍シーフードミックス + えび",
+        "ミックスナッツ + アーモンド",
+        "ミックスベジタブル + コーン"
+      ],
+      "reason": "混合物に構成要素を重ねて水増し。構成スナップショットを展開した場合も同一原料重複を除く。"
+    },
+    {
+      "pattern_id": "P004",
+      "name": "multiple_ready_dish_variants",
+      "examples": [
+        "冷凍餃子 + チルド餃子",
+        "レトルト筑前煮 + 惣菜筑前煮",
+        "冷凍コロッケ + 惣菜コロッケ"
+      ],
+      "reason": "同じ完成品料理の販売形態違いを一皿に重ねる。"
+    },
+    {
+      "pattern_id": "P005",
+      "name": "salt_stack",
+      "examples": [
+        "塩鮭 + 塩昆布 + めんつゆ",
+        "塩蔵わかめ + 味噌汁の素 + 醤油"
+      ],
+      "reason": "既存塩分を予算化せず味付けを積み上げる候補。商品表示がない場合は除外か試作待ち。"
+    },
+    {
+      "pattern_id": "P006",
+      "name": "route_mismatch",
+      "examples": [
+        "アイス/ゼリー + 高温炒め",
+        "乾燥豆 + 非加熱和え",
+        "生鮮肉 + 非加熱サラダ"
+      ],
+      "reason": "工程routeが食品状態に適合しない。具体的保証をせず、route validatorで候補を落とす。"
+    },
+    {
+      "pattern_id": "P007",
+      "name": "role_collision",
+      "examples": [
+        "主材と同じidentityを副材に選ぶ",
+        "副材3つが全て液体調味料",
+        "副材3つが全て完成惣菜"
+      ],
+      "reason": "副材数だけ増えて料理構造・役割が成立しない。役割クォータと料理構造ごとの上限を適用。"
+    }
+  ],
+  "non_inflationary_10m_exploration": [
+    {
+      "step": 1,
+      "action": "identity-first",
+      "detail": "1005食品をcatalog_releaseで固定し、ブランド/包装/濃度/状態をidentityとvariantへ分離。主材・副材の集合はidentity IDの無順序集合で数える。"
+    },
+    {
+      "step": 2,
+      "action": "variant-late",
+      "detail": "料理組合せの候補数はidentity tupleで一度だけ数え、商品variantは実在SKU・表示値が確定した段階で展開。variantだけで別レシピ件数を増やさない。"
+    },
+    {
+      "step": 3,
+      "action": "compatibility-gated",
+      "detail": "料理構造×役割×flavor×routeの適合辞書を先に通し、加熱状態・塩糖油・混合物構成の欠落は棄却理由を記録。"
+    },
+    {
+      "step": 4,
+      "action": "stratified_sampling",
+      "detail": "料理構造、主材カテゴリ、入手性、状態variantの層ごとに固定seedでpilot（例:各層1000件）を抽出し、適合・重複・公開通過率を分子分母つきで測る。"
+    },
+    {
+      "step": 5,
+      "action": "streaming_enumeration",
+      "detail": "混合基数と組合せunrankでordinal範囲をシャード化し、全1000万候補をメモリ・事前INSERTしない。候補キーにはidentity、variant制約、味付、工程DAGを含める。"
+    },
+    {
+      "step": 6,
+      "action": "dedupe_and_saturation",
+      "detail": "厳密キー、材料比率・操作DAG・味付の近似署名を段階的に検査。公開率が層別に飽和したら食品追加を止め、検索有用性と独自性の実測へ移る。目標数到達を保証しない。"
+    }
+  ],
+  "parent_implementation_notes": [
+    "既存scaleのS1/S2「同一性整理済み948」は監査前の暫定値として扱い、S001〜S014の修正を適用してidentity正規化版を上げる。",
+    "同じidentityに畳む場合でも、product_variantとoperation routeの不一致を候補キーで拒否する。",
+    "食品の扱い・調理安全性をこの監査JSONから保証しない。未確認はunknown/未試作として扱う。"
+  ]
+}

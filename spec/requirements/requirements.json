@@ -1,0 +1,478 @@
+{
+  "catalog_revision": 1,
+  "product": "RecipeWeave",
+  "requirements": [
+    {
+      "acceptance_criteria": [
+        {
+          "given": "RecipeWeaveの宣言入力がある",
+          "id": "AC-REQ-DOMAIN-001-1",
+          "then": "SKU濃度を独立指標として保持し、food semantic coverageと分けて評価する。",
+          "when": "受入検査を実行する"
+        }
+      ],
+      "action": "preserve",
+      "category": "functional",
+      "id": "REQ-DOMAIN-001",
+      "last_changed_by": "bootstrap:recipeweave",
+      "object": "food semantic identity",
+      "rationale": "食材の意味的な多様性をSKU表記の多さと混同せず、組合せ設計の対象にする。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-05",
+        "README.md"
+      ],
+      "status": "active",
+      "subject": "食品意味特徴量",
+      "superseded_by": "",
+      "title": "semantic food identity",
+      "traces": {
+        "design": [
+          "docs/design/generated/README.md"
+        ],
+        "implementation": [
+          "packages/generator/pyproject.toml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT",
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/README.md"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "moon task and targeted tests",
+        "method": "自動検査とartifact review"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "RecipeWeaveの宣言入力がある",
+          "id": "AC-REQ-ENUM-001-1",
+          "then": "列挙結果を正規化キーで重複排除し、同一入力の結果をバイト比較する。",
+          "when": "受入検査を実行する"
+        }
+      ],
+      "action": "preserve",
+      "category": "functional",
+      "id": "REQ-ENUM-001",
+      "last_changed_by": "bootstrap:recipeweave",
+      "object": "重複のない決定的な組合せ列",
+      "rationale": "再実行・並列化・入力順の同値変換でも安定した順序と一意な識別子を得る必要がある。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-05",
+        "README.md"
+      ],
+      "status": "active",
+      "subject": "組合せ列挙器",
+      "superseded_by": "",
+      "title": "deterministic unique enumeration",
+      "traces": {
+        "design": [
+          "docs/design/generated/README.md"
+        ],
+        "implementation": [
+          "packages/generator/pyproject.toml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT",
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/README.md"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "moon task and targeted tests",
+        "method": "自動検査とartifact review"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "RecipeWeaveの宣言入力がある",
+          "id": "AC-REQ-OUTPUT-001-1",
+          "then": "結果チャンク、件数、SHA256、入力digest、再開cursorをmanifestへ記録する。",
+          "when": "受入検査を実行する"
+        }
+      ],
+      "action": "preserve",
+      "category": "functional",
+      "id": "REQ-OUTPUT-001",
+      "last_changed_by": "bootstrap:recipeweave",
+      "object": "全量出力・SHA256 manifest・再開位置",
+      "rationale": "大量結果は一部成功を成功扱いせず、欠落を検出して再開できなければならない。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-05",
+        "README.md"
+      ],
+      "status": "active",
+      "subject": "出力器",
+      "superseded_by": "",
+      "title": "complete output manifest and resume",
+      "traces": {
+        "design": [
+          "docs/design/generated/README.md"
+        ],
+        "implementation": [
+          "packages/generator/pyproject.toml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT",
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/README.md"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "moon task and targeted tests",
+        "method": "自動検査とartifact review"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "RecipeWeaveの宣言入力がある",
+          "id": "AC-REQ-PERF-001-1",
+          "then": "ベンチマークは件数と時間を記録し、10m目標は未達なら未実装・未達として報告する。",
+          "when": "受入検査を実行する"
+        }
+      ],
+      "action": "preserve",
+      "category": "functional",
+      "id": "REQ-PERF-001",
+      "last_changed_by": "bootstrap:recipeweave",
+      "object": "将来一千万件規模へ拡張可能な実行契約",
+      "rationale": "初期データでの実績と将来目標を混同せず、ボトルネックを測定可能にする。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-05",
+        "README.md"
+      ],
+      "status": "active",
+      "subject": "組合せ実行基盤",
+      "superseded_by": "",
+      "title": "future ten million target",
+      "traces": {
+        "design": [
+          "docs/design/generated/README.md"
+        ],
+        "implementation": [
+          "packages/generator/pyproject.toml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT",
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/README.md"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "moon task and targeted tests",
+        "method": "自動検査とartifact review"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "RecipeWeaveの宣言入力がある",
+          "id": "AC-REQ-EVAL-001-1",
+          "then": "標本割当を盲検化し、Luna標本の手順・識別子・評価を別artifactとして固定する。",
+          "when": "受入検査を実行する"
+        }
+      ],
+      "action": "preserve",
+      "category": "functional",
+      "id": "REQ-EVAL-001",
+      "last_changed_by": "bootstrap:recipeweave",
+      "object": "blind independent Luna標本評価",
+      "rationale": "評価者の独立性と物理的な食味評価を、モデルの意味特徴やSKU評価と区別する。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-05",
+        "README.md"
+      ],
+      "status": "active",
+      "subject": "評価実験",
+      "superseded_by": "",
+      "title": "blind independent Luna evaluation",
+      "traces": {
+        "design": [
+          "docs/design/generated/README.md"
+        ],
+        "implementation": [
+          "packages/generator/pyproject.toml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT",
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/README.md"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "moon task and targeted tests",
+        "method": "自動検査とartifact review"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "RecipeWeaveの宣言入力がある",
+          "id": "AC-REQ-STATS-001-1",
+          "then": "分割seed、件数、除外条件、holdout固定状態をmanifestとレポートに残す。",
+          "when": "受入検査を実行する"
+        }
+      ],
+      "action": "preserve",
+      "category": "functional",
+      "id": "REQ-STATS-001",
+      "last_changed_by": "bootstrap:recipeweave",
+      "object": "train/holdout分離と漏洩検査",
+      "rationale": "探索結果を同じ標本で評価すると汎化性能を過大評価する。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-05",
+        "README.md"
+      ],
+      "status": "active",
+      "subject": "統計評価",
+      "superseded_by": "",
+      "title": "train holdout separation",
+      "traces": {
+        "design": [
+          "docs/design/generated/README.md"
+        ],
+        "implementation": [
+          "packages/generator/pyproject.toml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT",
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/README.md"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "moon task and targeted tests",
+        "method": "自動検査とartifact review"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "RecipeWeaveの宣言入力がある",
+          "id": "AC-REQ-DAG-001-1",
+          "then": "各原始材料の単位付き数量と工程ノード・依存辺を検証可能な形式で保存する。",
+          "when": "受入検査を実行する"
+        }
+      ],
+      "action": "preserve",
+      "category": "functional",
+      "id": "REQ-DAG-001",
+      "last_changed_by": "bootstrap:recipeweave",
+      "object": "原始材料数量と工程DAG",
+      "rationale": "完成料理名だけでは再現性や工程制約を表現できない。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-05",
+        "README.md"
+      ],
+      "status": "active",
+      "subject": "レシピ表現",
+      "superseded_by": "",
+      "title": "raw material quantities and process DAG",
+      "traces": {
+        "design": [
+          "docs/design/generated/README.md"
+        ],
+        "implementation": [
+          "packages/generator/pyproject.toml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT",
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/README.md"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "moon task and targeted tests",
+        "method": "自動検査とartifact review"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "RecipeWeaveの宣言入力がある",
+          "id": "AC-REQ-COST-001-1",
+          "then": "デフォルトはローカル・小規模dry-runとし、費用見積りと明示承認なしに外部大量処理を開始しない。",
+          "when": "受入検査を実行する"
+        }
+      ],
+      "action": "preserve",
+      "category": "functional",
+      "id": "REQ-COST-001",
+      "last_changed_by": "bootstrap:recipeweave",
+      "object": "ユーザー未承認の大量課金なし",
+      "rationale": "大量生成・外部評価・クラウド実行は費用を発生させうるため、承認境界を明示する。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-05",
+        "README.md"
+      ],
+      "status": "active",
+      "subject": "実験実行",
+      "superseded_by": "",
+      "title": "approved spending boundary",
+      "traces": {
+        "design": [
+          "docs/design/generated/README.md"
+        ],
+        "implementation": [
+          "packages/generator/pyproject.toml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT",
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/README.md"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "moon task and targeted tests",
+        "method": "自動検査とartifact review"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "RecipeWeaveの宣言入力がある",
+          "id": "AC-REQ-BOUNDARY-001-1",
+          "then": "各予約projectはREADMEとmoon設定を持ち、実装状態をplaceholderとして表示する。",
+          "when": "受入検査を実行する"
+        }
+      ],
+      "action": "preserve",
+      "category": "functional",
+      "id": "REQ-BOUNDARY-001",
+      "last_changed_by": "bootstrap:recipeweave",
+      "object": "frontend/backend/database/infra/batch/scriptsの境界",
+      "rationale": "将来の同居先を予約しつつ未実装機能を実装済みと表明しない。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-05",
+        "README.md"
+      ],
+      "status": "active",
+      "subject": "workspace",
+      "superseded_by": "",
+      "title": "future project boundaries",
+      "traces": {
+        "design": [
+          "docs/design/generated/README.md"
+        ],
+        "implementation": [
+          "packages/generator/pyproject.toml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT",
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/README.md"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "moon task and targeted tests",
+        "method": "自動検査とartifact review"
+      }
+    },
+    {
+      "acceptance_criteria": [
+        {
+          "given": "RecipeWeaveの宣言入力がある",
+          "id": "AC-REQ-DESIGN-001-1",
+          "then": "generatorの同一入力再実行で生成設計がbyte一致し、drift checkが差分を報告する。",
+          "when": "受入検査を実行する"
+        }
+      ],
+      "action": "preserve",
+      "category": "functional",
+      "id": "REQ-DESIGN-001",
+      "last_changed_by": "bootstrap:recipeweave",
+      "object": "実装artifact由来の決定的な設計導線",
+      "rationale": "設計文書が実装と乖離すると受入判断を誤る。",
+      "retirement_reason": "",
+      "revision": 1,
+      "scope": "project",
+      "source_refs": [
+        "user:2026-09-05",
+        "README.md"
+      ],
+      "status": "active",
+      "subject": "as-built設計",
+      "superseded_by": "",
+      "title": "implementation-derived design",
+      "traces": {
+        "design": [
+          "docs/design/generated/README.md"
+        ],
+        "implementation": [
+          "packages/generator/pyproject.toml"
+        ],
+        "standards": [
+          "DEVSTD-AS-BUILT",
+          "QUINT-0.32"
+        ],
+        "tests": [
+          "tests/README.md"
+        ]
+      },
+      "type": "functional",
+      "verification": {
+        "evidence": "moon task and targeted tests",
+        "method": "自動検査とartifact review"
+      }
+    }
+  ],
+  "schema_version": 1,
+  "updated_at": "2026-09-05"
+}

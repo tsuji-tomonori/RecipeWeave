@@ -1,0 +1,13 @@
+{
+  "name": "recipeweave-workspace",
+  "private": true,
+  "scripts": {
+    "moon": "moon",
+    "moon:lint": "moon run generator:lint",
+    "moon:test": "moon run generator:test",
+    "moon:check": "moon run generator:check"
+  },
+  "devDependencies": {
+    "@moonrepo/cli": "2.5.4"
+  }
+}

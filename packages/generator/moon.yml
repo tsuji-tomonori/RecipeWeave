@@ -1,0 +1,18 @@
+language: unknown
+layer: application
+tasks:
+  lint:
+    command: uv run --package recipeweave-generator ruff check packages/generator
+    options:
+      runFromWorkspaceRoot: true
+  test:
+    command: uv run --package recipeweave-generator pytest packages/generator
+    options:
+      runFromWorkspaceRoot: true
+  check:
+    command: python -c "print('generator checks passed')"
+    deps:
+      - lint
+      - test
+    options:
+      runFromWorkspaceRoot: true

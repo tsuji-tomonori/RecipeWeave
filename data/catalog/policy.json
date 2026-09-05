@@ -1,0 +1,1559 @@
+{
+  "version": "v3-20260905",
+  "availability": "common",
+  "aliases": [
+    {
+      "name": "めんつゆ",
+      "members": [
+        "めんつゆ2倍",
+        "めんつゆ3倍",
+        "めんつゆ4倍"
+      ],
+      "variant_dimensions": [
+        "concentration_multiplier",
+        "salt_sugar_per_ml",
+        "package_size",
+        "brand"
+      ],
+      "reason": "同じ調味料クラスの濃縮率違いで、料理組合せの独立軸にしない。2/3/4倍の名称だけでは実際の塩分・糖分を推定しない。"
+    },
+    {
+      "name": "ブロッコリー",
+      "members": [
+        "ブロッコリー",
+        "冷凍ブロッコリー"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "blanching",
+        "package_size"
+      ],
+      "reason": "同一野菜の生鮮/冷凍。冷凍は下処理・水分が異なるため工程属性を残す。"
+    },
+    {
+      "name": "ほうれん草",
+      "members": [
+        "ほうれん草",
+        "冷凍ほうれん草"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "blanching",
+        "cut_size"
+      ],
+      "reason": "同一野菜の生鮮/冷凍。"
+    },
+    {
+      "name": "いんげん",
+      "members": [
+        "いんげん",
+        "冷凍いんげん"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "blanching",
+        "cut_size"
+      ],
+      "reason": "同一野菜の生鮮/冷凍。"
+    },
+    {
+      "name": "かぼちゃ",
+      "members": [
+        "かぼちゃ",
+        "冷凍かぼちゃ"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "blanching"
+      ],
+      "reason": "同一野菜の生鮮/冷凍。"
+    },
+    {
+      "name": "オクラ",
+      "members": [
+        "オクラ",
+        "冷凍オクラ"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "blanching",
+        "cut_size"
+      ],
+      "reason": "同一野菜の生鮮/冷凍。"
+    },
+    {
+      "name": "そら豆",
+      "members": [
+        "そら豆",
+        "冷凍そら豆"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "blanching"
+      ],
+      "reason": "同一豆の生鮮/冷凍。"
+    },
+    {
+      "name": "アボカド",
+      "members": [
+        "アボカド",
+        "冷凍アボカド"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "oxidation"
+      ],
+      "reason": "同一果菜の生鮮/冷凍。"
+    },
+    {
+      "name": "ごぼう",
+      "members": [
+        "ごぼう",
+        "冷凍ごぼう",
+        "冷凍ささがきごぼう"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape",
+        "blanching"
+      ],
+      "reason": "同じ根菜だが、ささがきは切断形状を保持する。"
+    },
+    {
+      "name": "にんにく",
+      "members": [
+        "にんにく",
+        "冷凍にんにく"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape"
+      ],
+      "reason": "同じ原料の生鮮/冷凍。"
+    },
+    {
+      "name": "しょうが",
+      "members": [
+        "しょうが",
+        "冷凍しょうが"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape"
+      ],
+      "reason": "同じ原料の生鮮/冷凍。"
+    },
+    {
+      "name": "れんこん",
+      "members": [
+        "れんこん",
+        "冷凍れんこん"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape",
+        "blanching"
+      ],
+      "reason": "同じ根菜の生鮮/冷凍。"
+    },
+    {
+      "name": "里芋",
+      "members": [
+        "里芋",
+        "冷凍里芋"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "peeling",
+        "blanching"
+      ],
+      "reason": "同じ芋の生鮮/冷凍。"
+    },
+    {
+      "name": "いちご",
+      "members": [
+        "いちご",
+        "冷凍いちご"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "sugar_addition"
+      ],
+      "reason": "同じ果実の生鮮/冷凍。砂糖添加の有無は別属性で要確認。"
+    },
+    {
+      "name": "パイナップル",
+      "members": [
+        "パイナップル",
+        "冷凍パイナップル"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "sugar_addition"
+      ],
+      "reason": "同じ果実の生鮮/冷凍。"
+    },
+    {
+      "name": "たら",
+      "members": [
+        "たら",
+        "冷凍たら"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "salted"
+      ],
+      "reason": "同一魚の生鮮/冷凍。塩たら等の商品表示があれば別variant。"
+    },
+    {
+      "name": "生鮭",
+      "members": [
+        "生鮭",
+        "冷凍鮭"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_size",
+        "salted"
+      ],
+      "reason": "同一魚の生鮮/冷凍。"
+    },
+    {
+      "name": "いか",
+      "members": [
+        "いか",
+        "冷凍いか"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cut_shape",
+        "cleaned"
+      ],
+      "reason": "同一魚介の生鮮/冷凍。"
+    },
+    {
+      "name": "たけのこ",
+      "members": [
+        "たけのこ",
+        "水煮たけのこ"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "preservation",
+        "cut_shape",
+        "salt_brine"
+      ],
+      "reason": "同じたけのこ原料だが、水煮は保存液・下処理を伴う。"
+    },
+    {
+      "name": "焼きのり",
+      "members": [
+        "焼きのり",
+        "刻みのり"
+      ],
+      "variant_dimensions": [
+        "cut_shape",
+        "package_size"
+      ],
+      "reason": "同じ海苔の切断形態。"
+    },
+    {
+      "name": "トマト缶",
+      "members": [
+        "カットトマト缶",
+        "ホールトマト缶"
+      ],
+      "variant_dimensions": [
+        "cut_shape",
+        "juice_ratio",
+        "package_size",
+        "brand"
+      ],
+      "reason": "同じ缶詰トマトで切断形状が違う。生トマトとは保存・水分が異なるため別identity。"
+    },
+    {
+      "name": "ツナ缶",
+      "members": [
+        "ツナ水煮缶",
+        "ツナ油漬け缶"
+      ],
+      "variant_dimensions": [
+        "preserve_medium",
+        "drained_weight",
+        "oil_carryover",
+        "brand"
+      ],
+      "reason": "同じ魚種クラスの缶詰だが、水煮/油漬けを味・油量なしで同一視しない。"
+    },
+    {
+      "name": "牛乳",
+      "members": [
+        "牛乳",
+        "低脂肪乳"
+      ],
+      "variant_dimensions": [
+        "fat_percent",
+        "solids",
+        "brand"
+      ],
+      "reason": "同じ乳飲料系だが脂肪率を保持する。スキムミルク粉・エバミルクは別。"
+    },
+    {
+      "name": "バター",
+      "members": [
+        "バター",
+        "無塩バター",
+        "発酵バター"
+      ],
+      "variant_dimensions": [
+        "salted_unsalted",
+        "fermentation",
+        "fat_percent",
+        "brand"
+      ],
+      "reason": "同じバター系だが塩分・発酵風味を保持する。マーガリンは別。"
+    },
+    {
+      "name": "ケチャップ",
+      "members": [
+        "ケチャップ",
+        "トマトケチャップ（減塩）"
+      ],
+      "variant_dimensions": [
+        "salt_level",
+        "sugar_acidity",
+        "brand"
+      ],
+      "reason": "同じケチャップ系の減塩版。"
+    },
+    {
+      "name": "うどん",
+      "members": [
+        "乾燥うどん",
+        "ゆでうどん",
+        "冷凍うどん"
+      ],
+      "variant_dimensions": [
+        "hydration_state",
+        "temperature_state",
+        "thickness",
+        "preboiled"
+      ],
+      "reason": "同じ麺種だが、乾燥/ゆで/冷凍は水分と調理工程が異なる。"
+    },
+    {
+      "name": "そば",
+      "members": [
+        "乾燥そば",
+        "ゆでそば"
+      ],
+      "variant_dimensions": [
+        "hydration_state",
+        "preboiled",
+        "thickness"
+      ],
+      "reason": "同じ麺種の乾燥/ゆで。"
+    },
+    {
+      "name": "鶏つくね",
+      "members": [
+        "冷凍鶏つくね",
+        "チルド鶏つくね"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "sauce",
+        "size",
+        "brand"
+      ],
+      "reason": "同一惣菜の保存状態差。"
+    },
+    {
+      "name": "ワンタン",
+      "members": [
+        "冷凍ワンタン",
+        "チルドワンタン"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "filling",
+        "skin",
+        "brand"
+      ],
+      "reason": "同一惣菜の保存状態差。"
+    },
+    {
+      "name": "小籠包",
+      "members": [
+        "冷凍小籠包",
+        "チルド小籠包"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "filling",
+        "skin",
+        "brand"
+      ],
+      "reason": "同一惣菜の保存状態差。"
+    },
+    {
+      "name": "ハンバーグ",
+      "members": [
+        "レトルトハンバーグ",
+        "冷凍ハンバーグ",
+        "チルドハンバーグ"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "retort_process",
+        "sauce",
+        "brand"
+      ],
+      "reason": "同じ料理型の販売形態差。生ひき肉とは別identity。"
+    },
+    {
+      "name": "筑前煮",
+      "members": [
+        "レトルト筑前煮",
+        "惣菜筑前煮"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "retort_process",
+        "sauce",
+        "package_size"
+      ],
+      "reason": "同じ完成惣菜の販売形態差。"
+    },
+    {
+      "name": "焼き芋",
+      "members": [
+        "焼き芋",
+        "冷凍焼き芋"
+      ],
+      "variant_dimensions": [
+        "temperature_state",
+        "cooking_state",
+        "package_size"
+      ],
+      "reason": "同じ加熱済み芋の常温/冷凍販売形態。生さつまいもとは別料理工程。"
+    },
+    {
+      "name": "パプリカ",
+      "members": [
+        "赤パプリカ",
+        "黄パプリカ"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "玉ねぎ",
+      "members": [
+        "新玉ねぎ",
+        "玉ねぎ",
+        "冷凍刻み玉ねぎ"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "キャベツ",
+      "members": [
+        "キャベツ",
+        "春キャベツ"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "じゃがいも",
+      "members": [
+        "じゃがいも",
+        "新じゃがいも"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "小ねぎ",
+      "members": [
+        "小ねぎ",
+        "冷凍刻みねぎ"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "長ねぎ",
+      "members": [
+        "長ねぎ",
+        "冷凍長ねぎ"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "カリフラワー",
+      "members": [
+        "カリフラワー",
+        "冷凍カリフラワー"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "とうもろこし",
+      "members": [
+        "とうもろこし",
+        "冷凍コーン",
+        "コーン缶"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "グリーンアスパラ",
+      "members": [
+        "グリーンアスパラ",
+        "冷凍アスパラ"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "精白米",
+      "members": [
+        "精白米",
+        "パックご飯"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "玄米",
+      "members": [
+        "玄米",
+        "レトルト玄米ご飯"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "もち麦",
+      "members": [
+        "もち麦",
+        "もち麦ご飯パック"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "餃子",
+      "members": [
+        "チルド餃子",
+        "冷凍餃子"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "焼売",
+      "members": [
+        "チルド焼売",
+        "冷凍焼売"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "唐揚げ",
+      "members": [
+        "惣菜唐揚げ",
+        "冷凍唐揚げ"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "コロッケ",
+      "members": [
+        "惣菜コロッケ",
+        "冷凍コロッケ"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "メンチカツ",
+      "members": [
+        "惣菜メンチカツ",
+        "冷凍メンチカツ"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "春巻き",
+      "members": [
+        "惣菜春巻き",
+        "冷凍春巻き"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "チキンナゲット",
+      "members": [
+        "チルドチキンナゲット",
+        "冷凍チキンナゲット"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "かき揚げ",
+      "members": [
+        "惣菜かき揚げ",
+        "冷凍かき揚げ"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "肉団子",
+      "members": [
+        "チルド肉団子",
+        "冷凍肉団子"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "牛こま切れ",
+      "members": [
+        "牛こま切れ",
+        "牛切り落とし"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "ソーセージ",
+      "members": [
+        "ソーセージ",
+        "ウインナー"
+      ],
+      "variant_dimensions": [
+        "purchase_state",
+        "preparation",
+        "water_salt_content"
+      ],
+      "reason": "購買形態・色・季節名だけでは別の料理に数えず、必要な前処理は商品仕様に保持"
+    },
+    {
+      "name": "えび",
+      "members": [
+        "えび",
+        "むきえび",
+        "冷凍むきえび"
+      ],
+      "variant_dimensions": [
+        "preparation",
+        "size",
+        "water_content"
+      ],
+      "reason": "皮むき・サイズ・同等前処理だけでは料理数を増やさない。長芋以外の品種特性が確定した場合は個別IDへ見直す"
+    },
+    {
+      "name": "トマト",
+      "members": [
+        "トマト",
+        "ミニトマト"
+      ],
+      "variant_dimensions": [
+        "preparation",
+        "size",
+        "water_content"
+      ],
+      "reason": "皮むき・サイズ・同等前処理だけでは料理数を増やさない。長芋以外の品種特性が確定した場合は個別IDへ見直す"
+    },
+    {
+      "name": "長芋",
+      "members": [
+        "長芋",
+        "山芋",
+        "冷凍とろろ"
+      ],
+      "variant_dimensions": [
+        "preparation",
+        "size",
+        "water_content"
+      ],
+      "reason": "皮むき・サイズ・同等前処理だけでは料理数を増やさない。長芋以外の品種特性が確定した場合は個別IDへ見直す"
+    },
+    {
+      "name": "調理済み大豆",
+      "members": [
+        "蒸し大豆",
+        "水煮大豆"
+      ],
+      "variant_dimensions": [
+        "preparation",
+        "size",
+        "water_content"
+      ],
+      "reason": "皮むき・サイズ・同等前処理だけでは料理数を増やさない。長芋以外の品種特性が確定した場合は個別IDへ見直す"
+    }
+  ],
+  "pools": {
+    "protein": [
+      "鶏もも肉",
+      "鶏むね肉",
+      "鶏ささみ",
+      "鶏ひき肉",
+      "手羽先",
+      "手羽元",
+      "手羽中",
+      "鶏皮",
+      "砂肝",
+      "豚ロース",
+      "豚肩ロース",
+      "豚バラ肉",
+      "豚もも肉",
+      "豚ヒレ肉",
+      "豚こま切れ",
+      "豚ひき肉",
+      "スペアリブ",
+      "牛こま切れ",
+      "牛肩ロース",
+      "牛もも肉",
+      "牛バラ肉",
+      "牛ひき肉",
+      "合いびき肉",
+      "牛ステーキ用肉",
+      "生鮭",
+      "さば",
+      "あじ",
+      "いわし",
+      "さんま",
+      "ぶり",
+      "たら",
+      "かれい",
+      "たい",
+      "さわら",
+      "まぐろ切り身",
+      "かつお",
+      "めかじき",
+      "えび",
+      "むきえび",
+      "いか",
+      "ゆでだこ",
+      "あさり",
+      "ほたて",
+      "鶏卵",
+      "うずら卵",
+      "木綿豆腐",
+      "絹ごし豆腐",
+      "焼き豆腐",
+      "厚揚げ",
+      "油揚げ",
+      "がんもどき",
+      "蒸し大豆",
+      "水煮大豆",
+      "ベーコン",
+      "ロースハム",
+      "ソーセージ",
+      "サラダチキン",
+      "焼き豚",
+      "コンビーフ",
+      "ランチョンミート",
+      "魚肉ソーセージ",
+      "ちくわ",
+      "かまぼこ",
+      "はんぺん",
+      "さつま揚げ",
+      "カニ風味かまぼこ",
+      "つみれ",
+      "ツナ缶",
+      "さば水煮缶",
+      "鮭水煮缶",
+      "いわし水煮缶",
+      "ひよこ豆缶",
+      "ミックスビーンズ缶"
+    ],
+    "veg": [
+      "キャベツ",
+      "白菜",
+      "ほうれん草",
+      "小松菜",
+      "チンゲン菜",
+      "水菜",
+      "春菊",
+      "豆苗",
+      "にら",
+      "長ねぎ",
+      "セロリ",
+      "ブロッコリー",
+      "カリフラワー",
+      "もやし",
+      "にんじん",
+      "大根",
+      "かぶ",
+      "ごぼう",
+      "れんこん",
+      "じゃがいも",
+      "さつまいも",
+      "里芋",
+      "長芋",
+      "山芋",
+      "玉ねぎ",
+      "赤玉ねぎ",
+      "トマト",
+      "ミニトマト",
+      "なす",
+      "ピーマン",
+      "パプリカ",
+      "かぼちゃ",
+      "ズッキーニ",
+      "オクラ",
+      "いんげん",
+      "絹さや",
+      "スナップえんどう",
+      "とうもろこし",
+      "ぶなしめじ",
+      "えのき",
+      "まいたけ",
+      "生しいたけ",
+      "エリンギ",
+      "マッシュルーム",
+      "なめこ",
+      "きくらげ",
+      "たけのこ",
+      "そら豆",
+      "グリーンアスパラ"
+    ],
+    "saladveg": [
+      "キャベツ",
+      "レタス",
+      "サニーレタス",
+      "水菜",
+      "セロリ",
+      "にんじん",
+      "大根",
+      "かぶ",
+      "玉ねぎ",
+      "赤玉ねぎ",
+      "トマト",
+      "ミニトマト",
+      "きゅうり",
+      "パプリカ",
+      "アボカド",
+      "とうもろこし"
+    ],
+    "saladprotein": [
+      "鶏むね肉",
+      "鶏ささみ",
+      "豚ロース",
+      "豚もも肉",
+      "生鮭",
+      "えび",
+      "むきえび",
+      "ゆでだこ",
+      "ほたて",
+      "鶏卵",
+      "木綿豆腐",
+      "絹ごし豆腐",
+      "蒸し大豆",
+      "ツナ缶",
+      "サラダチキン",
+      "ロースハム",
+      "かまぼこ",
+      "カニ風味かまぼこ"
+    ],
+    "stapleprotein": [
+      "鶏もも肉",
+      "鶏むね肉",
+      "鶏ひき肉",
+      "豚こま切れ",
+      "豚ひき肉",
+      "牛こま切れ",
+      "牛ひき肉",
+      "生鮭",
+      "さば",
+      "たら",
+      "えび",
+      "むきえび",
+      "いか",
+      "ほたて",
+      "鶏卵",
+      "木綿豆腐",
+      "厚揚げ",
+      "油揚げ",
+      "ベーコン",
+      "ロースハム",
+      "ソーセージ",
+      "ツナ缶",
+      "ちくわ",
+      "さつま揚げ",
+      "蒸し大豆"
+    ],
+    "rice": [
+      "精白米",
+      "玄米",
+      "もち米",
+      "押し麦",
+      "もち麦",
+      "オートミール"
+    ],
+    "noodle": [
+      "乾燥スパゲッティ",
+      "マカロニ",
+      "ペンネ",
+      "そうめん",
+      "ひやむぎ",
+      "うどん",
+      "そば",
+      "中華生麺",
+      "蒸し焼そば麺"
+    ],
+    "bread": [
+      "食パン",
+      "バゲット",
+      "ロールパン",
+      "イングリッシュマフィン",
+      "クロワッサン",
+      "ピザクラスト",
+      "トルティーヤ"
+    ],
+    "cup_soup": [
+      "カップラーメン（醤油）",
+      "カップラーメン（味噌）",
+      "カップラーメン（塩）",
+      "カップラーメン（シーフード）",
+      "カップうどん",
+      "カップそば",
+      "カップ春雨",
+      "カップ担々麺",
+      "カップ酸辣湯麺",
+      "カップカレーうどん",
+      "カップフォー",
+      "袋ラーメン（醤油）",
+      "袋ラーメン（味噌）",
+      "袋ラーメン（塩）",
+      "袋担々麺",
+      "袋とんこつラーメン"
+    ],
+    "cup_dry": [
+      "カップ焼そば（ソース）",
+      "カップ焼そば（塩）",
+      "即席焼そば（袋）",
+      "チルド焼そばセット",
+      "カップ油そば",
+      "カップ汁なし担々麺",
+      "袋まぜそば",
+      "袋ビーフン"
+    ],
+    "ready_soup": [
+      "レトルトクラムチャウダー",
+      "レトルトミネストローネ",
+      "レトルトかぼちゃスープ",
+      "レトルトおでん",
+      "レトルトビーフシチュー",
+      "レトルトカレー",
+      "レトルトグリーンカレー",
+      "レトルトキーマカレー",
+      "レトルト豆カレー",
+      "レトルトバターチキンカレー"
+    ],
+    "ready_fry": [
+      "唐揚げ",
+      "コロッケ",
+      "メンチカツ",
+      "春巻き",
+      "チキンナゲット",
+      "冷凍エビフライ",
+      "冷凍白身魚フライ",
+      "惣菜とんかつ"
+    ],
+    "dumpling": [
+      "餃子",
+      "焼売",
+      "ワンタン",
+      "小籠包",
+      "鶏つくね",
+      "肉団子",
+      "冷凍水餃子",
+      "冷凍えび餃子"
+    ],
+    "fruit": [
+      "りんご",
+      "バナナ",
+      "オレンジ",
+      "グレープフルーツ",
+      "キウイ",
+      "パイナップル",
+      "いちご",
+      "冷凍ブルーベリー",
+      "冷凍マンゴー",
+      "桃缶",
+      "みかん缶",
+      "パイナップル缶",
+      "洋梨缶",
+      "フルーツミックス缶"
+    ],
+    "nut": [
+      "アーモンド",
+      "くるみ",
+      "カシューナッツ",
+      "ピーナッツ",
+      "レーズン",
+      "ドライプルーン"
+    ],
+    "sweet": [
+      "ビスケット",
+      "クッキー",
+      "カステラ",
+      "バウムクーヘン",
+      "プリン",
+      "コーヒーゼリー",
+      "バニラアイス",
+      "あずきアイス",
+      "無糖寒天",
+      "ゆで小豆",
+      "ラスク",
+      "グラハムクラッカー",
+      "ココアビスケット",
+      "チョコウエハース",
+      "スポンジケーキ台",
+      "ロールケーキ",
+      "どら焼き",
+      "ようかん",
+      "杏仁豆腐",
+      "マンゴープリン",
+      "フルーツゼリー",
+      "抹茶アイス",
+      "チョコアイス",
+      "ヨーグルトアイス"
+    ],
+    "yogurt": [
+      "プレーンヨーグルト",
+      "ギリシャヨーグルト"
+    ],
+    "crunch": [
+      "ポテトチップス",
+      "コーンスナック",
+      "柿の種",
+      "せんべい",
+      "クラッカー",
+      "えびせんべい",
+      "チーズスナック",
+      "プレッツェル"
+    ]
+  },
+  "flavors": {
+    "hot": [
+      "醤油甘辛",
+      "味噌甘辛",
+      "塩こしょう",
+      "塩レモン",
+      "しょうが醤油",
+      "にんにく醤油",
+      "めんつゆ",
+      "ごま味噌",
+      "梅しそ",
+      "トマト",
+      "カレー",
+      "ガーリックオイル",
+      "レモンハーブ",
+      "粒マスタード",
+      "オイスター",
+      "鶏ガラ塩",
+      "ごま油塩",
+      "豆板醤",
+      "黒酢",
+      "甜麺醤",
+      "コチュジャン",
+      "ナンプラーレモン",
+      "スイートチリ",
+      "梅味噌",
+      "ゆず味噌",
+      "ねぎ塩レモン",
+      "にんにく味噌",
+      "しょうが味噌",
+      "山椒醤油",
+      "味噌クリーム",
+      "マスタードクリーム",
+      "バルサミコ醤油",
+      "チーズ黒こしょう",
+      "アンチョビトマト",
+      "レモンクミン",
+      "トマトクミン"
+    ],
+    "soup": [
+      "醤油だし",
+      "味噌だし",
+      "白だし",
+      "めんつゆ",
+      "ごま味噌",
+      "コンソメ",
+      "トマト",
+      "クリーム",
+      "カレー",
+      "鶏ガラ塩",
+      "豆板醤",
+      "キムチ",
+      "豆乳ごま",
+      "トマトクミン",
+      "味噌クリーム"
+    ],
+    "cold": [
+      "ぽん酢",
+      "ごまぽん酢",
+      "梅しそ",
+      "塩レモン",
+      "ごま味噌",
+      "粒マスタード",
+      "レモンハーブ",
+      "オリーブレモン",
+      "青じそ",
+      "胡麻ドレッシング",
+      "玉ねぎドレッシング",
+      "バルサミコ醤油",
+      "黒酢しょうが",
+      "ナンプラーレモン"
+    ],
+    "sweet": [
+      "チョコ",
+      "抹茶",
+      "きなこ",
+      "黒蜜",
+      "柑橘はちみつ",
+      "シナモン",
+      "黒ごま",
+      "キャラメル"
+    ],
+    "native": [
+      "元の味を活かす"
+    ]
+  },
+  "templates": [
+    {
+      "code": "stir",
+      "label": "主材と野菜の炒め物",
+      "primary_pool": "protein",
+      "support_pool": "veg",
+      "flavor_group": "hot",
+      "route": "主材と野菜を食べやすく切り、食材別に下処理・必要加熱して炒め合わせる",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [
+        "手羽先",
+        "手羽元",
+        "手羽中",
+        "スペアリブ",
+        "絹ごし豆腐",
+        "がんもどき"
+      ]
+    },
+    {
+      "code": "simmer",
+      "label": "主材と野菜の煮物（煮汁少なめ）",
+      "primary_pool": "protein",
+      "support_pool": "veg",
+      "flavor_group": "hot",
+      "route": "食材ごとの下処理と加熱時間を分け、少量の煮汁で煮合わせる",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": []
+    },
+    {
+      "code": "steam",
+      "label": "主材と野菜の蒸し物",
+      "primary_pool": "protein",
+      "support_pool": "veg",
+      "flavor_group": "cold",
+      "route": "主材・野菜を必要に応じて別蒸しし、たれを和える",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [
+        "鶏皮",
+        "牛ステーキ用肉",
+        "コンビーフ",
+        "ランチョンミート",
+        "蒸し大豆",
+        "水煮大豆"
+      ]
+    },
+    {
+      "code": "roast",
+      "label": "主材と野菜のオーブン焼き",
+      "primary_pool": "protein",
+      "support_pool": "veg",
+      "flavor_group": "hot",
+      "route": "硬い野菜を下加熱し、主材と野菜を焼いてソースで仕上げる",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [
+        "絹ごし豆腐",
+        "鶏卵",
+        "うずら卵",
+        "蒸し大豆",
+        "水煮大豆",
+        "はんぺん"
+      ]
+    },
+    {
+      "code": "soup",
+      "label": "主材と野菜の具だくさんスープ",
+      "primary_pool": "protein",
+      "support_pool": "veg",
+      "flavor_group": "soup",
+      "route": "具の大きさと加熱時間を調整し、飲める量のスープに仕上げる",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": []
+    },
+    {
+      "code": "salad",
+      "label": "加熱主材と野菜のサラダ",
+      "primary_pool": "saladprotein",
+      "support_pool": "saladveg",
+      "flavor_group": "cold",
+      "route": "主材は必要加熱し、野菜は薄切り・下処理して、冷まして和える",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": []
+    },
+    {
+      "code": "rice_mix",
+      "label": "具入り混ぜご飯",
+      "primary_pool": "rice",
+      "support_pool": "veg",
+      "flavor_group": "hot",
+      "route": "穀類は炊飯または調理済み品を使用し、別加熱した具を混ぜ込む",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [],
+      "cross_pool": "stapleprotein"
+    },
+    {
+      "code": "rice_soup",
+      "label": "具入り雑炊・穀類スープ",
+      "primary_pool": "rice",
+      "support_pool": "veg",
+      "flavor_group": "soup",
+      "route": "穀類と具を必要加熱して、汁気を残した雑炊にする",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [],
+      "cross_pool": "stapleprotein"
+    },
+    {
+      "code": "noodle_stir",
+      "label": "具入り炒め麺",
+      "primary_pool": "noodle",
+      "support_pool": "veg",
+      "flavor_group": "hot",
+      "route": "麺を商品指定で戻し茹で、別加熱した具と炒め合わせる",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [],
+      "cross_pool": "stapleprotein"
+    },
+    {
+      "code": "noodle_soup",
+      "label": "具入り汁麺",
+      "primary_pool": "noodle",
+      "support_pool": "veg",
+      "flavor_group": "soup",
+      "route": "麺と具を必要に応じ別加熱し、温かいスープへ合流する",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [],
+      "cross_pool": "stapleprotein"
+    },
+    {
+      "code": "noodle_salad",
+      "label": "具入り冷製和え麺",
+      "primary_pool": "noodle",
+      "support_pool": "saladveg",
+      "flavor_group": "cold",
+      "route": "麺と加熱が必要な具を別加熱し、冷ましてたれと和える",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [],
+      "cross_pool": "saladprotein"
+    },
+    {
+      "code": "bread_open",
+      "label": "具を載せたオープントースト",
+      "primary_pool": "bread",
+      "support_pool": "veg",
+      "flavor_group": "hot",
+      "route": "具を別加熱して水分を切り、パンに載せて焼く",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [],
+      "cross_pool": "stapleprotein"
+    },
+    {
+      "code": "bread_sand",
+      "label": "具入りサンド",
+      "primary_pool": "bread",
+      "support_pool": "saladveg",
+      "flavor_group": "cold",
+      "route": "加熱が必要な具を別加熱・冷却し、野菜とパンに挟む",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [
+        "ピザクラスト"
+      ],
+      "cross_pool": "saladprotein"
+    },
+    {
+      "code": "cup_soup",
+      "label": "即席汁麺の野菜追加",
+      "primary_pool": "cup_soup",
+      "support_pool": "veg",
+      "flavor_group": "native",
+      "route": "商品表示どおり麺・スープを調理し、別加熱した野菜を追加。添付調味料量を調整",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": []
+    },
+    {
+      "code": "cup_dry",
+      "label": "即席焼そば・まぜそばの野菜追加",
+      "primary_pool": "cup_dry",
+      "support_pool": "veg",
+      "flavor_group": "native",
+      "route": "商品表示どおり麺を調理し、別加熱して水分を切った野菜を和える。添付調味料量を調整",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": []
+    },
+    {
+      "code": "ready_soup",
+      "label": "レトルト汁物・カレーの野菜追加",
+      "primary_pool": "ready_soup",
+      "support_pool": "veg",
+      "flavor_group": "native",
+      "route": "商品表示で温め、別加熱した野菜を煮合わせる。元の味付けを維持",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": []
+    },
+    {
+      "code": "ready_fry",
+      "label": "市販揚げ物の野菜あんかけ",
+      "primary_pool": "ready_fry",
+      "support_pool": "veg",
+      "flavor_group": "soup",
+      "route": "揚げ物を商品表示で温め、別加熱した野菜の少量のでんぷんあんをかける",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": []
+    },
+    {
+      "code": "dumpling",
+      "label": "市販餃子・団子の野菜スープ",
+      "primary_pool": "dumpling",
+      "support_pool": "veg",
+      "flavor_group": "soup",
+      "route": "市販品は表示に従い調理し、野菜とスープへ合流する",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": []
+    },
+    {
+      "code": "sweet",
+      "label": "市販デザートの果実ナッツ添え",
+      "primary_pool": "sweet",
+      "support_pool": "fruit",
+      "flavor_group": "sweet",
+      "route": "果実を下処理し、市販甘味と組み立てる。冷凍果実は表示に従い解凍・必要加熱する",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [],
+      "cross_pool": "nut"
+    },
+    {
+      "code": "yogurt",
+      "label": "果実ナッツヨーグルト",
+      "primary_pool": "yogurt",
+      "support_pool": "fruit",
+      "flavor_group": "sweet",
+      "route": "果実とナッツを下処理してヨーグルトに混ぜる。冷凍果実は表示に従い必要加熱",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": [],
+      "cross_pool": "nut"
+    },
+    {
+      "code": "crunch",
+      "label": "砕いた市販スナックの野菜サラダ",
+      "primary_pool": "crunch",
+      "support_pool": "saladveg",
+      "flavor_group": "cold",
+      "route": "野菜を下処理して和え、砕いた菓子を食べる直前に加える。追加塩を控える",
+      "k": [
+        1,
+        2
+      ],
+      "exclude_primary": []
+    }
+  ],
+  "rejected_audit_merges": {
+    "I025": "生/乾燥ハーブは媒体と香りが異なるので自動統合しない",
+    "I026": "同左",
+    "I027": "調製豆乳は糖・香味を含むので自動統合しない",
+    "I030": "薄口醤油等の味・色差は保持",
+    "I034": "粉末は結着・生地機能が異なる",
+    "I035": "白あんと小豆あん、粒と漉しの構造差を保持"
+  },
+  "rules": [
+    "食品の同一性を先に確定し商品バリエーションは後から選ぶ",
+    "野菜・主たんぱく・主食・菓子・味付けの役割を混ぜない",
+    "完成品に完成惣菜や任意の味付けを掛けない",
+    "色/濃度/容量/季節/人数は新規性キーにしない",
+    "副材は無順序集合。同じidentityを2回選ばない",
+    "汎用の別料理化・冷やし固め等、必要構造が未定な経路は出力しない",
+    "commonは販売形態に基づく設計上の分類で実在庫ではない",
+    "補助食材と味付けの組合せの食味妥当性は標本評価で別に測る"
+  ]
+}
