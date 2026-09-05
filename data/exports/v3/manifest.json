@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "definition_sha256": "495dc6b22638ff029c75913a13aef616c425049eacddc6389a6a26257e56da36",
+  "total": 12069539,
+  "shard_size": 1000000,
+  "status": "complete",
+  "shards": [
+    {
+      "file": "part-00000.csv.gz",
+      "start": 0,
+      "stop": 1000000,
+      "rows": 1000000,
+      "bytes": 4391677,
+      "sha256": "1e22b4b776805f50045ca70f7b8785a25187b78ef6e594be79acb254f19a8a23"
+    },
+    {
+      "file": "part-00001.csv.gz",
+      "start": 1000000,
+      "stop": 2000000,
+      "rows": 1000000,
+      "bytes": 4397490,
+      "sha256": "bf7933af82a579b991ce3aa3fdabf5a25d084431c2fa490409266b4014e5ac10"
+    },
+    {
+      "file": "part-00002.csv.gz",
+      "start": 2000000,
+      "stop": 3000000,
+      "rows": 1000000,
+      "bytes": 4390808,
+      "sha256": "5c2dff61e539855818aef281eea7ff9722c94a3fadabe55d7b7819746b904a39"
+    },
+    {
+      "file": "part-00003.csv.gz",
+      "start": 3000000,
+      "stop": 4000000,
+      "rows": 1000000,
+      "bytes": 4388888,
+      "sha256": "52ed051f747e5d25a3f0678a271b5bae1df2d855b857c9b4849e6487dbe4d51e"
+    },
+    {
+      "file": "part-00004.csv.gz",
+      "start": 4000000,
+      "stop": 5000000,
+      "rows": 1000000,
+      "bytes": 4429146,
+      "sha256": "dc59943e482ef0d5cffbf95c8e9ffd95caf09ced46c31da8b5190f4a51818956"
+    },
+    {
+      "file": "part-00005.csv.gz",
+      "start": 5000000,
+      "stop": 6000000,
+      "rows": 1000000,
+      "bytes": 4537455,
+      "sha256": "5ad2455df4cb6798066dd37fce30f93076035e4f2db0a95b2c71809e2308c238"
+    },
+    {
+      "file": "part-00006.csv.gz",
+      "start": 6000000,
+      "stop": 7000000,
+      "rows": 1000000,
+      "bytes": 4555862,
+      "sha256": "1668ecae06e92aae01e1db6bce95116b8f5ad4ed732b490c7da29ad1bdc14abc"
+    },
+    {
+      "file": "part-00007.csv.gz",
+      "start": 7000000,
+      "stop": 8000000,
+      "rows": 1000000,
+      "bytes": 4401272,
+      "sha256": "9f642d49a0f7f594107b9ef1278ff59a4ecafb7b6b471ea2e19184529d519d47"
+    },
+    {
+      "file": "part-00008.csv.gz",
+      "start": 8000000,
+      "stop": 9000000,
+      "rows": 1000000,
+      "bytes": 4426078,
+      "sha256": "357da6f65ba8105ee0711cd1bd17ed30e3a39fd7c0fce14d565318c99080f304"
+    },
+    {
+      "file": "part-00009.csv.gz",
+      "start": 9000000,
+      "stop": 10000000,
+      "rows": 1000000,
+      "bytes": 4623281,
+      "sha256": "7d81bb3b37399b3e4721e5ba7bb0022be90ed8d08f6714fb12650901666da41d"
+    },
+    {
+      "file": "part-00010.csv.gz",
+      "start": 10000000,
+      "stop": 11000000,
+      "rows": 1000000,
+      "bytes": 4556331,
+      "sha256": "27d7cd26218b3ba2e786d2cac529b65491fcb768f5ae89526f93fde2fb737759"
+    },
+    {
+      "file": "part-00011.csv.gz",
+      "start": 11000000,
+      "stop": 12000000,
+      "rows": 1000000,
+      "bytes": 4565242,
+      "sha256": "ca56c278edceaba0ed4ee1354589129f643436266fd576749c5fd1d8e732d942"
+    },
+    {
+      "file": "part-00012.csv.gz",
+      "start": 12000000,
+      "stop": 12069539,
+      "rows": 69539,
+      "bytes": 321255,
+      "sha256": "ce95d88bdd271fb81740261ea66ed69c65d14a5efd878f727c57c9cf422dcae5"
+    }
+  ],
+  "dictionary_sha256": "f8b38e927ac668b353741b51b42b901ceddeb3a7590fda243676c256764f58e4",
+  "columns": [
+    "ordinal",
+    "template",
+    "main",
+    "support1",
+    "support2",
+    "support3",
+    "flavor",
+    "route"
+  ],
+  "note": "0-based dictionary indexes; blank means absent. Hypotheses, not cooked recipes."
+}

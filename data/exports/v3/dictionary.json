@@ -1,0 +1,1166 @@
+{
+  "foods": [
+    {
+      "id": "ingredient_033eab4f347862ee",
+      "name": "グリーンアスパラ"
+    },
+    {
+      "id": "ingredient_0349fe3db634e0ab",
+      "name": "オレンジ"
+    },
+    {
+      "id": "ingredient_03b15bc6b8a0d04d",
+      "name": "レタス"
+    },
+    {
+      "id": "ingredient_043bfbb3960f2cb3",
+      "name": "スナップえんどう"
+    },
+    {
+      "id": "ingredient_047e77fdb95d5583",
+      "name": "袋ビーフン"
+    },
+    {
+      "id": "ingredient_0498163399fed25c",
+      "name": "ブロッコリー"
+    },
+    {
+      "id": "ingredient_056b8a18786097b1",
+      "name": "牛ステーキ用肉"
+    },
+    {
+      "id": "ingredient_0582cd29e24ffbf1",
+      "name": "レトルトキーマカレー"
+    },
+    {
+      "id": "ingredient_05f1a60dfb0e67eb",
+      "name": "牛こま切れ"
+    },
+    {
+      "id": "ingredient_070badf8221005bb",
+      "name": "レトルトかぼちゃスープ"
+    },
+    {
+      "id": "ingredient_09f2e4d6ce03909a",
+      "name": "カップラーメン（塩）"
+    },
+    {
+      "id": "ingredient_0a82c5fc9a93d579",
+      "name": "トルティーヤ"
+    },
+    {
+      "id": "ingredient_0a948f0a395d7fbf",
+      "name": "無糖寒天"
+    },
+    {
+      "id": "ingredient_0c17e679e354bb7d",
+      "name": "洋梨缶"
+    },
+    {
+      "id": "ingredient_0dc0e074c64ea438",
+      "name": "ぶり"
+    },
+    {
+      "id": "ingredient_0e2cd365fb8dd432",
+      "name": "レトルトおでん"
+    },
+    {
+      "id": "ingredient_0e8165e61dd74f77",
+      "name": "なめこ"
+    },
+    {
+      "id": "ingredient_0f8f944b809b73a7",
+      "name": "パイナップル"
+    },
+    {
+      "id": "ingredient_1131d97e2ea585bc",
+      "name": "フルーツゼリー"
+    },
+    {
+      "id": "ingredient_11c12c5ed2e9e5a3",
+      "name": "カップ春雨"
+    },
+    {
+      "id": "ingredient_125a677df6857d13",
+      "name": "ワンタン"
+    },
+    {
+      "id": "ingredient_12c863712abd61bc",
+      "name": "食パン"
+    },
+    {
+      "id": "ingredient_12fd8736f5b7f6f9",
+      "name": "ゆでだこ"
+    },
+    {
+      "id": "ingredient_15dbe529cda3dc33",
+      "name": "カップラーメン（シーフード）"
+    },
+    {
+      "id": "ingredient_166c9626b784555d",
+      "name": "袋とんこつラーメン"
+    },
+    {
+      "id": "ingredient_178c1e76b1b7098a",
+      "name": "きゅうり"
+    },
+    {
+      "id": "ingredient_179336692588e6de",
+      "name": "魚肉ソーセージ"
+    },
+    {
+      "id": "ingredient_184a3ba11033c847",
+      "name": "鮭水煮缶"
+    },
+    {
+      "id": "ingredient_18e75098dcd7cc7a",
+      "name": "みかん缶"
+    },
+    {
+      "id": "ingredient_195091c51f033b93",
+      "name": "アーモンド"
+    },
+    {
+      "id": "ingredient_1a3a7d210a0ab422",
+      "name": "赤玉ねぎ"
+    },
+    {
+      "id": "ingredient_1df7aad047d26cc6",
+      "name": "にんじん"
+    },
+    {
+      "id": "ingredient_1e96fdaadfd40a1a",
+      "name": "里芋"
+    },
+    {
+      "id": "ingredient_1edc4c1fd21a5715",
+      "name": "バウムクーヘン"
+    },
+    {
+      "id": "ingredient_1fcb54c27bd63dd5",
+      "name": "うずら卵"
+    },
+    {
+      "id": "ingredient_200b60f53037f943",
+      "name": "クロワッサン"
+    },
+    {
+      "id": "ingredient_20ae451ff3e6fe1a",
+      "name": "ロールケーキ"
+    },
+    {
+      "id": "ingredient_20f4a505905521a4",
+      "name": "ギリシャヨーグルト"
+    },
+    {
+      "id": "ingredient_21fee1963563d80b",
+      "name": "袋ラーメン（味噌）"
+    },
+    {
+      "id": "ingredient_2211a706979013ac",
+      "name": "即席焼そば（袋）"
+    },
+    {
+      "id": "ingredient_223e4138725713b4",
+      "name": "豚こま切れ"
+    },
+    {
+      "id": "ingredient_2244c96128be7a10",
+      "name": "ようかん"
+    },
+    {
+      "id": "ingredient_2559b73e7ba18a64",
+      "name": "ぶなしめじ"
+    },
+    {
+      "id": "ingredient_2704382d54b6ee52",
+      "name": "長ねぎ"
+    },
+    {
+      "id": "ingredient_276bc601090f8fd7",
+      "name": "レトルトグリーンカレー"
+    },
+    {
+      "id": "ingredient_293f278ae8106298",
+      "name": "袋ラーメン（醤油）"
+    },
+    {
+      "id": "ingredient_2998096a3846e1b1",
+      "name": "調理済み大豆"
+    },
+    {
+      "id": "ingredient_2a144ac5e324f9a6",
+      "name": "ほうれん草"
+    },
+    {
+      "id": "ingredient_2a510124dc22912f",
+      "name": "豚ヒレ肉"
+    },
+    {
+      "id": "ingredient_2ad1b07a1d11a479",
+      "name": "ペンネ"
+    },
+    {
+      "id": "ingredient_2ad6f6083203adce",
+      "name": "冷凍えび餃子"
+    },
+    {
+      "id": "ingredient_2bfe6867b4916224",
+      "name": "はんぺん"
+    },
+    {
+      "id": "ingredient_2c3a7b5836a7171e",
+      "name": "えびせんべい"
+    },
+    {
+      "id": "ingredient_2c95a62f5bb42c43",
+      "name": "カップ油そば"
+    },
+    {
+      "id": "ingredient_2d3ce16c8f7f9b4c",
+      "name": "かまぼこ"
+    },
+    {
+      "id": "ingredient_2e281a4dfdba0589",
+      "name": "レトルトカレー"
+    },
+    {
+      "id": "ingredient_2fc691f095375ef9",
+      "name": "鶏ひき肉"
+    },
+    {
+      "id": "ingredient_316074cd89608c6e",
+      "name": "ゆで小豆"
+    },
+    {
+      "id": "ingredient_3592f0324b3a81af",
+      "name": "冷凍水餃子"
+    },
+    {
+      "id": "ingredient_369e1bf2bea3ef60",
+      "name": "玄米"
+    },
+    {
+      "id": "ingredient_373981c6cba56ea8",
+      "name": "合いびき肉"
+    },
+    {
+      "id": "ingredient_3976c1fc65da2748",
+      "name": "たら"
+    },
+    {
+      "id": "ingredient_397a03953d762978",
+      "name": "カップ酸辣湯麺"
+    },
+    {
+      "id": "ingredient_3a3aad60ca5dcfc8",
+      "name": "鶏皮"
+    },
+    {
+      "id": "ingredient_3a4995cf4b6f9c33",
+      "name": "せんべい"
+    },
+    {
+      "id": "ingredient_3b2f2efed4459efd",
+      "name": "木綿豆腐"
+    },
+    {
+      "id": "ingredient_3e0ef01084bd3b9c",
+      "name": "ピーナッツ"
+    },
+    {
+      "id": "ingredient_3e175bee8d717396",
+      "name": "にら"
+    },
+    {
+      "id": "ingredient_40b978dd322523c2",
+      "name": "春菊"
+    },
+    {
+      "id": "ingredient_412941f154ab0858",
+      "name": "大根"
+    },
+    {
+      "id": "ingredient_4261abfc91324dc5",
+      "name": "りんご"
+    },
+    {
+      "id": "ingredient_427a39409bebbd55",
+      "name": "ごぼう"
+    },
+    {
+      "id": "ingredient_43a8db158a0dd6a1",
+      "name": "カップそば"
+    },
+    {
+      "id": "ingredient_43b15f89a27f2977",
+      "name": "豚ひき肉"
+    },
+    {
+      "id": "ingredient_43bd04f96b2543fb",
+      "name": "焼売"
+    },
+    {
+      "id": "ingredient_4984231f08952559",
+      "name": "れんこん"
+    },
+    {
+      "id": "ingredient_4d3e8dabf0c350ca",
+      "name": "めかじき"
+    },
+    {
+      "id": "ingredient_4d851e502431339a",
+      "name": "エリンギ"
+    },
+    {
+      "id": "ingredient_4e2516eba44f103e",
+      "name": "唐揚げ"
+    },
+    {
+      "id": "ingredient_50eec55783c08c82",
+      "name": "豚肩ロース"
+    },
+    {
+      "id": "ingredient_520262f6254f3418",
+      "name": "スポンジケーキ台"
+    },
+    {
+      "id": "ingredient_53095ed9fb98ba0b",
+      "name": "牛バラ肉"
+    },
+    {
+      "id": "ingredient_53fab6b4f1c23d2b",
+      "name": "もち米"
+    },
+    {
+      "id": "ingredient_5628182ff4d0de70",
+      "name": "冷凍ブルーベリー"
+    },
+    {
+      "id": "ingredient_570f7ee1f5621efe",
+      "name": "レーズン"
+    },
+    {
+      "id": "ingredient_59d517a56dedaf4a",
+      "name": "さんま"
+    },
+    {
+      "id": "ingredient_5a81a1ca64c2cf49",
+      "name": "ピーマン"
+    },
+    {
+      "id": "ingredient_5c85faa0d8fc2b99",
+      "name": "チョコアイス"
+    },
+    {
+      "id": "ingredient_5cb8f046e3ada534",
+      "name": "手羽中"
+    },
+    {
+      "id": "ingredient_5d9caafe3982cafa",
+      "name": "バゲット"
+    },
+    {
+      "id": "ingredient_5eaf2fcfaf5115f3",
+      "name": "さつま揚げ"
+    },
+    {
+      "id": "ingredient_5f749b663cff124b",
+      "name": "レトルト豆カレー"
+    },
+    {
+      "id": "ingredient_5fc84e7417cce5e2",
+      "name": "セロリ"
+    },
+    {
+      "id": "ingredient_6154ae64b6105bd5",
+      "name": "桃缶"
+    },
+    {
+      "id": "ingredient_63b2e091424c3a3e",
+      "name": "とうもろこし"
+    },
+    {
+      "id": "ingredient_63e6f12b7f836590",
+      "name": "うどん"
+    },
+    {
+      "id": "ingredient_64294b963c1b9a0a",
+      "name": "チーズスナック"
+    },
+    {
+      "id": "ingredient_65f085ab067386a4",
+      "name": "牛もも肉"
+    },
+    {
+      "id": "ingredient_693e9f1a83d08374",
+      "name": "鶏ささみ"
+    },
+    {
+      "id": "ingredient_6a334f4914ded152",
+      "name": "焼き豆腐"
+    },
+    {
+      "id": "ingredient_6a68bad06128db03",
+      "name": "精白米"
+    },
+    {
+      "id": "ingredient_6b80fa2edd24cd00",
+      "name": "カップカレーうどん"
+    },
+    {
+      "id": "ingredient_6bd220f4e81111ee",
+      "name": "がんもどき"
+    },
+    {
+      "id": "ingredient_6ce0f1f1b4f57415",
+      "name": "レトルトミネストローネ"
+    },
+    {
+      "id": "ingredient_6de634ff94635745",
+      "name": "生しいたけ"
+    },
+    {
+      "id": "ingredient_6ec66144404c0370",
+      "name": "ベーコン"
+    },
+    {
+      "id": "ingredient_6f34d9e3e4c79382",
+      "name": "冷凍白身魚フライ"
+    },
+    {
+      "id": "ingredient_6f9e8b6bfca94482",
+      "name": "キウイ"
+    },
+    {
+      "id": "ingredient_6ff2d2ed1a71bfc9",
+      "name": "豚バラ肉"
+    },
+    {
+      "id": "ingredient_701706be8f7b4571",
+      "name": "もやし"
+    },
+    {
+      "id": "ingredient_70cd2db2a778dfff",
+      "name": "ポテトチップス"
+    },
+    {
+      "id": "ingredient_722cf2d6c6ae2f34",
+      "name": "じゃがいも"
+    },
+    {
+      "id": "ingredient_742f2edd8acd06ba",
+      "name": "ヨーグルトアイス"
+    },
+    {
+      "id": "ingredient_74f9c968aca03795",
+      "name": "さば"
+    },
+    {
+      "id": "ingredient_753057576e198fb7",
+      "name": "えのき"
+    },
+    {
+      "id": "ingredient_76537500907a383b",
+      "name": "バニラアイス"
+    },
+    {
+      "id": "ingredient_787bcc7042939ad9",
+      "name": "バナナ"
+    },
+    {
+      "id": "ingredient_78a1a8d19ee893e4",
+      "name": "乾燥スパゲッティ"
+    },
+    {
+      "id": "ingredient_78cef29d6cd148e6",
+      "name": "くるみ"
+    },
+    {
+      "id": "ingredient_7a7230eee40d4a94",
+      "name": "かれい"
+    },
+    {
+      "id": "ingredient_7d1600d206955657",
+      "name": "小籠包"
+    },
+    {
+      "id": "ingredient_7e90d4c504e5ebb8",
+      "name": "いんげん"
+    },
+    {
+      "id": "ingredient_7ea303295ae7dd6b",
+      "name": "マッシュルーム"
+    },
+    {
+      "id": "ingredient_7f12b991b6d026f6",
+      "name": "いわし"
+    },
+    {
+      "id": "ingredient_805bf68369baab0e",
+      "name": "蒸し焼そば麺"
+    },
+    {
+      "id": "ingredient_80997f9b9b6970c5",
+      "name": "かぼちゃ"
+    },
+    {
+      "id": "ingredient_819bac9f6ddfd587",
+      "name": "たい"
+    },
+    {
+      "id": "ingredient_81f6cfaeff6c0653",
+      "name": "ドライプルーン"
+    },
+    {
+      "id": "ingredient_8456abf8309699a5",
+      "name": "パプリカ"
+    },
+    {
+      "id": "ingredient_88b8830649fe3345",
+      "name": "ロースハム"
+    },
+    {
+      "id": "ingredient_88f5b7b172ab486a",
+      "name": "ラスク"
+    },
+    {
+      "id": "ingredient_8a135d3449556a01",
+      "name": "ココアビスケット"
+    },
+    {
+      "id": "ingredient_8abb02df7c055de1",
+      "name": "サラダチキン"
+    },
+    {
+      "id": "ingredient_8d9e88e89de749e0",
+      "name": "レトルトバターチキンカレー"
+    },
+    {
+      "id": "ingredient_8daf10719b2088ea",
+      "name": "豚もも肉"
+    },
+    {
+      "id": "ingredient_90ec2872a5df6135",
+      "name": "そら豆"
+    },
+    {
+      "id": "ingredient_924354b112504759",
+      "name": "イングリッシュマフィン"
+    },
+    {
+      "id": "ingredient_928e4fe5637dab1c",
+      "name": "厚揚げ"
+    },
+    {
+      "id": "ingredient_9326e08974a3da35",
+      "name": "いちご"
+    },
+    {
+      "id": "ingredient_932b8d86631ebaab",
+      "name": "カシューナッツ"
+    },
+    {
+      "id": "ingredient_9390bf88d484840b",
+      "name": "まいたけ"
+    },
+    {
+      "id": "ingredient_93ace6f52a85675a",
+      "name": "ランチョンミート"
+    },
+    {
+      "id": "ingredient_95ceec6bccd742ba",
+      "name": "玉ねぎ"
+    },
+    {
+      "id": "ingredient_961c8fc2e27b9af5",
+      "name": "惣菜とんかつ"
+    },
+    {
+      "id": "ingredient_96316d6f748b90e3",
+      "name": "油揚げ"
+    },
+    {
+      "id": "ingredient_963b87c8edad8f20",
+      "name": "キャベツ"
+    },
+    {
+      "id": "ingredient_96763ebee35d3ac9",
+      "name": "メンチカツ"
+    },
+    {
+      "id": "ingredient_992ad0ec2a0ecec9",
+      "name": "カップラーメン（味噌）"
+    },
+    {
+      "id": "ingredient_9b12154277311595",
+      "name": "小松菜"
+    },
+    {
+      "id": "ingredient_9b8bc1b61d692685",
+      "name": "白菜"
+    },
+    {
+      "id": "ingredient_9c14e87928540532",
+      "name": "えび"
+    },
+    {
+      "id": "ingredient_9ccf161138c60381",
+      "name": "オートミール"
+    },
+    {
+      "id": "ingredient_9eb198615c332516",
+      "name": "ビスケット"
+    },
+    {
+      "id": "ingredient_9eb43a00d26639e8",
+      "name": "カップ焼そば（塩）"
+    },
+    {
+      "id": "ingredient_9ecb9bc10c84ee84",
+      "name": "ミックスビーンズ缶"
+    },
+    {
+      "id": "ingredient_9f4197ae65ff8eb3",
+      "name": "アボカド"
+    },
+    {
+      "id": "ingredient_9f488a4d521a9d1e",
+      "name": "クッキー"
+    },
+    {
+      "id": "ingredient_9f94d3323a6a5cf9",
+      "name": "絹さや"
+    },
+    {
+      "id": "ingredient_a4e9308ee950517b",
+      "name": "カップフォー"
+    },
+    {
+      "id": "ingredient_a5f346052f445fee",
+      "name": "レトルトビーフシチュー"
+    },
+    {
+      "id": "ingredient_a7dbc110c61b7e47",
+      "name": "そば"
+    },
+    {
+      "id": "ingredient_a8074096f1078798",
+      "name": "パイナップル缶"
+    },
+    {
+      "id": "ingredient_aae840e9cd6cd81a",
+      "name": "杏仁豆腐"
+    },
+    {
+      "id": "ingredient_ab3551e15aace7b1",
+      "name": "ピザクラスト"
+    },
+    {
+      "id": "ingredient_ad16bacfb534d878",
+      "name": "かぶ"
+    },
+    {
+      "id": "ingredient_ad8c153d844e4db1",
+      "name": "レトルトクラムチャウダー"
+    },
+    {
+      "id": "ingredient_ad8cf59bd5955452",
+      "name": "長芋"
+    },
+    {
+      "id": "ingredient_ae9265b3899e7fec",
+      "name": "スペアリブ"
+    },
+    {
+      "id": "ingredient_af0051848e7bd950",
+      "name": "カニ風味かまぼこ"
+    },
+    {
+      "id": "ingredient_afb0216c5de52c76",
+      "name": "生鮭"
+    },
+    {
+      "id": "ingredient_afcb62522a27204c",
+      "name": "カップ汁なし担々麺"
+    },
+    {
+      "id": "ingredient_afe9ceb30e485cda",
+      "name": "ソーセージ"
+    },
+    {
+      "id": "ingredient_b258160098a7fe21",
+      "name": "グレープフルーツ"
+    },
+    {
+      "id": "ingredient_b37f90d909b1e8a6",
+      "name": "ちくわ"
+    },
+    {
+      "id": "ingredient_b4356b6453aaf7fe",
+      "name": "中華生麺"
+    },
+    {
+      "id": "ingredient_b66caf428eb3d701",
+      "name": "グラハムクラッカー"
+    },
+    {
+      "id": "ingredient_b67af6a1769237e6",
+      "name": "オクラ"
+    },
+    {
+      "id": "ingredient_b7d04eb805d7c4df",
+      "name": "カステラ"
+    },
+    {
+      "id": "ingredient_b7d3396b1465e08e",
+      "name": "鶏もも肉"
+    },
+    {
+      "id": "ingredient_b9cef6a154e0e3ed",
+      "name": "春巻き"
+    },
+    {
+      "id": "ingredient_ba430b74a6dc97dd",
+      "name": "餃子"
+    },
+    {
+      "id": "ingredient_bb28575e20507d27",
+      "name": "マカロニ"
+    },
+    {
+      "id": "ingredient_bc6df7254eb97234",
+      "name": "押し麦"
+    },
+    {
+      "id": "ingredient_bd225018943a1542",
+      "name": "柿の種"
+    },
+    {
+      "id": "ingredient_bee8765fca7e452a",
+      "name": "牛ひき肉"
+    },
+    {
+      "id": "ingredient_bfaf3f3dddfd78a2",
+      "name": "手羽先"
+    },
+    {
+      "id": "ingredient_c0b4429b092d0379",
+      "name": "鶏むね肉"
+    },
+    {
+      "id": "ingredient_c123740be5389974",
+      "name": "つみれ"
+    },
+    {
+      "id": "ingredient_c2468571773f9666",
+      "name": "カップラーメン（醤油）"
+    },
+    {
+      "id": "ingredient_c404d4f9b505e56b",
+      "name": "チキンナゲット"
+    },
+    {
+      "id": "ingredient_c46d7f93640a4c37",
+      "name": "どら焼き"
+    },
+    {
+      "id": "ingredient_c8cfd5bc90870a73",
+      "name": "カリフラワー"
+    },
+    {
+      "id": "ingredient_c940e342952b2bb4",
+      "name": "プレッツェル"
+    },
+    {
+      "id": "ingredient_ca74b9b0b454147c",
+      "name": "焼き豚"
+    },
+    {
+      "id": "ingredient_cac3e3ec78481ddf",
+      "name": "袋担々麺"
+    },
+    {
+      "id": "ingredient_cb9f5ee22fed0964",
+      "name": "抹茶アイス"
+    },
+    {
+      "id": "ingredient_cf097ec982fccb15",
+      "name": "たけのこ"
+    },
+    {
+      "id": "ingredient_cf2cdcda00402386",
+      "name": "豆苗"
+    },
+    {
+      "id": "ingredient_d1ee31be25e3391f",
+      "name": "牛肩ロース"
+    },
+    {
+      "id": "ingredient_d245c99f68a2cfea",
+      "name": "絹ごし豆腐"
+    },
+    {
+      "id": "ingredient_d27a7c22e6b72281",
+      "name": "サニーレタス"
+    },
+    {
+      "id": "ingredient_d2c92d6b42ce43ce",
+      "name": "あずきアイス"
+    },
+    {
+      "id": "ingredient_d36bc8945ab1cc83",
+      "name": "きくらげ"
+    },
+    {
+      "id": "ingredient_d3cde9f7496ad2f0",
+      "name": "鶏つくね"
+    },
+    {
+      "id": "ingredient_d50169c0205b7abc",
+      "name": "ひやむぎ"
+    },
+    {
+      "id": "ingredient_d5a293b12763a30d",
+      "name": "なす"
+    },
+    {
+      "id": "ingredient_d5a67c5823b85d6e",
+      "name": "フルーツミックス缶"
+    },
+    {
+      "id": "ingredient_d66da1ca10b1e067",
+      "name": "かつお"
+    },
+    {
+      "id": "ingredient_d6ae3e22be5c8281",
+      "name": "ひよこ豆缶"
+    },
+    {
+      "id": "ingredient_da1c365bd7f76074",
+      "name": "あさり"
+    },
+    {
+      "id": "ingredient_da45db5270f69ad3",
+      "name": "まぐろ切り身"
+    },
+    {
+      "id": "ingredient_da75157fea9b70f9",
+      "name": "豚ロース"
+    },
+    {
+      "id": "ingredient_db6b7e2188638aa1",
+      "name": "チルド焼そばセット"
+    },
+    {
+      "id": "ingredient_dd291e2d739240fc",
+      "name": "カップうどん"
+    },
+    {
+      "id": "ingredient_ddfe88974d92c4c9",
+      "name": "いか"
+    },
+    {
+      "id": "ingredient_e11b503d970212df",
+      "name": "肉団子"
+    },
+    {
+      "id": "ingredient_e192582e0d2f5232",
+      "name": "さつまいも"
+    },
+    {
+      "id": "ingredient_e31d7b96f5bff249",
+      "name": "冷凍エビフライ"
+    },
+    {
+      "id": "ingredient_e46abe098a31967d",
+      "name": "トマト"
+    },
+    {
+      "id": "ingredient_e4b1d48fbdb75432",
+      "name": "いわし水煮缶"
+    },
+    {
+      "id": "ingredient_e7287b2cf63350dc",
+      "name": "袋ラーメン（塩）"
+    },
+    {
+      "id": "ingredient_e7569fef5f528437",
+      "name": "コーンスナック"
+    },
+    {
+      "id": "ingredient_e75e1714add19a8b",
+      "name": "さわら"
+    },
+    {
+      "id": "ingredient_e89e21519b12f124",
+      "name": "クラッカー"
+    },
+    {
+      "id": "ingredient_e8c980584a6a392c",
+      "name": "ズッキーニ"
+    },
+    {
+      "id": "ingredient_ea45229a41efb1e0",
+      "name": "砂肝"
+    },
+    {
+      "id": "ingredient_eb88704b98b290db",
+      "name": "もち麦"
+    },
+    {
+      "id": "ingredient_ebcf8cf3b61d0079",
+      "name": "コロッケ"
+    },
+    {
+      "id": "ingredient_ebe70ac24e389e3c",
+      "name": "カップ担々麺"
+    },
+    {
+      "id": "ingredient_edfee9b1f08433c3",
+      "name": "さば水煮缶"
+    },
+    {
+      "id": "ingredient_efca3fd8624602ad",
+      "name": "チョコウエハース"
+    },
+    {
+      "id": "ingredient_f0d3f65598620a6a",
+      "name": "コーヒーゼリー"
+    },
+    {
+      "id": "ingredient_f116b5f93ca2427a",
+      "name": "プレーンヨーグルト"
+    },
+    {
+      "id": "ingredient_f1a8d5ccfd79fbfd",
+      "name": "手羽元"
+    },
+    {
+      "id": "ingredient_f212a7378f429d3c",
+      "name": "袋まぜそば"
+    },
+    {
+      "id": "ingredient_f2f7b2c3ce69275b",
+      "name": "冷凍マンゴー"
+    },
+    {
+      "id": "ingredient_f4b724f5837cf795",
+      "name": "カップ焼そば（ソース）"
+    },
+    {
+      "id": "ingredient_f60539f8fc26c8f0",
+      "name": "マンゴープリン"
+    },
+    {
+      "id": "ingredient_f6c363278f4f6ac9",
+      "name": "水菜"
+    },
+    {
+      "id": "ingredient_f74f66b608290d4c",
+      "name": "プリン"
+    },
+    {
+      "id": "ingredient_f7cb1b429e8f386a",
+      "name": "ツナ缶"
+    },
+    {
+      "id": "ingredient_f8ee00412b6246a7",
+      "name": "コンビーフ"
+    },
+    {
+      "id": "ingredient_f9caedfec9e61ccc",
+      "name": "ほたて"
+    },
+    {
+      "id": "ingredient_fa2f4380177ffeb5",
+      "name": "そうめん"
+    },
+    {
+      "id": "ingredient_fc878b5f3ad14d8a",
+      "name": "あじ"
+    },
+    {
+      "id": "ingredient_fc884d95da3e0488",
+      "name": "ロールパン"
+    },
+    {
+      "id": "ingredient_fd55a3ce2ad61796",
+      "name": "チンゲン菜"
+    },
+    {
+      "id": "ingredient_fe882083db5f098a",
+      "name": "鶏卵"
+    }
+  ],
+  "templates": [
+    {
+      "id": "stir",
+      "name": "主材と野菜の炒め物"
+    },
+    {
+      "id": "simmer",
+      "name": "主材と野菜の煮物（煮汁少なめ）"
+    },
+    {
+      "id": "steam",
+      "name": "主材と野菜の蒸し物"
+    },
+    {
+      "id": "roast",
+      "name": "主材と野菜のオーブン焼き"
+    },
+    {
+      "id": "soup",
+      "name": "主材と野菜の具だくさんスープ"
+    },
+    {
+      "id": "salad",
+      "name": "加熱主材と野菜のサラダ"
+    },
+    {
+      "id": "rice_mix",
+      "name": "具入り混ぜご飯"
+    },
+    {
+      "id": "rice_soup",
+      "name": "具入り雑炊・穀類スープ"
+    },
+    {
+      "id": "noodle_stir",
+      "name": "具入り炒め麺"
+    },
+    {
+      "id": "noodle_soup",
+      "name": "具入り汁麺"
+    },
+    {
+      "id": "noodle_salad",
+      "name": "具入り冷製和え麺"
+    },
+    {
+      "id": "bread_open",
+      "name": "具を載せたオープントースト"
+    },
+    {
+      "id": "bread_sand",
+      "name": "具入りサンド"
+    },
+    {
+      "id": "cup_soup",
+      "name": "即席汁麺の野菜追加"
+    },
+    {
+      "id": "cup_dry",
+      "name": "即席焼そば・まぜそばの野菜追加"
+    },
+    {
+      "id": "ready_soup",
+      "name": "レトルト汁物・カレーの野菜追加"
+    },
+    {
+      "id": "ready_fry",
+      "name": "市販揚げ物の野菜あんかけ"
+    },
+    {
+      "id": "dumpling",
+      "name": "市販餃子・団子の野菜スープ"
+    },
+    {
+      "id": "sweet",
+      "name": "市販デザートの果実ナッツ添え"
+    },
+    {
+      "id": "yogurt",
+      "name": "果実ナッツヨーグルト"
+    },
+    {
+      "id": "crunch",
+      "name": "砕いた市販スナックの野菜サラダ"
+    }
+  ],
+  "flavors": [
+    "きなこ",
+    "ごまぽん酢",
+    "ごま味噌",
+    "ごま油塩",
+    "しょうが味噌",
+    "しょうが醤油",
+    "にんにく味噌",
+    "にんにく醤油",
+    "ねぎ塩レモン",
+    "ぽん酢",
+    "めんつゆ",
+    "ゆず味噌",
+    "アンチョビトマト",
+    "オイスター",
+    "オリーブレモン",
+    "カレー",
+    "ガーリックオイル",
+    "キムチ",
+    "キャラメル",
+    "クリーム",
+    "コチュジャン",
+    "コンソメ",
+    "シナモン",
+    "スイートチリ",
+    "チョコ",
+    "チーズ黒こしょう",
+    "トマト",
+    "トマトクミン",
+    "ナンプラーレモン",
+    "バルサミコ醤油",
+    "マスタードクリーム",
+    "レモンクミン",
+    "レモンハーブ",
+    "元の味を活かす",
+    "味噌だし",
+    "味噌クリーム",
+    "味噌甘辛",
+    "塩こしょう",
+    "塩レモン",
+    "山椒醤油",
+    "抹茶",
+    "柑橘はちみつ",
+    "梅しそ",
+    "梅味噌",
+    "玉ねぎドレッシング",
+    "甜麺醤",
+    "白だし",
+    "粒マスタード",
+    "胡麻ドレッシング",
+    "豆乳ごま",
+    "豆板醤",
+    "醤油だし",
+    "醤油甘辛",
+    "青じそ",
+    "鶏ガラ塩",
+    "黒ごま",
+    "黒蜜",
+    "黒酢",
+    "黒酢しょうが"
+  ],
+  "routes": [
+    "主材と野菜を食べやすく切り、食材別に下処理・必要加熱して炒め合わせる",
+    "主材は必要加熱し、野菜は薄切り・下処理して、冷まして和える",
+    "主材・野菜を必要に応じて別蒸しし、たれを和える",
+    "具の大きさと加熱時間を調整し、飲める量のスープに仕上げる",
+    "具を別加熱して水分を切り、パンに載せて焼く",
+    "加熱が必要な具を別加熱・冷却し、野菜とパンに挟む",
+    "商品表示で温め、別加熱した野菜を煮合わせる。元の味付けを維持",
+    "商品表示どおり麺を調理し、別加熱して水分を切った野菜を和える。添付調味料量を調整",
+    "商品表示どおり麺・スープを調理し、別加熱した野菜を追加。添付調味料量を調整",
+    "市販品は表示に従い調理し、野菜とスープへ合流する",
+    "揚げ物を商品表示で温め、別加熱した野菜の少量のでんぷんあんをかける",
+    "果実とナッツを下処理してヨーグルトに混ぜる。冷凍果実は表示に従い必要加熱",
+    "果実を下処理し、市販甘味と組み立てる。冷凍果実は表示に従い解凍・必要加熱する",
+    "硬い野菜を下加熱し、主材と野菜を焼いてソースで仕上げる",
+    "穀類と具を必要加熱して、汁気を残した雑炊にする",
+    "穀類は炊飯または調理済み品を使用し、別加熱した具を混ぜ込む",
+    "野菜を下処理して和え、砕いた菓子を食べる直前に加える。追加塩を控える",
+    "食材ごとの下処理と加熱時間を分け、少量の煮汁で煮合わせる",
+    "麺と具を必要に応じ別加熱し、温かいスープへ合流する",
+    "麺と加熱が必要な具を別加熱し、冷ましてたれと和える",
+    "麺を商品指定で戻し茹で、別加熱した具と炒め合わせる"
+  ]
+}
