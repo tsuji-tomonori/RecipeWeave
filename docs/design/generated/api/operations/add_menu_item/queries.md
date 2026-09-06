@@ -10,7 +10,10 @@
 
 | 対象表 | CRUD | 参照・書込列 |
 |---|---|---|
+| recipeweave.axis | R | code, id |
+| recipeweave.axis_option | R | axis_id, id |
 | recipeweave.recipe | R | id, status |
+| recipeweave.recipe_option | R | option_id, recipe_version_id |
 | recipeweave.recipe_version | R | base_servings, id, recipe_id, status, validation, version |
 
 バインド変数: preview, recipe_id, requested_version_id
@@ -19,7 +22,14 @@
 -- 公開済み料理、または明示したローカル試用で利用できる料理版を選ぶ。
 SELECT
     rv.id,
-    rv.base_servings
+    rv.base_servings,
+    ARRAY(
+        SELECT ao.id FROM recipeweave.recipe_option AS ro
+        INNER JOIN recipeweave.axis_option AS ao ON ro.option_id = ao.id
+        INNER JOIN recipeweave.axis AS ax ON ao.axis_id = ax.id
+        WHERE ro.recipe_version_id = rv.id AND ax.code = 'dish_role'
+        ORDER BY ao.id
+    ) AS role_option_ids
 FROM recipeweave.recipe_version AS rv
 INNER JOIN
     recipeweave.recipe AS r
@@ -88,7 +98,7 @@ VALUES (%(menu_id)s, %(user_id)s, %(name)s, 2, 1) ON CONFLICT (id) DO NOTHING;
 |---|---|---|
 | recipeweave.menu_item | C,R | id, menu_id, position, recipe_version_id, role_option_id, servings |
 
-バインド変数: menu_id, row_id, servings, version_id
+バインド変数: menu_id, role_option_id, row_id, servings, version_id
 
 ```sql
 -- 検証した料理版と人数を献立へ登録する。
@@ -96,7 +106,7 @@ INSERT INTO recipeweave.menu_item (
     id, menu_id, recipe_version_id, servings, role_option_id, position
 )
 VALUES (
-    %(row_id)s, %(menu_id)s, %(version_id)s, %(servings)s, NULL,
+    %(row_id)s, %(menu_id)s, %(version_id)s, %(servings)s, %(role_option_id)s,
     (
         SELECT COALESCE(MAX(mi.position), 0) + 1 FROM recipeweave.menu_item AS mi
         WHERE mi.menu_id = %(menu_id)s

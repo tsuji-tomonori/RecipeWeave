@@ -289,7 +289,7 @@ sequenceDiagram
 
 ### workspace_service.py: `_custom_food`
 
-定義元: `backend/src/app/core/workspace_service.py:386`
+定義元: `backend/src/app/core/workspace_service.py:390`
 
 ```mermaid
 sequenceDiagram
@@ -340,7 +340,7 @@ sequenceDiagram
 
 ### workspace_service.py: `commit_receipt`
 
-定義元: `backend/src/app/core/workspace_service.py:421`
+定義元: `backend/src/app/core/workspace_service.py:425`
 
 ```mermaid
 sequenceDiagram

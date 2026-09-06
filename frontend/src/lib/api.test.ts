@@ -132,18 +132,28 @@ describe("実APIへの要求と失敗時の扱い", () => {
   });
 
   it("要求中に利用者が変わったら古い結果を捨て、新しい認証を消さない", async () => {
-    setToken("alice-token");
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => {
-        setToken("bob-token");
-        return new Response(JSON.stringify({ privateValue: "alice" }));
-      }),
-    );
-    await expect(request("/api/workspace")).rejects.toMatchObject({
-      status: 409,
-    });
-    expect(getToken()).toBe("bob-token");
+    for (const duringBody of [false, true]) {
+      setToken("alice-token");
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(async () => {
+          const response = new Response(
+            JSON.stringify({ privateValue: "alice" }),
+          );
+          if (duringBody)
+            vi.spyOn(response, "json").mockImplementation(async () => {
+              setToken("bob-token");
+              return { privateValue: "alice" };
+            });
+          else setToken("bob-token");
+          return response;
+        }),
+      );
+      await expect(request("/api/workspace")).rejects.toMatchObject({
+        status: 409,
+      });
+      expect(getToken()).toBe("bob-token");
+    }
   });
 
   it("401では失効した認証を破棄し、通信失敗と区別する", async () => {

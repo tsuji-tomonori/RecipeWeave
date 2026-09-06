@@ -91,8 +91,8 @@ async function recognizeTestReceipt(page: Page, marker: string) {
     context.font = '52px "Noto Sans CJK JP", sans-serif';
     [
       "食品レシート",
-      "なす 200g 198円",
-      "トマト 300g 298円",
+      `なす ${text.startsWith("mobile") ? 210 : 200}g 198円`,
+      `トマト ${text.startsWith("mobile") ? 320 : 300}g 298円`,
       "合計 496円",
       text,
     ].forEach((line, index) => context.fillText(line, 60, 95 + index * 105));
@@ -448,10 +448,11 @@ test("レシート画像を実際に読み取り、確認した食材を登録�
         (entry) => !before.imports.some((old) => old.id === entry.id),
       )!.id;
       expect(
-        (await workspace(page)).lots.filter(
-          (lot) => lot.sourceImportId === importId,
-        ).length,
-      ).toBeGreaterThan(0);
+        (await workspace(page)).lots
+          .filter((lot) => lot.sourceImportId === importId)
+          .map((lot) => lot.quantity.value)
+          .sort((a, b) => (a ?? 0) - (b ?? 0)),
+      ).toEqual(info.project.name === "mobile" ? [210, 320] : [200, 300]);
     },
   );
   await step(

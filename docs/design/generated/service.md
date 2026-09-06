@@ -347,8 +347,8 @@
 |---|---|---|
 | `frontend/src/App.test.ts` | 検証コード | `6b32effd2998c09e1ec5c129adea57d032965d87b8461cbf4d313949af3df8c0` |
 | `frontend/src/lib/api-contract.ts` | `WorkspaceResponse`, `RevisionRequest`, `WorkspaceMutationResponse`, `CreatePantryLotRequest`, `UpdatePantryLotRequest`, `CommitReceiptRequest`, `AddMenuItemRequest`, `PutSettingsRequest`, `PutShoppingChecksRequest`, `CreateCookingSessionRequest`, `UpdateCookingSessionRequest`, `PreviewCookingPlanRequest`, `PreviewCookingPlanResponse`, `CreateCustomFoodRequest` | `0d2b0299ac7e28e6b3b3acc770970f266a43f126b48f091fdbbce5a7bf566e68` |
-| `frontend/src/lib/api.test.ts` | 検証コード | `c9b6a6eb9364b7679e4cd847d1bbba2ce2a18f29b0cf33e7e56f7046d462346a` |
-| `frontend/src/lib/api.ts` | `User`, `StateEnvelope`, `RecipePage`, `ApiError`, `request`, `localLogin`, `currentUser`, `loadFoods`, `findRecipes`, `randomRecipe`, `loadRecipe`, `loadState`, `saveState`, `completeCooking`, `commitReceipt`, `previewCookingPlan` | `fa3915ea15f79655f87afa8c0c139e46bbbce3af1954b8f1a35765a5167e77ad` |
+| `frontend/src/lib/api.test.ts` | 検証コード | `bde1193b862e022ef2344a69432a9aca40091c07eeb14f743d4598f1572d82d2` |
+| `frontend/src/lib/api.ts` | `User`, `StateEnvelope`, `RecipePage`, `ApiError`, `request`, `localLogin`, `currentUser`, `loadFoods`, `findRecipes`, `randomRecipe`, `loadRecipe`, `loadState`, `saveState`, `completeCooking`, `commitReceipt`, `previewCookingPlan` | `c5e3bd11936b188a4c6bf2c941378cce1a0c922d5582ad01fb78be213c2ef30e` |
 | `frontend/src/lib/auth.test.ts` | 検証コード | `007954eb06b22ad583e0f707501254830bb19c2f471ecb027091de90d258e586` |
 | `frontend/src/lib/auth.ts` | `localMode`, `getToken`, `setToken`, `clearToken`, `loginCognito`, `completeLogin`, `logout` | `1beef8d3417207cc4b5a8723dde17df38408e5b7072529cc5e7c5d98eac74a69` |
 | `frontend/src/lib/domain.test.ts` | 検証コード | `05077452f7c0ef12e476e084678f3db16e96811fe19a30181d10a045eda8353e` |
@@ -729,10 +729,10 @@
 | `backend/src/app/apis/recipes/get_recipe/sql/001_select_recipe.sql` | `b011d3174810decc63a329dfa153353ce017a53e8ecb9fa7f7e5ae98d630dc68` |
 | `backend/src/app/apis/recipes/list_recipes/sql/001_select_recipes.sql` | `6ecd4c9e7e96d929c9968f298a87a180ee60cd462cf10c6b92c6980f674e9622` |
 | `backend/src/app/apis/recipes/random_recipe/sql/001_random_recipe.sql` | `35f000bab482c9f33c3b4dbcd972ba25e843f7efc7cb1746faf8cd0c5d674eb5` |
-| `backend/src/app/apis/workspace/add_menu_item/sql/q010_recipe.sql` | `894fd27b91abcb09c82cf27f83fd87da02533d77172912c24cca4755b5430cc0` |
+| `backend/src/app/apis/workspace/add_menu_item/sql/q010_recipe.sql` | `6dc9a8255dfd42bf4b88dbd7a52b0a0c2a5ad640ebd1ed213546c968a3e2b10b` |
 | `backend/src/app/apis/workspace/add_menu_item/sql/q011_ingredients.sql` | `d070a791fb8b735b33e7837f9be4c78e35547d7c5d44934f6771fc6b79d0feae` |
 | `backend/src/app/apis/workspace/add_menu_item/sql/q012_menu.sql` | `6eee3b93a52dc8ad30be9b0ddba407b44e0c80a99999616ef69f600801adabe7` |
-| `backend/src/app/apis/workspace/add_menu_item/sql/q013_insert_item.sql` | `6c4e0b2865320957ec04c0e87cba4d0a694a3baea1e526633895d731955822f4` |
+| `backend/src/app/apis/workspace/add_menu_item/sql/q013_insert_item.sql` | `c80accf722ff53d66e4ba7e320e165d6b9110ee2cdda67b0066a224676df8b83` |
 | `backend/src/app/apis/workspace/add_menu_item/sql/q014_override.sql` | `063c035974dddd3b6a6520c02a39d23acee182fd7d6764586fd5013b2d51944f` |
 | `backend/src/app/apis/workspace/add_menu_item/sql/q015_advance_menu.sql` | `1917adb8a95a88eac63653140294a92e33ab1099358814644f1ceb514e9a4730` |
 | `backend/src/app/apis/workspace/add_menu_item/sql/q900_lock_revision.sql` | `f1ef00c3a47468641d44c89026381c3693e9cfc4462f18c18389931fcadaa63c` |
@@ -751,10 +751,10 @@
 | `backend/src/app/apis/workspace/commit_receipt/sql/q901_advance_revision.sql` | `942c0db60727dc0731b1e3086d8313068f57c864b3322861e0a28bd62377e22f` |
 | `backend/src/app/apis/workspace/commit_receipt/sql/q902_append_audit.sql` | `76db90e062480e68582345fe8aea09a91db366c547ac1195cb53b79c8e0a3346` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q001_current.sql` | `30ec6077ef4357122f120efc6402f2412080cf4349adf6c7668d161f9f4a0f8e` |
-| `backend/src/app/apis/workspace/create_cooking_session/sql/q010_recipe.sql` | `894fd27b91abcb09c82cf27f83fd87da02533d77172912c24cca4755b5430cc0` |
+| `backend/src/app/apis/workspace/create_cooking_session/sql/q010_recipe.sql` | `6dc9a8255dfd42bf4b88dbd7a52b0a0c2a5ad640ebd1ed213546c968a3e2b10b` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q011_ingredients.sql` | `d070a791fb8b735b33e7837f9be4c78e35547d7c5d44934f6771fc6b79d0feae` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q012_menu.sql` | `6eee3b93a52dc8ad30be9b0ddba407b44e0c80a99999616ef69f600801adabe7` |
-| `backend/src/app/apis/workspace/create_cooking_session/sql/q013_insert_item.sql` | `6c4e0b2865320957ec04c0e87cba4d0a694a3baea1e526633895d731955822f4` |
+| `backend/src/app/apis/workspace/create_cooking_session/sql/q013_insert_item.sql` | `c80accf722ff53d66e4ba7e320e165d6b9110ee2cdda67b0066a224676df8b83` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q014_override.sql` | `063c035974dddd3b6a6520c02a39d23acee182fd7d6764586fd5013b2d51944f` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q015_advance_menu.sql` | `1917adb8a95a88eac63653140294a92e33ab1099358814644f1ceb514e9a4730` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q020_steps.sql` | `538011a969d0478da16b2d27681bb617bb40d0ab4119967f502a0ab577564072` |
@@ -854,10 +854,10 @@
 | `backend/src/app/apis/workspace/update_cooking_session/sql/q901_advance_revision.sql` | `942c0db60727dc0731b1e3086d8313068f57c864b3322861e0a28bd62377e22f` |
 | `backend/src/app/apis/workspace/update_cooking_session/sql/q902_append_audit.sql` | `76db90e062480e68582345fe8aea09a91db366c547ac1195cb53b79c8e0a3346` |
 | `backend/src/app/apis/workspace/update_menu_item/sql/q001_delete_item.sql` | `ad34c60fe50c5bcbb724ac2f812a3ae385094afa46db9d96e3837f86b3e01d41` |
-| `backend/src/app/apis/workspace/update_menu_item/sql/q010_recipe.sql` | `894fd27b91abcb09c82cf27f83fd87da02533d77172912c24cca4755b5430cc0` |
+| `backend/src/app/apis/workspace/update_menu_item/sql/q010_recipe.sql` | `6dc9a8255dfd42bf4b88dbd7a52b0a0c2a5ad640ebd1ed213546c968a3e2b10b` |
 | `backend/src/app/apis/workspace/update_menu_item/sql/q011_ingredients.sql` | `d070a791fb8b735b33e7837f9be4c78e35547d7c5d44934f6771fc6b79d0feae` |
 | `backend/src/app/apis/workspace/update_menu_item/sql/q012_menu.sql` | `6eee3b93a52dc8ad30be9b0ddba407b44e0c80a99999616ef69f600801adabe7` |
-| `backend/src/app/apis/workspace/update_menu_item/sql/q013_insert_item.sql` | `6c4e0b2865320957ec04c0e87cba4d0a694a3baea1e526633895d731955822f4` |
+| `backend/src/app/apis/workspace/update_menu_item/sql/q013_insert_item.sql` | `c80accf722ff53d66e4ba7e320e165d6b9110ee2cdda67b0066a224676df8b83` |
 | `backend/src/app/apis/workspace/update_menu_item/sql/q014_override.sql` | `063c035974dddd3b6a6520c02a39d23acee182fd7d6764586fd5013b2d51944f` |
 | `backend/src/app/apis/workspace/update_menu_item/sql/q015_advance_menu.sql` | `1917adb8a95a88eac63653140294a92e33ab1099358814644f1ceb514e9a4730` |
 | `backend/src/app/apis/workspace/update_menu_item/sql/q900_lock_revision.sql` | `f1ef00c3a47468641d44c89026381c3693e9cfc4462f18c18389931fcadaa63c` |

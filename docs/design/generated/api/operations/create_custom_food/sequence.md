@@ -249,7 +249,7 @@ sequenceDiagram
 
 ### workspace_service.py: `_custom_food`
 
-定義元: `backend/src/app/core/workspace_service.py:386`
+定義元: `backend/src/app/core/workspace_service.py:390`
 
 ```mermaid
 sequenceDiagram
@@ -300,7 +300,7 @@ sequenceDiagram
 
 ### workspace_service.py: `create_custom_food`
 
-定義元: `backend/src/app/core/workspace_service.py:415`
+定義元: `backend/src/app/core/workspace_service.py:419`
 
 ```mermaid
 sequenceDiagram

@@ -104,9 +104,13 @@ export async function request<T>(
           : "処理を完了できませんでした。入力内容を確認してください。"),
     );
   }
-  return response.status === 204
-    ? (undefined as T)
-    : ((await response.json()) as T);
+  const result = response.status === 204 ? undefined : await response.json();
+  if (getToken() !== token)
+    throw new ApiError(
+      409,
+      "ログイン状態が変わったため、前の要求の結果は表示しません。",
+    );
+  return result as T;
 }
 export async function localLogin(
   username: string,

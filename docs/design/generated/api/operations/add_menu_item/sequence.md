@@ -266,6 +266,18 @@ sequenceDiagram
             Function-->>Caller: HTTPException(404, #39;料理が公開されていません#39;)
         end
     end
+    Function->>Callee: cast(list[UUID], version[0][#39;role_option_ids#39;])
+    Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
+    Note over Function: roles = cast(list[UUID], version[0][#39;role_option_ids#39;])
+    Function->>Callee: len(roles)
+    Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
+    alt len(roles) != 1
+        Function->>Callee: HTTPException(422, #39;料理の献立内役割が未確定です。料理の分類を確認してください#39;)
+        Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
+        break この経路の関数終了: raise
+            Function-->>Caller: HTTPException(422, #39;料理の献立内役割が未確定です。料理の分類を確認してください#39;)
+        end
+    end
     Function->>Callee: q.run(#39;q011_ingredients#39;, version_id=version[0][#39;id#39;])
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Note over Function: ingredients = q.run(#39;q011_ingredients#39;, version_id=version[0][#39;id#39;])
@@ -285,7 +297,7 @@ sequenceDiagram
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Function->>Callee: Decimal(str(item.servings))
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-    Function->>Callee: q.run(#39;q013_insert_item#39;, row_id=identifier(item.id), menu_id=menu_id, version_id=version[0][#39;id#39;], servings=Decimal(str(item.servings)))
+    Function->>Callee: q.run(#39;q013_insert_item#39;, row_id=identifier(item.id), menu_id=menu_id, version_id=version[0][#39;id#39;], servings=Decimal(str(item.servings)), role_option_id=roles[0])
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     loop ingredient in ingredients
         Function->>Callee: str(ingredient[#39;id#39;])
@@ -315,7 +327,7 @@ sequenceDiagram
 
 ### workspace_service.py: `add_menu_item`
 
-定義元: `backend/src/app/core/workspace_service.py:300`
+定義元: `backend/src/app/core/workspace_service.py:304`
 
 ```mermaid
 sequenceDiagram

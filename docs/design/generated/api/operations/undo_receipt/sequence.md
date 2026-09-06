@@ -222,7 +222,7 @@ sequenceDiagram
 
 ### workspace_service.py: `undo_receipt`
 
-定義元: `backend/src/app/core/workspace_service.py:476`
+定義元: `backend/src/app/core/workspace_service.py:480`
 
 ```mermaid
 sequenceDiagram

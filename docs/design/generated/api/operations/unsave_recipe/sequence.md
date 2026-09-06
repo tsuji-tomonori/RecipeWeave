@@ -222,7 +222,7 @@ sequenceDiagram
 
 ### workspace_service.py: `_save_recipe`
 
-定義元: `backend/src/app/core/workspace_service.py:323`
+定義元: `backend/src/app/core/workspace_service.py:327`
 
 ```mermaid
 sequenceDiagram
@@ -258,7 +258,7 @@ sequenceDiagram
 
 ### workspace_service.py: `unsave_recipe`
 
-定義元: `backend/src/app/core/workspace_service.py:341`
+定義元: `backend/src/app/core/workspace_service.py:345`
 
 ```mermaid
 sequenceDiagram

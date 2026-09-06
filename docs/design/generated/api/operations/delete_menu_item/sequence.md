@@ -222,7 +222,7 @@ sequenceDiagram
 
 ### workspace_service.py: `delete_menu_item`
 
-定義元: `backend/src/app/core/workspace_service.py:316`
+定義元: `backend/src/app/core/workspace_service.py:320`
 
 ```mermaid
 sequenceDiagram

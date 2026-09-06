@@ -1,5 +1,5 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 7470e11c7de088dd7b177f913eab660e7906ee03249faacc6b0f83c5ece02f16
+# SQLのSHA256: 2fde4b45920bd8556f6a336ae3f4076e0bea11a463cd461c3181845033793da7
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
@@ -21,7 +21,14 @@ RETURNING id;
 -- 公開済み料理、または明示したローカル試用で利用できる料理版を選ぶ。
 SELECT
     rv.id,
-    rv.base_servings
+    rv.base_servings,
+    ARRAY(
+        SELECT ao.id FROM recipeweave.recipe_option AS ro
+        INNER JOIN recipeweave.axis_option AS ao ON ro.option_id = ao.id
+        INNER JOIN recipeweave.axis AS ax ON ao.axis_id = ax.id
+        WHERE ro.recipe_version_id = rv.id AND ax.code = 'dish_role'
+        ORDER BY ao.id
+    ) AS role_option_ids
 FROM recipeweave.recipe_version AS rv
 INNER JOIN
     recipeweave.recipe AS r
@@ -63,7 +70,7 @@ INSERT INTO recipeweave.menu_item (
     id, menu_id, recipe_version_id, servings, role_option_id, position
 )
 VALUES (
-    %(row_id)s, %(menu_id)s, %(version_id)s, %(servings)s, NULL,
+    %(row_id)s, %(menu_id)s, %(version_id)s, %(servings)s, %(role_option_id)s,
     (
         SELECT COALESCE(MAX(mi.position), 0) + 1 FROM recipeweave.menu_item AS mi
         WHERE mi.menu_id = %(menu_id)s
@@ -109,7 +116,7 @@ PARAMETERS: dict[str, tuple[str, ...]] = {
     "q010_recipe": ("preview", "recipe_id", "requested_version_id"),
     "q011_ingredients": ("version_id",),
     "q012_menu": ("menu_id", "name", "user_id"),
-    "q013_insert_item": ("menu_id", "row_id", "servings", "version_id"),
+    "q013_insert_item": ("menu_id", "role_option_id", "row_id", "servings", "version_id"),
     "q014_override": ("amount", "ingredient_id", "item_id", "row_id", "selected"),
     "q015_advance_menu": ("menu_id", "user_id"),
     "q900_lock_revision": ("user_id",),

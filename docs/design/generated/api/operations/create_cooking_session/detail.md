@@ -51,7 +51,10 @@
 
 | 物理テーブル | 操作 | 対象列と意味 |
 |---|---|---|
+| recipeweave.axis | R | id: 不変の行識別子; code: 軸コード |
+| recipeweave.axis_option | R | id: 不変の行識別子; axis_id: 親軸 |
 | recipeweave.recipe | R | id: 不変の行識別子; status: 公開状態 |
+| recipeweave.recipe_option | R | recipe_version_id: 対象版; option_id: 特徴値 |
 | recipeweave.recipe_version | R | id: 不変の行識別子; recipe_id: 所属レシピ; version: 版番号; base_servings: 登録分量が何人前か; status: 版の状態; validation: 公開審査 |
 
 対象条件: `WHERE r.id = %(recipe_id)s AND (CAST(%(requested_version_id)s AS UUID) IS NULL OR rv.id = %(requested_version_id)s) AND ((rv.status = 'published' AND rv.validation = 'passed' AND r.status = 'published') OR (%(preview)s AND rv.status = 'draft' AND r.status = 'draft'))`
@@ -62,7 +65,7 @@
 | recipe_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
 | requested_version_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
 
-代入・選択式: `rv.id; rv.base_servings`
+代入・選択式: `rv.id; rv.base_servings; ARRAY(SELECT ao.id FROM recipeweave.recipe_option AS ro INNER JOIN recipeweave.axis_option AS ao ON ro.option_id = ao.id INNER JOIN recipeweave.axis AS ax ON ao.axis_id = ax.id WHERE ro.recipe_version_id = rv.id AND ax.code = 'dish_role' ORDER BY ao.id) AS role_option_ids`
 
 ### `backend/src/app/apis/workspace/create_cooking_session/sql/q011_ingredients.sql`
 
@@ -123,6 +126,7 @@
 | SQLバインド | 実装上の値の出所 |
 |---|---|
 | menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
+| role_option_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
 | row_id | task_id (backend/src/app/core/cooking_service.py:187) / uuid4() (backend/src/app/core/cooking_service.py:207) / uuid4() (backend/src/app/core/cooking_service.py:221) / uuid4() (backend/src/app/core/cooking_service.py:197) |
 | servings | row['servings'] (backend/src/app/core/cooking_service.py:147) |
 | version_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
@@ -135,7 +139,7 @@
 | menu_id | %(menu_id)s |
 | recipe_version_id | %(version_id)s |
 | servings | %(servings)s |
-| role_option_id | NULL |
+| role_option_id | %(role_option_id)s |
 | position | (SELECT COALESCE(MAX(mi.position), 0) + 1 FROM recipeweave.menu_item AS mi WHERE mi.menu_id = %(menu_id)s) |
 
 ### `backend/src/app/apis/workspace/create_cooking_session/sql/q014_override.sql`
@@ -899,7 +903,7 @@
 |---|---|---|
 | handle | execute(WorkspaceService(database, identity), request) | backend/src/app/apis/workspace/create_cooking_session/router.py:22 |
 | execute | service.create_cooking_session(request) | backend/src/app/apis/workspace/create_cooking_session/functions.py:6 |
-| WorkspaceService.create_cooking_session | CookingService(self).create(request) | backend/src/app/core/workspace_service.py:486 |
+| WorkspaceService.create_cooking_session | CookingService(self).create(request) | backend/src/app/core/workspace_service.py:490 |
 | CookingService.create | self.workspace.finish(q) | backend/src/app/core/cooking_service.py:108 |
 
 APIとして返す型・status・headerは [インターフェース](interface.md) の実OpenAPIを参照。
@@ -910,7 +914,7 @@ APIとして返す型・status・headerは [インターフェース](interface.
 |---|---|---|
 | handle | 調理計画を確定して開始する。呼出元が送った利用者IDは使用しない。 | backend/src/app/apis/workspace/create_cooking_session/router.py:22 |
 | execute | 調理計画を確定して開始する。永続値は業務サービスが検証し、同一トランザクションで扱う。 | backend/src/app/apis/workspace/create_cooking_session/functions.py:6 |
-| WorkspaceService.create_cooking_session | DBの料理と材料から調理計画を構築する。 | backend/src/app/core/workspace_service.py:486 |
+| WorkspaceService.create_cooking_session | DBの料理と材料から調理計画を構築する。 | backend/src/app/core/workspace_service.py:490 |
 | CookingService.create | 画面から送られた計画を信用せず、DBのDAGと設備で再計画する。 | backend/src/app/core/cooking_service.py:108 |
 
 [SQL](queries.md) / [シーケンス](sequence.md) / [ログ](messages.md) / [要因別テスト](tests.md)

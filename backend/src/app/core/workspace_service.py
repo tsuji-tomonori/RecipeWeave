@@ -3,7 +3,7 @@
 import hashlib
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any
+from typing import Any, cast
 from uuid import UUID, uuid4, uuid5
 
 from fastapi import HTTPException
@@ -270,6 +270,9 @@ class WorkspaceService:
         )
         if not version:
             raise HTTPException(404, "料理が公開されていません")
+        roles = cast(list[UUID], version[0]["role_option_ids"])
+        if len(roles) != 1:
+            raise HTTPException(422, "料理の献立内役割が未確定です。料理の分類を確認してください")
         ingredients = q.run("q011_ingredients", version_id=version[0]["id"])
         if set(item.amounts) != {str(r["id"]) for r in ingredients}:
             raise HTTPException(422, "材料の構成が料理版と一致しません")
@@ -280,6 +283,7 @@ class WorkspaceService:
             menu_id=menu_id,
             version_id=version[0]["id"],
             servings=Decimal(str(item.servings)),
+            role_option_id=roles[0],
         )
         for ingredient in ingredients:
             amount = item.amounts[str(ingredient["id"])]

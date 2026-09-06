@@ -1,5 +1,5 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 6c4e0b2865320957ec04c0e87cba4d0a694a3baea1e526633895d731955822f4
+# SQLのSHA256: c80accf722ff53d66e4ba7e320e165d6b9110ee2cdda67b0066a224676df8b83
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
@@ -12,7 +12,7 @@ INSERT INTO recipeweave.menu_item (
     id, menu_id, recipe_version_id, servings, role_option_id, position
 )
 VALUES (
-    %(row_id)s, %(menu_id)s, %(version_id)s, %(servings)s, NULL,
+    %(row_id)s, %(menu_id)s, %(version_id)s, %(servings)s, %(role_option_id)s,
     (
         SELECT COALESCE(MAX(mi.position), 0) + 1 FROM recipeweave.menu_item AS mi
         WHERE mi.menu_id = %(menu_id)s
@@ -21,7 +21,9 @@ VALUES (
 RETURNING id;
 """
 }
-PARAMETERS: dict[str, tuple[str, ...]] = {"query": ("menu_id", "row_id", "servings", "version_id")}
+PARAMETERS: dict[str, tuple[str, ...]] = {
+    "query": ("menu_id", "role_option_id", "row_id", "servings", "version_id")
+}
 
 
 def _execute(

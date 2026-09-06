@@ -44,7 +44,7 @@ sequenceDiagram
 
 ### workspace_service.py: `update_cooking_session`
 
-定義元: `backend/src/app/core/workspace_service.py:492`
+定義元: `backend/src/app/core/workspace_service.py:496`
 
 ```mermaid
 sequenceDiagram

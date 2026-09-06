@@ -53,3 +53,6 @@
 | entity_axis_list | R | backend/src/app/apis/entities/axis_list/sql/001_list.sql |
 | entity_axis_update | U | backend/src/app/apis/entities/axis_update/sql/001_update.sql |
 | list_foods | R | backend/src/app/apis/foods/list_foods/sql/001_select_foods.sql |
+| add_menu_item | R | backend/src/app/apis/workspace/add_menu_item/sql/q010_recipe.sql |
+| create_cooking_session | R | backend/src/app/apis/workspace/create_cooking_session/sql/q010_recipe.sql |
+| update_menu_item | R | backend/src/app/apis/workspace/update_menu_item/sql/q010_recipe.sql |

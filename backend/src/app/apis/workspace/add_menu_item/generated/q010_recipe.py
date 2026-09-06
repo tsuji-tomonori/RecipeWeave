@@ -1,5 +1,5 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 894fd27b91abcb09c82cf27f83fd87da02533d77172912c24cca4755b5430cc0
+# SQLのSHA256: 6dc9a8255dfd42bf4b88dbd7a52b0a0c2a5ad640ebd1ed213546c968a3e2b10b
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
@@ -10,7 +10,14 @@ QUERIES: dict[str, LiteralString] = {
 -- 公開済み料理、または明示したローカル試用で利用できる料理版を選ぶ。
 SELECT
     rv.id,
-    rv.base_servings
+    rv.base_servings,
+    ARRAY(
+        SELECT ao.id FROM recipeweave.recipe_option AS ro
+        INNER JOIN recipeweave.axis_option AS ao ON ro.option_id = ao.id
+        INNER JOIN recipeweave.axis AS ax ON ao.axis_id = ax.id
+        WHERE ro.recipe_version_id = rv.id AND ax.code = 'dish_role'
+        ORDER BY ao.id
+    ) AS role_option_ids
 FROM recipeweave.recipe_version AS rv
 INNER JOIN
     recipeweave.recipe AS r

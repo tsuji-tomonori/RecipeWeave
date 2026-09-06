@@ -249,7 +249,7 @@ sequenceDiagram
 
 ### workspace_service.py: `put_shopping_checks`
 
-定義元: `backend/src/app/core/workspace_service.py:362`
+定義元: `backend/src/app/core/workspace_service.py:366`
 
 ```mermaid
 sequenceDiagram

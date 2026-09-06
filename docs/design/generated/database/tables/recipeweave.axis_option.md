@@ -56,4 +56,7 @@
 | get_recipe | R | backend/src/app/apis/recipes/get_recipe/sql/001_select_recipe.sql |
 | list_recipes | R | backend/src/app/apis/recipes/list_recipes/sql/001_select_recipes.sql |
 | random_recipe | R | backend/src/app/apis/recipes/random_recipe/sql/001_random_recipe.sql |
+| add_menu_item | R | backend/src/app/apis/workspace/add_menu_item/sql/q010_recipe.sql |
+| create_cooking_session | R | backend/src/app/apis/workspace/create_cooking_session/sql/q010_recipe.sql |
+| update_menu_item | R | backend/src/app/apis/workspace/update_menu_item/sql/q010_recipe.sql |
 | preview_cooking_plan | R | backend/src/app/apis/recipes/get_recipe/sql/001_select_recipe.sql |

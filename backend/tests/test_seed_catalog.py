@@ -204,3 +204,31 @@ def test_seed_json_matches_typed_crud_contracts(
         Predicate.model_validate(row["predicate"])
     for row in seed_rows["validation_result"]:
         ValidationEvidence.model_validate(row["evidence"])
+
+
+def test_each_sample_recipe_has_one_original_dish_role(
+    seed_rows: dict[str, list[dict[str, Any]]],
+) -> None:
+    """献立の役割は表示タグで代用せず元のdish_role軸に一意に対応する。"""
+    expected = {
+        "eggplant-egg": "主菜",
+        "eggplant-curry": "主菜",
+        "tomato-egg": "主菜",
+        "tofu-soup": "汁物",
+        "cabbage-tuna": "副菜",
+        "yakisoba-cheese": "主食",
+        "tuna-corn-rice": "主食",
+        "mushroom-butter": "副菜",
+    }
+    axis_id = next(row["id"] for row in seed_rows["axis"] if row["code"] == "dish_role")
+    role_options = {
+        row["id"]: row["label"] for row in seed_rows["axis_option"] if row["axis_id"] == axis_id
+    }
+    for key, label in expected.items():
+        version_id = stable_id("recipe_version", key + "/1")
+        assigned = [
+            role_options[row["option_id"]]
+            for row in seed_rows["recipe_option"]
+            if row["recipe_version_id"] == version_id and row["option_id"] in role_options
+        ]
+        assert assigned == [label], key

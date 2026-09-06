@@ -711,7 +711,7 @@
 |---|---|---|
 | handle | execute(WorkspaceService(database, identity), request, row_id) | backend/src/app/apis/workspace/update_cooking_session/router.py:24 |
 | execute | service.update_cooking_session(request, row_id) | backend/src/app/apis/workspace/update_cooking_session/functions.py:8 |
-| WorkspaceService.update_cooking_session | CookingService(self).update(request, row_id) | backend/src/app/core/workspace_service.py:492 |
+| WorkspaceService.update_cooking_session | CookingService(self).update(request, row_id) | backend/src/app/core/workspace_service.py:496 |
 | CookingService.update | self.workspace.finish(q) | backend/src/app/core/cooking_service.py:232 |
 
 APIとして返す型・status・headerは [インターフェース](interface.md) の実OpenAPIを参照。
@@ -722,7 +722,7 @@ APIとして返す型・status・headerは [インターフェース](interface.
 |---|---|---|
 | handle | 工程・タイマー・調理完了を記録する。呼出元が送った利用者IDは使用しない。 | backend/src/app/apis/workspace/update_cooking_session/router.py:24 |
 | execute | 工程・タイマー・調理完了を記録する。永続値は業務サービスが検証し、同一トランザクションで扱う。 | backend/src/app/apis/workspace/update_cooking_session/functions.py:8 |
-| WorkspaceService.update_cooking_session | 工程の進行と在庫消費をDBで検証して確定する。 | backend/src/app/core/workspace_service.py:492 |
+| WorkspaceService.update_cooking_session | 工程の進行と在庫消費をDBで検証して確定する。 | backend/src/app/core/workspace_service.py:496 |
 | CookingService.update | 本人の工程・タイマーだけを更新し、完了の確定と消費を同時に行う。 | backend/src/app/core/cooking_service.py:232 |
 | CookingService._consume | 個別説明なし | backend/src/app/core/cooking_service.py:276 |
 

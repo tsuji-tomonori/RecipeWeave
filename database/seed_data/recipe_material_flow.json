@@ -1,5 +1,7 @@
 {
   "eggplant-egg": {
+    "dishRoleCode": "dish_role_002",
+    "dishRoleName": "主菜",
     "familyCode": "dish_family_001",
     "familyName": "炒め物",
     "seasonings": [
@@ -61,6 +63,8 @@
     ]
   },
   "eggplant-curry": {
+    "dishRoleCode": "dish_role_002",
+    "dishRoleName": "主菜",
     "familyCode": "dish_family_001",
     "familyName": "炒め物",
     "seasonings": [
@@ -124,6 +128,8 @@
     ]
   },
   "tomato-egg": {
+    "dishRoleCode": "dish_role_002",
+    "dishRoleName": "主菜",
     "familyCode": "dish_family_001",
     "familyName": "炒め物",
     "seasonings": [
@@ -185,6 +191,8 @@
     ]
   },
   "tofu-soup": {
+    "dishRoleCode": "dish_role_004",
+    "dishRoleName": "汁物",
     "familyCode": "dish_family_063",
     "familyName": "スープ",
     "seasonings": [
@@ -255,6 +263,8 @@
     ]
   },
   "cabbage-tuna": {
+    "dishRoleCode": "dish_role_003",
+    "dishRoleName": "副菜",
     "familyCode": "dish_family_053",
     "familyName": "和え物",
     "seasonings": [
@@ -311,6 +321,8 @@
     ]
   },
   "yakisoba-cheese": {
+    "dishRoleCode": "dish_role_001",
+    "dishRoleName": "主食",
     "familyCode": "bootstrap_cup_arrangement",
     "familyName": "カップ麺アレンジ",
     "seasonings": [
@@ -361,6 +373,8 @@
     ]
   },
   "tuna-corn-rice": {
+    "dishRoleCode": "dish_role_001",
+    "dishRoleName": "主食",
     "familyCode": "dish_family_080",
     "familyName": "混ぜご飯",
     "seasonings": [
@@ -418,6 +432,8 @@
     ]
   },
   "mushroom-butter": {
+    "dishRoleCode": "dish_role_003",
+    "dishRoleName": "副菜",
     "familyCode": "dish_family_001",
     "familyName": "炒め物",
     "seasonings": [

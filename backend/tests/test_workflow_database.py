@@ -38,6 +38,10 @@ class WorkflowClient(Protocol):
         self, url: str, *, headers: dict[str, str] | None = None, json: Any = None
     ) -> httpx.Response: ...
 
+    def patch(
+        self, url: str, *, headers: dict[str, str] | None = None, json: Any = None
+    ) -> httpx.Response: ...
+
     def put(
         self, url: str, *, headers: dict[str, str] | None = None, json: Any = None
     ) -> httpx.Response: ...
@@ -183,7 +187,7 @@ def test_receipt_partial_undo_preserves_edited_stock(workflow_client: WorkflowCl
         "expiresOn": None,
         "restore": False,
     }
-    changed = workflow_client.put("/api/pantry-lots/" + edited_id, headers=headers(), json=update)
+    changed = workflow_client.patch("/api/pantry-lots/" + edited_id, headers=headers(), json=update)
     assert changed.status_code == 200, changed.text
     undone = workflow_client.post(
         "/api/receipts/" + body["id"] + "/undo",
@@ -270,6 +274,24 @@ def test_recipe_cooking_is_planned_from_db_and_consumed_once(
     )
     assert started.status_code == 200, started.text
     cooking = started.json()["cooking"]
+    with psycopg.Connection[dict[str, Any]].connect(
+        os.environ["TEST_DATABASE_URL"], row_factory=dict_row
+    ) as connection:
+        connection.execute("SELECT set_config('recipeweave.role', 'admin', true)")
+        roles = connection.execute(
+            """SELECT item.role_option_id, relation.option_id AS recipe_role_id, option.label
+            FROM recipeweave.cooking_session AS cooking
+            JOIN recipeweave.menu_item AS item ON cooking.menu_id = item.menu_id
+            JOIN recipeweave.recipe_option AS relation
+                ON item.recipe_version_id = relation.recipe_version_id
+            JOIN recipeweave.axis_option AS option ON relation.option_id = option.id
+            JOIN recipeweave.axis AS axis ON option.axis_id = axis.id
+            WHERE cooking.id = %s AND axis.code = 'dish_role'""",
+            (session["id"],),
+        ).fetchall()
+    assert len(roles) == 1
+    assert roles[0]["role_option_id"] == roles[0]["recipe_role_id"]
+    assert roles[0]["label"] == "主菜"
     assert cooking["mealSnapshot"][0]["recipeVersionId"] == recipe["versionId"]
     assert set(cooking["mealSnapshot"][0]["amounts"]) == {
         line["ingredientId"] for line in recipe["ingredients"]
@@ -281,7 +303,7 @@ def test_recipe_cooking_is_planned_from_db_and_consumed_once(
     finished["index"] = len(cooking["plan"])
     finished["status"] = "completed"
     payload = {"expectedVersion": started.json()["version"], "session": finished, "deduct": True}
-    completed = workflow_client.put(
+    completed = workflow_client.patch(
         "/api/cooking-sessions/" + session["id"], headers=auth, json=payload
     )
     assert completed.status_code == 200, completed.text
@@ -289,7 +311,7 @@ def test_recipe_cooking_is_planned_from_db_and_consumed_once(
     assert state["cooking"]["status"] == "completed"
     assert all(row["applied"] for row in state["cooking"]["consumptionResults"])
     assert all(row["quantity"]["value"] == 0 for row in state["lots"] if row["id"] in created_lots)
-    replay = workflow_client.put(
+    replay = workflow_client.patch(
         "/api/cooking-sessions/" + session["id"], headers=auth, json=payload
     )
     assert replay.status_code == 409

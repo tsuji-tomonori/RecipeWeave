@@ -14,7 +14,7 @@ export default defineConfig({
     components: {Footer: './src/components/Footer.astro'},
     // APIごとの6帳票は一覧と検索から開き、数千リンクを全ページへ複製しない。
     sidebar: [
-      {label: '品質サマリーへ戻る', link: base.replace(/\/design\/?$/, '') + '/'},
+      {label: '品質サマリーへ戻る', link: '../'},
       {label: '設計書の概要', slug: ''},
       {label: 'API仕様', items: [
         {label: 'API一覧・6帳票', slug: 'api'},

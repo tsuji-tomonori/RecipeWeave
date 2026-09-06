@@ -543,7 +543,8 @@ class SeedBuilder:
                 published_at=None,
                 description=recipe["description"],
             )
-            facets = [family]
+            dish_role = self.option("dish_role", detail["dishRoleCode"], detail["dishRoleName"])
+            facets = [family, dish_role]
             for tag in recipe["tags"]:
                 facets.append(self.option("bootstrap_tag", tag, tag))
             for option_id in facets:
