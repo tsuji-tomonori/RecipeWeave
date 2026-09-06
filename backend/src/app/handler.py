@@ -1,4 +1,4 @@
-"""API Gateway HTTP API / Lambda adapter."""
+"""API Gateway HTTP API と Lambda の接続アダプター。"""
 
 from mangum import Mangum
 

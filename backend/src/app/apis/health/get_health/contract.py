@@ -8,7 +8,7 @@ CONTRACT = OperationContract(
     summary="稼働状況とサンプル公開範囲",
     authentication="public",
     errors=(),
-    idempotency="read-only",
-    transaction="none",
-    effects="none",
+    idempotency="読取専用",
+    transaction="なし",
+    effects="なし",
 )

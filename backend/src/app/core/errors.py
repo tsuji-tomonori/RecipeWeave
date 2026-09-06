@@ -1,13 +1,13 @@
-"""Application errors do not expose provider payloads or user data."""
+"""アプリケーションエラーに外部サービスの応答や利用者データを含めない。"""
 
 
 class StateConflictError(Exception):
-    """The expected revision differs from the stored revision."""
+    """期待した版が保存されている版と一致しない。"""
 
 
 class ServiceUnavailableError(Exception):
-    """A required provider or secure configuration is unavailable."""
+    """必要なプロバイダーまたは安全な接続設定を利用できない。"""
 
 
 class AuthenticationError(Exception):
-    """An access token was missing or failed verification."""
+    """アクセストークンが指定されていないか、検証に失敗した。"""

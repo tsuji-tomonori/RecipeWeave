@@ -1,1 +1,1 @@
-"""RecipeWeave API."""
+"""RecipeWeave のAPI実装。"""

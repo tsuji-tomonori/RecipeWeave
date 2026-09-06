@@ -309,7 +309,7 @@
       pantryFoods = [...appState.settings.pantryFoodIds];
       equipment = [...appState.settings.equipment];
     }
-    // Restore only after Svelte has rendered the destination; ignore superseded navigation.
+    // Svelteが遷移先を描画してから位置を復元し、後続の遷移で無効になった処理は無視する。
     void tick().then(() => {
       if (epoch === navigationEpoch)
         window.scrollTo({ top: scrollTop, behavior: "instant" });

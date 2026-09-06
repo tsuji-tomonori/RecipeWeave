@@ -1307,7 +1307,7 @@
     }
   },
   "info": {
-    "description": "Sample recipes and authenticated device-state migration boundary.",
+    "description": "サンプル料理と、認証を伴う端末状態の移行境界。",
     "title": "RecipeWeave API",
     "version": "0.1.0"
   },
@@ -1511,7 +1511,7 @@
             "description": "Successful Response"
           },
           "404": {
-            "description": "Recipe not found"
+            "description": "料理が見つからない"
           },
           "422": {
             "content": {
@@ -1542,10 +1542,10 @@
             "description": "Successful Response"
           },
           "401": {
-            "description": "Valid access token required"
+            "description": "有効なアクセストークンが必要"
           },
           "503": {
-            "description": "Synchronization unavailable"
+            "description": "同期を利用できない"
           }
         },
         "security": [
@@ -1579,13 +1579,13 @@
             "description": "Successful Response"
           },
           "401": {
-            "description": "Valid access token required"
+            "description": "有効なアクセストークンが必要"
           },
           "409": {
-            "description": "Version conflict; reload before retry"
+            "description": "版が競合したため、再読込後にやり直す"
           },
           "413": {
-            "description": "Request exceeds one MiB"
+            "description": "リクエストが1MiBを超えている"
           },
           "422": {
             "content": {
@@ -1598,7 +1598,7 @@
             "description": "Validation Error"
           },
           "503": {
-            "description": "Synchronization unavailable"
+            "description": "同期を利用できない"
           }
         },
         "security": [

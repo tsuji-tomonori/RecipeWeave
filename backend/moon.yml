@@ -10,6 +10,10 @@ tasks:
     deps: [generate]
     options:
       runFromWorkspaceRoot: true
+  sql-lint:
+    command: uv run --locked --package recipeweave-api app-sql-lint
+    options:
+      runFromWorkspaceRoot: true
   test:
     command: uv run --locked pytest backend/tests --cov=app --cov-branch --cov-report=term-missing
     deps: [generate]

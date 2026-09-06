@@ -1,7 +1,7 @@
-"""Validated wire models shared with frontend/src/lib/types.ts.
+"""frontend/src/lib/types.ts と対応する検証済みの通信モデル。
 
-This bounded snapshot is a migration boundary for local device data. It does not
-replace the normalized recipe, ingredient and process database model.
+この範囲を限定したスナップショットは端末データの移行境界であり、
+料理・食材・工程の正規化されたデータベースモデルを置き換えない。
 """
 
 from typing import Annotated, Literal, Self
@@ -185,7 +185,7 @@ class AppSnapshot(WireModel):
 
     @model_validator(mode="after")
     def validate_unique_ids(self) -> Self:
-        """Reject ambiguous duplicate identities within snapshot collections."""
+        """スナップショット内で識別子が重複する曖昧なデータを拒否する。"""
         for collection in (self.lots, self.imports, self.meal, self.custom_foods):
             ids = [item.id for item in collection]
             if len(ids) != len(set(ids)):

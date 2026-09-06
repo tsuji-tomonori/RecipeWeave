@@ -2,7 +2,7 @@
 # RecipeWeave 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 5
+- カタログ版: 7
 - Product(JSON): <code>"RecipeWeave"</code>
 - 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -52,6 +52,11 @@
 | <code>"REQ-SVC-PAGES-001"</code> | 2 | 有効 | 運用 | 開発配布工程は、検査対象の変更版と対応したDevプレビューを**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-DEV-ARCH-001"</code> | 2 | 有効 | 制約 | RecipeWeaveの開発基盤は、ADR-0001で採用した構成に従う実装プロファイルを**提供する**（<code>"provide"</code>） | 構成コード・API契約の検査、認証と利用者分離の対象試験、実配備記録の照合 |
 | <code>"REQ-DEV-QUALITY-001"</code> | 3 | 有効 | 運用 | RecipeWeaveの開発工程は、採用した配備とデータ移行に対応する再現可能な検証証跡を**維持する**（<code>"maintain"</code>） | CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー |
+| <code>"REQ-DEV-DB-DESIGN-001"</code> | 2 | 有効 | 運用 | DB設計生成器は、現行DDLに対応するMarkdownのDB仕様を**生成する**（<code>"generate"</code>） | 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認 |
+| <code>"REQ-DEV-API-DESIGN-001"</code> | 2 | 有効 | 運用 | API設計生成器は、実装に対応するMarkdownのAPI仕様を**生成する**（<code>"generate"</code>） | 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認 |
+| <code>"REQ-DEV-DESIGN-VERIFY-001"</code> | 2 | 有効 | 運用 | 設計生成工程は、実装入力と生成Markdownの対応を**検証する**（<code>"verify"</code>） | 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認 |
+| <code>"REQ-DEV-SQL-001"</code> | 2 | 有効 | 運用 | APIのデータアクセス実装は、API操作ごとのSQL正本と生成呼出し契約を**維持する**（<code>"maintain"</code>） | 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認 |
+| <code>"REQ-DEV-COMMENTS-001"</code> | 2 | 有効 | 運用 | RecipeWeaveの保守者は、コードコメントと生成される人向け説明を**維持する**（<code>"maintain"</code>） | 手書き説明と生成器の差分レビュー、生成説明と例外範囲の確認 |
 
 ## REQ-DOMAIN-001: semantic food identity
 
@@ -1470,5 +1475,183 @@ RecipeWeaveの開発工程は、採用した配備とデータ移行に対応す
 - 実装: <code>["infra/lib/data-stack.ts","infra/lib/service-stack.ts","infra/lib/github-deploy-stack.ts","backend/tools/package_lambda.py","database/migrate.py","database/migrations/manifest.manual.json","database/migrations/001_user_state.sql","backend/src/app/integrations/state/dsql_provider.py","backend/src/app/tools/generate.py","tools/generate_service_design.py","tools/check_generated_service.py",".github/workflows/dev.yml"]</code>
 - テスト: <code>["backend/tests/test_generation.py","backend/tests/test_dsql.py","backend/tests/test_migrations.py","infra/test/core.test.ts","infra/test/stack.test.ts"]</code>
 - 参照資料: <code>[]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DEV-DB-DESIGN-001: 現行DDLからテーブル仕様とER図を自動生成する
+
+要件ID(JSON): <code>"REQ-DEV-DB-DESIGN-001"</code>
+タイトル(JSON): <code>"現行DDLからテーブル仕様とER図を自動生成する"</code>
+主体(JSON): <code>"DB設計生成器"</code>
+対象(JSON): <code>"現行DDLに対応するMarkdownのDB仕様"</code>
+DB設計生成器は、現行DDLに対応するMarkdownのDB仕様を**生成する**。
+行為enum: <code>"generate"</code>
+
+根拠: 表と制約の追加・変更を人手で転記せず、実装済みのデータ構造を追跡可能にする。
+根拠(JSON): <code>"表と制約の追加・変更を人手で転記せず、実装済みのデータ構造を追跡可能にする。"</code>
+
+項目版: 2 / 状態: `active` / 種別: `operational`
+変更識別子: <code>"trace:2026-09-06:generated-design-implementation"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-REQ-DEV-DB-DESIGN-001-1"</code> 前提: 版管理されたDDLと移行台帳の定義がある。条件: DB設計を生成する。期待結果: テーブル一覧、各テーブルの用途・列名・型・NULL可否・既定値・主キー・一意制約・外部キー・CHECK制約・索引をMarkdownへ生成する。用途の補足は出典を示し、型・制約・列集合は実DDLと一致させる。。
+  - criterion(JSON Object): <code>{"given":"版管理されたDDLと移行台帳の定義がある","id":"AC-REQ-DEV-DB-DESIGN-001-1","then":"テーブル一覧、各テーブルの用途・列名・型・NULL可否・既定値・主キー・一意制約・外部キー・CHECK制約・索引をMarkdownへ生成する。用途の補足は出典を示し、型・制約・列集合は実DDLと一致させる。","when":"DB設計を生成する"}</code>
+- <code>"AC-REQ-DEV-DB-DESIGN-001-2"</code> 前提: 現行DDLに表と外部キーが宣言されている。条件: ER図を生成する。期待結果: 実際の表と宣言された外部キーだけをMermaid ER図へ反映する。外部キーがなければその事実を明記し、JSON内部の論理関係や将来モデルを物理外部キーとして描かない。。
+  - criterion(JSON Object): <code>{"given":"現行DDLに表と外部キーが宣言されている","id":"AC-REQ-DEV-DB-DESIGN-001-2","then":"実際の表と宣言された外部キーだけをMermaid ER図へ反映する。外部キーがなければその事実を明記し、JSON内部の論理関係や将来モデルを物理外部キーとして描かない。","when":"ER図を生成する"}</code>
+- <code>"AC-REQ-DEV-DB-DESIGN-001-3"</code> 前提: 列・型・制約・外部キー・索引を変更したDDLがある。条件: 同じ生成入口を再実行する。期待結果: 変更した構造が表仕様とER図へ追従し、未対応DDLは場所と未対応構文を示して失敗する。変更を無視した古い設計を成功として出力しない。。
+  - criterion(JSON Object): <code>{"given":"列・型・制約・外部キー・索引を変更したDDLがある","id":"AC-REQ-DEV-DB-DESIGN-001-3","then":"変更した構造が表仕様とER図へ追従し、未対応DDLは場所と未対応構文を示して失敗する。変更を無視した古い設計を成功として出力しない。","when":"同じ生成入口を再実行する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06:recipeweave-generated-design","AGENTS.md"]</code>
+検証方法: 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認
+検証証跡: 対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。
+検証(JSON Object): <code>{"evidence":"対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。","method":"実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/recipeweave-design-contract/references/service-design.md"]</code>
+- 実装: <code>["tools/generate_service_design.py","tools/design/database.py","tools/design/common.py","database/design.manual.json","database/migrate.py","database/migrations/001_user_state.sql"]</code>
+- テスト: <code>["tests/test_service_design.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DEV-API-DESIGN-001: 実APIから一覧とAPIごとの仕様を自動生成する
+
+要件ID(JSON): <code>"REQ-DEV-API-DESIGN-001"</code>
+タイトル(JSON): <code>"実APIから一覧とAPIごとの仕様を自動生成する"</code>
+主体(JSON): <code>"API設計生成器"</code>
+対象(JSON): <code>"実装に対応するMarkdownのAPI仕様"</code>
+API設計生成器は、実装に対応するMarkdownのAPI仕様を**生成する**。
+行為enum: <code>"generate"</code>
+
+根拠: APIの契約・処理・データアクセスを読者が横断して把握でき、更新時の転記漏れを防ぐ。
+根拠(JSON): <code>"APIの契約・処理・データアクセスを読者が横断して把握でき、更新時の転記漏れを防ぐ。"</code>
+
+項目版: 2 / 状態: `active` / 種別: `operational`
+変更識別子: <code>"trace:2026-09-06:generated-design-implementation"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-REQ-DEV-API-DESIGN-001-1"</code> 前提: 実アプリのOpenAPIとAPIごとの実装がある。条件: API設計を生成する。期待結果: API一覧とAPIごとのインターフェース、シーケンス図、SQL仕様、処理詳細、検証との対応をMarkdownへ生成する。HTTPメソッド・パス・認証・パラメータ・要求/応答・ステータスと共通スキーマを実契約に合わせる。。
+  - criterion(JSON Object): <code>{"given":"実アプリのOpenAPIとAPIごとの実装がある","id":"AC-REQ-DEV-API-DESIGN-001-1","then":"API一覧とAPIごとのインターフェース、シーケンス図、SQL仕様、処理詳細、検証との対応をMarkdownへ生成する。HTTPメソッド・パス・認証・パラメータ・要求/応答・ステータスと共通スキーマを実契約に合わせる。","when":"API設計を生成する"}</code>
+- <code>"AC-REQ-DEV-API-DESIGN-001-2"</code> 前提: APIから参照するSQLとテーブル定義がある。条件: CRUD対応を生成する。期待結果: テーブルとAPIのCRUDをSQL ASTから導出する。SELECTの読取り、INSERT・UPDATE・DELETEの書込み先を区別し、SQLを実行しないAPIはDB操作なしとして示す。。
+  - criterion(JSON Object): <code>{"given":"APIから参照するSQLとテーブル定義がある","id":"AC-REQ-DEV-API-DESIGN-001-2","then":"テーブルとAPIのCRUDをSQL ASTから導出する。SELECTの読取り、INSERT・UPDATE・DELETEの書込み先を区別し、SQLを実行しないAPIはDB操作なしとして示す。","when":"CRUD対応を生成する"}</code>
+- <code>"AC-REQ-DEV-API-DESIGN-001-3"</code> 前提: routerと到達可能な処理関数に分岐や繰返しがある。条件: シーケンス図を生成する。期待結果: 宣言した解析範囲の実際の呼出順・分岐・繰返しを保持する。未対応構文を直線化して隠さず、ソース・関数・行・構文を示して失敗する。依存性注入、認証、永続化の内部等は解析境界を明示する。。
+  - criterion(JSON Object): <code>{"given":"routerと到達可能な処理関数に分岐や繰返しがある","id":"AC-REQ-DEV-API-DESIGN-001-3","then":"宣言した解析範囲の実際の呼出順・分岐・繰返しを保持する。未対応構文を直線化して隠さず、ソース・関数・行・構文を示して失敗する。依存性注入、認証、永続化の内部等は解析境界を明示する。","when":"シーケンス図を生成する"}</code>
+- <code>"AC-REQ-DEV-API-DESIGN-001-4"</code> 前提: OpenAPIのスキーマ・ルート・SQL参照を変更する。条件: API設計を再生成する。期待結果: 一覧、インターフェース、CRUD等の該当仕様が同じ入力から更新される。生成範囲のAPI欠落、重複や契約と実装の不一致は成功として扱わず、テストとの対応を実在するソースに限定する。。
+  - criterion(JSON Object): <code>{"given":"OpenAPIのスキーマ・ルート・SQL参照を変更する","id":"AC-REQ-DEV-API-DESIGN-001-4","then":"一覧、インターフェース、CRUD等の該当仕様が同じ入力から更新される。生成範囲のAPI欠落、重複や契約と実装の不一致は成功として扱わず、テストとの対応を実在するソースに限定する。","when":"API設計を再生成する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06:recipeweave-generated-design","AGENTS.md"]</code>
+検証方法: 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認
+検証証跡: 対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。
+検証(JSON Object): <code>{"evidence":"対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。","method":"実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/recipeweave-design-contract/references/service-design.md"]</code>
+- 実装: <code>["tools/generate_service_design.py","tools/design/api.py","tools/design/database.py","tools/design/flow.py","tools/design/common.py","backend/src/app/main.py","backend/src/app/tools/generate.py"]</code>
+- テスト: <code>["tests/test_service_design.py","backend/tests/test_generation.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DEV-DESIGN-VERIFY-001: 設計生成の決定性と差分検出を維持する
+
+要件ID(JSON): <code>"REQ-DEV-DESIGN-VERIFY-001"</code>
+タイトル(JSON): <code>"設計生成の決定性と差分検出を維持する"</code>
+主体(JSON): <code>"設計生成工程"</code>
+対象(JSON): <code>"実装入力と生成Markdownの対応"</code>
+設計生成工程は、実装入力と生成Markdownの対応を**検証する**。
+行為enum: <code>"verify"</code>
+
+根拠: 設計が生成済みという事実だけでなく、実装に追従し改変や生成漏れを検出できることを確認する。
+根拠(JSON): <code>"設計が生成済みという事実だけでなく、実装に追従し改変や生成漏れを検出できることを確認する。"</code>
+
+項目版: 2 / 状態: `active` / 種別: `operational`
+変更識別子: <code>"trace:2026-09-06:generated-design-implementation"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-REQ-DEV-DESIGN-VERIFY-001-1"</code> 前提: 同じ実装・設定・依存版がある。条件: 設計生成を連続して実行する。期待結果: 全生成物がbyte一致する。生成器一覧と入力のrepository相対パス・SHA-256を生成し、時刻や環境固有の絶対パスによる差分を作らない。。
+  - criterion(JSON Object): <code>{"given":"同じ実装・設定・依存版がある","id":"AC-REQ-DEV-DESIGN-VERIFY-001-1","then":"全生成物がbyte一致する。生成器一覧と入力のrepository相対パス・SHA-256を生成し、時刻や環境固有の絶対パスによる差分を作らない。","when":"設計生成を連続して実行する"}</code>
+- <code>"AC-REQ-DEV-DESIGN-VERIFY-001-2"</code> 前提: 生成文書の変更・欠落・管理対象内の余剰がある。条件: 書込みを伴わない差分検査を実行する。期待結果: 差分を検出して失敗し、検査前後でrepositoryの内容を変えない。通常生成は宣言した管理対象だけを更新し、管理外ファイル・symlink・範囲外への出力を拒否する。。
+  - criterion(JSON Object): <code>{"given":"生成文書の変更・欠落・管理対象内の余剰がある","id":"AC-REQ-DEV-DESIGN-VERIFY-001-2","then":"差分を検出して失敗し、検査前後でrepositoryの内容を変えない。通常生成は宣言した管理対象だけを更新し、管理外ファイル・symlink・範囲外への出力を拒否する。","when":"書込みを伴わない差分検査を実行する"}</code>
+- <code>"AC-REQ-DEV-DESIGN-VERIFY-001-3"</code> 前提: 設計生成器または対象ソースを変更する。条件: 既存の検証工程を実行する。期待結果: 同一入力の安定性、スキーマ/SQL変更への追従、未対応構文の拒否と差分検出を対象試験で検証する。実行していないAWS配備や未解析の処理の完全性は生成結果から主張しない。。
+  - criterion(JSON Object): <code>{"given":"設計生成器または対象ソースを変更する","id":"AC-REQ-DEV-DESIGN-VERIFY-001-3","then":"同一入力の安定性、スキーマ/SQL変更への追従、未対応構文の拒否と差分検出を対象試験で検証する。実行していないAWS配備や未解析の処理の完全性は生成結果から主張しない。","when":"既存の検証工程を実行する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06:recipeweave-generated-design","AGENTS.md"]</code>
+検証方法: 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認
+検証証跡: 対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。
+検証(JSON Object): <code>{"evidence":"対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。","method":"実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/recipeweave-design-contract/references/service-design.md"]</code>
+- 実装: <code>["tools/generate_service_design.py","tools/design/storage.py","tools/design/common.py","tools/check_generated_service.py",".github/workflows/dev.yml"]</code>
+- テスト: <code>["tests/test_service_design.py","backend/tests/test_generation.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DEV-SQL-001: APIごとのSQLファイルを静的検査する
+
+要件ID(JSON): <code>"REQ-DEV-SQL-001"</code>
+タイトル(JSON): <code>"APIごとのSQLファイルを静的検査する"</code>
+主体(JSON): <code>"APIのデータアクセス実装"</code>
+対象(JSON): <code>"API操作ごとのSQL正本と生成呼出し契約"</code>
+APIのデータアクセス実装は、API操作ごとのSQL正本と生成呼出し契約を**維持する**。
+行為enum: <code>"maintain"</code>
+
+根拠: SQLの実体をAPIから追え、型付き呼出しと設計に同じクエリを使いながら構文や規約の不備を検出する。
+根拠(JSON): <code>"SQLの実体をAPIから追え、型付き呼出しと設計に同じクエリを使いながら構文や規約の不備を検出する。"</code>
+
+項目版: 2 / 状態: `active` / 種別: `operational`
+変更識別子: <code>"trace:2026-09-06:generated-design-implementation"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-REQ-DEV-SQL-001-1"</code> 前提: 永続データへアクセスするAPIがある。条件: クエリを追加または変更する。期待結果: API操作ごとのディレクトリへSQL文ごとに.sqlファイルを置く。SQL ASTから型付き呼出しを生成して処理関数経由で利用し、手書きSQLの重複やORMの暗黙生成をAPIのSQL正本へ混在させない。。
+  - criterion(JSON Object): <code>{"given":"永続データへアクセスするAPIがある","id":"AC-REQ-DEV-SQL-001-1","then":"API操作ごとのディレクトリへSQL文ごとに.sqlファイルを置く。SQL ASTから型付き呼出しを生成して処理関数経由で利用し、手書きSQLの重複やORMの暗黙生成をAPIのSQL正本へ混在させない。","when":"クエリを追加または変更する"}</code>
+- <code>"AC-REQ-DEV-SQL-001-2"</code> 前提: APIのSQLまたは版管理DDLがある。条件: SQLFluff等のSQL専用静的解析と生成差分検査を実行する。期待結果: 採用したSQL方言と束縛パラメータを扱い、構文解析エラーと選択した規約違反を失敗として報告する。対象SQLの欠落や解析エラーの無視で検査を通さない。適用済み移行のchecksumは保持する。。
+  - criterion(JSON Object): <code>{"given":"APIのSQLまたは版管理DDLがある","id":"AC-REQ-DEV-SQL-001-2","then":"採用したSQL方言と束縛パラメータを扱い、構文解析エラーと選択した規約違反を失敗として報告する。対象SQLの欠落や解析エラーの無視で検査を通さない。適用済み移行のchecksumは保持する。","when":"SQLFluff等のSQL専用静的解析と生成差分検査を実行する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06:recipeweave-generated-design","AGENTS.md"]</code>
+検証方法: 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認
+検証証跡: 対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。
+検証(JSON Object): <code>{"evidence":"対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。","method":"実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/recipeweave-design-contract/references/service-design.md"]</code>
+- 実装: <code>["backend/src/app/tools/generate.py","backend/src/app/tools/sql_lint.py",".sqlfluff","backend/src/app/apis/state/get_state/sql/001_select_state.sql","backend/src/app/apis/state/put_state/sql/001_insert_state.sql","backend/src/app/apis/state/put_state/sql/002_update_state.sql"]</code>
+- テスト: <code>["backend/tests/test_sql_lint.py","backend/tests/test_generation.py","tests/test_service_design.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DEV-COMMENTS-001: 保守の説明を原則日本語で記載する
+
+要件ID(JSON): <code>"REQ-DEV-COMMENTS-001"</code>
+タイトル(JSON): <code>"保守の説明を原則日本語で記載する"</code>
+主体(JSON): <code>"RecipeWeaveの保守者"</code>
+対象(JSON): <code>"コードコメントと生成される人向け説明"</code>
+RecipeWeaveの保守者は、コードコメントと生成される人向け説明を**維持する**。
+行為enum: <code>"maintain"</code>
+
+根拠: 利用者の開発言語に合わせ、実装意図と制約を日本語で追跡できるようにする。
+根拠(JSON): <code>"利用者の開発言語に合わせ、実装意図と制約を日本語で追跡できるようにする。"</code>
+
+項目版: 2 / 状態: `active` / 種別: `operational`
+変更識別子: <code>"trace:2026-09-06:generated-design-implementation"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-REQ-DEV-COMMENTS-001-1"</code> 前提: RecipeWeaveの手書きコード・SQL・生成器を新規作成または変更する。条件: コメント・docstring・人向け設計説明を記載する。期待結果: 原則日本語で目的・制約を説明する。識別子、APIの互換フィールド、外部仕様名や機械用指示は必要な原表記を保ち、英語の説明を増やさない。。
+  - criterion(JSON Object): <code>{"given":"RecipeWeaveの手書きコード・SQL・生成器を新規作成または変更する","id":"AC-REQ-DEV-COMMENTS-001-1","then":"原則日本語で目的・制約を説明する。識別子、APIの互換フィールド、外部仕様名や機械用指示は必要な原表記を保ち、英語の説明を増やさない。","when":"コメント・docstring・人向け設計説明を記載する"}</code>
+- <code>"AC-REQ-DEV-COMMENTS-001-2"</code> 前提: checksumで固定した適用済み移行または導入元で管理された配布物がある。条件: 説明言語を整理する。期待結果: 固定された内容を説明の翻訳だけで書き換えない。例外の理由と範囲を開発規約に記載し、今回のプロジェクト固有ルールはローカルスキルへ反映する。。
+  - criterion(JSON Object): <code>{"given":"checksumで固定した適用済み移行または導入元で管理された配布物がある","id":"AC-REQ-DEV-COMMENTS-001-2","then":"固定された内容を説明の翻訳だけで書き換えない。例外の理由と範囲を開発規約に記載し、今回のプロジェクト固有ルールはローカルスキルへ反映する。","when":"説明言語を整理する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06:recipeweave-generated-design","AGENTS.md"]</code>
+検証方法: 手書き説明と生成器の差分レビュー、生成説明と例外範囲の確認
+検証証跡: 対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。
+検証(JSON Object): <code>{"evidence":"対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。","method":"手書き説明と生成器の差分レビュー、生成説明と例外範囲の確認"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>[".agents/skills/recipeweave-design-contract/references/service-design.md"]</code>
+- 実装: <code>["AGENTS.md",".agents/skills/recipeweave-design-contract/SKILL.md","tools/generate_service_design.py","backend/src/app/tools/generate.py"]</code>
+- テスト: <code>[]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>

@@ -1,4 +1,4 @@
-"""Catalogue port hides the current sample storage implementation."""
+"""カタログの境界で、現在のサンプル保存方式を呼出側から分離する。"""
 
 from typing import Protocol
 

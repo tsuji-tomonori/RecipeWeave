@@ -1,4 +1,4 @@
-"""Finite, versioned spaces with uniform ordinal sampling and streaming output."""
+"""バージョン管理する有限の候補空間を、一様な通し番号抽出と逐次出力で扱う。"""
 
 from __future__ import annotations
 
@@ -149,7 +149,7 @@ class Space:
                 continue
             if offset >= stop:
                 break
-            # islice skips only within one bounded segment; no full-space prefix expansion.
+            # isliceが読み飛ばす範囲を1つの有限区間に限定し、候補空間の先頭から展開しない。
             choices = (
                 segment.choices
                 if segment.choices is not None

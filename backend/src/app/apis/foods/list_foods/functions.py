@@ -6,7 +6,7 @@ from .schemas import FoodsResponse
 
 
 def list_foods(catalog: CatalogPort, query: str) -> FoodsResponse:
-    """Return sample food names and aliases matching a normalized query."""
+    """正規化した検索語に一致するサンプル食材名と別名を返す。"""
     q = unicodedata.normalize("NFKC", query).casefold().strip()
     items = [
         f

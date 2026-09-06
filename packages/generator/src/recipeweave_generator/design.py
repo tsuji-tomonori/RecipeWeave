@@ -1,4 +1,4 @@
-"""Generate the implemented Python surface without claiming future apps exist."""
+"""実装済みのPython構成から設計を生成し、将来のアプリを実装済みとは記載しない。"""
 
 import argparse
 import ast

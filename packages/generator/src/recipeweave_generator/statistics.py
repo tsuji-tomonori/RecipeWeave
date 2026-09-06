@@ -1,20 +1,16 @@
-"""Statistical summaries for two independent judge ratings.
+"""独立した2人の評価者による判定を統計的に集計する。
 
-The unit of analysis is a sampled design point.  Each point is rated by two
-judges with one of ``pass``, ``uncertain`` or ``fail``.  The primary binary
-endpoint is deliberately strict: both judges must say ``pass``.  This module
-does not attempt to calibrate either judge against an external gold standard;
-its intervals describe the sampled, model-judged population.
+分析単位は抽出した設計点とする。各点を2人の評価者が ``pass``、``uncertain``、
+``fail`` のいずれかで判定する。主要な二値評価項目は厳格に定義し、両者の ``pass``
+を必要とする。外部の正解データに対する評価者の校正は行わず、区間推定は抽出した
+モデル評価対象の母集団を表す。
 
-Only the Python standard library is used.  Proportions use unweighted SRS
-Wilson score intervals (95 percent by default).  Since the baseline
-RecipeWeave population is 25,171,059,494 (the revised population is tracked
-separately) and the planned samples are 400, the finite
-population correction is negligible and is intentionally not applied.  For a
-pre-specified comparison, the difference interval is the
-Newcombe hybrid score interval built from the two Wilson intervals.  The hypothesis test
-is the two-sided pooled two-proportion z test at alpha=.05; no comparison is
-selected from its observed result.
+Python標準ライブラリだけを使用する。比率には単純無作為抽出を前提とする重みなしの
+Wilsonスコア区間（既定は95%）を使う。RecipeWeaveの従来版の母集団は25,171,059,494件
+（改訂版の母集団は別途管理）、計画標本数は400件であり、有限母集団補正の影響は
+無視できるため適用しない。事前に定めた比較では、2つのWilson区間からNewcombeの
+ハイブリッドスコア区間を構成して比率の差を推定する。仮説検定には有意水準0.05の
+両側・プール型2標本比率z検定を使い、観測結果を見て比較対象を選ばない。
 """
 
 from __future__ import annotations
@@ -40,7 +36,7 @@ def _check_count(x: int, n: int) -> None:
 
 
 def wilson_interval(count: int, n: int, confidence: float = 0.95) -> tuple[float, float]:
-    """Return a Wilson score interval for an unweighted binary proportion."""
+    """重みなしの二値比率に対するWilsonスコア区間を返す。"""
 
     if not isinstance(n, int) or isinstance(n, bool) or n <= 0:
         raise ValueError("n must be a positive integer")
@@ -54,7 +50,7 @@ def wilson_interval(count: int, n: int, confidence: float = 0.95) -> tuple[float
     center = (p + z2 / (2.0 * n)) / denominator
     half = z / denominator * math.sqrt(p * (1.0 - p) / n + z2 / (4.0 * n * n))
     lower, upper = max(0.0, center - half), min(1.0, center + half)
-    # Preserve exact endpoint conventions despite floating-point roundoff.
+    # 浮動小数点の丸め誤差があっても、端点の定義を厳密に保つ。
     if count == 0:
         lower = 0.0
     if count == n:
@@ -69,11 +65,10 @@ def newcombe_difference_interval(
     n_b: int,
     confidence: float = 0.95,
 ) -> tuple[float, float]:
-    """Return the Newcombe hybrid score difference interval ``p_a - p_b``.
+    """比率差 ``p_a - p_b`` のNewcombeハイブリッドスコア区間を返す。
 
-    This is Newcombe's hybrid score interval.  Each binomial proportion uses
-    its Wilson limits, and the two resulting score distances are combined in
-    quadrature, including when an observed proportion is near 0 or 1.
+    各二項比率のWilson区間を用い、得られた2つのスコア距離を二乗和の平方根で
+    統合する。観測比率が0や1に近い場合も、同じ方法で計算する。
     """
 
     a_lo, a_hi = wilson_interval(count_a, n_a, confidence)
@@ -107,7 +102,7 @@ def compare_proportions(
     alpha: float = DEFAULT_ALPHA,
     confidence: float = 0.95,
 ) -> dict[str, Any]:
-    """Compare two independent binary endpoints using a pooled z test."""
+    """独立した2つの二値評価項目を、プール型z検定で比較する。"""
 
     if not 0 < alpha < 1:
         raise ValueError("alpha must be between 0 and 1")
@@ -202,8 +197,8 @@ def _summary(rows: list[tuple[str, str]], confidence: float) -> dict[str, Any]:
     marginal = {"judge_a": secondary["judge_a_pass"], "judge_b": secondary["judge_b_pass"]}
     expected = sum((a[v] / n) * (b[v] / n) for v in VERDICTS)
     observed = agreement / n
-    # When both judges use one category for every row, chance agreement is 1
-    # and kappa has no variation from which to be estimated.
+    # 両評価者がすべての行を同じ1分類で判定すると、偶然の一致率は1になる。
+    # この場合、κ係数を推定するための変動がない。
     kappa = None if expected == 1.0 else (observed - expected) / (1.0 - expected)
     result: dict[str, Any] = {
         "n": n,
@@ -239,13 +234,11 @@ def analyze(
     alpha: float = DEFAULT_ALPHA,
     population: int | Mapping[str, int] | None = None,
 ) -> dict[str, Any]:
-    """Validate ratings and return endpoint summaries grouped by cohort.
+    """判定データを検証し、群ごとの評価項目の集計を返す。
 
-    If ``baseline`` and ``revised`` cohorts are present, that pair is the
-    sole confirmatory comparison.  With exactly two other cohort names, that
-    pair is compared as a convenience.  Additional cohorts (such as the
-    development ``pilot``) are summarized but are never silently used to
-    select a hypothesis comparison.
+    ``baseline`` と ``revised`` の両群がある場合は、その組だけを検証的な比較対象に
+    する。それ以外の群名がちょうど2つある場合は、便宜上その組を比較する。
+    開発用の ``pilot`` など追加の群は集計するが、仮説検定の比較対象には無断で使わない。
     """
 
     sample_rows = _records(samples, "samples")
@@ -284,7 +277,7 @@ def analyze(
     grouped: dict[Any, list[tuple[str, str]]] = {}
     for ident in sample_ids:
         grouped.setdefault(sample_cohorts[ident], []).append((a[ident], b[ident]))
-    # Make output deterministic independent of set/dict insertion order.
+    # 集合や辞書への挿入順序に依存せず、決定的な出力にする。
     grouped = {key: grouped[key] for key in sorted(grouped, key=repr)}
     cohorts = {str(key): _summary(rows, confidence) for key, rows in grouped.items()}
     for name, summary in cohorts.items():

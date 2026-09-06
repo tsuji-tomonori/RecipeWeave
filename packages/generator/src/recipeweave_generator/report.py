@@ -1,13 +1,12 @@
-"""Reproducible confirmation-study report.
+"""再現可能な検証実験の報告を生成する。
 
-Run from the repository root with::
+リポジトリのルートから次を実行する::
 
     uv run python -m recipeweave_generator.report
 
-The command validates the frozen design and sampled ordinals before joining
-the four blinded judge result files.  It writes ``analysis.json`` and
-``evidence.json`` beside the frozen confirmation inputs.  It never resamples,
-changes labels, or calls a model.
+固定した実験設計と抽出済みの通し番号を検証してから、盲検化された評価結果の
+4ファイルを結合する。固定済みの検証入力と同じ場所へ ``analysis.json`` と
+``evidence.json`` を出力する。再抽出、判定ラベルの変更、モデルの呼び出しは行わない。
 """
 
 from __future__ import annotations
@@ -22,8 +21,8 @@ from typing import Any
 from .space import Space
 from .statistics import analyze, compare_proportions
 
-# v2 has 25,171,059,494 generated points; the confirmation population
-# excludes the 100 pilot ordinals and is therefore 25,171,059,394.
+# v2の生成点は25,171,059,494件。検証用の母集団は予備実験の通し番号100件を除くため、
+# 25,171,059,394件となる。
 BASELINE_FULL_POPULATION = 25_171_059_494
 BASELINE_POPULATION = BASELINE_FULL_POPULATION - 100
 REVISED_POPULATION = 12_069_539
@@ -49,7 +48,7 @@ def _read_json(path: Path) -> Any:
 
 
 def _expected_ordinals(space: Space, seed: int, n: int, excluded: set[int]) -> set[int]:
-    """Reproduce experiment.prepare's rejection sampler without resampling."""
+    """再抽出は行わず、experiment.prepareの棄却抽出を再現する。"""
 
     rng = random.Random(seed)
     selected: list[int] = []
@@ -247,9 +246,9 @@ def build_report(root: Path | None = None) -> tuple[dict[str, Any], dict[str, An
         alpha=design["alpha"],
         population=design_evidence["populations"],
     )
-    # Present the confirmatory effect in the policy direction: revised minus
-    # baseline.  The generic analyzer keeps cohort order deterministic, but a
-    # positive improvement is the readable and pre-specified report contrast.
+    # 検証する効果は、方針に沿って改訂版から従来版を引いた差として示す。
+    # 汎用の分析器では群の順序を決定的に保つが、この報告では改善を正で表す
+    # 事前定義の比較方向を使う。
     revised = report["cohorts"]["revised"]
     baseline = report["cohorts"]["baseline"]
     endpoint_counts = {

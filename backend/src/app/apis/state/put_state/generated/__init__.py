@@ -1,1 +1,1 @@
-"""Typed SQL wrapper package; queries.py is owned by app-docs."""
+"""型付きSQLラッパーのパッケージ。queries.py は app-docs が管理する。"""

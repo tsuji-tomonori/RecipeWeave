@@ -15,7 +15,7 @@ router = APIRouter()
     CONTRACT.path,
     operation_id=CONTRACT.operation_id,
     summary=CONTRACT.summary,
-    responses={404: {"description": "Recipe not found"}},
+    responses={404: {"description": "料理が見つからない"}},
 )
 def get_recipe(
     catalog: CatalogDependency, recipe_id: Annotated[str, Path(max_length=128)]

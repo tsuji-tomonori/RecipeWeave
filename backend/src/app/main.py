@@ -1,4 +1,4 @@
-"""Composition root; provider clients are constructed only in dependencies."""
+"""アプリケーションの構成起点。外部クライアントは依存の構築時だけ生成する。"""
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -35,18 +35,18 @@ async def conflict_error(_request: Request, _exc: Exception) -> JSONResponse:
 async def validation_error(_request: Request, exc: Exception) -> JSONResponse:
     if not isinstance(exc, RequestValidationError):
         raise exc
-    # Pydantic's default error includes input values; never echo personal state or tokens.
+    # Pydanticの既定エラーには入力値が含まれるため、個人データやトークンを返さない。
     errors = [{"loc": list(error["loc"]), "type": error["type"]} for error in exc.errors()]
     return JSONResponse({"detail": errors}, status_code=422)
 
 
 def create_app() -> FastAPI:
-    """Create the API with explicit operations and fail-closed personal state."""
+    """操作を明示してAPIを構築し、個人状態の認証・設定不足時は処理を拒否する。"""
     settings = get_settings()
     application = FastAPI(
         title="RecipeWeave API",
         version="0.1.0",
-        description="Sample recipes and authenticated device-state migration boundary.",
+        description="サンプル料理と、認証を伴う端末状態の移行境界。",
     )
     application.add_middleware(BodySizeLimit, max_bytes=settings.max_request_bytes)
     origins = [origin.strip() for origin in settings.allowed_origins.split(",") if origin.strip()]

@@ -8,7 +8,7 @@ export interface GitHubDeployStackProps extends StackProps {
   readonly bootstrapQualifier: string;
 }
 
-/** Optional: references a pre-existing account provider; never bootstraps an account. */
+/** 任意の構成。アカウント内の既存プロバイダーを参照し、アカウントの初期構築は行わない。 */
 export class GitHubDeployStack extends Stack {
   public constructor(
     scope: Construct,

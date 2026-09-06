@@ -27,8 +27,8 @@ class StatisticsTest(unittest.TestCase):
         self.assertAlmostEqual(hi, difference + math.sqrt((a_hi - 0.40) ** 2 + (0.20 - b_lo) ** 2))
 
     def test_newcombe_near_boundaries_fixture(self):
-        # Independent hand-computed hybrid formula fixture, where the old
-        # endpoint-subtraction shortcut differs materially.
+        # 手計算で独立に求めたハイブリッド式の期待値。従来の端点の単純な差分では、
+        # 結果に無視できない差が生じる例を使う。
         lo, hi = newcombe_difference_interval(1, 400, 399, 400)
         a_lo, a_hi = wilson_interval(1, 400)
         b_lo, b_hi = wilson_interval(399, 400)

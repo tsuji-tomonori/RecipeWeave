@@ -8,7 +8,7 @@ CONTRACT = OperationContract(
     summary="料理の材料と工程を表示する",
     authentication="public",
     errors=(404, 422),
-    idempotency="read-only",
-    transaction="none",
-    effects="none",
+    idempotency="読取専用",
+    transaction="なし",
+    effects="なし",
 )

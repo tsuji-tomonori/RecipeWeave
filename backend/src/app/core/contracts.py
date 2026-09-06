@@ -1,4 +1,4 @@
-"""Manual API identity and behavior metadata."""
+"""APIの識別子と動作を記述する手書きのメタデータ。"""
 
 from dataclasses import dataclass
 

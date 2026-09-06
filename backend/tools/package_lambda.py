@@ -1,4 +1,4 @@
-"""Build a locked Linux Python 3.12 Lambda asset without Docker or cloud calls."""
+"""固定した依存でLinux Python 3.12用Lambda資材を構築する。Dockerやクラウド接続は不要。"""
 
 import argparse
 import hashlib

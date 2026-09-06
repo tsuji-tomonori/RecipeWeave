@@ -1,4 +1,4 @@
-"""Check operation layout, provider boundaries and route-contract consistency."""
+"""操作ごとの配置、プロバイダー境界、ルートと契約の整合性を検査する。"""
 
 import ast
 import importlib
@@ -14,7 +14,7 @@ PROVIDERS = {"boto3", "botocore", "psycopg", "jwt", "httpx"}
 
 
 def inspect_operations(root: Path = ROOT) -> list[str]:
-    """Mechanically enforce the adopted layout and provider-only integration boundary."""
+    """採用したディレクトリ構成と、外部接続をプロバイダーへ限定する境界を検査する。"""
     errors: list[str] = []
     operation_ids: set[str] = set()
     openapi = create_app().openapi()

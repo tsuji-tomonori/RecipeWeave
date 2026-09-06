@@ -8,7 +8,7 @@ CONTRACT = OperationContract(
     summary="版を確認して利用者自身の状態を置き換える",
     authentication="cognito-access-jwt",
     errors=(401, 409, 413, 422, 503),
-    idempotency="repeat with stale expectedVersion returns 409; reload to verify",
-    transaction="one compare-and-swap transaction",
-    effects="replace verified subject snapshot",
+    idempotency="古いexpectedVersionで再送すると409を返す。再読込して結果を確認する",
+    transaction="版の比較と更新を行う単一トランザクション",
+    effects="認証済み本人のスナップショットを置換する",
 )

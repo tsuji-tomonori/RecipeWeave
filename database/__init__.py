@@ -1,1 +1,1 @@
-"""Database migration sources and command-line tooling."""
+"""データベース移行の定義とコマンドラインツール。"""

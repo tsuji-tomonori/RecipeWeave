@@ -15,9 +15,9 @@ def test_codegen_is_deterministic_and_rejects_wildcards(tmp_path: Path) -> None:
 
     assert generate_outputs() == generate_outputs()
     source = tmp_path / "bad.sql"
-    source.write_text("-- Invalid wildcard\nSELECT * FROM example;\n")
+    source.write_text("-- 禁止されたワイルドカード\nSELECT * FROM example;\n")
     with pytest.raises(ValueError, match="wildcard"):
         read_query(source)
-    source.write_text("-- Invalid compound\nSELECT x FROM example; DELETE FROM example;\n")
+    source.write_text("-- 禁止された複数文\nSELECT x FROM example; DELETE FROM example;\n")
     with pytest.raises(ValueError, match="one SQL"):
         read_query(source)

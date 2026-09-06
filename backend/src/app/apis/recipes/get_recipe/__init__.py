@@ -1,1 +1,1 @@
-"""Operation package."""
+"""API操作のパッケージ。"""

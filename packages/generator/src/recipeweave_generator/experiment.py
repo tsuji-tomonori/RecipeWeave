@@ -1,4 +1,4 @@
-"""Freeze the protocol and blinded assignments before judging confirmation data."""
+"""検証用データを評価する前に、評価手順と盲検化した割り当てを固定する。"""
 
 import hashlib
 import json

@@ -1,4 +1,4 @@
-"""Explicit test/local adapter. Never a fallback for a failed cloud database."""
+"""明示して使用するテスト・ローカル用アダプター。クラウドDB失敗時の代替にはしない。"""
 
 from threading import Lock
 

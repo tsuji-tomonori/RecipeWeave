@@ -17,6 +17,7 @@ dependencies = [
 [project.scripts]
 app-archlint = "app.tools.archlint:main"
 app-docs = "app.tools.generate:main"
+app-sql-lint = "app.tools.sql_lint:main"
 
 [build-system]
 requires = ["hatchling>=1.27,<2"]

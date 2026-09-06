@@ -1,7 +1,7 @@
-"""One DDL per transaction, checksummed ledger and separate DML transactions.
+"""1トランザクション1DDL、チェックサム付き台帳、独立したDMLトランザクション。
 
-Use --plan without AWS. --apply requires an already-assumed dedicated migration
-IAM role with DbConnectAdmin. Runtime Lambda has only DbConnect.
+--plan はAWS接続不要。--apply は DbConnectAdmin を持つ専用の移行用IAMロールで実行する。
+実行時Lambdaには DbConnect だけを付与する。
 """
 
 import argparse
@@ -53,7 +53,7 @@ class PreparedMigration:
 
 
 def load_migrations(path: Path = ROOT / "migrations") -> list[PreparedMigration]:
-    """Validate declarations before any database action."""
+    """データベースへの操作前に移行の宣言を検証する。"""
     manifest = Manifest.model_validate_json((path / "manifest.manual.json").read_text())
     result: list[PreparedMigration] = []
     seen: set[str] = set()
@@ -76,7 +76,7 @@ def load_migrations(path: Path = ROOT / "migrations") -> list[PreparedMigration]
 def connect_admin(host: str, region: str) -> Connection[tuple[object, ...]]:
     if not re.fullmatch(r"[a-z0-9]+\.dsql\.[a-z0-9-]+\.on\.aws", host):
         raise ValueError("invalid DSQL_HOST")
-    factory: Callable[..., AdminTokenClient] = getattr(boto3, "client")  # noqa: B009 -- dynamic SDK typing boundary
+    factory: Callable[..., AdminTokenClient] = getattr(boto3, "client")  # noqa: B009 -- 動的SDKの型境界
     client = factory(
         "dsql",
         region_name=region,
@@ -104,7 +104,7 @@ def connect_admin(host: str, region: str) -> Connection[tuple[object, ...]]:
 
 
 def verified(connection: Connection[tuple[object, ...]], statement: str) -> bool:
-    # The manifest's parsed SQL is trusted repository input; values remain separately bound.
+    # マニフェスト内の解析済みSQLは管理下の入力として扱い、値は別途束縛する。
     row = connection.execute(statement.encode("utf-8")).fetchone()
     return row is not None and row[0] is True
 
@@ -112,7 +112,7 @@ def verified(connection: Connection[tuple[object, ...]], statement: str) -> bool
 def apply_migrations(
     connection: Connection[tuple[object, ...]], items: list[PreparedMigration]
 ) -> None:
-    """Recover a committed DDL before ledger write only after structural verification."""
+    """台帳記録前に確定したDDLは、構造を検証してから復旧する。"""
     connection.execute("CREATE SCHEMA IF NOT EXISTS recipeweave")
     connection.execute(
         "CREATE TABLE IF NOT EXISTS recipeweave.schema_migrations "
@@ -140,7 +140,7 @@ def apply_migrations(
                     raise ValueError("async index creation failed")
             if not verified(connection, definition.verify):
                 raise ValueError(f"migration postcondition failed: {definition.id}")
-        # This DML is separate from the preceding DDL autocommit transaction.
+        # このDMLは先行するDDLの自動コミットトランザクションから分離する。
         connection.execute(
             "INSERT INTO recipeweave.schema_migrations (id, checksum, applied_at) "
             "VALUES (%s, %s, CURRENT_TIMESTAMP)",
@@ -149,7 +149,7 @@ def apply_migrations(
 
 
 def grant_application(connection: Connection[tuple[object, ...]], iam_arn: str) -> None:
-    """Bind the non-admin application database role to exactly the supplied IAM role."""
+    """管理者ではないアプリケーションDBロールを、指定したIAMロールだけに対応付ける。"""
     if not re.fullmatch(r"arn:aws(?:-cn|-us-gov)?:iam::\d{12}:role/[A-Za-z0-9+=,.@_/-]+", iam_arn):
         raise ValueError("invalid DSQL_APP_IAM_ARN")
     row = connection.execute(

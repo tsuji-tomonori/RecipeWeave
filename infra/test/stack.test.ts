@@ -94,7 +94,7 @@ test("never caches private state and forwards Authorization without the viewer H
       CacheBehaviors: Match.arrayWith([
         Match.objectLike({
           PathPattern: "/api/*",
-          // AWS managed CachingDisabled: minimum/default/maximum TTL are all 0.
+          // AWS管理のCachingDisabledでは、最小・既定・最大TTLがすべて0になる。
           // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-policy-caching-disabled
           CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
           OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac",

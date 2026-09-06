@@ -1,8 +1,12 @@
-# Aurora DSQL migration boundary
+# Aurora DSQLの移行境界
 
 `recipeweave.user_state(subject,revision,payload,updated_at)` は端末データ同期の初期境界です。1000万料理向けの正規化モデル・候補生成データを置換しません。レシート画像、OCR全文、購入店情報はこのsnapshotへ保持しません。
 
 `migrations/manifest.manual.json` とSQLを入力に、SQL構文・1ファイル1文・checksumを検査します。計画表示はAWS不要です。
+
+新規コメントと説明は日本語で記載します。既存の `001_user_state.sql` だけは冒頭コメントもchecksumに含まれるため、公開済みのバイト列を保持します。その英語コメントの意味は「端末スナップショットの移行境界であり、料理の正規化テーブルは後続の移行で扱う」です。内容を修正する場合は既存の移行を書き換えず、新しい移行を追加します。
+
+`uv run --locked --package recipeweave-api app-sql-lint` は移行DDLをSQLFluffでlintし、マニフェストの検証SQLも構文解析します。既存の検証SQLはchecksumを保持するため、再整形を要求せず構文だけを検査します。アプリケーション用SQLの静的解析と同じコマンドで実行できます。
 
 ```bash
 uv run --locked --package recipeweave-api python database/migrate.py --plan

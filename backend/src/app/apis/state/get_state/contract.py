@@ -8,7 +8,7 @@ CONTRACT = OperationContract(
     summary="認証した利用者自身の状態を読む",
     authentication="cognito-access-jwt",
     errors=(401, 503),
-    idempotency="read-only",
-    transaction="read committed snapshot",
-    effects="read personal state",
+    idempotency="読取専用",
+    transaction="コミット済みのスナップショットを読む",
+    effects="本人の状態を読む",
 )

@@ -9,7 +9,7 @@ import {
 import type { StackProps } from "aws-cdk-lib";
 import type { Construct } from "constructs";
 
-/** Stateful resources have separate lifecycle and never use auto-delete. */
+/** 状態を保持するリソースは独立したライフサイクルで管理し、自動削除しない。 */
 export class DataStack extends Stack {
   public readonly cluster: dsql.CfnCluster;
   public readonly userPool: cognito.UserPool;
@@ -39,8 +39,8 @@ export class DataStack extends Stack {
       deletionProtection: true,
       removalPolicy: RemovalPolicy.RETAIN,
     });
-    // SRP issues access tokens with aws.cognito.signin.user.admin. Hosted-login UI
-    // and OAuth callback configuration belong to a later cloud-auth UI release.
+    // SRPで発行するアクセストークンにはaws.cognito.signin.user.adminが付く。
+    // ホスト型ログイン画面とOAuthのコールバック設定は、今後のクラウド認証画面で導入する。
     this.userPoolClient = this.userPool.addClient("WebClient", {
       generateSecret: false,
       authFlows: { userSrp: true },

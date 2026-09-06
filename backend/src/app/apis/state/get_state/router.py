@@ -14,8 +14,8 @@ router = APIRouter()
     operation_id=CONTRACT.operation_id,
     summary=CONTRACT.summary,
     responses={
-        401: {"description": "Valid access token required"},
-        503: {"description": "Synchronization unavailable"},
+        401: {"description": "有効なアクセストークンが必要"},
+        503: {"description": "同期を利用できない"},
     },
 )
 def get_state(subject: SubjectDependency, repository: StateDependency) -> StateEnvelope:

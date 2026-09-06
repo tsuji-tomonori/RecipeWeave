@@ -1,4 +1,4 @@
-"""Bound request bytes before JSON parsing, including chunked transfer bodies."""
+"""チャンク転送を含め、JSON解析前にリクエストのバイト数を制限する。"""
 
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send

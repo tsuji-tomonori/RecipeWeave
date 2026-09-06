@@ -1,4 +1,4 @@
-"""Provider construction and cached dependency roots; imports are lazy."""
+"""プロバイダーの構築と依存のキャッシュ。必要になるまでインポートしない。"""
 
 from functools import lru_cache
 from pathlib import Path
@@ -44,7 +44,7 @@ def get_verifier() -> IdentityVerifier:
 def require_subject(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)],
 ) -> str:
-    """Never trust subject headers, query parameters or unverified JWT claims."""
+    """利用者識別用のヘッダー・クエリ引数・未検証のJWTクレームを信頼しない。"""
     if credentials is None or credentials.scheme.lower() != "bearer":
         raise AuthenticationError("access token required")
     return get_verifier().subject(credentials.credentials)

@@ -5,7 +5,7 @@ import type { AppState } from './types';
 export const STORAGE_KEY = 'recipeweave.dev.v1';
 export interface StorageLike { getItem(key: string): string | null; setItem(key: string, value: string): void }
 export interface LockManagerLike { request<T>(name: string, callback: () => T): Promise<T> }
-/** Ephemeral comparison token. Never persist or log the damaged raw data. */
+/** 一時的な比較用トークン。破損した生データは保存もログ出力もしない。 */
 export interface RecoverySnapshot { raw: string; reason: 'malformed-json' | 'invalid-data' }
 const fail = (): never => { throw new DomainError('INVALID_BACKUP', '保存データの形式・版・参照・数量が不正です。現在のデータは変更していません。'); };
 const obj = (value: unknown, keys: string[]): Record<string, unknown> => {
@@ -34,7 +34,7 @@ function uniqueIds(value: unknown[]): Set<string> {
   const ids = value.map((x) => str(record(x).id)); if (new Set(ids).size !== ids.length) return fail(); return new Set(ids);
 }
 
-/** Reject extra fields as well as broken nested data; receipt raw data cannot sneak into a backup. */
+/** 不正な入れ子データと余分な項目を拒否し、レシートの生データがバックアップへ混入するのを防ぐ。 */
 export function validateAppState(value: unknown): AppState {
   const root = obj(value, ['schemaVersion', 'version', 'lots', 'imports', 'drafts', 'meal', 'saved', 'shoppingChecks', 'cooking', 'settings', 'customFoods', 'search']);
   if (root.schemaVersion !== 1) fail(); integer(root.version);
@@ -124,7 +124,7 @@ function recoveryCandidate(raw: string | null): RecoverySnapshot {
   if (raw === null) throw new DomainError('RECOVERY_NOT_REQUIRED', '保存データは破損していません。通常のデータ読込みを使ってください。');
   let value: unknown;
   try { value = JSON.parse(raw) as unknown; } catch { return { raw, reason: 'malformed-json' }; }
-  // A different declared version can be a valid future format. Do not treat it as corruption.
+  // 異なるバージョンの宣言は将来の正当な形式の可能性があるため、破損とみなさない。
   if (value && typeof value === 'object' && !Array.isArray(value)) {
     const declared = (value as Record<string, unknown>).schemaVersion;
     if (typeof declared === 'number' && declared !== 1) throw new DomainError('UNSUPPORTED_SCHEMA', 'この保存データは異なる版です。新しい対応版で開いてください。破損データとして上書きできません。');
@@ -153,13 +153,13 @@ export async function transact(state: AppState, mutator: (current: AppState) => 
 export function exportBackup(state: AppState): string { return JSON.stringify(validateAppState(state), null, 2); }
 export async function restoreBackup(current: AppState, backup: AppState, storage?: StorageLike, locks?: LockManagerLike): Promise<AppState> { const validated = validateAppState(backup); return transact(current, () => validated, storage, locks); }
 
-/** Call only after the user confirms replacing damaged data with this validated backup. */
+/** 検証済みバックアップで破損データを置き換えることを、利用者が確認してから呼び出す。 */
 export async function recoverBackup(recovery: RecoverySnapshot, backup: AppState, storage: StorageLike = defaultStorage(), locks: LockManagerLike = defaultLocks()): Promise<AppState> {
   const validated = validateAppState(backup);
   return locks.request(STORAGE_KEY, () => {
     const raw = readRaw(storage);
     if (raw !== recovery.raw) throw new DomainError('VERSION_CONFLICT', '確認後に別のタブで保存データが変わりました。復旧を中止しました。再読込みして確認してください。');
-    recoveryCandidate(raw); // Re-check inside the lock; a forged token cannot overwrite healthy/future data.
+    recoveryCandidate(raw); // ロック内で再検査し、偽造トークンによる正常データや将来形式の上書きを防ぐ。
     let previousVersion = 0;
     try {
       const previous = JSON.parse(recovery.raw) as unknown;
@@ -167,9 +167,9 @@ export async function recoverBackup(recovery: RecoverySnapshot, backup: AppState
         const version = (previous as Record<string, unknown>).version;
         if (typeof version === 'number' && Number.isSafeInteger(version) && version >= 0 && version < Number.MAX_SAFE_INTEGER) previousVersion = version;
       }
-    } catch { /* Syntactically damaged JSON has no trustworthy revision. */ }
-    // Content comparison in ordinary transactions also rejects pre-recovery stale tabs
-    // if a damaged revision had to restart at 1.
+    } catch { /* JSONの構文が破損している場合、リビジョンは信頼できない。 */ }
+    // 破損したリビジョンを1から再開した場合も、通常の更新で内容を比較することで、
+    // 復旧前の古いタブからの更新を拒否する。
     const next = validateAppState({ ...validated, version: previousVersion + 1 });
     try { storage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch { throw new DomainError('STORAGE_FULL', '復旧データを保存できませんでした。元の保存内容は変更していません。容量や設定を確認してください。'); }
     return next;

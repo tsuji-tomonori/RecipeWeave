@@ -1,0 +1,22 @@
+[sqlfluff]
+dialect = postgres
+templater = placeholder
+max_line_length = 100
+large_file_skip_byte_limit = 0
+disable_noqa = True
+
+# 実行値は渡さず、psycopgの名前付き引数を検査用の値で解析する。
+[sqlfluff:templater:placeholder]
+param_style = pyformat
+subject = 'verified-subject'
+payload = '{}'
+revision = 1
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.functions]
+extended_capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.types]
+extended_capitalisation_policy = upper

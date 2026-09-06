@@ -56,8 +56,8 @@ export class ServiceStack extends Stack {
       "index.html",
     );
 
-    // Build artifacts are reproducible. Keep the static bucket with its OAC
-    // distribution policy to avoid cross-stack dependency cycles; retain on delete.
+    // ビルド成果物は再現可能。スタック間の循環参照を避けるため、静的ファイル用バケットと
+    // OACを使う配信ポリシーを同じスタックに置き、スタック削除時もバケットは保持する。
     const webBucket = new s3.Bucket(this, "WebAssets", {
       encryption: s3.BucketEncryption.S3_MANAGED,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
@@ -212,8 +212,8 @@ export class ServiceStack extends Stack {
     };
     this.distribution = new cloudfront.Distribution(this, "Web", {
       defaultRootObject: "index.html",
-      // Error responses have an independent minimum TTL. Zero it without
-      // changing status codes or serving an HTML fallback for API failures.
+      // エラーレスポンスには独立した最小TTLがあるため、0にする。
+      // ステータスコードは変更せず、APIの失敗を代替HTMLへ置き換えない。
       errorResponses: [400, 403, 404, 405, 414, 500, 501, 502, 503, 504].map(
         (httpStatus) => ({ httpStatus, ttl: Duration.seconds(0) }),
       ),
@@ -233,8 +233,8 @@ export class ServiceStack extends Stack {
           ...apiBase,
           allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
           cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-          // Includes Authorization while replacing the viewer Host header with
-          // the API origin host. Private state never enters a shared cache.
+          // Authorizationを転送し、閲覧側のHostヘッダーはAPI配信元のホストに置き換える。
+          // 利用者固有の状態は共有キャッシュに保存しない。
           originRequestPolicy:
             cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
         },

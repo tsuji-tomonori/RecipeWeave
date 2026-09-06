@@ -1,4 +1,4 @@
-"""Migration recovery contracts; the double does not claim to execute DSQL SQL."""
+"""移行復旧の契約テスト。テスト代替はDSQL上のSQL実行を再現するものではない。"""
 
 from dataclasses import dataclass
 from typing import cast
@@ -22,7 +22,7 @@ VERIFY = "SELECT TRUE"
 
 
 class InterruptedLedgerWrite(Exception):
-    """A committed DDL can survive interruption before its ledger DML."""
+    """確定したDDLは、台帳DML前の中断後も残ることがある。"""
 
 
 @dataclass
@@ -35,7 +35,7 @@ class Result:
 
 @dataclass
 class MigrationBoundary:
-    """Only the externally observable schema/ledger states, not a database emulator."""
+    """外部から観測できるスキーマ・台帳の状態だけを表す。DBエミュレーターではない。"""
 
     schema_ready: bool = False
     ledger_checksum: str | None = None

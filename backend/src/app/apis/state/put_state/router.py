@@ -14,10 +14,10 @@ router = APIRouter()
     operation_id=CONTRACT.operation_id,
     summary=CONTRACT.summary,
     responses={
-        401: {"description": "Valid access token required"},
-        409: {"description": "Version conflict; reload before retry"},
-        413: {"description": "Request exceeds one MiB"},
-        503: {"description": "Synchronization unavailable"},
+        401: {"description": "有効なアクセストークンが必要"},
+        409: {"description": "版が競合したため、再読込後にやり直す"},
+        413: {"description": "リクエストが1MiBを超えている"},
+        503: {"description": "同期を利用できない"},
     },
 )
 def put_state(

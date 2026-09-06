@@ -1,4 +1,4 @@
-"""Environment configuration: missing persistence and auth fail closed."""
+"""環境設定。保存先や認証設定の不足時は処理を拒否する。"""
 
 from typing import Literal
 

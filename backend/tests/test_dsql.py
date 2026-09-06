@@ -1,4 +1,4 @@
-"""Adapter tests use generated SQL but never connect to AWS."""
+"""接続アダプターのテストは生成SQLを使い、AWSへ接続しない。"""
 
 from unittest.mock import MagicMock, patch
 

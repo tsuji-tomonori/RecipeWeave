@@ -43,7 +43,7 @@ export async function validateReceiptImage(file: File): Promise<void> {
     );
   }
 }
-/** All OCR assets are hosted with the app. Receipt pixels never leave the browser. */
+/** OCRの全資材をアプリと同じ配信元に置き、レシート画像をブラウザ外へ送信しない。 */
 export function recognizeReceipt(
   file: File,
   onProgress: (progress: number, status: string) => void,

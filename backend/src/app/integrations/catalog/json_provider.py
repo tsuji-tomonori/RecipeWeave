@@ -1,4 +1,4 @@
-"""Read immutable sample records, never enumeration candidates."""
+"""変更しないサンプルレコードを読む。組み合わせ列挙候補は対象にしない。"""
 
 from pathlib import Path
 

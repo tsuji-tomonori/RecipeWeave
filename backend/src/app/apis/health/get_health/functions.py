@@ -2,5 +2,5 @@ from .schemas import HealthResponse
 
 
 def get_health() -> HealthResponse:
-    """Describe this API without implying AWS deployment or catalog completeness."""
+    """AWSへの配備やカタログの網羅性を示唆せず、このAPIの状態を返す。"""
     return HealthResponse()

@@ -1,4 +1,4 @@
-"""Versioned state storage is independent of identity verification and HTTP."""
+"""版を管理する状態保存を、本人確認とHTTP処理から分離する。"""
 
 from typing import Protocol
 

@@ -198,7 +198,7 @@ export function randomRecipe(state: AppState, previousId?: string): Recipe | nul
 export function arrangements(state: AppState, recipeId: string): Recipe[] {
   return getRecipe(recipeId).arrangementIds.map(getRecipe).filter((x) => allowedRecipe(state, x));
 }
-/** List scheduling: one active task at a time; passive steps hold their equipment. */
+/** リストスケジューリング。同時に行う手作業は1つとし、待ち時間の工程も器具を占有する。 */
 export function buildCookingPlan(items: MealItem[], equipment?: string[]): PlannedStep[] {
   const recipes = items.map((item) => { validateDraft(item); return getRecipe(item.recipeId); });
   if (equipment && recipes.some((r) => r.equipment.some((e) => !equipment.includes(e)))) throw new DomainError('MISSING_EQUIPMENT', '使う器具の設定を確認してください。');

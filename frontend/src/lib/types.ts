@@ -1,4 +1,4 @@
-/** Persistent model. Receipt images, raw OCR and purchase dates are intentionally absent. */
+/** 永続化するモデル。レシート画像、OCRの生データ、購入日は保存対象に含めない。 */
 export const UNITS = ['g', 'ml', '個', 'パック', '袋', '缶', '本', '枚', '点'] as const;
 export type Unit = (typeof UNITS)[number];
 export type StorageLocation = '冷蔵' | '冷凍' | '常温';
@@ -30,7 +30,7 @@ export interface ReceiptImport {
   id: string; imageHash: string; purchaseSignature: string; createdAt: string;
   state: 'registered' | 'undone'; createdLotIds: string[]; undoneAt: string | null;
 }
-/** Temporary only: never serialize candidates into AppState. */
+/** 一時データ専用。読取候補をAppStateへシリアライズしない。 */
 export interface ReceiptCandidate {
   id: string; rawText: string; foodId: string | null; quantity: Quantity;
   selected: boolean; status: 'matched' | 'review' | 'excluded'; reason: string;

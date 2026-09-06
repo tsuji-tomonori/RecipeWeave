@@ -1,1 +1,1 @@
-"""Backend contract and security tests."""
+"""バックエンドの契約とセキュリティのテスト。"""

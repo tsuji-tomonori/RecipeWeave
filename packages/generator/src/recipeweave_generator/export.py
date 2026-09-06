@@ -1,4 +1,4 @@
-"""Every design point is materialized; manifests are not a substitute for rows."""
+"""すべての設計点を行として出力し、マニフェストで実データの代わりにしない。"""
 
 from __future__ import annotations
 

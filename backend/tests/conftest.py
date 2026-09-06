@@ -1,4 +1,4 @@
-"""All personal-state tests verify real RSA tokens; no unverified test auth route."""
+"""個人状態のテストは実際のRSA署名を検証し、検証を省略するテスト用認証経路を作らない。"""
 
 import time
 from collections.abc import Iterator
@@ -61,7 +61,7 @@ def repository() -> MemoryStateRepository:
 
 
 class HttpTestClient(Protocol):
-    """Stable narrow HTTP port across Starlette's httpx/httpx2 transition."""
+    """Starletteのhttpx/httpx2移行に対応する、小さなHTTPクライアント境界。"""
 
     def get(
         self,

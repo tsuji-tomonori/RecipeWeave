@@ -2,7 +2,7 @@ name: Verify and publish Dev Pages
 
 on:
   push:
-    branches: [main, feat/service-receipts-dev]
+    branches: [main, dev, feat/service-receipts-dev]
   pull_request:
   workflow_dispatch:
 
@@ -45,6 +45,8 @@ jobs:
         run: |
           uv run --locked python tools/quintflow.py setup
           uv run --locked python tools/quintflow.py check
+      - name: SQLの静的解析
+        run: uv run --locked --package recipeweave-api app-sql-lint
       - name: Generate API and SQL contracts
         run: uv run --locked --package recipeweave-api app-docs
       - name: Frontend types, domain tests and build
@@ -55,7 +57,8 @@ jobs:
           python tools/check_service_docs.py frontend/dist/help
       - name: Python lint, API architecture and strict types
         run: |
-          uv run --locked ruff check packages/generator tools/generate_service_design.py
+          uv run --locked ruff check packages/generator tools/design tools/generate_service_design.py tools/check_generated_service.py tests/test_service_design.py
+          uv run --locked ruff format --check tools/design tools/generate_service_design.py tools/check_generated_service.py tests/test_service_design.py
           uv run --locked ruff format --check backend database
           uv run --locked ruff check backend database
           uv run --locked --package recipeweave-api app-archlint
@@ -77,6 +80,7 @@ jobs:
           uv run --locked python -m recipeweave_generator.design
           uv run --locked python tools/generate_service_design.py
           uv run --locked python tools/generate_service_design.py --check
+          uv run --locked pytest tests/test_service_design.py -q
           python tools/check_generated_service.py
       - name: Preserve generated design for review
         if: always()

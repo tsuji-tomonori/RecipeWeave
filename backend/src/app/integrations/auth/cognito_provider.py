@@ -1,4 +1,4 @@
-"""Cognito access token verification independent of API Gateway authorizers."""
+"""API Gatewayのオーソライザーとは独立してCognitoアクセストークンを検証する。"""
 
 import re
 from typing import Protocol, cast
@@ -42,7 +42,7 @@ class CognitoVerifier:
         self._keys = keys if keys is not None else CognitoSigningKeys(issuer)
 
     def subject(self, token: str) -> str:
-        """Verify signature, issuer, expiry, access use and app client before sub."""
+        """subを使う前に署名・発行者・有効期限・用途・アプリクライアントを検証する。"""
         try:
             header = jwt.get_unverified_header(token)
             if header.get("alg") != "RS256" or not isinstance(header.get("kid"), str):

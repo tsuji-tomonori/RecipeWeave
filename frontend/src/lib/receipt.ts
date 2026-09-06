@@ -4,8 +4,8 @@ import type { Food, Quantity, ReceiptCandidate, Unit } from './types';
 const normalize = (value: string): string => value.normalize('NFKC').toLowerCase().replace(/\s+/g, '');
 const excludedPattern = /合計|小計|お預り|お預かり|お釣り|釣銭|消費税|税率|内税|外税|値引|割引|クーポン|ポイント|会員|電話|領収|レシート|現金|クレジット|visa|mastercard|洗剤|漂白|柔軟剤|シャンプー|ティッシュ|トイレ|レジ袋|袋代|箸代|tel|登録番号|ご利用|営業時間|店$/i;
 function explicitQuantity(raw: string, fallback: Unit): Quantity {
-  // Digits without an explicit physical/purchase unit remain prices or unknown.
-  // Package contents such as "10個入" are not a purchase quantity.
+  // 物量や購入数の単位が明示されていない数字は、価格または数量不明として扱う。
+  // 「10個入」のような包装内の内容量は購入数とみなさない。
   const text = raw.normalize('NFKC').replace(/\d+(?:\.\d+)?\s*(?:個|枚|本)\s*入(?:り)?/g, '');
   const match = text.match(/(?:^|[^\d.\-])([0-9]+(?:\.[0-9]+)?)\s*(kg|ml|g|l|パック|袋|缶|個|本|枚|点)(?![a-z])/i);
   if (!match) return { value: null, unit: fallback };
@@ -30,7 +30,7 @@ async function sha256(value: ArrayBuffer): Promise<string> {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 export async function receiptSignature(candidates: ReceiptCandidate[]): Promise<string> {
-  // Order-independent but multiplicity-preserving. No raw OCR or store/date data persists.
+  // 順序には依存せず重複数は保持する。OCRの生データや店舗・日付の情報は保存しない。
   const rows = candidates.filter((x) => x.selected).map((x) => `${x.foodId ?? '?'}:${x.quantity.value ?? '?'}:${x.quantity.unit}`).sort();
   return sha256(new TextEncoder().encode(JSON.stringify(rows)).buffer as ArrayBuffer);
 }

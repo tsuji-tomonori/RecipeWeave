@@ -8,7 +8,7 @@ CONTRACT = OperationContract(
     summary="食材・時間からサンプル料理を探す",
     authentication="public",
     errors=(422,),
-    idempotency="read-only",
-    transaction="none",
-    effects="none",
+    idempotency="読取専用",
+    transaction="なし",
+    effects="なし",
 )

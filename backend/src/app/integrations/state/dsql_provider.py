@@ -1,4 +1,4 @@
-"""Aurora DSQL adapter: verified TLS, IAM on each connection and bounded OCC retry."""
+"""Aurora DSQL接続。TLSを検証し、接続ごとにIAM認証し、OCC再試行回数を制限する。"""
 
 import re
 import time
@@ -21,7 +21,7 @@ from app.core.settings import AppSettings
 
 
 class DsqlTokenClient(Protocol):
-    """Boto3 custom presigning methods omitted by its generated service stubs."""
+    """Boto3の生成スタブに含まれない認証トークン発行メソッドを型で定義する。"""
 
     def generate_db_connect_auth_token(
         self, *, Hostname: str, Region: str, ExpiresIn: int
@@ -40,8 +40,8 @@ class DsqlStateRepository:
         if settings.dsql_database_user == "admin":
             raise ServiceUnavailableError("admin role is forbidden for application requests")
         self._settings = settings
-        # Dynamic SDK method boundary is narrowed here; operation code sees only StateRepository.
-        client_factory: Callable[..., DsqlTokenClient] = getattr(boto3, "client")  # noqa: B009 -- dynamic SDK typing boundary
+        # 動的SDKの型境界をここに限定し、操作側にはStateRepositoryだけを公開する。
+        client_factory: Callable[..., DsqlTokenClient] = getattr(boto3, "client")  # noqa: B009 -- 動的SDKの型境界
         self._client = client_factory(
             "dsql",
             region_name=settings.aws_region,

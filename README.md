@@ -7,7 +7,7 @@ Devの個人データは利用中のブラウザに保存します。クラウ�
 - [Dev試用版を開く](https://tsuji-tomonori.github.io/RecipeWeave/)
 - [サービス概要](docs/service/overview.md) / [図付き利用者マニュアル](docs/service/manual.md) / [Q&A](docs/service/faq.md)
 - [画面と動線](docs/service/screens-and-flows.md) / [要件定義](docs/requirements/REQUIREMENTS.md)
-- [採用構成と判断](docs/design/ADR-0001-service-dev.md) / [実装由来の設計](docs/design/generated/service.md)
+- [採用構成と判断](docs/design/ADR-0001-service-dev.md) / [実装由来の設計一覧](docs/design/generated/README.md)
 - [Dev検証・公開状況](docs/verification/service-dev.md)
 
 Svelte 5 / TypeScript / Vite、Python 3.12 / FastAPI、AWS CDKを使用します。
@@ -90,7 +90,8 @@ exportは定義と完了シャードのチェックサムを照合して再開�
 `dev-standard` のportable skillとpre-commit設定を取り込みました。適用記録は `.dev-standard/install/receipt.json` にあります。
 要件は [`spec/requirements/requirements.qnt`](spec/requirements/requirements.qnt) を編集し、`quintflow.py generate` でJSONとMarkdownへ変換します。
 生成器の設計は [`docs/design/generated/generator.md`](docs/design/generated/generator.md)、
-サービス設計は [`docs/design/generated/service.md`](docs/design/generated/service.md) に実装から生成します。
+サービス設計は [生成設計書一覧](docs/design/generated/README.md) に実装から生成します。
+テーブル仕様・ER図・API別仕様・CRUD・シーケンスの生成方法は [自動生成手順](docs/design/AUTOMATION.md) を参照してください。
 
 ```bash
 uv run python -m recipeweave_generator.design

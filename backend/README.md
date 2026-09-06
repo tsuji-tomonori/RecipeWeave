@@ -32,6 +32,7 @@ uv run --locked ruff check backend database
 uv run --locked pyright --project backend/pyproject.toml
 uv run --locked mypy --config-file backend/pyproject.toml backend/src backend/tests backend/tools database
 uv run --locked --package recipeweave-api app-archlint
+uv run --locked --package recipeweave-api app-sql-lint
 uv run --locked --package recipeweave-api app-docs --check
 uv run --locked pytest backend/tests --cov=app --cov-branch --cov-report=term-missing
 uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64
@@ -40,6 +41,16 @@ uv run --locked --package recipeweave-api python backend/tools/package_lambda.py
 契約・署名検証・利用者隔離・同時更新・過大要求・型検証・SQL再現性のテスト成功をgateとし、branch coverageを報告します。未接続AWSの動作はcoverage率で代替しません。SQLGlot未取得の環境ではSQL生成・adapter検査を実施できず、`app-docs --check`が通るまでbackend配布は完了扱いにしません。
 
 生成物: `openapi.gen.json`、各state operationの `generated/queries.py`。`generators.manual.json` が入力と出力を定義します。OpenAPIのみなら `app-docs --openapi-only` で再生成できます。これはSQLの検証を行ったことにはなりません。
+
+## API別SQLと静的解析
+
+DBアクセスにはORMを使わず、操作ごとの `apis/<resource>/<operation>/sql/*.sql` を正本にします。現在DBを利用するのは状態の取得・保存の2操作です。食品・料理のサンプルJSONを読むAPIには、実行しないSQLを置きません。
+
+SQLGlotで1ファイル1文・列のワイルドカード禁止を検査し、`app-docs` が `generated/queries.py` の型付きラッパーを生成します。関数は保存用Protocolを呼び、DSQLプロバイダーが生成ラッパーへ本人識別子と値を渡します。SQL文字列の組立てや値の埋込みは行わず、psycopgの名前付き引数で値を束縛します。
+
+`app-sql-lint` は固定したSQLFluff 4.3.0を用い、全APIのSQLファイルと移行DDLをPostgreSQL方言で検査します。`.sqlfluff` のplaceholder設定で `%(subject)s` などを検査用の値へ置き換えるため、AWS接続や実際の個人データは不要です。構文・テンプレートエラーの無視や `noqa` による検査の回避は許可しません。移行マニフェスト内の検証SQLも構文解析し、既存チェックサムを保つためそのSQLを再整形しません。
+
+根拠: [SQLFluffの設定](https://docs.sqlfluff.com/en/stable/configuration/setting_configuration.html)、[psycopg引数のplaceholder設定](https://docs.sqlfluff.com/en/stable/configuration/templating/placeholder.html)。
 
 ## 接続設定
 

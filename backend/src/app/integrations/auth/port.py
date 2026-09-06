@@ -1,4 +1,4 @@
-"""Only a verified identity may address personal state."""
+"""本人確認済みの識別子だけで個人状態へアクセスする。"""
 
 from typing import Protocol
 
