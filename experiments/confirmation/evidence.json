@@ -42,7 +42,9 @@
       "judge_b": 800
     },
     "model": "gpt-5.6-luna",
-    "actual_model": "gpt-5.6-luna",
+    "declared_model": "gpt-5.6-luna",
+    "actual_model": null,
+    "provenance_status": "declared model retained; execution metadata and prompt/context hashes are absent",
     "workers_per_item": 2,
     "human_results": 0,
     "human_labels": 0,
@@ -58,13 +60,31 @@
     "ordinals_match_frozen_seeds": true,
     "baseline_excludes_pilot": true,
     "blinded_inputs_match_sample_key": true,
+    "blinding": {
+      "status": "limited",
+      "cohort_field_hidden": true,
+      "ordinal_field_hidden": true,
+      "algorithm_name_field_hidden": true,
+      "cohort_inference_from_structure_possible": true,
+      "limitation": "structure labels remain visible and may reveal cohort or algorithm"
+    },
     "definition_digests": {
       "baseline": "486f8f288d2c26241959cbb70216aab27a712f0a7ff39f3a9783820924339782",
       "revised": "495dc6b22638ff029c75913a13aef616c425049eacddc6389a6a26257e56da36"
     }
   },
   "judge_model": "gpt-5.6-luna",
-  "actual_model": "gpt-5.6-luna",
+  "declared_model": "gpt-5.6-luna",
+  "actual_model": null,
+  "provenance_status": "declared model retained; execution metadata and prompt/context hashes are absent",
+  "blinding": {
+    "status": "limited",
+    "cohort_field_hidden": true,
+    "ordinal_field_hidden": true,
+    "algorithm_name_field_hidden": true,
+    "cohort_inference_from_structure_possible": true,
+    "limitation": "structure labels remain visible and may reveal cohort or algorithm"
+  },
   "workers_per_item": 2,
   "human_results": 0,
   "human_labels": 0,

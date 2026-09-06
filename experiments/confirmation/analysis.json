@@ -625,7 +625,7 @@
       "z": 13.237248983631183,
       "z_statistic": 13.237248983631183,
       "p_value": 5.347181263758995e-40,
-      "reject": true
+      "inference": "exploratory; no multiplicity-adjusted decision"
     },
     "agreement": {
       "count_a": 399,
@@ -649,7 +649,7 @@
       "z": 9.910400061889142,
       "z_statistic": 9.910400061889142,
       "p_value": 3.751409939625493e-23,
-      "reject": true
+      "inference": "exploratory; no multiplicity-adjusted decision"
     },
     "judge_a_pass": {
       "count_a": 398,
@@ -673,7 +673,7 @@
       "z": 15.453121517178216,
       "z_statistic": 15.453121517178216,
       "p_value": 7.187660036802053e-54,
-      "reject": true
+      "inference": "exploratory; no multiplicity-adjusted decision"
     },
     "judge_b_pass": {
       "count_a": 399,
@@ -697,7 +697,7 @@
       "z": 15.893052188356872,
       "z_statistic": 15.893052188356872,
       "p_value": 7.079493839466556e-57,
-      "reject": true
+      "inference": "exploratory; no multiplicity-adjusted decision"
     }
   },
   "comparison": {
@@ -747,7 +747,7 @@
       "z": 13.237248983631183,
       "z_statistic": 13.237248983631183,
       "p_value": 5.347181263758995e-40,
-      "reject": true
+      "inference": "exploratory; no multiplicity-adjusted decision"
     },
     "agreement": {
       "count_a": 399,
@@ -771,7 +771,7 @@
       "z": 9.910400061889142,
       "z_statistic": 9.910400061889142,
       "p_value": 3.751409939625493e-23,
-      "reject": true
+      "inference": "exploratory; no multiplicity-adjusted decision"
     },
     "judge_a_pass": {
       "count_a": 398,
@@ -795,7 +795,7 @@
       "z": 15.453121517178216,
       "z_statistic": 15.453121517178216,
       "p_value": 7.187660036802053e-54,
-      "reject": true
+      "inference": "exploratory; no multiplicity-adjusted decision"
     },
     "judge_b_pass": {
       "count_a": 399,
@@ -819,7 +819,7 @@
       "z": 15.893052188356872,
       "z_statistic": 15.893052188356872,
       "p_value": 7.079493839466556e-57,
-      "reject": true
+      "inference": "exploratory; no multiplicity-adjusted decision"
     }
   },
   "comparison_cohorts": [
@@ -842,7 +842,16 @@
     "worst_case_n_for_plus_minus_5pp": 385,
     "approximate_worst_case_margin_at_n400": 0.048999099613501344,
     "interpretation": "confidence applies to the model-judged sampled population; shared model bias is not removed and two judges do not double n",
-    "pilot": "development pilot is summarized separately and is not used to select the confirmatory comparison"
+    "pilot": "development pilot is summarized separately and is not used to select the confirmatory comparison",
+    "blinding": {
+      "status": "limited",
+      "cohort_field_hidden": true,
+      "ordinal_field_hidden": true,
+      "algorithm_name_field_hidden": true,
+      "cohort_inference_from_structure_possible": true,
+      "limitation": "structure labels remain visible and may reveal cohort or algorithm"
+    },
+    "secondary_inference": "exploratory only; no multiplicity-adjusted confirmatory decision"
   },
   "comparison_direction": "revised minus baseline",
   "template_breakdown": [
@@ -1017,6 +1026,9 @@
   ],
   "validation": {
     "protocol_sha256": "641c8cf2917cd5a1a9c1ef5421c268b571cd731286a3e3a3cf5ee085b3d7d465",
+    "design_sha256": "a42e75c6a4bf738dcb5d36146fc9096542b27738c73376c8449d36d808632bf9",
+    "pilot_design_sha256": "3ac09c0ecbcb25ba37490e6e0481f48be4eb891669e27cd64c477c3babeef6ad",
+    "design_hash_status": "retrospectively pinned to baseline evidence; preregistration not established",
     "populations": {
       "baseline": 25171059394,
       "revised": 12069539
@@ -1029,7 +1041,15 @@
     },
     "ordinals_match_frozen_seeds": true,
     "baseline_excludes_pilot": true,
-    "blinded_inputs_match_sample_key": true
+    "blinded_inputs_match_sample_key": true,
+    "blinding": {
+      "status": "limited",
+      "cohort_field_hidden": true,
+      "ordinal_field_hidden": true,
+      "algorithm_name_field_hidden": true,
+      "cohort_inference_from_structure_possible": true,
+      "limitation": "structure labels remain visible and may reveal cohort or algorithm"
+    }
   },
   "catalog": {
     "source_foods": 1005,

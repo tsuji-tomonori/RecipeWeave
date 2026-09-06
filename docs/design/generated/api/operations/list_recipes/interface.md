@@ -18,7 +18,7 @@
 | query | selectedFoodIds | 任意 | array&lt;string&gt; | maxItems=100 |  |
 | query | excludedFoodIds | 任意 | array&lt;string&gt; | maxItems=100 |  |
 | query | match | 任意 | string | enum=["all", "any"]; default="all" |  |
-| query | maxMinutes | 任意 | anyOf(number, null) | 追加制約なし |  |
+| query | maxMinutes | 任意 | anyOf(number, null) | anyOfの制約=number: maximum=1440; exclusiveMinimum=0 |  |
 | query | equipment | 任意 | array&lt;string&gt; | maxItems=50 |  |
 
 ## リクエスト本文

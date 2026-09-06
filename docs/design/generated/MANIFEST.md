@@ -8,6 +8,8 @@
 
 | 生成元 | SHA-256 |
 |---|---|
+| .sqlfluff | 7d030f484da60653c51f761a5f9df88a0c90871167e35bc299ef43d51b03b98d |
+| backend/generators.manual.json | 6b42af4949b77fa667c64fd6bf9b09f3d770d691b23f80f3e8c24a212b1881f9 |
 | backend/openapi.gen.json | 39c6f85efd6f2b48b7c9fd3484356ec1f5cab5c78ccbddbfb80a59bdd2d68eec |
 | backend/src/app/__init__.py | a9ee3ac2d85c3fa8139197f1a93705cea5440e57f6deae5511bd6447be77bb3a |
 | backend/src/app/apis/__init__.py | 86f1e036a3aaadcc9c1f58c434efb6f9a5159c03cb1f53b210d2710d1ec2186a |
@@ -117,12 +119,12 @@
 | infra/lib/service-stack.ts | 56af084ae1332d36a21a8e2874c46832a07e8a06d6ccda0e11a04466eac2e286 |
 | pyproject.toml | 297e974a66ef4353d96ee9269fef851afe09998a0f117a32f07ee6782667471b |
 | tools/design/__init__.py | 46873f8df7332d75921d5a2645486ffe1a24902163bd01f7e1a65c2f95cf816e |
-| tools/design/api.py | 8b9444edb2ef0358909134c6ff2a29e0ae33221de28f385fc5074dfb84daca5d |
+| tools/design/api.py | 5c89feba0d4aaf99acd97f5760de59fae9607db7307795e95502ed7e09f891e2 |
 | tools/design/common.py | 2cf8da23bdadad9558e822a16ac975598daad33a849b81824ed3a081b0326510 |
-| tools/design/database.py | 77cf734033a064761b6712d9d1a7c0b6d23920bcd2cf24cf378c9f14d0a247e6 |
+| tools/design/database.py | c97dd01af38635192c7d94faea6fc00bf7cbf2d98e49cb3aee531a2848e9eb26 |
 | tools/design/flow.py | 5863fae421fc741980f8e27f39ee9e279c08c588e685cbb5ebed6e433d669c85 |
 | tools/design/storage.py | 1f48274aaa72d7acc8b7fe795f35c56113f28866ec501ba3109519fb5e9f02b3 |
-| tools/generate_service_design.py | 292d998769cadcd81df73f9c2c076cb5432674f97ba0561f2467df4a0d6f9591 |
+| tools/generate_service_design.py | f5f6a87ef7727c4d742769addd8db815b197eaeedce0400f85aef0f8f8eb9a9f |
 | uv.lock | 42879c24fde07cf6ed7dbcc8de0ab6146fdf4bd266ed2647579df45d051a8566 |
 
 ## 出力
@@ -133,7 +135,7 @@
 | REGISTRY.md | 1d628f8c9511fa94aa89f8d2defbc03b6f37fcf15a75170395b3507ab549804a |
 | api/CRUD.md | 5248040a2137496c45bca7323b16c3ec8855da59f2be80d6229837684653852e |
 | api/ERRORS.md | eb098335f16dc9ff420e42ce515db6751d948b89b0b521c1fde44e33b9538496 |
-| api/MODELS.md | 546c549ed94f49afa4b94e305251e7674999734e4579857c61c663edf937a209 |
+| api/MODELS.md | 72514f1863436d25c65480513b4c2c9b2e4b833e82caf3c2c9d1a1600687f2d0 |
 | api/README.md | d863b83daa587932b43232f50277b50a5bc61ad2c1823615d3612103993bd148 |
 | api/operations/get_health/detail.md | 2826b2a8f9b630f55b0b89d6afe92ca1febdd508b684b326ee04551f283e4f46 |
 | api/operations/get_health/interface.md | db07067800e10e846af1daca0cf3b732ac989ccb0d6614ff15fe522306e1b68a |
@@ -141,7 +143,7 @@
 | api/operations/get_health/sequence.md | e31f2040b93d155eef407d1ae7dd65eec8c9653d2823e3b7d7c85125ee3291b5 |
 | api/operations/get_health/tests.md | 373bea428627617cff1715bd04122fbe766b3636841161135526dfb42f7eba60 |
 | api/operations/get_recipe/detail.md | c25e04a97e45c55404d5464f8729a0c28af7f635adcebd47b64234bc25a0b36f |
-| api/operations/get_recipe/interface.md | d3ad59b9022b439ed6add84d695c3dc2a40b9f3acf8f5fe1ef484bf679e748f2 |
+| api/operations/get_recipe/interface.md | 5c26b6aa27c40a93f1caa3743cc477cbc5ce9249aa4401bbbfee202ade0d1d9b |
 | api/operations/get_recipe/queries.md | e1506bd876a26bb4e91901addf236ba634b6e44721cff07c77e7e425ef4b6088 |
 | api/operations/get_recipe/sequence.md | 7f0d97827f0df939473ee4a75a1f52629e1ccddca64f1e21d1a5183e0de54c00 |
 | api/operations/get_recipe/tests.md | 643b51ca557aa3acffef9ac05371bda3a09bbbe3f0ce917c852e9ef37771cc8f |
@@ -156,7 +158,7 @@
 | api/operations/list_foods/sequence.md | 3466fa8a55d5d2e699f1447f90c9e3360ae09997db843ab55e91687e0c7ca2e4 |
 | api/operations/list_foods/tests.md | 11967b64a238a3c48783329bda6ee1e1d1f945143bafee0bb60ca8ae568fc870 |
 | api/operations/list_recipes/detail.md | 8f7f6ff0176c6e9fbd8db8be91f1fde062f41436904e8e733b82e04de551864a |
-| api/operations/list_recipes/interface.md | cf9eafc0f781235c89d70ea83e2ee81f4d09125914bce1856dc02bd1c7e26860 |
+| api/operations/list_recipes/interface.md | 74a14aed8912444b1bf7f16f381fb05858618a0d23d0b05b294200e99241dd9e |
 | api/operations/list_recipes/queries.md | 193362f2f5216d8df8e8fef2bdff6e34e5915c6921a779bac9d3eefda69ce95f |
 | api/operations/list_recipes/sequence.md | 7f788c660206c707246adfb0bf62d5644cfe0c1b132062b764905ca8bf5747d0 |
 | api/operations/list_recipes/tests.md | 48f38abf873f2b9f9f87ed005d14248cd6ac4b291f8bf7eb3752567e858eacfe |

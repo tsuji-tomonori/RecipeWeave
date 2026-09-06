@@ -14,9 +14,15 @@ uv run recipeweave count
 uv run recipeweave show --ordinal 5182376
 uv run recipeweave export --output data/exports/v3 --shard-size 1000000
 uv run recipeweave verify-export --output data/exports/v3 --definition data/catalog/v3_reviewed.json
+uv run recipeweave verify-export --output data/exports/v3 --definition data/catalog/v3_reviewed.json --full
 ```
 
 同一出力先へのexportは完了シャードのSHAを照合して再開します。定義変更時は別versionへ出力します。
+再開前にmanifestの範囲・順序・重複・ファイル名・辞書と全完了ファイルを検査します。
+破損時は既存状態を書き換えずに停止します。completeと記録された出力の欠落も拒否します。
+verify-exportは全行の連番・参照・ファイルSHAを検査し、定義指定時には辞書全体と
+抽出1,024件＋各シャード境界を照合します。`--full`は定義指定を必須とし、
+全行を定義の列挙結果と逐次照合します。全量をメモリへ読み込む処理ではありません。
 1つの出力先を複数プロセスで同時更新しないでください。現在のライターは単一プロセス用です。
 レシピの分量・工程詳細・食品取扱い・食味を検証したデータではありません。
 

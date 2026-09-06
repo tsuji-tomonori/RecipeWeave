@@ -31,8 +31,14 @@ EXPECTED_DEFINITION_DIGESTS = {
     "revised": "495dc6b22638ff029c75913a13aef616c425049eacddc6389a6a26257e56da36",
 }
 EXPECTED_PROTOCOL_SHA256 = "641c8cf2917cd5a1a9c1ef5421c268b571cd731286a3e3a3cf5ee085b3d7d465"
+# 記録済みの検証実行に対して、事後的に整合性確認用のハッシュを固定する。
+# これらは、この報告が受け入れる成果物を特定するための値であり、
+# 評価前に実験設計が事前登録されていたことを示す証拠ではない。
+EXPECTED_DESIGN_SHA256 = "a42e75c6a4bf738dcb5d36146fc9096542b27738c73376c8449d36d808632bf9"
+EXPECTED_PILOT_DESIGN_SHA256 = "3ac09c0ecbcb25ba37490e6e0481f48be4eb891669e27cd64c477c3babeef6ad"
 EXPECTED_SAMPLE_N = 400
 VERDICTS = {"pass", "uncertain", "fail"}
+DECLARED_JUDGE_MODEL = "gpt-5.6-luna"
 
 
 def _sha256(path: Path) -> str:
@@ -66,11 +72,20 @@ def _validate_design(
     root: Path, confirmation: Path
 ) -> tuple[dict[str, Any], dict[str, Space], dict[str, Any]]:
     design = _read_json(confirmation / "design.json")
+    design_sha = _sha256(confirmation / "design.json")
+    if design_sha != EXPECTED_DESIGN_SHA256:
+        raise ValueError("confirmation design hash does not match retrospective integrity pin")
     if set(design.get("cohorts", {})) != {"baseline", "revised"}:
         raise ValueError("design must contain exactly baseline and revised cohorts")
+    if (
+        design.get("version") != 1
+        or design.get("primary_endpoint") != "both_pass"
+        or design.get("alpha") != 0.05
+    ):
+        raise ValueError("unexpected frozen confirmation design fields")
     if design.get("method") != "SRS without replacement":
         raise ValueError("unexpected sampling method")
-    if design.get("judge_slots_per_item") != 2 or design.get("judge_model") != "gpt-5.6-luna":
+    if design.get("judge_slots_per_item") != 2 or design.get("judge_model") != DECLARED_JUDGE_MODEL:
         raise ValueError("unexpected judge protocol")
     protocol_sha = _sha256(root / "experiments/PROTOCOL.md")
     if protocol_sha != design.get("protocol_sha256") or protocol_sha != EXPECTED_PROTOCOL_SHA256:
@@ -92,11 +107,48 @@ def _validate_design(
             or frozen.get("population") != expected_population[cohort]
         ):
             raise ValueError(f"{cohort} population or sample size changed")
-    if len(design.get("pilot_excluded_from_baseline", [])) != 100:
+    pilot = _read_json(root / "experiments/pilot/design.json")
+    pilot_sha = _sha256(root / "experiments/pilot/design.json")
+    if pilot_sha != EXPECTED_PILOT_DESIGN_SHA256:
+        raise ValueError("pilot design hash does not match retrospective integrity pin")
+    pilot_ordinals = pilot.get("ordinals")
+    if (
+        pilot.get("n") != 100
+        or pilot.get("sampling") != "simple random without replacement"
+        or not isinstance(pilot_ordinals, list)
+        or len(pilot_ordinals) != 100
+        or any(
+            not isinstance(ordinal, int)
+            or isinstance(ordinal, bool)
+            or not 0 <= ordinal < spaces["baseline"].total
+            for ordinal in pilot_ordinals
+        )
+        or len(set(pilot_ordinals)) != 100
+    ):
+        raise ValueError("pilot design ordinals are invalid")
+    excluded = design.get("pilot_excluded_from_baseline")
+    if not isinstance(excluded, list) or len(excluded) != 100:
         raise ValueError("baseline pilot exclusion list must contain 100 ordinals")
-    if len(set(design["pilot_excluded_from_baseline"])) != 100:
+    if any(
+        not isinstance(ordinal, int)
+        or isinstance(ordinal, bool)
+        or not 0 <= ordinal < spaces["baseline"].total
+        for ordinal in excluded
+    ):
+        raise ValueError("baseline pilot exclusion list contains an out-of-range ordinal")
+    if len(set(excluded)) != 100:
         raise ValueError("baseline pilot exclusion list contains duplicates")
-    return design, spaces, {"protocol_sha256": protocol_sha, "populations": expected_population}
+    if set(excluded) != set(pilot_ordinals):
+        raise ValueError("baseline pilot exclusion list does not match pilot design")
+    return design, spaces, {
+        "protocol_sha256": protocol_sha,
+        "design_sha256": design_sha,
+        "pilot_design_sha256": pilot_sha,
+        "design_hash_status": (
+            "retrospectively pinned to baseline evidence; preregistration not established"
+        ),
+        "populations": expected_population,
+    }
 
 
 def _validate_samples(
@@ -171,6 +223,27 @@ def _validate_samples(
         "ordinals_match_frozen_seeds": True,
         "baseline_excludes_pilot": True,
         "blinded_inputs_match_sample_key": True,
+        "blinding": {
+            "status": "limited",
+            "cohort_field_hidden": True,
+            "ordinal_field_hidden": True,
+            "algorithm_name_field_hidden": True,
+            "cohort_inference_from_structure_possible": (
+                {
+                    row["structure"]
+                    for row in rows
+                    if row["cohort"] == "baseline"
+                }
+                != {
+                    row["structure"]
+                    for row in rows
+                    if row["cohort"] == "revised"
+                }
+            ),
+            "limitation": (
+                "structure labels remain visible and may reveal cohort or algorithm"
+            ),
+        },
     }
 
 
@@ -178,6 +251,12 @@ def _validate_ratings(
     confirmation: Path, sample_rows: list[dict[str, Any]]
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     sample_ids = {row["id"] for row in sample_rows}
+    blind_ids_by_shard = {
+        f"blind_{shard}": [
+            row["id"] for row in _read_json(confirmation / f"blind_{shard}.json")
+        ]
+        for shard in ("0", "1")
+    }
     rating_files = {
         "judge_a": [confirmation / "judge_a0.json", confirmation / "judge_a1.json"],
         "judge_b": [confirmation / "judge_b0.json", confirmation / "judge_b1.json"],
@@ -193,6 +272,9 @@ def _validate_ratings(
             ids = [row.get("id") for row in part]
             if len(ids) != len(set(ids)) or not set(ids) <= sample_ids:
                 raise ValueError(f"{path.name} has duplicate or unknown IDs")
+            shard = path.stem[-1]
+            if set(ids) != set(blind_ids_by_shard[f"blind_{shard}"]):
+                raise ValueError(f"{path.name} IDs do not match blind_{shard}.json")
             if any(row.get("verdict") not in VERDICTS for row in part):
                 raise ValueError(f"{path.name} has an unknown verdict")
             evidence["files"][path.name] = {
@@ -204,8 +286,12 @@ def _validate_ratings(
             raise ValueError(f"{judge} ratings do not exactly cover all samples")
         combined[judge] = rows
     evidence["coverage"] = {judge: len(rows) for judge, rows in combined.items()}
-    evidence["model"] = "gpt-5.6-luna"
-    evidence["actual_model"] = "gpt-5.6-luna"
+    evidence["model"] = DECLARED_JUDGE_MODEL
+    evidence["declared_model"] = DECLARED_JUDGE_MODEL
+    evidence["actual_model"] = None
+    evidence["provenance_status"] = (
+        "declared model retained; execution metadata and prompt/context hashes are absent"
+    )
     evidence["workers_per_item"] = 2
     evidence["human_results"] = 0
     evidence["human_labels"] = 0
@@ -258,19 +344,27 @@ def build_report(root: Path | None = None) -> tuple[dict[str, Any], dict[str, An
         "judge_a_pass": (revised["judge_a_pass"], baseline["judge_a_pass"]),
         "judge_b_pass": (revised["judge_b_pass"], baseline["judge_b_pass"]),
     }
-    report["comparisons"] = {
-        endpoint: compare_proportions(
+    comparisons: dict[str, Any] = {}
+    for endpoint, (revised_measure, baseline_measure) in endpoint_counts.items():
+        comparison = compare_proportions(
             revised_measure["count"], revised_measure["n"],
             baseline_measure["count"], baseline_measure["n"],
             alpha=design["alpha"],
         )
-        for endpoint, (revised_measure, baseline_measure) in endpoint_counts.items()
-    }
+        if endpoint != "primary":
+            comparison.pop("reject", None)
+            comparison["inference"] = "exploratory; no multiplicity-adjusted decision"
+        comparisons[endpoint] = comparison
+    report["comparisons"] = comparisons
     report["comparison"] = report["comparisons"]
     report["comparison_cohorts"] = ["revised", "baseline"]
     report["comparison_direction"] = "revised minus baseline"
     report["template_breakdown"] = _template_breakdown(samples, ratings_a, ratings_b)
     report["validation"] = {**design_evidence, **sample_evidence}
+    report["method"]["blinding"] = sample_evidence["blinding"]
+    report["method"]["secondary_inference"] = (
+        "exploratory only; no multiplicity-adjusted confirmatory decision"
+    )
     manifest = _read_json(root / "data/exports/v3/manifest.json")
     normalization = _read_json(root / "data/catalog/normalization.json")
     report["catalog"] = {
@@ -306,8 +400,13 @@ def build_report(root: Path | None = None) -> tuple[dict[str, Any], dict[str, An
         },
         "ratings": rating_evidence,
         "validation": {**sample_evidence, "definition_digests": EXPECTED_DEFINITION_DIGESTS},
-        "judge_model": "gpt-5.6-luna",
-        "actual_model": "gpt-5.6-luna",
+        "judge_model": DECLARED_JUDGE_MODEL,
+        "declared_model": DECLARED_JUDGE_MODEL,
+        "actual_model": None,
+        "provenance_status": (
+            "declared model retained; execution metadata and prompt/context hashes are absent"
+        ),
+        "blinding": sample_evidence["blinding"],
         "workers_per_item": 2,
         "human_results": 0,
         "human_labels": 0,

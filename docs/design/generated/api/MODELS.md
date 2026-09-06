@@ -14,7 +14,7 @@
 | imports | array&lt;ReceiptImport&gt; | 必須 | maxItems=1000 | Imports |
 | lots | array&lt;StockLot&gt; | 必須 | maxItems=5000 | Lots |
 | meal | array&lt;MealItem&gt; | 必須 | maxItems=50 | Meal |
-| saved | array&lt;string&gt; | 必須 | maxItems=10000 | Saved |
+| saved | array&lt;string&gt; | 必須 | maxItems=10000; 要素の制約=minLength=1; maxLength=128 | Saved |
 | schemaVersion | integer | 必須 | const=1 | Schemaversion |
 | search | SearchFilters | 必須 | 追加制約なし |  |
 | settings | Settings | 必須 | 追加制約なし |  |
@@ -141,7 +141,7 @@
 | applied | boolean | 必須 | 追加制約なし | Applied |
 | foodId | string | 必須 | minLength=1; maxLength=128 | Foodid |
 | form | string | 必須 | maxLength=500 | Form |
-| lotIds | array&lt;string&gt; | 必須 | maxItems=1000 | Lotids |
+| lotIds | array&lt;string&gt; | 必須 | maxItems=1000; 要素の制約=minLength=1; maxLength=128 | Lotids |
 | quantity | Quantity | 必須 | 追加制約なし |  |
 | reason | string | 必須 | maxLength=500 | Reason |
 
@@ -202,7 +202,7 @@
 
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
-| completedStepIds | array&lt;string&gt; | 必須 | maxItems=500 | Completedstepids |
+| completedStepIds | array&lt;string&gt; | 必須 | maxItems=500; 要素の制約=minLength=1; maxLength=128 | Completedstepids |
 | consumptionResults | array&lt;ConsumptionResult&gt; | 必須 | maxItems=1000 | Consumptionresults |
 | id | string | 必須 | minLength=1; maxLength=128 | Id |
 | index | integer | 必須 | minimum=0.0; maximum=500.0 | Index |
@@ -341,13 +341,13 @@
 
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
-| aliases | array&lt;string&gt; | 必須 | maxItems=100 | Aliases |
+| aliases | array&lt;string&gt; | 必須 | maxItems=100; 要素の制約=maxLength=500 | Aliases |
 | category | string | 必須 | maxLength=500 | Category |
-| componentFoodIds | array&lt;string&gt; | 必須 | maxItems=100 | Componentfoodids |
+| componentFoodIds | array&lt;string&gt; | 必須 | maxItems=100; 要素の制約=minLength=1; maxLength=128 | Componentfoodids |
 | componentsKnown | boolean | 必須 | 追加制約なし | Componentsknown |
 | defaultUnit | string | 必須 | enum=["g", "ml", "個", "パック", "袋", "缶", "本", "枚", "点"] | Defaultunit |
 | id | string | 必須 | minLength=1; maxLength=128 | Id |
-| imageIndex | anyOf(integer, null) | 必須 | 追加制約なし | Imageindex |
+| imageIndex | anyOf(integer, null) | 必須 | anyOfの制約=integer: minimum=0.0 | Imageindex |
 | location | string | 必須 | enum=["冷蔵", "冷凍", "常温"] | Location |
 | name | string | 必須 | minLength=1; maxLength=100 | Name |
 | pantry | boolean | 必須 | 追加制約なし | Pantry |
@@ -619,8 +619,8 @@
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
 | endMinute | number | 必須 | minimum=0.0; maximum=1000000.0 | Endminute |
-| equipment | array&lt;string&gt; | 必須 | maxItems=50 | Equipment |
-| guide | anyOf(string, null) | 必須 | 追加制約なし | Guide |
+| equipment | array&lt;string&gt; | 必須 | maxItems=50; 要素の制約=maxLength=500 | Equipment |
+| guide | anyOf(string, null) | 必須 | anyOfの制約=string: maxLength=500 | Guide |
 | id | string | 必須 | minLength=1; maxLength=128 | Id |
 | instruction | string | 必須 | maxLength=5000 | Instruction |
 | key | string | 必須 | maxLength=500 | Key |
@@ -781,7 +781,7 @@
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
 | unit | string | 必須 | enum=["g", "ml", "個", "パック", "袋", "缶", "本", "枚", "点"] | Unit |
-| value | anyOf(number, null) | 必須 | 追加制約なし | Value |
+| value | anyOf(number, null) | 必須 | anyOfの制約=number: minimum=0.0; maximum=1000000.0 | Value |
 
 ```json
 {
@@ -832,12 +832,12 @@
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
 | createdAt | string | 必須 | maxLength=500 | Createdat |
-| createdLotIds | array&lt;string&gt; | 必須 | maxItems=200 | Createdlotids |
+| createdLotIds | array&lt;string&gt; | 必須 | maxItems=200; 要素の制約=minLength=1; maxLength=128 | Createdlotids |
 | id | string | 必須 | minLength=1; maxLength=128 | Id |
 | imageHash | string | 必須 | pattern="^[a-f0-9]{64}$" | Imagehash |
 | purchaseSignature | string | 必須 | pattern="^[a-f0-9]{64}$" | Purchasesignature |
 | state | string | 必須 | enum=["registered", "undone"] | State |
-| undoneAt | anyOf(string, null) | 必須 | 追加制約なし | Undoneat |
+| undoneAt | anyOf(string, null) | 必須 | anyOfの制約=string: maxLength=500 | Undoneat |
 
 ```json
 {
@@ -915,9 +915,9 @@
 
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
-| arrangementIds | array&lt;string&gt; | 必須 | maxItems=100 | Arrangementids |
+| arrangementIds | array&lt;string&gt; | 必須 | maxItems=100; 要素の制約=minLength=1; maxLength=128 | Arrangementids |
 | description | string | 必須 | maxLength=5000 | Description |
-| equipment | array&lt;string&gt; | 必須 | maxItems=50 | Equipment |
+| equipment | array&lt;string&gt; | 必須 | maxItems=50; 要素の制約=maxLength=500 | Equipment |
 | id | string | 必須 | minLength=1; maxLength=128 | Id |
 | ingredients | array&lt;RecipeIngredient&gt; | 必須 | maxItems=100 | Ingredients |
 | minutes | number | 必須 | minimum=0.0; maximum=1000000.0 | Minutes |
@@ -925,7 +925,7 @@
 | sample | boolean | 必須 | const=true | Sample |
 | servings | number | 必須 | maximum=1000.0; exclusiveMinimum=0.0 | Servings |
 | steps | array&lt;RecipeStep&gt; | 必須 | maxItems=100 | Steps |
-| tags | array&lt;string&gt; | 必須 | maxItems=100 | Tags |
+| tags | array&lt;string&gt; | 必須 | maxItems=100; 要素の制約=maxLength=500 | Tags |
 
 ```json
 {
@@ -1133,8 +1133,8 @@
 
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
-| equipment | array&lt;string&gt; | 必須 | maxItems=50 | Equipment |
-| guide | anyOf(string, null) | 必須 | 追加制約なし | Guide |
+| equipment | array&lt;string&gt; | 必須 | maxItems=50; 要素の制約=maxLength=500 | Equipment |
+| guide | anyOf(string, null) | 必須 | anyOfの制約=string: maxLength=500 | Guide |
 | id | string | 必須 | minLength=1; maxLength=128 | Id |
 | instruction | string | 必須 | maxLength=5000 | Instruction |
 | minutes | number | 必須 | minimum=0.0; maximum=1000000.0 | Minutes |
@@ -1258,11 +1258,11 @@
 
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
-| equipment | array&lt;string&gt; | 必須 | maxItems=50 | Equipment |
+| equipment | array&lt;string&gt; | 必須 | maxItems=50; 要素の制約=maxLength=500 | Equipment |
 | match | string | 必須 | enum=["all", "any"] | Match |
-| maxMinutes | anyOf(number, null) | 必須 | 追加制約なし | Maxminutes |
+| maxMinutes | anyOf(number, null) | 必須 | anyOfの制約=number: minimum=0.0; maximum=1000000.0 | Maxminutes |
 | noShopping | boolean | 必須 | 追加制約なし | Noshopping |
-| selectedFoodIds | array&lt;string&gt; | 必須 | maxItems=100 | Selectedfoodids |
+| selectedFoodIds | array&lt;string&gt; | 必須 | maxItems=100; 要素の制約=minLength=1; maxLength=128 | Selectedfoodids |
 
 ```json
 {
@@ -1331,9 +1331,9 @@
 
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
-| equipment | array&lt;string&gt; | 必須 | maxItems=50 | Equipment |
-| excludedFoodIds | array&lt;string&gt; | 必須 | maxItems=1000 | Excludedfoodids |
-| pantryFoodIds | array&lt;string&gt; | 必須 | maxItems=1000 | Pantryfoodids |
+| equipment | array&lt;string&gt; | 必須 | maxItems=50; 要素の制約=maxLength=500 | Equipment |
+| excludedFoodIds | array&lt;string&gt; | 必須 | maxItems=1000; 要素の制約=minLength=1; maxLength=128 | Excludedfoodids |
+| pantryFoodIds | array&lt;string&gt; | 必須 | maxItems=1000; 要素の制約=minLength=1; maxLength=128 | Pantryfoodids |
 
 ```json
 {
@@ -1485,7 +1485,7 @@
 | consumed | array&lt;Quantity&gt; | 必須 | maxItems=1000 | Consumed |
 | createdAt | string | 必須 | maxLength=500 | Createdat |
 | edited | boolean | 必須 | 追加制約なし | Edited |
-| expiresOn | anyOf(string, null) | 必須 | 追加制約なし | Expireson |
+| expiresOn | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^\\d{4}-\\d{2}-\\d{2}$" | Expireson |
 | foodId | string | 必須 | minLength=1; maxLength=128 | Foodid |
 | form | string | 必須 | maxLength=500 | Form |
 | id | string | 必須 | minLength=1; maxLength=128 | Id |
@@ -1494,7 +1494,7 @@
 | originalQuantity | Quantity | 必須 | 追加制約なし |  |
 | priority | boolean | 必須 | 追加制約なし | Priority |
 | quantity | Quantity | 必須 | 追加制約なし |  |
-| sourceImportId | anyOf(string, null) | 必須 | 追加制約なし | Sourceimportid |
+| sourceImportId | anyOf(string, null) | 必須 | anyOfの制約=string: minLength=1; maxLength=128 | Sourceimportid |
 | status | string | 必須 | enum=["active", "deleted", "undone"] | Status |
 | updatedAt | string | 必須 | maxLength=500 | Updatedat |
 

@@ -1,0 +1,8 @@
+{
+  "rows_verified": 12069539,
+  "shards_verified": 13,
+  "decoded_points_matched": 12069539,
+  "definition_sha256": "495dc6b22638ff029c75913a13aef616c425049eacddc6389a6a26257e56da36",
+  "verification_mode": "full",
+  "elapsed_seconds": 58.794
+}

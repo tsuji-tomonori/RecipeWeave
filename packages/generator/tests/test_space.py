@@ -1,3 +1,6 @@
+import csv
+import gzip
+import hashlib
 import itertools
 import json
 import math
@@ -5,8 +8,8 @@ from pathlib import Path
 
 import pytest
 from recipeweave_generator.catalog import compile_catalog
-from recipeweave_generator.export import export_all, verify_all
-from recipeweave_generator.space import Space, unrank
+from recipeweave_generator.export import export_all, file_hash, verify_all
+from recipeweave_generator.space import Space, canonical, unrank
 
 
 def tiny():
@@ -86,6 +89,72 @@ def test_export_resume_and_corruption_detection(tmp_path):
     part.write_bytes(b"corrupt")
     with pytest.raises(ValueError):
         export_all(s, tmp_path, 7)
+
+
+@pytest.mark.parametrize("damage", ["duplicate", "missing", "order", "filename", "columns"])
+def test_damaged_manifest_is_rejected_without_rewriting(tmp_path, damage):
+    s = Space(tiny())
+    manifest = export_all(s, tmp_path, 7)
+    if damage == "duplicate":
+        manifest["shards"].append(manifest["shards"][0])
+    elif damage == "missing":
+        manifest["shards"].pop()
+    elif damage == "order":
+        manifest["shards"].reverse()
+    elif damage == "filename":
+        manifest["shards"][0]["file"] = "wrong.csv.gz"
+    else:
+        manifest["columns"][2] = "wrong"
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(manifest))
+    before = path.read_bytes()
+    with pytest.raises(ValueError):
+        export_all(s, tmp_path, 7)
+    assert path.read_bytes() == before
+    with pytest.raises(ValueError):
+        verify_all(tmp_path, s)
+
+
+def test_resume_preserves_corrupt_dictionary_for_recovery(tmp_path):
+    s = Space(tiny())
+    export_all(s, tmp_path, 7)
+    path = tmp_path / "dictionary.json"
+    path.write_text('{}\n')
+    with pytest.raises(ValueError, match="dictionary corruption"):
+        export_all(s, tmp_path, 7)
+    assert path.read_text() == '{}\n'
+
+
+def test_full_verification_rejects_checksum_consistent_wrong_candidate(tmp_path):
+    s = Space(tiny())
+    manifest = export_all(s, tmp_path, 7)
+    assert verify_all(tmp_path, s, full=True)["decoded_points_matched"] == s.total
+    with pytest.raises(ValueError, match="requires a definition"):
+        verify_all(tmp_path, full=True)
+    path = tmp_path / manifest["shards"][0]["file"]
+    with gzip.open(path, "rt", newline="") as stream:
+        rows = list(csv.reader(stream))
+    # 既存の調理経路IDと有効な通し番号を保つため、この変更はチェックサムだけでは検出できない。
+    rows[1][7] = str(1 - int(rows[1][7]))
+    with gzip.open(path, "wt", newline="") as stream:
+        csv.writer(stream, lineterminator="\n").writerows(rows)
+    manifest["shards"][0].update(sha256=file_hash(path), bytes=path.stat().st_size)
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match="differs from ordinal definition"):
+        verify_all(tmp_path, s, full=True)
+
+
+def test_verification_binds_dictionary_labels_to_definition(tmp_path):
+    s = Space(tiny())
+    manifest = export_all(s, tmp_path, 7)
+    path = tmp_path / "dictionary.json"
+    dictionary = json.loads(path.read_text())
+    dictionary["templates"][0]["name"] = "別の料理"
+    path.write_text(json.dumps(dictionary))
+    manifest["dictionary_sha256"] = hashlib.sha256(canonical(dictionary)).hexdigest()
+    (tmp_path / "manifest.json").write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match="dictionary does not match definition"):
+        verify_all(tmp_path, s, full=True)
 
 
 def test_concentration_variants_do_not_multiply_candidates():

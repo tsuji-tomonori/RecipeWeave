@@ -31,11 +31,14 @@ def main() -> None:
     verify = sub.add_parser("verify-export")
     verify.add_argument("--output", type=Path, required=True)
     verify.add_argument("--definition", type=Path)
+    verify.add_argument("--full", action="store_true", help="compare every row with its definition")
     args = parser.parse_args()
     if args.command == "compile":
         result = compile_files(args.catalog)
     elif args.command == "verify-export":
-        result = verify_all(args.output, Space.load(args.definition) if args.definition else None)
+        result = verify_all(
+            args.output, Space.load(args.definition) if args.definition else None, full=args.full
+        )
     else:
         space = Space.load(args.definition)
         if args.command == "count":

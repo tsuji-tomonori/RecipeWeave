@@ -30,9 +30,9 @@ Recipe
 
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
-| arrangementIds | array&lt;string&gt; | 必須 | maxItems=100 | Arrangementids |
+| arrangementIds | array&lt;string&gt; | 必須 | maxItems=100; 要素の制約=minLength=1; maxLength=128 | Arrangementids |
 | description | string | 必須 | maxLength=5000 | Description |
-| equipment | array&lt;string&gt; | 必須 | maxItems=50 | Equipment |
+| equipment | array&lt;string&gt; | 必須 | maxItems=50; 要素の制約=maxLength=500 | Equipment |
 | id | string | 必須 | minLength=1; maxLength=128 | Id |
 | ingredients | array&lt;RecipeIngredient&gt; | 必須 | maxItems=100 | Ingredients |
 | minutes | number | 必須 | minimum=0.0; maximum=1000000.0 | Minutes |
@@ -40,7 +40,7 @@ Recipe
 | sample | boolean | 必須 | const=true | Sample |
 | servings | number | 必須 | maximum=1000.0; exclusiveMinimum=0.0 | Servings |
 | steps | array&lt;RecipeStep&gt; | 必須 | maxItems=100 | Steps |
-| tags | array&lt;string&gt; | 必須 | maxItems=100 | Tags |
+| tags | array&lt;string&gt; | 必須 | maxItems=100; 要素の制約=maxLength=500 | Tags |
 
 ### HTTP 404: 料理が見つからない
 
