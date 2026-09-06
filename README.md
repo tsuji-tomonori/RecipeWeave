@@ -4,6 +4,7 @@
 Devアプリは8品・35食品のサンプルで、レシートOCR、手持ち食材の検索、人数と材料量の変更、買い物集計、調理ガイドを扱います。
 Devの個人データは利用中のブラウザに保存します。クラウド同期は提供していません。
 
+- [Dev試用版を開く](https://tsuji-tomonori.github.io/RecipeWeave/)
 - [サービス概要](docs/service/overview.md) / [図付き利用者マニュアル](docs/service/manual.md) / [Q&A](docs/service/faq.md)
 - [画面と動線](docs/service/screens-and-flows.md) / [要件定義](docs/requirements/REQUIREMENTS.md)
 - [採用構成と判断](docs/design/ADR-0001-service-dev.md) / [実装由来の設計](docs/design/generated/service.md)
