@@ -1,0 +1,32 @@
+{
+  "name": "@recipeweave/infra",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "node --import tsx --test test/*.test.ts",
+    "test:core": "node --import tsx --test test/core.test.ts",
+    "synth": "cdk synth --strict --quiet",
+    "check": "npm run typecheck && npm run lint && npm test"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.268.0",
+    "constructs": "10.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.0",
+    "aws-cdk": "2.1140.0",
+    "eslint": "10.10.0",
+    "eslint-plugin-awscdk": "4.4.1",
+    "prettier": "3.9.6",
+    "tsx": "4.23.13",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.69.0"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "generators": [
+    {
+      "name": "api-sql-and-openapi",
+      "category": "codegen",
+      "command": "uv run --locked --package recipeweave-api app-docs",
+      "summary": "Parse PostgreSQL operation SQL into typed wrappers and export runtime OpenAPI",
+      "inputs": ["backend/src/app/apis/**/*.py", "backend/src/app/apis/**/sql/*.sql", "backend/src/app/core/*.py"],
+      "outputs": ["backend/src/app/apis/**/generated/queries.py", "backend/openapi.gen.json"],
+      "dependencies": [],
+      "check": true,
+      "ciSafe": true
+    },
+    {
+      "name": "api-architecture",
+      "category": "lint",
+      "command": "uv run --locked --package recipeweave-api app-archlint",
+      "summary": "Validate operation layout, provider import boundaries and OpenAPI identity",
+      "inputs": ["backend/src/app/**/*.py"],
+      "outputs": [],
+      "dependencies": ["api-sql-and-openapi"],
+      "check": false,
+      "ciSafe": true
+    }
+  ],
+  "unsupportedSurfaces": [
+    {
+      "path": "backend/src/app/apis/**/functions.py",
+      "reason": "The portable CFG cannot expand loops or Protocol dynamic dispatch; no generated sequence completeness claim.",
+      "supportStatus": "bounded-unavailable"
+    },
+    {
+      "path": "database/migrations/*.sql",
+      "reason": "Migration SQL and postconditions are parsed; real DSQL execution is an AWS deployment acceptance gate.",
+      "supportStatus": "requires-live-dsql"
+    }
+  ]
+}

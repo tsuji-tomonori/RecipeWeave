@@ -1,0 +1,739 @@
+[
+  {
+    "id": "eggplant-egg",
+    "name": "なすと卵の醤油炒め",
+    "description": "とろっとしたなすと卵を、シンプルな醤油味で。",
+    "servings": 2,
+    "minutes": 15,
+    "equipment": [
+      "フライパン"
+    ],
+    "ingredients": [
+      {
+        "foodId": "eggplant",
+        "quantity": {
+          "value": 160,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "egg",
+        "quantity": {
+          "value": 2,
+          "unit": "個"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "oil",
+        "quantity": {
+          "value": 8,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "soy-sauce",
+        "quantity": {
+          "value": 10,
+          "unit": "ml"
+        },
+        "form": "標準",
+        "note": ""
+      }
+    ],
+    "steps": [
+      {
+        "id": "cut",
+        "title": "なすを切る",
+        "instruction": "なすのへたを落とし、食べやすい半月切りにします。卵はボウルで溶きます。",
+        "minutes": 4,
+        "equipment": [
+          "包丁"
+        ],
+        "mode": "active",
+        "guide": "半月切り"
+      },
+      {
+        "id": "fry",
+        "title": "なすを炒める",
+        "instruction": "フライパンに油を入れて中火にし、なすがやわらかくなるまで炒めます。",
+        "minutes": 6,
+        "equipment": [
+          "フライパン"
+        ],
+        "mode": "active",
+        "guide": null
+      },
+      {
+        "id": "finish",
+        "title": "卵を加えて仕上げる",
+        "instruction": "卵を加え、全体に火が通るまで炒めます。醤油を回し入れて混ぜます。",
+        "minutes": 5,
+        "equipment": [
+          "フライパン"
+        ],
+        "mode": "active",
+        "guide": null
+      }
+    ],
+    "arrangementIds": [
+      "eggplant-curry"
+    ],
+    "tags": [
+      "定番",
+      "フライパン"
+    ],
+    "sample": true
+  },
+  {
+    "id": "eggplant-curry",
+    "name": "なすと卵のカレー炒め",
+    "description": "同じなすと卵を、香りのよいカレー味に。",
+    "servings": 2,
+    "minutes": 15,
+    "equipment": [
+      "フライパン"
+    ],
+    "ingredients": [
+      {
+        "foodId": "eggplant",
+        "quantity": {
+          "value": 160,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "egg",
+        "quantity": {
+          "value": 2,
+          "unit": "個"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "oil",
+        "quantity": {
+          "value": 8,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "curry-powder",
+        "quantity": {
+          "value": 2,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "salt",
+        "quantity": {
+          "value": 1,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      }
+    ],
+    "steps": [
+      {
+        "id": "cut",
+        "title": "材料を切る",
+        "instruction": "なすを半月切りにし、卵を溶きます。",
+        "minutes": 4,
+        "equipment": [
+          "包丁"
+        ],
+        "mode": "active",
+        "guide": "半月切り"
+      },
+      {
+        "id": "fry",
+        "title": "なすに火を通す",
+        "instruction": "油を入れたフライパンを中火にかけ、なすがやわらかくなるまで炒めます。",
+        "minutes": 6,
+        "equipment": [
+          "フライパン"
+        ],
+        "mode": "active",
+        "guide": null
+      },
+      {
+        "id": "finish",
+        "title": "カレー味に仕上げる",
+        "instruction": "卵を加えて全体に火を通し、カレー粉と塩を加えて混ぜます。",
+        "minutes": 5,
+        "equipment": [
+          "フライパン"
+        ],
+        "mode": "active",
+        "guide": null
+      }
+    ],
+    "arrangementIds": [
+      "eggplant-egg"
+    ],
+    "tags": [
+      "アレンジ",
+      "カレー味"
+    ],
+    "sample": true
+  },
+  {
+    "id": "tomato-egg",
+    "name": "トマトと卵の炒めもの",
+    "description": "トマトの酸味と卵のやさしい味。",
+    "servings": 2,
+    "minutes": 12,
+    "equipment": [
+      "フライパン"
+    ],
+    "ingredients": [
+      {
+        "foodId": "tomato",
+        "quantity": {
+          "value": 200,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "egg",
+        "quantity": {
+          "value": 2,
+          "unit": "個"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "oil",
+        "quantity": {
+          "value": 8,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "salt",
+        "quantity": {
+          "value": 1,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      }
+    ],
+    "steps": [
+      {
+        "id": "cut",
+        "title": "トマトを切る",
+        "instruction": "トマトをくし形に切り、卵をボウルで溶きます。",
+        "minutes": 4,
+        "equipment": [
+          "包丁"
+        ],
+        "mode": "active",
+        "guide": "くし形切り"
+      },
+      {
+        "id": "fry",
+        "title": "トマトを炒める",
+        "instruction": "油を入れたフライパンを中火で熱し、トマトを軽く炒めます。",
+        "minutes": 3,
+        "equipment": [
+          "フライパン"
+        ],
+        "mode": "active",
+        "guide": null
+      },
+      {
+        "id": "finish",
+        "title": "卵を加える",
+        "instruction": "卵と塩を加え、大きく混ぜながら卵全体に火を通します。",
+        "minutes": 5,
+        "equipment": [
+          "フライパン"
+        ],
+        "mode": "active",
+        "guide": null
+      }
+    ],
+    "arrangementIds": [
+      "eggplant-egg"
+    ],
+    "tags": [
+      "時短",
+      "さっぱり"
+    ],
+    "sample": true
+  },
+  {
+    "id": "tofu-soup",
+    "name": "豆腐とわかめのスープ",
+    "description": "主菜に添えやすい、あたたかな汁物。",
+    "servings": 2,
+    "minutes": 12,
+    "equipment": [
+      "鍋"
+    ],
+    "ingredients": [
+      {
+        "foodId": "tofu",
+        "quantity": {
+          "value": 150,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "wakame",
+        "quantity": {
+          "value": 2,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "water",
+        "quantity": {
+          "value": 400,
+          "unit": "ml"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "stock",
+        "quantity": {
+          "value": 2,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "soy-sauce",
+        "quantity": {
+          "value": 5,
+          "unit": "ml"
+        },
+        "form": "標準",
+        "note": ""
+      }
+    ],
+    "steps": [
+      {
+        "id": "cut",
+        "title": "豆腐を切る",
+        "instruction": "豆腐を食べやすい角切りにします。",
+        "minutes": 3,
+        "equipment": [
+          "包丁"
+        ],
+        "mode": "active",
+        "guide": "角切り"
+      },
+      {
+        "id": "heat",
+        "title": "鍋を火にかける",
+        "instruction": "鍋に水と顆粒だしを入れ、豆腐を加えて火にかけます。",
+        "minutes": 2,
+        "equipment": [
+          "鍋"
+        ],
+        "mode": "active",
+        "guide": null
+      },
+      {
+        "id": "simmer",
+        "title": "弱火で温める",
+        "instruction": "沸いたら弱火で温めます。吹きこぼれに注意し、火元の近くで次の準備を進めます。",
+        "minutes": 5,
+        "equipment": [
+          "鍋"
+        ],
+        "mode": "passive",
+        "guide": null
+      },
+      {
+        "id": "finish",
+        "title": "わかめと醤油を加える",
+        "instruction": "乾燥わかめと醤油を加え、わかめが戻るまで温めます。",
+        "minutes": 2,
+        "equipment": [
+          "鍋"
+        ],
+        "mode": "active",
+        "guide": null
+      }
+    ],
+    "arrangementIds": [],
+    "tags": [
+      "汁物",
+      "やさしい味"
+    ],
+    "sample": true
+  },
+  {
+    "id": "cabbage-tuna",
+    "name": "キャベツとツナの一品",
+    "description": "電子レンジでやわらかくしたキャベツにツナを合わせます。",
+    "servings": 2,
+    "minutes": 10,
+    "equipment": [
+      "電子レンジ"
+    ],
+    "ingredients": [
+      {
+        "foodId": "cabbage",
+        "quantity": {
+          "value": 200,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "tuna",
+        "quantity": {
+          "value": 70,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": "缶の汁を切った可食量"
+      },
+      {
+        "foodId": "mayonnaise",
+        "quantity": {
+          "value": 15,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "pepper",
+        "quantity": {
+          "value": 0.2,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      }
+    ],
+    "steps": [
+      {
+        "id": "cut",
+        "title": "キャベツを切る",
+        "instruction": "キャベツをざく切りにし、耐熱ボウルへ入れます。",
+        "minutes": 3,
+        "equipment": [
+          "包丁"
+        ],
+        "mode": "active",
+        "guide": "ざく切り"
+      },
+      {
+        "id": "heat",
+        "title": "電子レンジで加熱する",
+        "instruction": "ふんわりラップをし、600Wで3分を目安に加熱します。やわらかさを見て短時間ずつ追加します。",
+        "minutes": 3,
+        "equipment": [
+          "電子レンジ"
+        ],
+        "mode": "passive",
+        "guide": null
+      },
+      {
+        "id": "mix",
+        "title": "ツナと和える",
+        "instruction": "やけどに注意して取り出し、水気を切ります。ツナ、マヨネーズ、こしょうを混ぜます。",
+        "minutes": 4,
+        "equipment": [],
+        "mode": "active",
+        "guide": null
+      }
+    ],
+    "arrangementIds": [],
+    "tags": [
+      "電子レンジ",
+      "副菜"
+    ],
+    "sample": true
+  },
+  {
+    "id": "yakisoba-cheese",
+    "name": "カップ焼きそばのチーズアレンジ",
+    "description": "市販のカップ焼きそばにチーズをひと工夫。",
+    "servings": 1,
+    "minutes": 8,
+    "equipment": [
+      "ケトル"
+    ],
+    "ingredients": [
+      {
+        "foodId": "yakisoba",
+        "quantity": {
+          "value": 1,
+          "unit": "個"
+        },
+        "form": "標準",
+        "note": "付属ソースを含む。商品表示を確認"
+      },
+      {
+        "foodId": "cheese",
+        "quantity": {
+          "value": 20,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "pepper",
+        "quantity": {
+          "value": 0.1,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      }
+    ],
+    "steps": [
+      {
+        "id": "prepare",
+        "title": "商品の作り方を確認する",
+        "instruction": "カップ焼きそばの表示に従い、付属品を取り出し、指定量の湯を注ぎます。",
+        "minutes": 2,
+        "equipment": [
+          "ケトル"
+        ],
+        "mode": "active",
+        "guide": null
+      },
+      {
+        "id": "wait",
+        "title": "表示された時間待つ",
+        "instruction": "待ち時間は商品表示を優先してください。ここでは3分の商品を例にしています。",
+        "minutes": 3,
+        "equipment": [],
+        "mode": "passive",
+        "guide": null
+      },
+      {
+        "id": "finish",
+        "title": "湯切りしチーズを混ぜる",
+        "instruction": "表示に従って安全に湯切りし、付属ソース、チーズ、こしょうを混ぜます。チーズが溶けにくい場合はふたをして少し蒸らします。",
+        "minutes": 3,
+        "equipment": [],
+        "mode": "active",
+        "guide": null
+      }
+    ],
+    "arrangementIds": [],
+    "tags": [
+      "市販食品",
+      "ひと工夫"
+    ],
+    "sample": true
+  },
+  {
+    "id": "tuna-corn-rice",
+    "name": "ツナコーンごはん",
+    "description": "温かいごはんに混ぜるだけの簡単な一皿。",
+    "servings": 2,
+    "minutes": 8,
+    "equipment": [
+      "電子レンジ"
+    ],
+    "ingredients": [
+      {
+        "foodId": "rice",
+        "quantity": {
+          "value": 300,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "tuna",
+        "quantity": {
+          "value": 70,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": "缶の汁を切った可食量"
+      },
+      {
+        "foodId": "corn",
+        "quantity": {
+          "value": 80,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "soy-sauce",
+        "quantity": {
+          "value": 8,
+          "unit": "ml"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "butter",
+        "quantity": {
+          "value": 8,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      }
+    ],
+    "steps": [
+      {
+        "id": "prepare",
+        "title": "材料を用意する",
+        "instruction": "ツナとコーンの水分を切り、耐熱ボウルにごはんと合わせます。",
+        "minutes": 2,
+        "equipment": [],
+        "mode": "active",
+        "guide": null
+      },
+      {
+        "id": "heat",
+        "title": "温める",
+        "instruction": "ふんわりラップをして600Wで3分を目安に温めます。全体が温まるまで短時間ずつ追加します。",
+        "minutes": 3,
+        "equipment": [
+          "電子レンジ"
+        ],
+        "mode": "passive",
+        "guide": null
+      },
+      {
+        "id": "mix",
+        "title": "調味して混ぜる",
+        "instruction": "熱いうちにバターと醤油を加え、全体をよく混ぜます。",
+        "minutes": 3,
+        "equipment": [],
+        "mode": "active",
+        "guide": null
+      }
+    ],
+    "arrangementIds": [],
+    "tags": [
+      "主食",
+      "電子レンジ"
+    ],
+    "sample": true
+  },
+  {
+    "id": "mushroom-butter",
+    "name": "きのこのバター炒め",
+    "description": "しめじの香りをバターと醤油で引き立てます。",
+    "servings": 2,
+    "minutes": 10,
+    "equipment": [
+      "フライパン"
+    ],
+    "ingredients": [
+      {
+        "foodId": "mushroom",
+        "quantity": {
+          "value": 180,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "butter",
+        "quantity": {
+          "value": 10,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "soy-sauce",
+        "quantity": {
+          "value": 8,
+          "unit": "ml"
+        },
+        "form": "標準",
+        "note": ""
+      },
+      {
+        "foodId": "pepper",
+        "quantity": {
+          "value": 0.2,
+          "unit": "g"
+        },
+        "form": "標準",
+        "note": ""
+      }
+    ],
+    "steps": [
+      {
+        "id": "prepare",
+        "title": "しめじをほぐす",
+        "instruction": "しめじの根元を切り落とし、食べやすい房にほぐします。",
+        "minutes": 3,
+        "equipment": [
+          "包丁"
+        ],
+        "mode": "active",
+        "guide": null
+      },
+      {
+        "id": "fry",
+        "title": "バターで炒める",
+        "instruction": "フライパンにバターを溶かし、しめじを加えて火が通るまで炒めます。",
+        "minutes": 5,
+        "equipment": [
+          "フライパン"
+        ],
+        "mode": "active",
+        "guide": null
+      },
+      {
+        "id": "finish",
+        "title": "醤油で仕上げる",
+        "instruction": "醤油とこしょうを加え、全体にからめます。",
+        "minutes": 2,
+        "equipment": [
+          "フライパン"
+        ],
+        "mode": "active",
+        "guide": null
+      }
+    ],
+    "arrangementIds": [],
+    "tags": [
+      "副菜",
+      "香ばしい"
+    ],
+    "sample": true
+  }
+]

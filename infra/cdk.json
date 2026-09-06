@@ -1,0 +1,8 @@
+{
+  "app": "node --import tsx bin/recipeweave.ts",
+  "context": {
+    "@aws-cdk/core:checkSecretUsage": true,
+    "@aws-cdk/aws-lambda:useCdkManagedLogGroup": false,
+    "stage": "dev"
+  }
+}

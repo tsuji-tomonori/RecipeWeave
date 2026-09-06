@@ -31,12 +31,25 @@ def render(root: Path) -> str:
             + " |"
         )
     lines += ["", "## 境界", "", "| ディレクトリ | 現在の役割 |", "|---|---|"]
+    boundaries = {
+        "frontend": ("src/main.ts", "Svelte画面・端末保存・レシートOCR・数量計算"),
+        "backend": ("src/app/main.py", "FastAPI・カタログAPI・認証付き状態API"),
+        "database": ("README.md", "DSQLマイグレーションと運用手順"),
+        "infra": ("bin/recipeweave.ts", "AWS CDKによる配備定義"),
+    }
     for name in ("frontend", "backend", "database", "infra", "batch", "scripts"):
         if (root / name / "moon.yml").is_file():
-            lines.append(f"| `{name}` | moonプロジェクトの場所を確保。製品機能は未実装 |")
+            boundary = boundaries.get(name)
+            role = (
+                boundary[1]
+                if boundary and (root / name / boundary[0]).is_file()
+                else "moonプロジェクトの場所を確保。製品機能は未実装"
+            )
+            lines.append(f"| `{name}` | {role} |")
     lines += [
         "",
-        "実装の列挙であり、数量計算・工程DAG・検索API・インフラが実装済みという意味ではない。",
+        "コードの存在に基づく列挙。サービス詳細は [service.md](service.md)、",
+        "実際の検証・公開状況はサービス受入記録で確認する。",
         "",
     ]
     return "\n".join(lines)

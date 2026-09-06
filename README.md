@@ -1,7 +1,18 @@
 # RecipeWeave
 
-食材・料理構造・味付け・調理経路から、レシピ生成に渡す組み合わせを決定的に列挙するプロジェクトです。
-Python 3.12以上をuv workspace、プロジェクトとタスクをmoonrepoで管理します。
+食材から料理を選び、分量・献立・調理を組み立てるWebアプリと、レシピ候補の列挙基盤です。
+Devアプリは8品・35食品のサンプルで、レシートOCR、手持ち食材の検索、人数と材料量の変更、買い物集計、調理ガイドを扱います。
+Devの個人データは利用中のブラウザに保存します。クラウド同期は提供していません。
+
+- [サービス概要](docs/service/overview.md) / [図付き利用者マニュアル](docs/service/manual.md) / [Q&A](docs/service/faq.md)
+- [画面と動線](docs/service/screens-and-flows.md) / [要件定義](docs/requirements/REQUIREMENTS.md)
+- [採用構成と判断](docs/design/ADR-0001-service-dev.md) / [実装由来の設計](docs/design/generated/service.md)
+- [Dev検証・公開状況](docs/verification/service-dev.md)
+
+Svelte 5 / TypeScript / Vite、Python 3.12 / FastAPI、AWS CDKを使用します。
+Python依存はuv workspace、プロジェクトとタスクはmoonrepoで管理します。
+
+## レシピ候補の列挙基盤
 
 現行v3は **12,069,539件の候補を全量出力**しています。めんつゆ2/3/4倍は1つの食品IDに統合し、濃縮倍率を商品属性として保持します。
 食品1,005入力を936食品IDへ整理し、用途と適合規則を整備した248主材・副材と21料理テンプレートを採用しました。
@@ -23,16 +34,33 @@ Python 3.12以上をuv workspace、プロジェクトとタスクをmoonrepoで�
 | `data/catalog` | 組み合わせ元と適合規則、旧版・現行版定義 |
 | `data/exports` | 全量出力と辞書・チェックサム |
 | `experiments` | 開発用標本・独立確認標本・評価結果・再現情報 |
-| `frontend`, `backend`, `database` | Web UI、API、DBの配置先を確保。製品機能は未実装 |
-| `infra`, `batch`, `scripts` | インフラ、バッチ運用、補助スクリプトの配置先を確保 |
+| `frontend` | 操作中心のWeb UI、日本語OCR、端末保存、数量計算 |
+| `backend` | FastAPIの公開カタログAPIと認証付き状態API |
+| `database` | DSQLの版付きマイグレーションと運用手順 |
+| `infra` | CloudFront/S3、API Gateway/Lambda、DSQL、CognitoのCDK定義 |
+| `data/samples` | Dev用8品・35食品。候補の全量出力とは別データ |
+| `batch`, `scripts` | 将来のバッチ運用、補助スクリプトの配置先 |
 | `spec`, `docs`, `tools` | 要件正本、生成設計書、dev-standardの管理ツール |
 
 ## セットアップと検証
 
 リポジトリのルートで実行します。
 
+Webアプリだけを試す場合は Node.js 24 で次を実行します。
+レシートの認識データは初回ビルド時にnpmの固定依存から同梱し、画像をOCRサーバーへ送信しません。
+
 ```bash
-uv sync --locked
+npm ci --prefix frontend
+npm run build --prefix frontend
+npm run preview --prefix frontend
+```
+
+表示されたlocalhost URLを開きます。ZIP内のHTMLを直接開く方法ではOCRや端末保存は動作しません。
+API・DSQL・AWSの起動と配備は [backend](backend/README.md)、[database](database/README.md)、[infra](infra/README.md) の手順を参照してください。
+GitHub Actionsは型・テスト・生成差分・CDK合成を確認後にPagesへ配置します。AWSへは自動配備しません。
+
+```bash
+uv sync --locked --all-packages
 npm ci --ignore-scripts
 uv run pre-commit install
 npm run moon:check
@@ -60,7 +88,8 @@ exportは定義と完了シャードのチェックサムを照合して再開�
 
 `dev-standard` のportable skillとpre-commit設定を取り込みました。適用記録は `.dev-standard/install/receipt.json` にあります。
 要件は [`spec/requirements/requirements.qnt`](spec/requirements/requirements.qnt) を編集し、`quintflow.py generate` でJSONとMarkdownへ変換します。
-現在の設計は [`docs/design/generated/generator.md`](docs/design/generated/generator.md) に実装から生成します。
+生成器の設計は [`docs/design/generated/generator.md`](docs/design/generated/generator.md)、
+サービス設計は [`docs/design/generated/service.md`](docs/design/generated/service.md) に実装から生成します。
 
 ```bash
 uv run python -m recipeweave_generator.design

@@ -1,0 +1,11 @@
+import {mkdir,copyFile,readdir} from 'node:fs/promises';
+import {dirname,join} from 'node:path';
+import {createRequire} from 'node:module';
+const require=createRequire(import.meta.url);
+const out=new URL('../public/ocr/',import.meta.url);
+await mkdir(out,{recursive:true});
+await copyFile(require.resolve('tesseract.js/dist/worker.min.js'),new URL('worker.min.js',out));
+const core=dirname(require.resolve('tesseract.js-core/package.json'));
+for(const name of await readdir(core)) if(name.endsWith('.wasm')||name.endsWith('.wasm.js')) await copyFile(join(core,name),new URL(name,out));
+const lang=dirname(require.resolve('@tesseract.js-data/jpn/package.json'));
+await copyFile(join(lang,'4.0.0_best_int','jpn.traineddata.gz'),new URL('jpn.traineddata.gz',out));

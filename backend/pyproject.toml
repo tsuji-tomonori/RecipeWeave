@@ -1,0 +1,50 @@
+[project]
+name = "recipeweave-api"
+version = "0.1.0"
+description = "RecipeWeave sample catalogue API and authenticated snapshot boundary"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "pydantic-settings>=2.8,<3",
+  "mangum>=0.19,<1",
+  "uvicorn>=0.34,<1",
+  "PyJWT[crypto]>=2.10,<3",
+  "boto3>=1.40,<2",
+  "psycopg[binary]>=3.2,<4",
+  "certifi>=2025.1",
+]
+
+[project.scripts]
+app-archlint = "app.tools.archlint:main"
+app-docs = "app.tools.generate:main"
+
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/app"]
+
+[tool.ruff]
+extend = "../pyproject.toml"
+
+[tool.ruff.lint]
+extend-select = ["B", "SIM", "ASYNC", "S", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+"tools/package_lambda.py" = ["S603", "S607"]
+
+[tool.pyright]
+include = ["src", "tests", "tools", "../database"]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+venvPath = ".."
+venv = ".venv"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests", "tools"]
+explicit_package_bases = true
+mypy_path = "$MYPY_CONFIG_FILE_DIR/src"
