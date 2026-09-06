@@ -26,6 +26,7 @@
 | `0387ded`・[総合CI 34031436929](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34031436929) | Python806件、Vitest57件、CDK9件、品質サイト6件成功。SQLFluff703ファイルで違反0件、生成設計2,404ファイル差分なし、Mermaid1,736図を検証。Ruffの生成説明文8行の長さ超過と、設定の器具返却順が揺れるE2E1件を検出し、公開を停止。後続修正は最新のPR・CI成果物で確認する |
 | `12c05bc`・[公開用総合CI 34032975591](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34032975591) | **Python812件・Vitest57件・CDK9件・利用画面22件・品質サイト6件が成功し、Pages公開も成功**。独立した実DB191件も成功。公開接続の5設定は引き続き未設定 |
 | `12c05bc`・[PR総合CI 34032977532](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34032977532) | Python812件・Vitest57件・利用画面22件は成功。品質サイトのモバイルER図の撮影1件が5秒の上限で停止。撮影前のSVG・フォント待機を追加し、必須証跡の条件を保って是正する |
+| `1b56f04`・[PR総合CI 34035029598](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34035029598) | Python819件・Vitest57件・利用画面22件・品質サイト6件成功。配備資材6,444件はCIとローカルで全件一致。配備スクリプトの空コンテナの型注釈不足と、CDK使用状況メタデータ・画面の空環境変数による生成差分を最終ゲートで検出。型注釈、CDKの正規設定、CIと同じ公開ビルド入力で是正する |
 
 Devへの取り込み前に、Python 3.12のパッチ版によるf-stringのAST再出力差と、Lambda資材へのbytecode・実行環境パスの混入を検出した。同一ソースから同じ設計・配備物を再生成できるよう修正し、Devのclean-tree検査と設計入力の全バイトハッシュは維持する。最終修正版の結果はPRと対応するCI成果物を参照する。
 

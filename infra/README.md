@@ -36,6 +36,15 @@ uv run --locked python tools/quality.py
 
 配備資材の構築にはCIと同じuv 0.11.33を使用します。Lambda構築はPython起動スクリプトの絶対パスを可搬なshebangへそろえ、wheelのRECORDも実バイトに合わせます。handlerの独立importはbytecodeを作らず、資材が変化しないことを検査します。`--verify-reproducible` は別ディレクトリへの再構築と全ファイルのSHA-256一致を必須にします。Dev用の設計を再生成するときは、画面の `VITE_AUTH_MODE=cognito`・`VITE_CATALOG_PREVIEW=true` とAPI/Cognitoの公開設定もCIにそろえます。構築したCDKテンプレートの全バイトhashは設計に残し、設定変更時も正規再生成してGitへ反映します。
 
+GitHubの接続設定が未設定の場合も、次の3変数は空文字を明示します。Viteでは環境変数の未定義と空文字で生成コードが異なるため、単に変数を省略しません。接続先を設定済みの場合は、同じ変数へCIと一致する公開設定値を渡します。
+
+```bash
+VITE_API_BASE_URL='' VITE_COGNITO_DOMAIN='' VITE_COGNITO_CLIENT_ID='' \
+  VITE_AUTH_MODE=cognito VITE_CATALOG_PREVIEW=true npm run build --prefix frontend
+```
+
+CDKの使用状況報告は、[公式設定](https://docs.aws.amazon.com/cdk/v2/guide/usage-data.html)に従い `cdk.json` の `versionReporting: false` で無効にします。構築機のNodeパッチ版を含む `AWS::CDK::Metadata` が設計入力を変化させないようにするためです。実資源・資材hash・ソース位置のメタデータは保持し、合成済みテンプレートを後から加工しません。
+
 ## CIとGitHub Pages
 
 [dev.yml](../.github/workflows/dev.yml) は dev と既存featureのpush、dev/main向けPRで、固定依存・実PostgreSQL移行・初期投入・静的解析・厳密な型検査・単体/実DB統合・実画面E2E・品質サイトE2Eを実行します。失敗時も取得できた証跡をartifactへ残します。検査がすべて成功したpushだけを既存の `github-pages` 環境へ公開します。環境保護や配備対象ブランチの許可は変更しません。

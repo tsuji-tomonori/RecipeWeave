@@ -1090,7 +1090,6 @@
 
 | 資源種別 | 数 |
 |---|---|
-| `AWS::CDK::Metadata` | 1 |
 | `AWS::Cognito::UserPool` | 1 |
 | `AWS::Cognito::UserPoolClient` | 1 |
 | `AWS::Cognito::UserPoolDomain` | 1 |
@@ -1115,7 +1114,6 @@
 | Logical ID | 資源種別 |
 |---|---|
 | `ApplicationDatabaseSecretCC2242CC` | `AWS::SecretsManager::Secret` |
-| `CDKMetadata` | `AWS::CDK::Metadata` |
 | `DatabaseClientsD3CE02C8` | `AWS::EC2::SecurityGroup` |
 | `DatabaseVpc73869E3A` | `AWS::EC2::VPC` |
 | `DatabaseVpcApplicationSubnet1DefaultRoute33B05C1E` | `AWS::EC2::Route` |
@@ -1165,7 +1163,6 @@
 | `AWS::ApiGatewayV2::Integration` | 1 |
 | `AWS::ApiGatewayV2::Route` | 1 |
 | `AWS::ApiGatewayV2::Stage` | 1 |
-| `AWS::CDK::Metadata` | 1 |
 | `AWS::CloudFront::CachePolicy` | 1 |
 | `AWS::CloudFront::Distribution` | 1 |
 | `AWS::CloudFront::OriginAccessControl` | 1 |
@@ -1186,7 +1183,6 @@
 | `ApiServiceRole1BD550DA` | `AWS::IAM::Role` |
 | `ApiServiceRoleDefaultPolicyB24862FE` | `AWS::IAM::Policy` |
 | `ApiStage` | `AWS::ApiGatewayV2::Stage` |
-| `CDKMetadata` | `AWS::CDK::Metadata` |
 | `CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536` | `AWS::Lambda::Function` |
 | `CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265` | `AWS::IAM::Role` |
 | `CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF` | `AWS::IAM::Policy` |

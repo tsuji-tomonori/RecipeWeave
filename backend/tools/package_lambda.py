@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def file_hashes(target: Path) -> dict[str, str]:
     """一時bytecodeを拒否し、配備対象の全バイトを検査する。"""
-    entries = {}
+    entries: dict[str, str] = {}
     for path in sorted(target.rglob("*")):
         if path.name == "__pycache__" or path.suffix in {".pyc", ".pyo"}:
             raise ValueError(
@@ -31,7 +31,7 @@ def file_hashes(target: Path) -> dict[str, str]:
 
 def normalize_entrypoints(target: Path) -> None:
     """uvが埋め込む構築機固有のPythonパスを可搬な起動方法へそろえる。"""
-    changed = set()
+    changed: set[str] = set()
     for script in sorted((target / "bin").glob("*")):
         if not script.is_file():
             continue
@@ -39,7 +39,7 @@ def normalize_entrypoints(target: Path) -> None:
         if first.startswith(b"#!") and b"python" in first:
             script.write_bytes(b"#!/usr/bin/env python3.12" + separator + rest)
             changed.add(str(script.relative_to(target)))
-    recorded = set()
+    recorded: set[str] = set()
     for record in sorted(target.glob("*.dist-info/RECORD")):
         with record.open(newline="") as stream:
             rows = list(csv.reader(stream))

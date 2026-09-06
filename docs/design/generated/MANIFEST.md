@@ -3190,7 +3190,7 @@
 | backend/tests/test_sql_lint.py | 4abe5fd088fce0231e31668d52d5a06593b7db8105cf5a93c700f6409e58d14f |
 | backend/tests/test_state.py | f7a9e168a1b54150e33f2c957da7072fbc46c3fa5db7a7abc9452e316cba8253 |
 | backend/tests/test_workflow_database.py | cf6167d0d0bca278f719a3321722a7fa4c71f19b7323d510969f84b0f700b98c |
-| backend/tools/package_lambda.py | c56a3f76512bef05c9118efe553e5db73063ac56e4bbf0d19961334d5b8d548c |
+| backend/tools/package_lambda.py | 75f3730e6203e9bd2dace9b318b1db8b311b18f69135c59b87e0bb9cb3014f2b |
 | data/samples/foods.json | 69f10ea50bc80682b9bbfd5613fc749584bc78c3dd50a58bc2ddfe6f429f940c |
 | data/samples/recipes.json | cd12f4aa81a30967fd9485b1d0218727ec87f89a2a6151b0bda06ed1a34412c7 |
 | database/__init__.py | eedbbc695f9d2f414051ea9c729e99b96060d9c37c61b1bd904823d5083b1341 |
@@ -3229,8 +3229,8 @@
 | frontend/src/lib/types.ts | bc07fc8746fe109e30c585bc2b53256442c70d9972e5e81bfa22ce336444ffc2 |
 | frontend/src/main.ts | ec315a1d373f5470b11a7dcaa0d972ab81e3f513113325bd18aea471c1ce2d62 |
 | frontend/src/test-fixtures.ts | 7898608c422027651efb2521013d31dfdeb59d78cd50cd7a53bd90853a45e178 |
-| infra/cdk.out/RecipeWeave-dev-Data.template.json | 8f8cbe3b93262baf5712a77f4d77eb1e8fe6dea2eeb7c3af8c989a33c94721ba |
-| infra/cdk.out/RecipeWeave-dev-Service.template.json | e25b035f67821ecf46f6e14bc55cc1527f2affd8e671a2563ad3e61bf93ca3e5 |
+| infra/cdk.out/RecipeWeave-dev-Data.template.json | 1602809142f29909a839e1b6aa980f06359c8ad58bfee33af1bb28d29afd4a68 |
+| infra/cdk.out/RecipeWeave-dev-Service.template.json | 727f045891c3f91860832045d80d2ba3ed802988bd3c37ecee65a45e698eae55 |
 | infra/lib/config.ts | d94efbaf9d744e1638a0f950579cbe35cb5dce0e3dac70bab05bb1898e61ab07 |
 | infra/lib/data-stack.ts | 94f3a9ae2cfa05da00d0d1f2064e29d5908d47f89228546c14165dca63f15186 |
 | infra/lib/github-deploy-stack.ts | e2adc10fa23d959c88a84f2b840be3c13634a2f25a56fc2869ff1fb07d11deda |
@@ -5656,6 +5656,6 @@
 | database/tables/recipeweave.user_state.md | bd2808941d7dc9db408a3aeaed03966995e8cb0cebbcf328438de28213ed797e |
 | database/tables/recipeweave.validation_result.md | 3193529b692d8de98af5b83034e0774e77f747a5a0bdccfff7bbc39fd5e9432b |
 | database/tables/recipeweave.workspace_revision.md | ba33684df6ba9521eef48b3e86ff6acd4f1f89ae171600aada127a740f991f29 |
-| service.md | 2acbe0a09b01fd7af6a27342259c6e59d148f9e93803d1c9bce142653ad9da27 |
+| service.md | be8cf8909295a35b295ff56899f68b6d68a2a3bf11610f708f8a946999e31b23 |
 
 自己参照を避けるためMANIFEST.md自身のハッシュは掲載しない。
