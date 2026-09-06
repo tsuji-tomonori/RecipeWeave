@@ -1,4 +1,4 @@
-"""Check generated manual links, including Japanese section anchors, without a browser."""
+"""日本語の見出しアンカーを含む生成済みマニュアルのリンクを、ブラウザを使わず検査する。"""
 
 import argparse
 from html.parser import HTMLParser

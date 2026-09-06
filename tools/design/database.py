@@ -90,6 +90,10 @@ def project_table(statement: exp.Expression, source: str) -> Table | None:
     for item in schema.expressions:
         if isinstance(item, exp.ColumnDef):
             rules = list(item.args.get("constraints", []))
+            if any(rule.find(exp.Reference) for rule in rules):
+                raise DesignError(
+                    f"列内REFERENCESは未対応です。表制約として記述してください: {source}"
+                )
             default = next(
                 (
                     r.args["kind"].this.sql(dialect="postgres")
@@ -183,6 +187,16 @@ def query_projection(text: str, source: str, operation: str, tables: dict[str, T
     action = next((value for kind, value in kinds.items() if isinstance(stmt, kind)), None)
     if action is None or stmt.find(exp.Star):
         raise DesignError(f"対応する明示列のCRUD文が必要です: {source}")
+    if stmt.args.get("with_") is not None:
+        raise DesignError(f"CTEのSQL投影は未対応です: {source}")
+    conflict = stmt.args.get("conflict")
+    if conflict is not None and conflict.args.get("expressions"):
+        raise DesignError(f"ON CONFLICTによる更新の投影は未対応です: {source}")
+    if any(
+        isinstance(node, exp.Insert | exp.Update | exp.Delete) and node is not stmt
+        for node in stmt.walk()
+    ):
+        raise DesignError(f"入れ子のDML投影は未対応です: {source}")
     references = list(stmt.find_all(exp.Table))
     aliases = {ref.alias_or_name: sql_name(ref) for ref in references}
     actions: dict[str, set[str]] = {}

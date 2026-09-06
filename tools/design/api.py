@@ -152,12 +152,22 @@ def restrictions(schema: dict[str, Any]) -> str:
         "readOnly",
         "writeOnly",
     )
-    return (
-        "; ".join(
-            f"{key}={json.dumps(schema[key], ensure_ascii=False)}" for key in keys if key in schema
-        )
-        or "追加制約なし"
-    )
+    values = [
+        f"{key}={json.dumps(schema[key], ensure_ascii=False)}" for key in keys if key in schema
+    ]
+    for branch in ("anyOf", "oneOf", "allOf"):
+        children = [
+            f"{schema_type(child)}: {restrictions(child)}"
+            for child in schema.get(branch, [])
+            if restrictions(child) != "追加制約なし"
+        ]
+        if children:
+            values.append(f"{branch}の制約=" + " / ".join(children))
+    if "items" in schema:
+        item_rules = restrictions(schema["items"])
+        if item_rules != "追加制約なし":
+            values.append("要素の制約=" + item_rules)
+    return "; ".join(values) or "追加制約なし"
 
 
 def schema_rows(schema: dict[str, Any], spec: dict[str, Any]) -> list[list[object]]:

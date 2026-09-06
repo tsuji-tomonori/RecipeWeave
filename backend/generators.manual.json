@@ -5,9 +5,16 @@
       "name": "api-sql-and-openapi",
       "category": "codegen",
       "command": "uv run --locked --package recipeweave-api app-docs",
-      "summary": "Parse PostgreSQL operation SQL into typed wrappers and export runtime OpenAPI",
-      "inputs": ["backend/src/app/apis/**/*.py", "backend/src/app/apis/**/sql/*.sql", "backend/src/app/core/*.py"],
-      "outputs": ["backend/src/app/apis/**/generated/queries.py", "backend/openapi.gen.json"],
+      "summary": "API別PostgreSQL SQLから型付きwrapperを生成し、実FastAPIからOpenAPIを出力する",
+      "inputs": [
+        "backend/src/app/apis/**/*.py",
+        "backend/src/app/apis/**/sql/*.sql",
+        "backend/src/app/core/*.py"
+      ],
+      "outputs": [
+        "backend/src/app/apis/**/generated/queries.py",
+        "backend/openapi.gen.json"
+      ],
       "dependencies": [],
       "check": true,
       "ciSafe": true
@@ -16,23 +23,72 @@
       "name": "api-architecture",
       "category": "lint",
       "command": "uv run --locked --package recipeweave-api app-archlint",
-      "summary": "Validate operation layout, provider import boundaries and OpenAPI identity",
-      "inputs": ["backend/src/app/**/*.py"],
+      "summary": "API配置・プロバイダー境界・OpenAPIの識別子を検査する",
+      "inputs": [
+        "backend/src/app/**/*.py"
+      ],
       "outputs": [],
-      "dependencies": ["api-sql-and-openapi"],
+      "dependencies": [
+        "api-sql-and-openapi"
+      ],
       "check": false,
+      "ciSafe": true
+    },
+    {
+      "name": "sql-static-analysis",
+      "category": "lint",
+      "command": "uv run --locked --package recipeweave-api app-sql-lint",
+      "summary": "SQLFluffでAPI別SQL・移行SQLを検査する",
+      "inputs": [
+        "backend/src/app/apis/**/sql/*.sql",
+        "database/migrations/*",
+        ".sqlfluff"
+      ],
+      "outputs": [],
+      "dependencies": [],
+      "check": false,
+      "ciSafe": true
+    },
+    {
+      "name": "service-design",
+      "category": "docs",
+      "command": "uv run --locked python tools/generate_service_design.py",
+      "summary": "DDL・SQL・OpenAPI・Python AST・CDK合成結果からDB/API設計一式を生成する",
+      "inputs": [
+        "backend/openapi.gen.json",
+        "backend/src/app/**/*.py",
+        "backend/src/app/apis/**/sql/*.sql",
+        "backend/tests/*.py",
+        "database/*",
+        "database/migrations/*",
+        "infra/cdk.out/*.template.json",
+        "tools/design/*.py",
+        "tools/generate_service_design.py"
+      ],
+      "outputs": [
+        "docs/design/generated/README.md",
+        "docs/design/generated/REGISTRY.md",
+        "docs/design/generated/MANIFEST.md",
+        "docs/design/generated/service.md",
+        "docs/design/generated/api/**/*.md",
+        "docs/design/generated/database/**/*.md"
+      ],
+      "dependencies": [
+        "api-sql-and-openapi"
+      ],
+      "check": true,
       "ciSafe": true
     }
   ],
   "unsupportedSurfaces": [
     {
       "path": "backend/src/app/apis/**/functions.py",
-      "reason": "The portable CFG cannot expand loops or Protocol dynamic dispatch; no generated sequence completeness claim.",
+      "reason": "固定配布のCFG生成器とプロジェクト固有の関数別シーケンス生成器を分離する。後者は分岐・反復を保持するが、Protocolの実行時選択や連携先内部は推測しない。",
       "supportStatus": "bounded-unavailable"
     },
     {
       "path": "database/migrations/*.sql",
-      "reason": "Migration SQL and postconditions are parsed; real DSQL execution is an AWS deployment acceptance gate.",
+      "reason": "移行DDL・検証SQLは静的解析する。実DSQL接続はAWS配備後の受入で確認する。",
       "supportStatus": "requires-live-dsql"
     }
   ]

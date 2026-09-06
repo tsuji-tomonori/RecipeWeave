@@ -30,13 +30,13 @@
 |---|---|---|
 | `frontend/src/App.test.ts` | 検証コード | `6d302cca375e46480d158b07da040287d5d780eaee4c3cb2f6ecf7aa48f0efb1` |
 | `frontend/src/lib/domain.test.ts` | 検証コード | `f9ec084aa0c4307ae29cf631a553f6b907dbc006fa9f968d23233d2a83c35856` |
-| `frontend/src/lib/domain.ts` | `FOODS`, `RECIPES`, `DomainError`, `newId`, `validateQuantity`, `createInitialState`, `allFoods`, `getFood`, `getRecipe`, `quantityText`, `getDraft`, `scaleDraft`, `setDraftAmount`, `saveDraft`, `resetDraft`, `addToMeal`, `updateMeal`, `removeFromMeal`, `toggleSaved`, `addCustomFood`, `addStock`, `updateStock`, `deleteStock`, `restoreStock`, `duplicateImports`, `commitReceipt`, `previewUndoImport`, `undoImport`, `requiredQuantities`, `shoppingList`, `toggleShoppingCheck`, `searchRecipes`, `randomRecipe`, `arrangements`, `buildCookingPlan`, `startCooking`, `moveCooking`, `pauseCooking`, `resumeCooking`, `startTimer`, `timerRemaining`, `previewConsumption`, `completeCooking` | `8de6512faecba50b224b6c71cc811da00cd4821bc9920ce526bae2a1be1dac82` |
-| `frontend/src/lib/ocr.ts` | `OcrTask`, `validateReceiptImage`, `recognizeReceipt` | `61590b3c31d6fe513092640a1e3d6f37a3cc8f229bc80003a11098f36964d4ec` |
-| `frontend/src/lib/persistence.ts` | `STORAGE_KEY`, `StorageLike`, `LockManagerLike`, `RecoverySnapshot`, `validateAppState`, `parseBackup`, `loadState`, `inspectRecovery`, `transact`, `exportBackup`, `restoreBackup`, `recoverBackup` | `7bfb0243d4103d66a890f80a5cfd651c2f4035549142912a8dac1ff8403449de` |
-| `frontend/src/lib/receipt.ts` | `parseReceipt`, `receiptSignature`, `validateReceiptFile`, `hashImage` | `4575e6a5096fceb8770bf9824e576265bd9bb5cfd4441ee48cde5088a5c23619` |
-| `frontend/src/lib/types.ts` | `UNITS`, `Unit`, `StorageLocation`, `Quantity`, `Food`, `RecipeIngredient`, `RecipeStep`, `Recipe`, `RecipeDraft`, `MealItem`, `StockLot`, `ReceiptImport`, `ReceiptCandidate`, `ReceiptCommit`, `ShoppingCheck`, `ShoppingRow`, `ShoppingList`, `PlannedStep`, `CookingTimer`, `ConsumptionRequest`, `ConsumptionResult`, `CookingSession`, `Settings`, `SearchFilters`, `AppState`, `StockInput`, `UndoPreview` | `4d2c48088aa014be86b9c12bde285dc9b7b25b6e561b088f18c5358c2d6da3f7` |
+| `frontend/src/lib/domain.ts` | `FOODS`, `RECIPES`, `DomainError`, `newId`, `validateQuantity`, `createInitialState`, `allFoods`, `getFood`, `getRecipe`, `quantityText`, `getDraft`, `scaleDraft`, `setDraftAmount`, `saveDraft`, `resetDraft`, `addToMeal`, `updateMeal`, `removeFromMeal`, `toggleSaved`, `addCustomFood`, `addStock`, `updateStock`, `deleteStock`, `restoreStock`, `duplicateImports`, `commitReceipt`, `previewUndoImport`, `undoImport`, `requiredQuantities`, `shoppingList`, `toggleShoppingCheck`, `searchRecipes`, `randomRecipe`, `arrangements`, `buildCookingPlan`, `startCooking`, `moveCooking`, `pauseCooking`, `resumeCooking`, `startTimer`, `timerRemaining`, `previewConsumption`, `completeCooking` | `151c621f73d083e6d96bbc2b2f5ee3fecd0f009bd5724d32b5e38eda8d34f8c0` |
+| `frontend/src/lib/ocr.ts` | `OcrTask`, `validateReceiptImage`, `recognizeReceipt` | `e017bc1ff238edf30fe43b440752cd66c70d45172ad73bf3f9687b37947efeab` |
+| `frontend/src/lib/persistence.ts` | `STORAGE_KEY`, `StorageLike`, `LockManagerLike`, `RecoverySnapshot`, `validateAppState`, `parseBackup`, `loadState`, `inspectRecovery`, `transact`, `exportBackup`, `restoreBackup`, `recoverBackup` | `63071669c7230b782fe1ca085a5c37191b5978e6d02ab30529638515c2918098` |
+| `frontend/src/lib/receipt.ts` | `parseReceipt`, `receiptSignature`, `validateReceiptFile`, `hashImage` | `293c705dfc2f47b9657deffb4123bcb00a4056693520648ef75df5f9ed3e4c53` |
+| `frontend/src/lib/types.ts` | `UNITS`, `Unit`, `StorageLocation`, `Quantity`, `Food`, `RecipeIngredient`, `RecipeStep`, `Recipe`, `RecipeDraft`, `MealItem`, `StockLot`, `ReceiptImport`, `ReceiptCandidate`, `ReceiptCommit`, `ShoppingCheck`, `ShoppingRow`, `ShoppingList`, `PlannedStep`, `CookingTimer`, `ConsumptionRequest`, `ConsumptionResult`, `CookingSession`, `Settings`, `SearchFilters`, `AppState`, `StockInput`, `UndoPreview` | `af53af7913167c5a3696613f28e6fe3c1bfc7063cda34ed5046dcd217d886ef8` |
 | `frontend/src/main.ts` | 画面コンポーネント／起動処理 | `ec315a1d373f5470b11a7dcaa0d972ab81e3f513113325bd18aea471c1ce2d62` |
-| `frontend/src/App.svelte` | 画面コンポーネント／起動処理 | `d66ba8ea29346964253a1b060d67636a5185b748ee13f1b739c840ce3a91889a` |
+| `frontend/src/App.svelte` | 画面コンポーネント／起動処理 | `c622edb872845a20d3eed41f881bde94cad452401f7e06fdadf5ecca49346914` |
 | `frontend/src/lib/FoodTile.svelte` | 画面コンポーネント／起動処理 | `8be1fc4f7ab1b54c026a7ff77fa74f67e479f8b09a7cf25c944807da71024333` |
 | `frontend/src/lib/RecipeCard.svelte` | 画面コンポーネント／起動処理 | `0921fc76b0d516fdf56d67ac4299d01a2a6245a60bf8f7289aafd25da11cb6e6` |
 
@@ -44,9 +44,9 @@
 
 | SQL | SHA-256 |
 |---|---|
-| `backend/src/app/apis/state/get_state/sql/001_select_state.sql` | `6140d5bf18b78dac277dbe8c58325ed4a06c84535ca387612ba1923928dee8ee` |
-| `backend/src/app/apis/state/put_state/sql/001_insert_state.sql` | `d64b097cd651c2c0cba2a8fc15e72a3cb1034899243b9534b40ace8bd924258e` |
-| `backend/src/app/apis/state/put_state/sql/002_update_state.sql` | `39f304389ac61b149bcbf5b89616dd330f1866ee7a390e53e1c634667569d253` |
+| `backend/src/app/apis/state/get_state/sql/001_select_state.sql` | `a86d0a112650fc82532227aa350b73836433e5c4c926ce0469c4f6b8bd36df52` |
+| `backend/src/app/apis/state/put_state/sql/001_insert_state.sql` | `8891184150e54cbeae5ec2d55500a1838a40206d98213495353879e56d7339e0` |
+| `backend/src/app/apis/state/put_state/sql/002_update_state.sql` | `299b20ecc231850083d3d0f767d06a47d2dcb93f50e028d2f96b7cce0465ceba` |
 | `database/migrations/001_user_state.sql` | `4f085833e9d63238900f9b3a7be1356fe5bb05e56bc93b276ffa32a139cc20f4` |
 
 ## CDK合成資源

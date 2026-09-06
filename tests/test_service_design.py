@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from app.main import create_app
 
-from tools.design.api import load_operations, schema_rows, validate_references
+from tools.design.api import load_operations, restrictions, schema_rows, validate_references
 from tools.design.common import DesignError
 from tools.design.database import load_tables, parse_one, project_table, query_projection
 from tools.design.flow import block, render_expression, validate_tree
@@ -253,3 +253,31 @@ def test_manifest_output_hashes_and_relative_links() -> None:
                 else None
             )
             assert relative in outputs or resolved.exists(), (name, link)
+
+
+def test_nullable_branch_constraints_are_visible_in_the_table() -> None:
+    value = restrictions(
+        {"anyOf": [{"type": "integer", "minimum": 1, "maximum": 60}, {"type": "null"}]}
+    )
+    assert "minimum=1" in value and "maximum=60" in value and "integer" in value
+
+
+def test_inline_foreign_key_requires_explicit_supported_projection() -> None:
+    with pytest.raises(DesignError, match="REFERENCES"):
+        project_table(
+            parse_one("CREATE TABLE a.t (id INT REFERENCES a.u(id));", "fixture"), "fixture"
+        )
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "WITH changed AS (DELETE FROM recipeweave.user_state RETURNING subject) "
+        "SELECT subject FROM changed;",
+        "INSERT INTO recipeweave.user_state (subject) VALUES ('a') "
+        "ON CONFLICT (subject) DO UPDATE SET revision = 1;",
+    ],
+)
+def test_unsupported_combined_sql_cannot_hide_extra_side_effects(text: str) -> None:
+    with pytest.raises(DesignError):
+        query_projection(text, "fixture", "test", load_tables(ROOT))

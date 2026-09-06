@@ -144,10 +144,12 @@ def build_outputs(root: Path = ROOT) -> dict[str, str]:
     )
     inputs = {
         root / "backend/openapi.gen.json",
+        root / "backend/generators.manual.json",
         root / "database/design.manual.json",
         root / "tools/generate_service_design.py",
         root / "pyproject.toml",
         root / "uv.lock",
+        root / ".sqlfluff",
     }
     for directory, patterns in {
         "backend/src": ("*.py", "*.sql"),
