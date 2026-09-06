@@ -12,7 +12,7 @@ import re
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, LiteralString, Protocol, cast
+from typing import Literal, Protocol, cast
 
 import boto3
 import certifi
@@ -104,7 +104,8 @@ def connect_admin(host: str, region: str) -> Connection[tuple[object, ...]]:
 
 
 def verified(connection: Connection[tuple[object, ...]], statement: str) -> bool:
-    row = connection.execute(sql.SQL(cast(LiteralString, statement))).fetchone()
+    # The manifest's parsed SQL is trusted repository input; values remain separately bound.
+    row = connection.execute(statement.encode("utf-8")).fetchone()
     return row is not None and row[0] is True
 
 
@@ -129,7 +130,7 @@ def apply_migrations(
                 raise ValueError(f"applied schema drift: {definition.id}")
             continue
         if not verified(connection, definition.verify):
-            cursor = connection.execute(sql.SQL(cast(LiteralString, item.statement)))
+            cursor = connection.execute(item.statement.encode("utf-8"))
             if definition.kind == "index":
                 job = cursor.fetchone()
                 if job is None or not isinstance(job[0], str):

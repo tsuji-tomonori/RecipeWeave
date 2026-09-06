@@ -1,165 +1,2690 @@
 <script lang="ts">
- import {onMount} from 'svelte';
- import {Home, Refrigerator, Bookmark, CookingPot, Settings, CircleHelp, ArrowRight, ArrowLeft, Plus, Minus, Receipt, Camera, Image, Shuffle, Search, SlidersHorizontal, X, Check, Leaf, Clock, ShoppingBasket, History, Upload, Download, Trash2, Pause, Play, Utensils, Sparkles, ChevronRight} from 'lucide-svelte';
- import FoodTile from './lib/FoodTile.svelte';
- import RecipeCard from './lib/RecipeCard.svelte';
- import type {AppState,Food,Recipe,RecipeDraft,StockLot,ReceiptCandidate,Quantity,Unit,StorageLocation,ConsumptionRequest,MealItem} from './lib/types';
- import {UNITS} from './lib/types';
- import * as D from './lib/domain';
- import {loadState,transact,exportBackup,parseBackup,restoreBackup,inspectRecovery,recoverBackup} from './lib/persistence';
- import {parseReceipt,receiptSignature,hashImage,validateReceiptFile} from './lib/receipt';
- import {recognizeReceipt,validateReceiptImage,type OcrTask} from './lib/ocr';
- const base=import.meta.env.BASE_URL;
- let appState=$state.raw<AppState>(D.createInitialState());
- let recoveryToken:ReturnType<typeof inspectRecovery>|null=null;let storageIssue=$state('');let route=$state('home'); let routeId=$state(''); let error=$state(''); let toast=$state(''); let undoAction:(()=>void)|null=$state(null);
- let query=$state('');let category=$state('すべて');let selectedLots=$state<string[]>([]);
- let randomId=$state('');let modal=$state('');let selectedHistory=$state('');let backup=$state.raw<AppState|null>(null);
- let modalRoot=$state<HTMLDivElement>();let editLot=$state('');let editCandidate=$state('');let editFood=$state('');let editName=$state('');let editValue=$state('');let editUnit=$state<Unit>('g');let editLocation=$state<StorageLocation>('冷蔵');let editPriority=$state(false);let editExpiry=$state('');
- let receiptCustomFoods=$state.raw<Food[]>([]);let receiptFile=$state<File|null>(null);let receiptPreview=$state('');let receiptPhase=$state<'upload'|'reading'|'review'|'success'>('upload');let candidates=$state<ReceiptCandidate[]>([]);let excludedOpen=$state(false);let ocrProgress=$state(0);let ocrStatus=$state('');let ocrError=$state('');let sampleReceipt=$state(false);let imageHash=$state('');let signature=$state('');let pendingImportId=$state('');let lastImportId=$state('');let duplicates=$state<string[]>([]);let registrationBusy=$state(false);let ocrTask:OcrTask|null=null;
- let captureInput=$state<HTMLInputElement>();let fileInput=$state<HTMLInputElement>();let backupInput=$state<HTMLInputElement>();
- let deduct=$state(false);let consumption=$state<ConsumptionRequest[]>([]);let now=$state(Date.now());let completedMessage=$state(false);
- let stagedMax=$state('');let stagedMatch=$state<'all'|'any'>('all');let stagedNoShopping=$state(false);let stagedEquipment=$state<string[]>([]);
- let excludedFoods=$state<string[]>([]);let pantryFoods=$state<string[]>([]);let equipment=$state<string[]>([]);
- const foods=$derived([...D.allFoods(appState),...receiptCustomFoods]);
- const activeLots=$derived(appState.lots.filter(l=>l.status==='active').sort((a,b)=>Number(b.priority)-Number(a.priority)));
- const selectedFoods=$derived(appState.search.selectedFoodIds);
- const currentRecipe=$derived(routeId ? D.RECIPES.find(r=>r.id===routeId) : undefined);
- const draft=$derived(currentRecipe?D.getDraft(appState,currentRecipe.id):null);
- const searchResults=$derived(D.searchRecipes(appState));
- const random=$derived(D.RECIPES.find(r=>r.id===randomId));
- const shopping=$derived(D.shoppingList(appState));
- const visibleFoods=$derived(foods.filter(f=>(category==='すべて'||f.category===category)&&(!query||f.name.includes(query)||f.aliases.some(a=>a.includes(query)))));
- const categories=$derived(['すべて',...new Set(foods.map(f=>f.category))]);
- const selectedCandidates=$derived(candidates.filter(c=>c.selected&&c.status!=='excluded'));
- const invalidCandidates=$derived(selectedCandidates.some(c=>!c.foodId||c.status==='review'));
- const currentStep=$derived(appState.cooking?.plan[appState.cooking.index]);
- const undoPreview=$derived(selectedHistory&&appState.imports.some(i=>i.id===selectedHistory)?D.previewUndoImport(appState,selectedHistory):null);
- const previewUse=$derived.by(()=>{try{return consumption.length?D.previewConsumption(appState,$state.snapshot(consumption)):[];}catch{return [];}});
- const planned=$derived.by(()=>{try{return {steps:D.buildCookingPlan(appState.meal,appState.settings.equipment),error:''};}catch(e){return {steps:[],error:e instanceof Error?e.message:'器具の設定を確認してください。'};}});
- function recipeStock(recipe:Recipe){return D.shoppingList({...appState,meal:[{...D.getDraft(appState,recipe.id),id:'stock-preview'}]});}
- function stockSummary(recipe:Recipe){const rows=recipeStock(recipe).rows;const missing=rows.filter(r=>r.status==='buy').length;const unknown=rows.filter(r=>r.status==='unknown'||r.status==='incompatible').length;return `${missing?`買い足し ${missing}食材`:'食材の種類はそろっています'}${unknown?` · 量を確認 ${unknown}食材`:''}`;}
- function updateConsumption(index:number,value:string){const amount=value===''?null:Number(value);if(amount!==null&&(!Number.isFinite(amount)||amount<0)){notify('使用量は0以上で入力してください。');return;}consumption=consumption.map((r,j)=>index===j?{...r,quantity:{...r.quantity,value:amount}}:r);}
- function notify(message:string,undo?:()=>void){toast=message;undoAction=undo??null;setTimeout(()=>{if(toast===message){toast='';undoAction=null;}},7000);}
- let writeQueue:Promise<unknown>=Promise.resolve();
- function change(mutator:(s:AppState)=>AppState,message?:string):Promise<boolean>{const work=writeQueue.then(async()=>{try{appState=await transact(appState,mutator);error='';if(message)notify(message);return true;}catch(e){error=e instanceof Error?e.message:'保存できませんでした。もう一度お試しください。';return false;}});writeQueue=work;return work;}
+  import { onMount } from "svelte";
+  import {
+    Home,
+    Refrigerator,
+    Bookmark,
+    CookingPot,
+    Settings,
+    CircleHelp,
+    ArrowRight,
+    ArrowLeft,
+    Plus,
+    Minus,
+    Receipt,
+    Camera,
+    Image,
+    Shuffle,
+    Search,
+    SlidersHorizontal,
+    X,
+    Check,
+    Leaf,
+    Clock,
+    ShoppingBasket,
+    History,
+    Upload,
+    Download,
+    Trash2,
+    Pause,
+    Play,
+    Utensils,
+    Sparkles,
+    ChevronRight,
+  } from "lucide-svelte";
+  import FoodTile from "./lib/FoodTile.svelte";
+  import RecipeCard from "./lib/RecipeCard.svelte";
+  import type {
+    AppState,
+    Food,
+    Recipe,
+    RecipeDraft,
+    StockLot,
+    ReceiptCandidate,
+    Quantity,
+    Unit,
+    StorageLocation,
+    ConsumptionRequest,
+    MealItem,
+  } from "./lib/types";
+  import { UNITS } from "./lib/types";
+  import * as D from "./lib/domain";
+  import {
+    loadState,
+    transact,
+    exportBackup,
+    parseBackup,
+    restoreBackup,
+    inspectRecovery,
+    recoverBackup,
+  } from "./lib/persistence";
+  import {
+    parseReceipt,
+    receiptSignature,
+    hashImage,
+    validateReceiptFile,
+  } from "./lib/receipt";
+  import {
+    recognizeReceipt,
+    validateReceiptImage,
+    type OcrTask,
+  } from "./lib/ocr";
+  const base = import.meta.env.BASE_URL;
+  let appState = $state.raw<AppState>(D.createInitialState());
+  let recoveryToken: ReturnType<typeof inspectRecovery> | null = null;
+  let storageIssue = $state("");
+  let route = $state("home");
+  let routeId = $state("");
+  let error = $state("");
+  let toast = $state("");
+  let undoAction: (() => void) | null = $state(null);
+  let query = $state("");
+  let category = $state("すべて");
+  let selectedLots = $state<string[]>([]);
+  let randomId = $state("");
+  let modal = $state("");
+  let selectedHistory = $state("");
+  let backup = $state.raw<AppState | null>(null);
+  let modalRoot = $state<HTMLDivElement>();
+  let editLot = $state("");
+  let editCandidate = $state("");
+  let editFood = $state("");
+  let editName = $state("");
+  let editValue = $state("");
+  let editUnit = $state<Unit>("g");
+  let editLocation = $state<StorageLocation>("冷蔵");
+  let editPriority = $state(false);
+  let editExpiry = $state("");
+  let receiptCustomFoods = $state.raw<Food[]>([]);
+  let receiptFile = $state<File | null>(null);
+  let receiptPreview = $state("");
+  let receiptPhase = $state<"upload" | "reading" | "review" | "success">(
+    "upload",
+  );
+  let candidates = $state<ReceiptCandidate[]>([]);
+  let excludedOpen = $state(false);
+  let ocrProgress = $state(0);
+  let ocrStatus = $state("");
+  let ocrError = $state("");
+  let sampleReceipt = $state(false);
+  let imageHash = $state("");
+  let signature = $state("");
+  let pendingImportId = $state("");
+  let lastImportId = $state("");
+  let duplicates = $state<string[]>([]);
+  let registrationBusy = $state(false);
+  let ocrTask: OcrTask | null = null;
+  let captureInput = $state<HTMLInputElement>();
+  let fileInput = $state<HTMLInputElement>();
+  let backupInput = $state<HTMLInputElement>();
+  let deduct = $state(false);
+  let consumption = $state<ConsumptionRequest[]>([]);
+  let now = $state(Date.now());
+  let completedMessage = $state(false);
+  let stagedMax = $state("");
+  let stagedMatch = $state<"all" | "any">("all");
+  let stagedNoShopping = $state(false);
+  let stagedEquipment = $state<string[]>([]);
+  let excludedFoods = $state<string[]>([]);
+  let pantryFoods = $state<string[]>([]);
+  let equipment = $state<string[]>([]);
+  const foods = $derived([...D.allFoods(appState), ...receiptCustomFoods]);
+  const activeLots = $derived(
+    appState.lots
+      .filter((l) => l.status === "active")
+      .sort((a, b) => Number(b.priority) - Number(a.priority)),
+  );
+  const selectedFoods = $derived(appState.search.selectedFoodIds);
+  const currentRecipe = $derived(
+    routeId ? D.RECIPES.find((r) => r.id === routeId) : undefined,
+  );
+  const draft = $derived(
+    currentRecipe ? D.getDraft(appState, currentRecipe.id) : null,
+  );
+  const searchResults = $derived(D.searchRecipes(appState));
+  const random = $derived(D.RECIPES.find((r) => r.id === randomId));
+  const shopping = $derived(D.shoppingList(appState));
+  const visibleFoods = $derived(
+    foods.filter(
+      (f) =>
+        (category === "すべて" || f.category === category) &&
+        (!query ||
+          f.name.includes(query) ||
+          f.aliases.some((a) => a.includes(query))),
+    ),
+  );
+  const categories = $derived([
+    "すべて",
+    ...new Set(foods.map((f) => f.category)),
+  ]);
+  const selectedCandidates = $derived(
+    candidates.filter((c) => c.selected && c.status !== "excluded"),
+  );
+  const invalidCandidates = $derived(
+    selectedCandidates.some((c) => !c.foodId || c.status === "review"),
+  );
+  const currentStep = $derived(appState.cooking?.plan[appState.cooking.index]);
+  const undoPreview = $derived(
+    selectedHistory && appState.imports.some((i) => i.id === selectedHistory)
+      ? D.previewUndoImport(appState, selectedHistory)
+      : null,
+  );
+  const previewUse = $derived.by(() => {
+    try {
+      return consumption.length
+        ? D.previewConsumption(appState, $state.snapshot(consumption))
+        : [];
+    } catch {
+      return [];
+    }
+  });
+  const planned = $derived.by(() => {
+    try {
+      return {
+        steps: D.buildCookingPlan(appState.meal, appState.settings.equipment),
+        error: "",
+      };
+    } catch (e) {
+      return {
+        steps: [],
+        error:
+          e instanceof Error ? e.message : "器具の設定を確認してください。",
+      };
+    }
+  });
+  function recipeStock(recipe: Recipe) {
+    return D.shoppingList({
+      ...appState,
+      meal: [{ ...D.getDraft(appState, recipe.id), id: "stock-preview" }],
+    });
+  }
+  function stockSummary(recipe: Recipe) {
+    const rows = recipeStock(recipe).rows;
+    const missing = rows.filter((r) => r.status === "buy").length;
+    const unknown = rows.filter(
+      (r) => r.status === "unknown" || r.status === "incompatible",
+    ).length;
+    return `${missing ? `買い足し ${missing}食材` : "食材の種類はそろっています"}${unknown ? ` · 量を確認 ${unknown}食材` : ""}`;
+  }
+  function updateConsumption(index: number, value: string) {
+    const amount = value === "" ? null : Number(value);
+    if (amount !== null && (!Number.isFinite(amount) || amount < 0)) {
+      notify("使用量は0以上で入力してください。");
+      return;
+    }
+    consumption = consumption.map((r, j) =>
+      index === j ? { ...r, quantity: { ...r.quantity, value: amount } } : r,
+    );
+  }
+  function notify(message: string, undo?: () => void) {
+    toast = message;
+    undoAction = undo ?? null;
+    setTimeout(() => {
+      if (toast === message) {
+        toast = "";
+        undoAction = null;
+      }
+    }, 7000);
+  }
+  let writeQueue: Promise<unknown> = Promise.resolve();
+  function change(
+    mutator: (s: AppState) => AppState,
+    message?: string,
+  ): Promise<boolean> {
+    const work = writeQueue.then(async () => {
+      try {
+        appState = await transact(appState, mutator);
+        error = "";
+        if (message) notify(message);
+        return true;
+      } catch (e) {
+        error =
+          e instanceof Error
+            ? e.message
+            : "保存できませんでした。もう一度お試しください。";
+        return false;
+      }
+    });
+    writeQueue = work;
+    return work;
+  }
 
- function navigate(to:string,id=''){if(route==='receipt'&&to!=='receipt'&&receiptPhase==='review'&&candidates.length&&!window.confirm('読み取り中の候補を破棄して移動しますか？在庫は変更しません。'))return;window.location.hash=`/${to}${id?'/'+id:''}`;}
- function readRoute(){const parts=window.location.hash.replace(/^#\/?/,'').split('/');const next=parts[0]||'home';if(route==='receipt'&&next!=='receipt'){void clearReceipt();}route=next;routeId=parts[1]||'';error='';query='';modal='';if(next==='fridge'&&routeId==='add')openStock();if(next==='complete'&&appState.cooking&&appState.cooking.status!=='completed'&&!consumption.length)consumption=D.requiredQuantities(appState.cooking.mealSnapshot);if(next==='settings'){excludedFoods=[...appState.settings.excludedFoodIds];pantryFoods=[...appState.settings.pantryFoodIds];equipment=[...appState.settings.equipment];}window.scrollTo({top:0});}
- function foodName(id:string){return foods.find(f=>f.id===id)?.name??id;}
- function toggleFood(id:string){change(s=>({...s,search:{...s.search,selectedFoodIds:s.search.selectedFoodIds.includes(id)?s.search.selectedFoodIds.filter(f=>f!==id):[...s.search.selectedFoodIds,id]}}));}
- async function doSearch(ids?:string[]){if(ids)await change(s=>({...s,search:{...s.search,selectedFoodIds:[...new Set(ids)]}}));navigate('results');}
- function chooseRandom(){const next=D.randomRecipe(appState,randomId);randomId=next?.id??'';}
- function openRecipe(r:Recipe){navigate('detail',r.id);}
- function updateDraft(next:RecipeDraft){change(s=>D.saveDraft(s,next));}
- function changeServings(value:string|number,item?:MealItem){const n=Number(value);try{if(item)change(s=>D.updateMeal(s,item.id,D.scaleDraft(s.meal.find(m=>m.id===item.id)??item,n)));else if(currentRecipe){const id=currentRecipe.id;change(s=>D.saveDraft(s,D.scaleDraft(D.getDraft(s,id),n)));}}catch(e){notify(e instanceof Error?e.message:'人数を確認してください。');}}
- function adjustServings(delta:number,itemId?:string){const recipeId=routeId;change(s=>{if(itemId){const item=s.meal.find(m=>m.id===itemId);if(!item)throw new Error('献立の料理が見つかりません。');return D.updateMeal(s,itemId,D.scaleDraft(item,item.servings+delta));}const latest=D.getDraft(s,recipeId);return D.saveDraft(s,D.scaleDraft(latest,latest.servings+delta));});}
- function changeAmount(foodId:string,value:string){if(!currentRecipe)return;const id=currentRecipe.id;try{change(s=>{const latest=D.getDraft(s,id);return D.saveDraft(s,D.setDraftAmount(latest,foodId,{...latest.amounts[foodId],value:value===''?null:Number(value)}));});}catch(e){notify(e instanceof Error?e.message:'数量を確認してください。');}}
- async function saveRecipe(id:string){const was=appState.saved.includes(id);if(await change(s=>D.toggleSaved(s,id)))notify(was?'保存を外しました。':'保存しました。',was?()=>change(s=>D.toggleSaved(s,id)):undefined);}
- async function addMeal(d:RecipeDraft){const id=d.recipeId;if(await change(s=>D.addToMeal(s,D.getDraft(s,id)),'献立に追加しました。'))navigate('meal');}
- function openStock(lot?:StockLot){editLot=lot?.id??'';editCandidate='';editFood=lot?.foodId??foods[0]?.id??'';editName='';editValue=lot?.quantity.value?.toString()??'';editUnit=lot?.quantity.unit??'g';editLocation=lot?.location??'冷蔵';editPriority=lot?.priority??false;editExpiry=lot?.expiresOn??'';modal='stock';}
- function editReceipt(c:ReceiptCandidate){editCandidate=c.id;editLot='';editFood=c.foodId??'';editName='';editValue=c.quantity.value?.toString()??'';editUnit=c.quantity.unit;modal='candidate';}
- function selectEditFood(id:string){editFood=id;const f=foods.find(f=>f.id===id);if(f&&!editLot){editUnit=f.defaultUnit;editLocation=f.location;}}
- async function saveEdit(){let next=modal==='candidate'?{...appState,customFoods:[...appState.customFoods,...receiptCustomFoods]}:appState;let id=editFood;try{if(!id&&editName.trim()){next=D.addCustomFood(next,editName.trim());id=next.customFoods[next.customFoods.length-1].id;}if(!id)throw new Error('登録する食材を選んでください。');const quantity:Quantity={value:editValue===''?null:Number(editValue),unit:editUnit};if(quantity.value!==null&&(!Number.isFinite(quantity.value)||quantity.value<0))throw new Error('量は0以上の数で入力してください。');if(modal==='candidate'){receiptCustomFoods=next.customFoods.filter(f=>!appState.customFoods.some(old=>old.id===f.id));candidates=candidates.map(c=>c.id===editCandidate?{...c,foodId:id,quantity,selected:true,status:'matched',reason:'内容を確認しました'}:c);modal='';return;}const input={foodId:id,quantity,location:editLocation,priority:editPriority,expiresOn:editExpiry||null};if(await change(()=>editLot?D.updateStock(next,editLot,input):D.addStock(next,input),'冷蔵庫を更新しました。'))modal='';}catch(e){error=e instanceof Error?e.message:'入力内容を確認してください。';}}
- async function deleteLot(){const id=editLot;if(await change(s=>D.deleteStock(s,id))){modal='';notify('食材を削除しました。',()=>change(s=>D.restoreStock(s,id)));}}
- function sampleStock(){change(s=>{let next=s;for(const [foodId,value,unit]of[['eggplant',null,'g'],['egg',1,'個'],['tofu',300,'g']] as [string,number|null,Unit][])next=D.addStock(next,{foodId,quantity:{value,unit}});return next;},'サンプル在庫3件を追加しました。');}
- function toggleLot(id:string){selectedLots=selectedLots.includes(id)?selectedLots.filter(x=>x!==id):[...selectedLots,id];}
- function openFilters(){stagedMax=appState.search.maxMinutes?.toString()??'';stagedMatch=appState.search.match;stagedNoShopping=appState.search.noShopping;stagedEquipment=[...appState.search.equipment];modal='filters';}
- async function applyFilters(){if(await change(s=>({...s,search:{...s.search,maxMinutes:stagedMax?Number(stagedMax):null,match:stagedMatch,noShopping:stagedNoShopping,equipment:$state.snapshot(stagedEquipment)}})))modal='';}
- async function pickReceipt(event:Event){const target=event.target as HTMLInputElement;const file=target.files?.[0];if(!file)return;ocrError='';if(receiptPreview)URL.revokeObjectURL(receiptPreview);receiptPreview='';receiptFile=null;try{validateReceiptFile(file);await validateReceiptImage(file);if(receiptPreview)URL.revokeObjectURL(receiptPreview);receiptPreview=URL.createObjectURL(file);receiptFile=file;sampleReceipt=false;receiptPhase='upload';}catch(e){ocrError=e instanceof Error?e.message:'画像を開けませんでした。';}target.value='';}
- async function clearReceipt(){if(ocrTask){await ocrTask.cancel();ocrTask=null;}if(receiptPreview)URL.revokeObjectURL(receiptPreview);receiptPreview='';receiptFile=null;candidates=[];receiptCustomFoods=[];imageHash='';signature='';receiptPhase='upload';ocrError='';pendingImportId='';sampleReceipt=false;}
- function cancelReceipt(){if(candidates.length){modal='cancel-receipt';}else{void clearReceipt();navigate('fridge');}}
- async function runOcr(){if(!receiptFile)return;receiptPhase='reading';ocrError='';ocrProgress=0;try{imageHash=await hashImage(receiptFile);ocrTask=recognizeReceipt(receiptFile,(progress,status)=>{ocrProgress=Math.round(progress*100);ocrStatus=status;});const text=await ocrTask.result;ocrTask=null;candidates=parseReceipt(text,foods);if(!candidates.length)throw new Error('食材の文字が見つかりませんでした。明るい場所で撮り直すか、手入力してください。');receiptPhase='review';pendingImportId=crypto.randomUUID();}catch(e){if(receiptPhase==='reading'){ocrError=e instanceof Error?e.message:'読み取りに失敗しました。';receiptPhase='upload';}}}
- async function cancelOcr(){receiptPhase='upload';if(ocrTask){await ocrTask.cancel();ocrTask=null;}ocrError='読み取りをキャンセルしました。在庫は変更していません。';}
- async function sampleRead(){await clearReceipt();sampleReceipt=true;candidates=parseReceipt('トマト 198円\nたまご 248円\nキヌ 98円\nレジ袋 5円\n合計 549円',foods);imageHash='0fcebd21f7378b58478e92976604aa0cf1c773595984bf5943eef01ade00dc9c';pendingImportId=crypto.randomUUID();receiptPhase='review';}
- function toggleCandidate(id:string){candidates=candidates.map(c=>c.id===id?{...c,selected:!c.selected}:c);}
- async function prepareRegister(){if(registrationBusy||!selectedCandidates.length||invalidCandidates)return;signature=await receiptSignature(candidates);duplicates=D.duplicateImports(appState,imageHash,signature).map(i=>i.id);if(duplicates.length){modal='duplicate';return;}registerReceipt(false);}
- async function registerReceipt(allowDuplicate:boolean){if(registrationBusy)return;registrationBusy=true;const id=pendingImportId||crypto.randomUUID();const ok=await change(s=>D.commitReceipt({...s,customFoods:[...s.customFoods,...receiptCustomFoods]},{id,imageHash,purchaseSignature:signature,candidates:$state.snapshot(candidates),allowDuplicate}));if(ok){lastImportId=id;receiptPhase='success';modal='';candidates=[];receiptCustomFoods=[];receiptFile=null;if(receiptPreview)URL.revokeObjectURL(receiptPreview);receiptPreview='';imageHash='';signature='';}registrationBusy=false;}
- function openUndo(id:string){selectedHistory=id;modal='undo-import';}
- async function confirmUndo(){if(await change(s=>D.undoImport(s,selectedHistory),'今回の登録の残量を取り消しました。')){modal='';if(receiptPhase==='success')navigate('history');}}
- async function startMealCooking(){await writeQueue;await startCooking(appState.meal);}
- async function startCooking(items:MealItem[]){await writeQueue;items=items.map(i=>appState.meal.find(m=>m.id===i.id)??i);if(appState.cooking&&appState.cooking.status!=='completed'){notify('中断中の調理があります。まず再開・完了してください。');navigate('cooking');return;}if(await change(s=>D.startCooking(s,items))){deduct=false;completedMessage=false;navigate('cooking');}}
- async function cookSingle(){const recipeId=currentRecipe?.id;if(!recipeId)return;await writeQueue;startCooking([{...D.getDraft(appState,recipeId),id:crypto.randomUUID()}]);}
- function nextStep(){if(!appState.cooking)return;if(appState.cooking.index===appState.cooking.plan.length-1){prepareComplete();return;}change(s=>D.moveCooking(s,1));}
- function prepareComplete(){if(!appState.cooking)return;const map=new Map<string,ConsumptionRequest>();for(const item of appState.cooking.mealSnapshot){const recipe=D.getRecipe(item.recipeId);for(const ingredient of recipe.ingredients){const q=item.amounts[ingredient.foodId];const key=`${ingredient.foodId}:${q.unit}:${ingredient.form}`;const old=map.get(key);map.set(key,{foodId:ingredient.foodId,form:ingredient.form,quantity:{unit:q.unit,value:old?(old.quantity.value===null||q.value===null?null:old.quantity.value+q.value):q.value}});}}consumption=[...map.values()];deduct=false;completedMessage=false;navigate('complete');}
- async function finishCooking(){if(await change(s=>D.completeCooking(s,deduct,$state.snapshot(consumption)))){completedMessage=true;}}
- function secondsLabel(seconds:number){return `${Math.floor(seconds/60).toString().padStart(2,'0')}:${Math.floor(seconds%60).toString().padStart(2,'0')}`;}
- async function saveSettings(){if(await change(s=>({...s,settings:{excludedFoodIds:$state.snapshot(excludedFoods),pantryFoodIds:$state.snapshot(pantryFoods),equipment:$state.snapshot(equipment)}}),'設定を保存しました。'))chooseRandom();}
- function toggleList(list:string[],id:string){return list.includes(id)?list.filter(x=>x!==id):[...list,id];}
- function downloadBackup(){try{if(storageIssue)throw new Error('保存データを正常に読めないため、現在のデータとして書き出せません。正常なバックアップから復元してください。');const blob=new Blob([exportBackup(appState)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`recipeweave-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){error=e instanceof Error?e.message:'書き出しできませんでした。';}}
- async function readBackup(event:Event){const file=(event.target as HTMLInputElement).files?.[0];if(!file)return;try{if(file.size>10*1024*1024)throw new Error('バックアップは10MB以下のJSONを選んでください。');backup=parseBackup(await file.text());modal='backup';}catch(e){error=e instanceof Error?e.message:'このファイルは読み込めません。';}(event.target as HTMLInputElement).value='';}
- async function confirmBackup(){if(!backup)return;try{appState=storageIssue?await recoverBackup(recoveryToken??inspectRecovery(),$state.snapshot(backup)):await restoreBackup(appState,$state.snapshot(backup));storageIssue='';backup=null;modal='';chooseRandom();notify('データを読み込みました。');}catch(e){error=e instanceof Error?e.message:'保存できませんでした。';}}
- $effect(()=>{const activeModal=modal;const root=modalRoot;if(!activeModal||!root)return;const previous=document.activeElement instanceof HTMLElement?document.activeElement:null;const overflow=document.body.style.overflow;document.body.style.overflow='hidden';queueMicrotask(()=>root.querySelector<HTMLElement>('button,input,select,a[href]')?.focus());const handle=(event:KeyboardEvent)=>{if(event.key==='Escape'){modal=activeModal==='duplicate-history'?'duplicate':'';return;}if(event.key!=='Tab')return;const items=[...root.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),select:not([disabled]),a[href],[tabindex="0"]')];const first=items[0];const last=items[items.length-1];if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}};root.addEventListener('keydown',handle);return()=>{root.removeEventListener('keydown',handle);document.body.style.overflow=overflow;previous?.focus();};});
- onMount(()=>{try{appState=loadState();}catch(e){storageIssue=e instanceof Error?e.message:'保存データを開けませんでした。';try{recoveryToken=inspectRecovery();}catch{recoveryToken=null;}}chooseRandom();readRoute();window.addEventListener('hashchange',readRoute);const timer=setInterval(()=>{now=Date.now();},1000);return()=>{window.removeEventListener('hashchange',readRoute);clearInterval(timer);void clearReceipt();};});
+  function navigate(to: string, id = "") {
+    if (
+      route === "receipt" &&
+      to !== "receipt" &&
+      receiptPhase === "review" &&
+      candidates.length &&
+      !window.confirm(
+        "読み取り中の候補を破棄して移動しますか？在庫は変更しません。",
+      )
+    )
+      return;
+    window.location.hash = `/${to}${id ? "/" + id : ""}`;
+  }
+  function readRoute() {
+    const parts = window.location.hash.replace(/^#\/?/, "").split("/");
+    const next = parts[0] || "home";
+    if (route === "receipt" && next !== "receipt") {
+      void clearReceipt();
+    }
+    route = next;
+    routeId = parts[1] || "";
+    error = "";
+    query = "";
+    modal = "";
+    if (next === "fridge" && routeId === "add") openStock();
+    if (
+      next === "complete" &&
+      appState.cooking &&
+      appState.cooking.status !== "completed" &&
+      !consumption.length
+    )
+      consumption = D.requiredQuantities(appState.cooking.mealSnapshot);
+    if (next === "settings") {
+      excludedFoods = [...appState.settings.excludedFoodIds];
+      pantryFoods = [...appState.settings.pantryFoodIds];
+      equipment = [...appState.settings.equipment];
+    }
+    window.scrollTo({ top: 0 });
+  }
+  function foodName(id: string) {
+    return foods.find((f) => f.id === id)?.name ?? id;
+  }
+  function toggleFood(id: string) {
+    change((s) => ({
+      ...s,
+      search: {
+        ...s.search,
+        selectedFoodIds: s.search.selectedFoodIds.includes(id)
+          ? s.search.selectedFoodIds.filter((f) => f !== id)
+          : [...s.search.selectedFoodIds, id],
+      },
+    }));
+  }
+  async function doSearch(ids?: string[]) {
+    if (ids)
+      await change((s) => ({
+        ...s,
+        search: { ...s.search, selectedFoodIds: [...new Set(ids)] },
+      }));
+    navigate("results");
+  }
+  function chooseRandom() {
+    const next = D.randomRecipe(appState, randomId);
+    randomId = next?.id ?? "";
+  }
+  function openRecipe(r: Recipe) {
+    navigate("detail", r.id);
+  }
+  function updateDraft(next: RecipeDraft) {
+    change((s) => D.saveDraft(s, next));
+  }
+  function changeServings(value: string | number, item?: MealItem) {
+    const n = Number(value);
+    try {
+      if (item)
+        change((s) =>
+          D.updateMeal(
+            s,
+            item.id,
+            D.scaleDraft(s.meal.find((m) => m.id === item.id) ?? item, n),
+          ),
+        );
+      else if (currentRecipe) {
+        const id = currentRecipe.id;
+        change((s) => D.saveDraft(s, D.scaleDraft(D.getDraft(s, id), n)));
+      }
+    } catch (e) {
+      notify(e instanceof Error ? e.message : "人数を確認してください。");
+    }
+  }
+  function adjustServings(delta: number, itemId?: string) {
+    const recipeId = routeId;
+    change((s) => {
+      if (itemId) {
+        const item = s.meal.find((m) => m.id === itemId);
+        if (!item) throw new Error("献立の料理が見つかりません。");
+        return D.updateMeal(
+          s,
+          itemId,
+          D.scaleDraft(item, item.servings + delta),
+        );
+      }
+      const latest = D.getDraft(s, recipeId);
+      return D.saveDraft(s, D.scaleDraft(latest, latest.servings + delta));
+    });
+  }
+  function changeAmount(foodId: string, value: string) {
+    if (!currentRecipe) return;
+    const id = currentRecipe.id;
+    try {
+      change((s) => {
+        const latest = D.getDraft(s, id);
+        return D.saveDraft(
+          s,
+          D.setDraftAmount(latest, foodId, {
+            ...latest.amounts[foodId],
+            value: value === "" ? null : Number(value),
+          }),
+        );
+      });
+    } catch (e) {
+      notify(e instanceof Error ? e.message : "数量を確認してください。");
+    }
+  }
+  async function saveRecipe(id: string) {
+    const was = appState.saved.includes(id);
+    if (await change((s) => D.toggleSaved(s, id)))
+      notify(
+        was ? "保存を外しました。" : "保存しました。",
+        was ? () => change((s) => D.toggleSaved(s, id)) : undefined,
+      );
+  }
+  async function addMeal(d: RecipeDraft) {
+    const id = d.recipeId;
+    if (
+      await change(
+        (s) => D.addToMeal(s, D.getDraft(s, id)),
+        "献立に追加しました。",
+      )
+    )
+      navigate("meal");
+  }
+  function openStock(lot?: StockLot) {
+    editLot = lot?.id ?? "";
+    editCandidate = "";
+    editFood = lot?.foodId ?? foods[0]?.id ?? "";
+    editName = "";
+    editValue = lot?.quantity.value?.toString() ?? "";
+    editUnit = lot?.quantity.unit ?? "g";
+    editLocation = lot?.location ?? "冷蔵";
+    editPriority = lot?.priority ?? false;
+    editExpiry = lot?.expiresOn ?? "";
+    modal = "stock";
+  }
+  function editReceipt(c: ReceiptCandidate) {
+    editCandidate = c.id;
+    editLot = "";
+    editFood = c.foodId ?? "";
+    editName = "";
+    editValue = c.quantity.value?.toString() ?? "";
+    editUnit = c.quantity.unit;
+    modal = "candidate";
+  }
+  function selectEditFood(id: string) {
+    editFood = id;
+    const f = foods.find((f) => f.id === id);
+    if (f && !editLot) {
+      editUnit = f.defaultUnit;
+      editLocation = f.location;
+    }
+  }
+  async function saveEdit() {
+    let next =
+      modal === "candidate"
+        ? {
+            ...appState,
+            customFoods: [...appState.customFoods, ...receiptCustomFoods],
+          }
+        : appState;
+    let id = editFood;
+    try {
+      if (!id && editName.trim()) {
+        next = D.addCustomFood(next, editName.trim());
+        id = next.customFoods[next.customFoods.length - 1].id;
+      }
+      if (!id) throw new Error("登録する食材を選んでください。");
+      const quantity: Quantity = {
+        value: editValue === "" ? null : Number(editValue),
+        unit: editUnit,
+      };
+      if (
+        quantity.value !== null &&
+        (!Number.isFinite(quantity.value) || quantity.value < 0)
+      )
+        throw new Error("量は0以上の数で入力してください。");
+      if (modal === "candidate") {
+        receiptCustomFoods = next.customFoods.filter(
+          (f) => !appState.customFoods.some((old) => old.id === f.id),
+        );
+        candidates = candidates.map((c) =>
+          c.id === editCandidate
+            ? {
+                ...c,
+                foodId: id,
+                quantity,
+                selected: true,
+                status: "matched",
+                reason: "内容を確認しました",
+              }
+            : c,
+        );
+        modal = "";
+        return;
+      }
+      const input = {
+        foodId: id,
+        quantity,
+        location: editLocation,
+        priority: editPriority,
+        expiresOn: editExpiry || null,
+      };
+      const lotId = editLot;
+      const createdFood = next.customFoods.find(
+        (f) =>
+          f.id === id && !appState.customFoods.some((old) => old.id === id),
+      );
+      if (
+        await change((current) => {
+          const fresh =
+            createdFood &&
+            !current.customFoods.some((f) => f.id === createdFood.id)
+              ? D.addCustomFood(current, createdFood.name, createdFood.id)
+              : current;
+          return lotId
+            ? D.updateStock(fresh, lotId, input)
+            : D.addStock(fresh, input);
+        }, "冷蔵庫を更新しました。")
+      )
+        modal = "";
+    } catch (e) {
+      error = e instanceof Error ? e.message : "入力内容を確認してください。";
+    }
+  }
+  async function deleteLot() {
+    const id = editLot;
+    if (await change((s) => D.deleteStock(s, id))) {
+      modal = "";
+      notify("食材を削除しました。", () =>
+        change((s) => D.restoreStock(s, id)),
+      );
+    }
+  }
+  function sampleStock() {
+    change((s) => {
+      let next = s;
+      for (const [foodId, value, unit] of [
+        ["eggplant", null, "g"],
+        ["egg", 1, "個"],
+        ["tofu", 300, "g"],
+      ] as [string, number | null, Unit][])
+        next = D.addStock(next, { foodId, quantity: { value, unit } });
+      return next;
+    }, "サンプル在庫3件を追加しました。");
+  }
+  function toggleLot(id: string) {
+    selectedLots = selectedLots.includes(id)
+      ? selectedLots.filter((x) => x !== id)
+      : [...selectedLots, id];
+  }
+  function openFilters() {
+    stagedMax = appState.search.maxMinutes?.toString() ?? "";
+    stagedMatch = appState.search.match;
+    stagedNoShopping = appState.search.noShopping;
+    stagedEquipment = [...appState.search.equipment];
+    modal = "filters";
+  }
+  async function applyFilters() {
+    if (
+      await change((s) => ({
+        ...s,
+        search: {
+          ...s.search,
+          maxMinutes: stagedMax ? Number(stagedMax) : null,
+          match: stagedMatch,
+          noShopping: stagedNoShopping,
+          equipment: $state.snapshot(stagedEquipment),
+        },
+      }))
+    )
+      modal = "";
+  }
+  async function pickReceipt(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
+    ocrError = "";
+    if (receiptPreview) URL.revokeObjectURL(receiptPreview);
+    receiptPreview = "";
+    receiptFile = null;
+    try {
+      validateReceiptFile(file);
+      await validateReceiptImage(file);
+      if (receiptPreview) URL.revokeObjectURL(receiptPreview);
+      receiptPreview = URL.createObjectURL(file);
+      receiptFile = file;
+      sampleReceipt = false;
+      receiptPhase = "upload";
+    } catch (e) {
+      ocrError = e instanceof Error ? e.message : "画像を開けませんでした。";
+    }
+    target.value = "";
+  }
+  async function clearReceipt() {
+    if (ocrTask) {
+      await ocrTask.cancel();
+      ocrTask = null;
+    }
+    if (receiptPreview) URL.revokeObjectURL(receiptPreview);
+    receiptPreview = "";
+    receiptFile = null;
+    candidates = [];
+    receiptCustomFoods = [];
+    imageHash = "";
+    signature = "";
+    receiptPhase = "upload";
+    ocrError = "";
+    pendingImportId = "";
+    sampleReceipt = false;
+  }
+  function cancelReceipt() {
+    if (candidates.length) {
+      modal = "cancel-receipt";
+    } else {
+      void clearReceipt();
+      navigate("fridge");
+    }
+  }
+  async function runOcr() {
+    if (!receiptFile) return;
+    receiptPhase = "reading";
+    ocrError = "";
+    ocrProgress = 0;
+    try {
+      imageHash = await hashImage(receiptFile);
+      ocrTask = recognizeReceipt(receiptFile, (progress, status) => {
+        ocrProgress = Math.round(progress * 100);
+        ocrStatus = status;
+      });
+      const text = await ocrTask.result;
+      ocrTask = null;
+      candidates = parseReceipt(text, foods);
+      if (!candidates.length)
+        throw new Error(
+          "食材の文字が見つかりませんでした。明るい場所で撮り直すか、手入力してください。",
+        );
+      receiptPhase = "review";
+      pendingImportId = crypto.randomUUID();
+    } catch (e) {
+      if (receiptPhase === "reading") {
+        ocrError = e instanceof Error ? e.message : "読み取りに失敗しました。";
+        receiptPhase = "upload";
+      }
+    }
+  }
+  async function cancelOcr() {
+    receiptPhase = "upload";
+    if (ocrTask) {
+      await ocrTask.cancel();
+      ocrTask = null;
+    }
+    ocrError = "読み取りをキャンセルしました。在庫は変更していません。";
+  }
+  async function sampleRead() {
+    await clearReceipt();
+    sampleReceipt = true;
+    candidates = parseReceipt(
+      "トマト 198円\nたまご 248円\nキヌ 98円\nレジ袋 5円\n合計 549円",
+      foods,
+    );
+    imageHash =
+      "0fcebd21f7378b58478e92976604aa0cf1c773595984bf5943eef01ade00dc9c";
+    pendingImportId = crypto.randomUUID();
+    receiptPhase = "review";
+  }
+  function toggleCandidate(id: string) {
+    candidates = candidates.map((c) =>
+      c.id === id ? { ...c, selected: !c.selected } : c,
+    );
+  }
+  async function prepareRegister() {
+    if (registrationBusy || !selectedCandidates.length || invalidCandidates)
+      return;
+    signature = await receiptSignature(candidates);
+    duplicates = D.duplicateImports(appState, imageHash, signature).map(
+      (i) => i.id,
+    );
+    if (duplicates.length) {
+      modal = "duplicate";
+      return;
+    }
+    registerReceipt(false);
+  }
+  async function registerReceipt(allowDuplicate: boolean) {
+    if (registrationBusy) return;
+    registrationBusy = true;
+    const id = pendingImportId || crypto.randomUUID();
+    const ok = await change((s) =>
+      D.commitReceipt(
+        { ...s, customFoods: [...s.customFoods, ...receiptCustomFoods] },
+        {
+          id,
+          imageHash,
+          purchaseSignature: signature,
+          candidates: $state.snapshot(candidates),
+          allowDuplicate,
+        },
+      ),
+    );
+    if (ok) {
+      lastImportId = id;
+      receiptPhase = "success";
+      modal = "";
+      candidates = [];
+      receiptCustomFoods = [];
+      receiptFile = null;
+      if (receiptPreview) URL.revokeObjectURL(receiptPreview);
+      receiptPreview = "";
+      imageHash = "";
+      signature = "";
+    }
+    registrationBusy = false;
+  }
+  function openUndo(id: string) {
+    selectedHistory = id;
+    modal = "undo-import";
+  }
+  async function confirmUndo() {
+    if (
+      await change(
+        (s) => D.undoImport(s, selectedHistory),
+        "今回の登録の残量を取り消しました。",
+      )
+    ) {
+      modal = "";
+      if (receiptPhase === "success") navigate("history");
+    }
+  }
+  async function startMealCooking() {
+    await writeQueue;
+    await startCooking(appState.meal);
+  }
+  async function startCooking(items: MealItem[]) {
+    await writeQueue;
+    items = items.map((i) => appState.meal.find((m) => m.id === i.id) ?? i);
+    if (appState.cooking && appState.cooking.status !== "completed") {
+      notify("中断中の調理があります。まず再開・完了してください。");
+      navigate("cooking");
+      return;
+    }
+    if (await change((s) => D.startCooking(s, items))) {
+      deduct = false;
+      completedMessage = false;
+      navigate("cooking");
+    }
+  }
+  async function cookSingle() {
+    const recipeId = currentRecipe?.id;
+    if (!recipeId) return;
+    await writeQueue;
+    startCooking([
+      { ...D.getDraft(appState, recipeId), id: crypto.randomUUID() },
+    ]);
+  }
+  function nextStep() {
+    if (!appState.cooking) return;
+    if (appState.cooking.index === appState.cooking.plan.length - 1) {
+      prepareComplete();
+      return;
+    }
+    change((s) => D.moveCooking(s, 1));
+  }
+  function prepareComplete() {
+    if (!appState.cooking) return;
+    const map = new Map<string, ConsumptionRequest>();
+    for (const item of appState.cooking.mealSnapshot) {
+      const recipe = D.getRecipe(item.recipeId);
+      for (const ingredient of recipe.ingredients) {
+        const q = item.amounts[ingredient.foodId];
+        const key = `${ingredient.foodId}:${q.unit}:${ingredient.form}`;
+        const old = map.get(key);
+        map.set(key, {
+          foodId: ingredient.foodId,
+          form: ingredient.form,
+          quantity: {
+            unit: q.unit,
+            value: old
+              ? old.quantity.value === null || q.value === null
+                ? null
+                : old.quantity.value + q.value
+              : q.value,
+          },
+        });
+      }
+    }
+    consumption = [...map.values()];
+    deduct = false;
+    completedMessage = false;
+    navigate("complete");
+  }
+  async function finishCooking() {
+    if (
+      await change((s) =>
+        D.completeCooking(s, deduct, $state.snapshot(consumption)),
+      )
+    ) {
+      completedMessage = true;
+    }
+  }
+  function secondsLabel(seconds: number) {
+    return `${Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0")}:${Math.floor(seconds % 60)
+      .toString()
+      .padStart(2, "0")}`;
+  }
+  async function saveSettings() {
+    if (
+      await change(
+        (s) => ({
+          ...s,
+          settings: {
+            excludedFoodIds: $state.snapshot(excludedFoods),
+            pantryFoodIds: $state.snapshot(pantryFoods),
+            equipment: $state.snapshot(equipment),
+          },
+        }),
+        "設定を保存しました。",
+      )
+    )
+      chooseRandom();
+  }
+  function toggleList(list: string[], id: string) {
+    return list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
+  }
+  function downloadBackup() {
+    try {
+      if (storageIssue)
+        throw new Error(
+          "保存データを正常に読めないため、現在のデータとして書き出せません。正常なバックアップから復元してください。",
+        );
+      const blob = new Blob([exportBackup(appState)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `recipeweave-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) {
+      error = e instanceof Error ? e.message : "書き出しできませんでした。";
+    }
+  }
+  async function readBackup(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    try {
+      if (file.size > 10 * 1024 * 1024)
+        throw new Error("バックアップは10MB以下のJSONを選んでください。");
+      backup = parseBackup(await file.text());
+      modal = "backup";
+    } catch (e) {
+      error = e instanceof Error ? e.message : "このファイルは読み込めません。";
+    }
+    (event.target as HTMLInputElement).value = "";
+  }
+  async function confirmBackup() {
+    if (!backup) return;
+    try {
+      appState = storageIssue
+        ? await recoverBackup(
+            recoveryToken ?? inspectRecovery(),
+            $state.snapshot(backup),
+          )
+        : await restoreBackup(appState, $state.snapshot(backup));
+      storageIssue = "";
+      backup = null;
+      modal = "";
+      chooseRandom();
+      notify("データを読み込みました。");
+    } catch (e) {
+      error = e instanceof Error ? e.message : "保存できませんでした。";
+    }
+  }
+  $effect(() => {
+    const activeModal = modal;
+    const root = modalRoot;
+    if (!activeModal || !root) return;
+    const previous =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    queueMicrotask(() =>
+      root.querySelector<HTMLElement>("button,input,select,a[href]")?.focus(),
+    );
+    const handle = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        modal = activeModal === "duplicate-history" ? "duplicate" : "";
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const items = [
+        ...root.querySelectorAll<HTMLElement>(
+          'button:not([disabled]),input:not([disabled]),select:not([disabled]),a[href],[tabindex="0"]',
+        ),
+      ];
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    root.addEventListener("keydown", handle);
+    return () => {
+      root.removeEventListener("keydown", handle);
+      document.body.style.overflow = overflow;
+      previous?.focus();
+    };
+  });
+  onMount(() => {
+    try {
+      appState = loadState();
+    } catch (e) {
+      storageIssue =
+        e instanceof Error ? e.message : "保存データを開けませんでした。";
+      try {
+        recoveryToken = inspectRecovery();
+      } catch {
+        recoveryToken = null;
+      }
+    }
+    chooseRandom();
+    readRoute();
+    window.addEventListener("hashchange", readRoute);
+    const timer = setInterval(() => {
+      now = Date.now();
+    }, 1000);
+    return () => {
+      window.removeEventListener("hashchange", readRoute);
+      clearInterval(timer);
+      void clearReceipt();
+    };
+  });
 </script>
 
-<svelte:head><title>{route==='home'?'今日の一品、ここから。':'RecipeWeave 試用版'} — RecipeWeave</title></svelte:head>
-<div class="app-shell" inert={modal?true:undefined}>
- <header class="topbar"><button class="brand" onclick={()=>navigate('home')} aria-label="RecipeWeave ホーム"><CookingPot class="brand-mark"/>RecipeWeave<span style="color:var(--orange)">.</span></button><div class="top-actions"><span class="dev-pill">DEV · SAMPLE 08</span><button class="icon-button" onclick={()=>navigate('help')} aria-label="使い方・Q&A"><CircleHelp size={19}/></button><button class="icon-button" onclick={()=>navigate('settings')} aria-label="設定"><Settings size={19}/></button></div></header>
- <main class="page" id="main">
- {#if storageIssue}<div class="notice error gap-bottom" role="alert">保存データを開けません：{storageIssue}<button class="text-button" onclick={()=>navigate('settings')}>設定からバックアップを復元</button></div>{/if}
- {#if error}<div class="notice error gap-bottom" role="alert">{error}<button class="text-button" onclick={()=>error=''}>閉じる</button></div>{/if}
- {#if route==='home'}
-  <div class="home-title"><span class="eyebrow">A LITTLE CHOICE, A NEW DISH.</span><h1>今日の一品、ここから。</h1><p class="subtitle">使いたい食材を、ぽんと選ぶ。<br class="mobile-break"/>いつもの材料に、新しいおいしさを。</p></div>
-  {#if appState.cooking&&appState.cooking.status!=='completed'}<button class="notice wide row between gap-bottom" onclick={()=>{change(s=>D.resumeCooking(s));navigate('cooking');}}><span>調理を再開 · {appState.cooking.plan[appState.cooking.index]?.recipeName} / 工程{appState.cooking.index+1}</span><ArrowRight size={20}/></button>{/if}
-  <div class="columns"><section><div class="section-head"><h2>何を使おう？</h2><span class="muted">いくつでも選べます</span></div><div class="food-grid">{#each foods.filter(f=>f.imageIndex!==null).slice(0,12) as food}<FoodTile {food} selected={selectedFoods.includes(food.id)} onselect={()=>toggleFood(food.id)}/>{/each}</div><div class="row between"><span class="selection-summary">{selectedFoods.length?selectedFoods.map(foodName).join('・'):'写真を押すと、チェックが付きます'}</span><button class="text-button" onclick={()=>navigate('ingredients')}>食材をもっと見る <ArrowRight size={15}/></button></div><div class="search-dock"><button class="primary" onclick={()=>doSearch()}><Search size={19}/>{selectedFoods.length?`この${selectedFoods.length}つで探す`:'すべての料理を見る'}<ArrowRight size={18}/></button></div><div class="quick-receipt"><Receipt size={31}/><div><strong>買ったものは、レシートから。</strong><p>撮って、確認。冷蔵庫にまとめて追加。</p></div><button class="icon-button" aria-label="レシートから追加" onclick={()=>navigate('receipt')}><ArrowRight size={19}/></button></div></section><aside><div class="discover"><div class="section-head"><span class="eyebrow" style="margin:0">偶然の一品</span><button class="shuffle-button" onclick={chooseRandom}><Shuffle size={16}/>別の一品</button></div>{#if random}<RecipeCard recipe={random} large onclick={()=>openRecipe(random)}/>{:else}<p>食べられない食材の設定に合う料理がありません。</p><button class="text-button" onclick={()=>navigate('settings')}>設定を確認する</button>{/if}<p class="discover-note">いつもと少し違う料理に出会う。<br/>気になる一品を、今日の食卓に。</p></div><span class="hero-tag"><Sparkles size={13}/>まずは8品のサンプルから。人数・分量は料理を選んだあとに。</span></aside></div>
- {:else if route==='ingredients'}
-  <button class="back" onclick={()=>navigate('home')}><ArrowLeft size={16}/>ホームへ</button><div class="page-header"><div><span class="eyebrow">INGREDIENTS</span><h1>食材を選ぶ</h1></div><span class="muted">{selectedFoods.length}つ選択中</span></div><label class="field gap-bottom">食材名<input type="search" bind:value={query} placeholder="例：なす、ツナ、カップ焼きそば"/></label><div class="row wrap gap-bottom">{#each categories as c}<button class="chip" class:on={category===c} onclick={()=>category=c}>{c}</button>{/each}</div><div class="food-grid">{#each visibleFoods as food}<FoodTile {food} selected={selectedFoods.includes(food.id)} onselect={()=>toggleFood(food.id)}/>{/each}</div>{#if !visibleFoods.length}<p class="notice">候補がありません。名前を短くして探してみてください。</p>{/if}<div class="sticky-actions"><button class="primary wide" onclick={()=>doSearch()}>選んだ食材で探す <ArrowRight size={18}/></button></div>
- {:else if route==='results'||route==='meal-add'}
-  <button class="back" onclick={()=>navigate(route==='meal-add'?'meal':'home')}><ArrowLeft size={16}/>戻る</button><div class="page-header"><div><span class="eyebrow">FIND YOUR DISH</span><h1>{route==='meal-add'?'献立にもう一品':'こんな一品、どう？'}</h1><p class="subtitle">{selectedFoods.length?selectedFoods.map(foodName).join('・'):'すべての食材'} <span class="muted">/ {appState.search.match==='all'?'選んだ食材をすべて使う':'いずれかを使う'}</span></p></div><button class="secondary" onclick={openFilters}><SlidersHorizontal size={17}/>条件</button></div><p class="muted gap-bottom">{searchResults.length}品のサンプル · 人数と材料量は、料理を開いたあとで変更できます。</p>{#if searchResults.length}<div class="grid-results">{#each searchResults as recipe}<div><RecipeCard {recipe} onclick={()=>openRecipe(recipe)}/><p class="check-note" style="padding:8px 4px">{stockSummary(recipe)}</p></div>{/each}</div>{:else}<div class="empty"><Search size={38}/><h2>この条件の料理は、まだありません。</h2><p>今回は8品のサンプルです。食材を選び直すか、時間や買い足し条件を変更できます。</p><div class="row wrap" style="justify-content:center"><button class="primary" onclick={()=>navigate('ingredients')}>食材を選び直す</button><button class="secondary" onclick={openFilters}>条件を変える</button></div></div>{/if}
- {:else if route==='fridge'}
-  <div class="page-header"><div><span class="eyebrow">MY FRIDGE</span><h1>冷蔵庫に、何がある？</h1><p class="subtitle">使いたい食材を選んで、そのまま料理へ。</p></div><button class="secondary" onclick={()=>navigate('history')}><History size={18}/>レシート履歴</button></div><div class="columns"><section><div class="row gap-bottom"><button class="primary" onclick={()=>navigate('receipt')}><Receipt size={19}/>レシートから追加</button><button class="secondary" onclick={()=>openStock()}><Plus size={18}/>手入力で追加</button></div>{#if activeLots.length}<div class="list">{#each activeLots as lot}<div class="stock-row"><button class="stock-select" aria-pressed={selectedLots.includes(lot.id)} onclick={()=>toggleLot(lot.id)}><span class="check-square" class:checked={selectedLots.includes(lot.id)} aria-hidden="true">{selectedLots.includes(lot.id)?'✓':''}</span><span><strong>{foodName(lot.foodId)} {#if lot.priority}<span class="badge warning">優先して使う</span>{/if}</strong><span class="muted">{D.quantityText(lot.quantity)} · {lot.location}{lot.expiresOn?` · 期限 ${lot.expiresOn}`:''}</span></span></button><button class="text-button" aria-label={`${foodName(lot.foodId)}を編集`} onclick={()=>openStock(lot)}>編集</button></div>{/each}</div><div class="sticky-actions"><button class="primary wide" disabled={!selectedLots.length} onclick={()=>doSearch(activeLots.filter(l=>selectedLots.includes(l.id)).map(l=>l.foodId))}>選んだ食材で探す <ArrowRight size={18}/></button></div>{:else}<div class="empty"><Refrigerator size={40}/><h2>最初の食材を、入れてみよう。</h2><p>レシートからまとめて登録。<br/>ひとつずつ手入力でも、量はあとからでも。</p><button class="secondary" onclick={()=>modal='sample-stock'}>サンプル在庫を入れる</button><p class="check-note" style="margin-top:14px;margin-bottom:0">明示して選んだときだけ見本の3件を追加します。</p></div>{/if}</section><aside class="stack"><div class="panel"><span class="eyebrow">LESS INPUT, MORE COOKING</span><h2>買い物のあと、<br/>レシートを1枚。</h2><p class="subtitle">食材の候補を自動で読み取り。最後に名前を確かめたら、冷蔵庫ができあがります。</p><button class="text-button" onclick={()=>navigate('receipt')}>レシートから追加 <ArrowRight size={17}/></button></div><p class="check-note">このブラウザ内に保存します。数量が分からなくても登録できます。購入日は食品の期限として扱いません。</p></aside></div>
- {:else if route==='receipt'}
-  <div class="desktop-narrow"><button class="back" onclick={cancelReceipt}><ArrowLeft size={16}/>冷蔵庫へ</button><div class="page-header"><div><span class="eyebrow">RECEIPT TO FRIDGE</span><h1>{receiptPhase==='success'?'冷蔵庫に追加しました':receiptPhase==='review'?'食材を確認する':receiptPhase==='reading'?'食材を読み取り中':'レシートから追加'}</h1></div><span class="badge sample">{sampleReceipt?'サンプル読取結果':'この端末内で読取'}</span></div>
-  {#if receiptPhase==='upload'}
-   <p class="subtitle gap-bottom">買った食材を、自動で候補に。<br/>読み取ったあとで、名前と量を確認できます。</p><input class="visually-hidden" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" bind:this={captureInput} onchange={pickReceipt} aria-label="レシートを撮影"/><input class="visually-hidden" type="file" accept="image/jpeg,image/png,image/webp" bind:this={fileInput} onchange={pickReceipt} aria-label="レシート画像を選ぶ"/>
-   <div class="upload-zone"><Receipt size={46}/><h2>{receiptFile?receiptFile.name:'レシートを撮る・選ぶ'}</h2><p class="muted">商品名が読めるように、明るい場所で。</p>{#if receiptPreview}<img class="receipt-preview" src={receiptPreview} alt="読み取るレシートのプレビュー"/>{/if}<div class="row wrap gap-top" style="justify-content:center"><button class="secondary" onclick={()=>captureInput?.click()}><Camera size={20}/>撮影する</button><button class="secondary" onclick={()=>fileInput?.click()}><Image size={20}/>画像を選ぶ</button></div><p class="check-note gap-top">JPEG・PNG・WebP / 1枚10MBまで<br/>HEICはJPEG等に変換してから選んでください。</p></div>
-   {#if ocrError}<div class="notice error gap-top" role="alert">{ocrError}<div class="row wrap"><button class="text-button" onclick={()=>fileInput?.click()}>画像を選び直す</button><button class="text-button" onclick={()=>{navigate('fridge','add');}}>手入力で追加</button></div></div>{/if}<button class="primary wide gap-top" disabled={!receiptFile} onclick={runOcr}>{ocrError?'もう一度読み取る':'読み取る'} <ArrowRight size={19}/></button><button class="text-button wide" style="justify-content:center" onclick={sampleRead}>サンプルで試す</button><div class="notice gap-top">画像をサービスのサーバーへ送りません。読取用データの初回準備に少し時間がかかります。画像・読取全文は登録やキャンセル後に破棄します。</div>
-  {:else if receiptPhase==='reading'}<div class="panel"><Receipt size={42} color="var(--green)"/><h2 class="gap-top">この端末で、文字を読んでいます。</h2><p class="subtitle">この時点では冷蔵庫は変わりません。</p><div class="progress" role="progressbar" aria-valuenow={ocrProgress} aria-valuemin="0" aria-valuemax="100" aria-label="読み取り進捗"><span style={`width:${ocrProgress}%`}></span></div><p class="muted">{ocrProgress}% · {ocrStatus==='recognizing text'?'商品名を読み取り中':'読み取りの準備中'}</p><button class="secondary wide gap-top" onclick={cancelOcr}>キャンセル</button></div>
-  {:else if receiptPhase==='review'}
-   <p class="subtitle gap-bottom">名前が違うときは「修正」。<br/>量は、分かるものだけで大丈夫です。</p>{#if sampleReceipt}<p class="notice gap-bottom">これは操作確認用のサンプルです。実際のレシートを読み取った結果ではありません。</p>{/if}<div class="list">{#each candidates.filter(c=>c.status!=='excluded') as c}<div class="receipt-row"><button class="check-square" class:checked={c.selected} style="min-width:24px;min-height:24px;padding:12px;box-sizing:content-box" aria-label={`${c.foodId?foodName(c.foodId):c.rawText}の登録選択`} aria-pressed={c.selected} onclick={()=>toggleCandidate(c.id)}>{c.selected?'✓':''}</button><div class="candidate-main"><strong>{c.foodId?foodName(c.foodId):'食材名を確認'} {#if c.status==='review'}<span class="badge warning">要確認</span>{/if}</strong><span class="muted">{D.quantityText(c.quantity)}</span><small>読取：{c.rawText}</small></div><button class="text-button" onclick={()=>editReceipt(c)}>{c.foodId?'修正':'食材を選ぶ'}</button></div>{/each}</div><button class="text-button" onclick={()=>excludedOpen=!excludedOpen}>除外した行（{candidates.filter(c=>c.status==='excluded').length}）{excludedOpen?'を閉じる':'を見る'}</button>{#if excludedOpen}<div class="panel list">{#each candidates.filter(c=>c.status==='excluded') as c}<div class="row between"><span><strong>{c.rawText}</strong><span class="muted" style="display:block">{c.reason}</span></span><button class="text-button" onclick={()=>editReceipt(c)}>食材として戻す</button></div>{/each}</div>{/if}<div class="notice gap-top">金額から分量は推測しません。パックの内容量が分からない場合は、内容量不明のままで登録します。</div><div class="sticky-actions"><div class="row between gap-bottom"><strong>選択中 {selectedCandidates.length}件</strong>{#if invalidCandidates}<span class="badge warning">要確認の食材を修正するか外してください</span>{/if}</div><button class="primary wide" disabled={!selectedCandidates.length||invalidCandidates||registrationBusy} onclick={prepareRegister}>この内容で登録 <ArrowRight size={18}/></button><button class="text-button wide" style="justify-content:center" onclick={cancelReceipt}>キャンセル</button></div>
-  {:else}<div class="panel" style="text-align:center"><div class="success-icon">✓</div><h2>買った食材が、次の一品に。</h2><p class="subtitle">選んだ食材を、このブラウザの冷蔵庫に登録しました。</p><div class="list gap-top" style="text-align:left">{#each appState.lots.filter(l=>l.sourceImportId===lastImportId&&l.status==='active') as lot}<div class="row between"><strong>{foodName(lot.foodId)}</strong><span class="muted">{D.quantityText(lot.quantity)}</span></div>{/each}</div><button class="primary wide gap-top" onclick={()=>doSearch(appState.lots.filter(l=>l.sourceImportId===lastImportId&&l.status==='active').map(l=>l.foodId))}>この食材で料理を探す <ArrowRight size={18}/></button><button class="secondary wide gap-top" onclick={()=>openUndo(lastImportId)}>今回の登録を取り消す</button></div>{/if}
-  </div>
- {:else if route==='history'}
-  <div class="desktop-narrow"><button class="back" onclick={()=>navigate('fridge')}><ArrowLeft size={16}/>冷蔵庫へ</button><div class="page-header"><div><span class="eyebrow">RECEIPT HISTORY</span><h1>レシート履歴</h1></div></div><p class="subtitle gap-bottom">登録した食材と状態を確認できます。元のレシート画像は保存していません。</p>{#if !appState.imports.length}<div class="empty"><Receipt size={36}/><h2>まだ登録はありません。</h2><button class="primary" onclick={()=>navigate('receipt')}>レシートから追加</button></div>{:else}<div class="list">{#each [...appState.imports].reverse() as imp}<div class="panel"><div class="row between"><strong>{new Date(imp.createdAt).toLocaleString('ja-JP')}</strong><span class="badge" class:warning={imp.state==='undone'}>{imp.state==='registered'?'登録済み':'取消済み'}</span></div><p class="subtitle">{imp.createdLotIds.map(id=>appState.lots.find(l=>l.id===id)).filter(l=>l!==undefined).map(l=>`${foodName(l.foodId)} ${D.quantityText(l.quantity)}`).join('・')}</p><button class="secondary wide gap-top" disabled={imp.state==='undone'} onclick={()=>openUndo(imp.id)}>今回の登録を取り消す</button></div>{/each}</div>{/if}</div>
- {:else if route==='detail'&&currentRecipe&&draft}
-  <div class="recipe-detail"><button class="back" onclick={()=>navigate('results')}><ArrowLeft size={16}/>料理一覧へ</button><div class="columns"><section><img class="recipe-hero" src={`${base}food/${currentRecipe.id}.png`} alt={currentRecipe.name}/><div class="row wrap gap-top">{#each currentRecipe.tags as tag}<span class="badge">{tag}</span>{/each}<span class="badge sample">サンプル料理・画像</span></div><h1 class="recipe-detail-heading">{currentRecipe.name}</h1><p class="subtitle">{currentRecipe.description}</p><div class="row wrap gap-top"><span class="chip"><Clock size={15}/>{currentRecipe.minutes}分</span><span class="chip"><CookingPot size={15}/>{currentRecipe.equipment.join('・')}</span><button class="chip" class:on={appState.saved.includes(currentRecipe.id)} onclick={()=>saveRecipe(currentRecipe.id)}><Bookmark size={15}/>{appState.saved.includes(currentRecipe.id)?'保存済み':'保存'}</button></div><div class="row gap-top"><button class="secondary" onclick={()=>navigate('arrangements',currentRecipe.id)}><Shuffle size={16}/>アレンジ</button><button class="secondary" onclick={()=>addMeal(draft)}><Plus size={17}/>献立に追加</button></div><p class="check-note gap-top">人数を変えても加熱時間は比例させません。料理の状態を見て調整してください。{currentRecipe.ingredients.some(i=>!foods.find(f=>f.id===i.foodId)?.componentsKnown)?'加工食品は原材料未確認です。商品表示も確認してください。':''}</p></section><section><div class="panel"><div class="row between gap-bottom"><h2>材料</h2><div class="row"><div class="stepper"><button aria-label="人数を減らす" onclick={()=>adjustServings(-1)}>−</button><input aria-label="人数" type="number" min="0.1" step="any" value={draft.servings} onchange={e=>changeServings(e.currentTarget.value)}/><button aria-label="人数を増やす" onclick={()=>adjustServings(1)}>＋</button></div><span class="muted">人分</span></div></div>{#if draft.adjusted}<span class="badge warning">調整済み</span>{/if}{#each currentRecipe.ingredients as ingredient}{@const stock=recipeStock(currentRecipe).rows.find(r=>r.foodId===ingredient.foodId)}<label class="ingredient-row"><span>{foodName(ingredient.foodId)}{#if stock}<small class="muted" style="display:block">手持ち {D.quantityText(stock.available)} · {stock.status==='buy'?`買い足し ${D.quantityText(stock.toBuy)}`:stock.status==='enough'?'手持ちで足りる':'量を確認'}</small>{/if}{#if ingredient.note}<small class="muted" style="display:block">{ingredient.note}</small>{/if}</span><span class="row"><input aria-label={`${foodName(ingredient.foodId)}の量`} type="number" min="0" step="any" value={draft.amounts[ingredient.foodId]?.value??''} placeholder="不明" onchange={e=>changeAmount(ingredient.foodId,e.currentTarget.value)}/><span class="muted">{draft.amounts[ingredient.foodId]?.unit}</span></span></label>{/each}<button class="text-button" onclick={()=>change(s=>D.resetDraft(s,currentRecipe.id))}>元の分量に戻す</button></div><button class="primary wide gap-top" onclick={cookSingle}><Play size={18}/>この料理を作る <ArrowRight size={18}/></button><div class="gap-top"><h2 class="gap-bottom">作り方</h2><div class="step-list">{#each currentRecipe.steps as step}<article><h3>{step.title}</h3><p>{step.instruction}</p></article>{/each}</div></div></section></div></div>
- {:else if route==='arrangements'&&currentRecipe}
-  <button class="back" onclick={()=>navigate('detail',currentRecipe.id)}><ArrowLeft size={16}/>料理に戻る</button><div class="page-header"><div><span class="eyebrow">SAME INGREDIENTS, A NEW TASTE</span><h1>同じ食材で、もうひとつ。</h1><p class="subtitle">味付けや作り方を変えて、違う一品に。</p></div></div>{#if D.arrangements(appState,currentRecipe.id).length}<div class="grid-results">{#each D.arrangements(appState,currentRecipe.id) as recipe}<RecipeCard {recipe} onclick={()=>openRecipe(recipe)}/>{/each}</div>{:else}<div class="empty"><Shuffle size={36}/><h2>この料理の別アレンジは準備中です。</h2><p>食べられない食材の設定に合わない料理も表示しません。</p><button class="primary" onclick={()=>navigate('results')}>ほかの料理を見る</button></div>{/if}
- {:else if route==='saved'}
-  <div class="page-header"><div><span class="eyebrow">YOUR FAVORITES</span><h1>また作りたい、一品。</h1><p class="subtitle">気になる料理を、いつでもここに。</p></div><span class="badge">{appState.saved.length}品保存中</span></div>{#if appState.saved.length}<div class="grid-results">{#each appState.saved as id}{@const recipe=D.RECIPES.find(r=>r.id===id)}{#if recipe}<RecipeCard {recipe} onclick={()=>openRecipe(recipe)}/>{:else}<div class="notice">公開が終了した料理です。<button class="text-button" onclick={()=>saveRecipe(id)}>保存を外す</button></div>{/if}{/each}</div>{:else}<div class="empty"><Bookmark size={38}/><h2>おいしそう、を保存しよう。</h2><p>料理の「保存」を押すと、ここに並びます。<br/>人数・分量の下書きは別に保持します。</p><button class="primary" onclick={()=>navigate('home')}>料理を探す</button></div>{/if}
- {:else if route==='meal'}
-  <div class="page-header"><div><span class="eyebrow">TODAY'S TABLE</span><h1>今日の献立</h1><p class="subtitle">一品ずつ、ちょうどいい人数で。</p></div><button class="secondary" onclick={()=>{change(s=>({...s,search:{...s.search,selectedFoodIds:[]}}));navigate('meal-add');}}><Plus size={18}/>料理を追加</button></div>{#if appState.cooking&&appState.cooking.status!=='completed'}<button class="notice wide row between gap-bottom" onclick={()=>{change(s=>D.resumeCooking(s));navigate('cooking');}}>調理を再開 · {appState.cooking.plan[appState.cooking.index]?.recipeName} / 工程{appState.cooking.index+1}<ArrowRight size={18}/></button>{/if}{#if appState.meal.length}<div class="columns"><div class="list">{#each appState.meal as item}{@const recipe=D.getRecipe(item.recipeId)}<div class="panel"><div class="row"><img class="meal-thumb" src={`${base}food/${recipe.id}.png`} alt={recipe.name}/><div style="flex:1"><button style="text-align:left;padding:0;min-height:48px" onclick={()=>openRecipe(recipe)}><h3>{recipe.name}</h3></button><span class="muted">{recipe.minutes}分 · {item.adjusted?'調整した分量':'標準の分量'}</span></div><button class="icon-button" aria-label={`${recipe.name}を献立から外す`} onclick={()=>change(s=>D.removeFromMeal(s,item.id),'献立から外しました。')}><X size={17}/></button></div><div class="row between gap-top"><span class="muted">この料理の人数</span><div class="row"><div class="stepper"><button aria-label={`${recipe.name}の人数を減らす`} onclick={()=>adjustServings(-1,item.id)}>−</button><input aria-label={`${recipe.name}の人数`} type="number" min="0.1" step="any" value={item.servings} onchange={e=>changeServings(e.currentTarget.value,item)}/><button aria-label={`${recipe.name}の人数を増やす`} onclick={()=>adjustServings(1,item.id)}>＋</button></div><span class="muted">人分</span></div></div></div>{/each}</div><aside class="stack"><div class="panel"><h2>{appState.meal.length}品を、まとめて準備。</h2><p class="subtitle">必要な材料と手持ちを整理。料理の順番も、一度に確認できます。</p><button class="secondary wide gap-top" onclick={()=>navigate('shopping')}><ShoppingBasket size={19}/>買い物リスト</button><button class="primary wide gap-top" onclick={()=>navigate('plan')}><CookingPot size={19}/>段取りを見る</button></div><p class="check-note">料理ごとの人数を変えても、ほかの料理の分量は変わりません。</p></aside></div>{:else}<div class="empty"><Utensils size={40}/><h2>今日作る料理を、選ぼう。</h2><p>料理を開いて「献立に追加」。<br/>一食分の材料と作業を、まとめられます。</p><button class="primary" onclick={()=>{change(s=>({...s,search:{...s.search,selectedFoodIds:[]}}));navigate('meal-add');}}>料理を追加</button></div>{/if}
- {:else if route==='shopping'}
-  <button class="back" onclick={()=>navigate('meal')}><ArrowLeft size={16}/>献立へ</button><div class="page-header"><div><span class="eyebrow">SHOPPING MEMO</span><h1>買うもの、これだけ。</h1><p class="subtitle">チェックは買い物のメモ。在庫は買ったあとに登録します。</p></div></div>{#if shopping.rows.length}<div class="panel" style="overflow-x:auto"><table class="shopping-table"><thead><tr><th>食材</th><th>必要量</th><th>手持ち</th><th>買う量</th></tr></thead><tbody>{#each shopping.rows as row}<tr><td><button class="row" style="min-height:48px;text-align:left" onclick={()=>change(s=>D.toggleShoppingCheck(s,row.key))} aria-pressed={row.checked}><span class="check-square" class:checked={row.checked}>{row.checked?'✓':''}</span><strong>{foodName(row.foodId)}</strong></button></td><td>{D.quantityText(row.required)}</td><td>{D.quantityText(row.available)}</td><td>{#if row.status==='unknown'||row.status==='incompatible'}<span class="badge warning">量を確認</span>{:else if row.status==='enough'}<span class="badge">手持ちで足りる</span>{:else}<strong>{D.quantityText(row.toBuy)}</strong>{/if}<small class="muted" style="display:block;max-width:160px">{row.reason}</small></td></tr>{/each}</tbody></table></div>{:else}<p class="notice">献立に料理を追加すると、必要な材料が表示されます。</p>{/if}{#if shopping.previous.length}<div class="panel gap-top"><h2>以前の購入メモ</h2><p class="muted gap-top">献立の変更で、現在のリストから外れた項目です。</p>{#each shopping.previous as row}<p class="subtitle">✓ {foodName(row.foodId)} {D.quantityText(row.quantity)}</p>{/each}</div>{/if}<div class="row wrap gap-top"><button class="primary" onclick={()=>navigate('receipt')}><Receipt size={18}/>レシートから追加</button><button class="secondary" onclick={()=>navigate('meal')}>献立に戻る</button></div>
- {:else if route==='plan'}
-  {@const plan=planned.steps}<div class="desktop-narrow"><button class="back" onclick={()=>navigate('meal')}><ArrowLeft size={16}/>献立へ</button><div class="page-header"><div><span class="eyebrow">COOKING PLAN</span><h1>無理なく、ひとつずつ。</h1><p class="subtitle">一人で進められる順番に整理しました。器具を同時に使いません。</p></div></div>{#if plan.length}<div class="panel">{#each plan as step}<article class="plan-step"><span class="plan-time">{step.startMinute}–{step.endMinute}分</span><div><span class="eyebrow">{step.recipeName}</span><h3>{step.title}</h3><p class="subtitle">{step.instruction}</p><span class="badge">{step.equipment.join('・')||'手作業'}</span></div></article>{/each}</div><button class="primary wide gap-top" onclick={startMealCooking}><Play size={18}/>調理を始める</button>{:else}<p class="notice warning">{planned.error||'まず献立に料理を追加してください。'}</p>{#if planned.error}<button class="secondary gap-top" onclick={()=>navigate('settings')}>使う器具の設定を確認</button>{/if}{/if}</div>
- {:else if route==='cooking'&&appState.cooking&&currentStep}
-  <div class="focus-screen"><div class="row between"><span class="eyebrow">COOKING · {appState.cooking.index+1} / {appState.cooking.plan.length}</span><button class="secondary" onclick={()=>{change(s=>D.pauseCooking(s));navigate('home');}}><Pause size={17}/>中断</button></div><div class="progress"><span style={`width:${(appState.cooking.index+1)/appState.cooking.plan.length*100}%`}></span></div><span class="muted">{currentStep.recipeName}</span><div class="focus-step"><span class="eyebrow">STEP {String(appState.cooking.index+1).padStart(2,'0')}</span><h1>{currentStep.title}</h1><p>{currentStep.instruction}</p><div class="row wrap gap-top"><span class="chip"><CookingPot size={16}/>{currentStep.equipment.join('・')||'手作業'}</span>{#if currentStep.guide}<button class="secondary" onclick={()=>modal='guide'}>切り方を見る <ArrowRight size={17}/></button>{/if}</div>{#if currentStep.minutes>0}<div class="divider"></div>{@const timer=appState.cooking.timers.find(t=>t.stepKey===currentStep.key)}{#if timer}<div class="row between"><span class="timer" role="timer">{secondsLabel(D.timerRemaining(timer,now))}</span><span class="badge">{D.timerRemaining(timer,now)===0?'時間になりました':'タイマー作動中'}</span></div>{:else}<button class="secondary wide" onclick={()=>change(s=>D.startTimer(s,currentStep.key,Date.now()))}><Clock size={18}/>{currentStep.minutes}分のタイマーを始める</button>{/if}<p class="check-note gap-top">画面を閉じている間も終了時刻は保持します。終了通知の音は鳴りません。再開時に残り時間を表示します。</p>{/if}</div><div class="row gap-top"><button class="secondary" disabled={appState.cooking.index===0} onclick={()=>change(s=>D.moveCooking(s,-1))}><ArrowLeft size={18}/>戻る</button><button class="primary" style="flex:1" onclick={nextStep}>{appState.cooking.index===appState.cooking.plan.length-1?'使用量を確認する':'次へ'} <ArrowRight size={19}/></button></div></div>
- {:else if route==='complete'&&appState.cooking}
-  <div class="desktop-narrow">{#if completedMessage||appState.cooking.status==='completed'}<div class="panel" style="text-align:center"><div class="success-icon">✓</div><span class="eyebrow">WELL COOKED.</span><h1>いただきます。</h1><p class="subtitle">今日の料理、おつかれさまでした。</p>{#if appState.cooking.consumptionResults.length}<div class="list gap-top" style="text-align:left">{#each appState.cooking.consumptionResults as result}<div class="row between"><strong>{foodName(result.foodId)}</strong><span class="badge" class:warning={!result.applied}>{result.applied?'在庫に反映':result.reason}</span></div>{/each}</div>{:else}<p class="notice gap-top">在庫は変更していません。</p>{/if}<button class="primary wide gap-top" onclick={()=>navigate('home')}>ホームへ</button></div>{:else}<div class="page-header"><div><span class="eyebrow">FINISH COOKING</span><h1>最後に、使った量を確認。</h1><p class="subtitle">実際に使った量が違えば、ここで直せます。</p></div></div><div class="panel">{#each consumption as request,i}<label class="ingredient-row"><span>{foodName(request.foodId)}</span><span class="row"><input type="number" min="0" step="any" aria-label={`${foodName(request.foodId)}の実使用量`} value={request.quantity.value??''} onchange={e=>updateConsumption(i,e.currentTarget.value)}/><span class="muted">{request.quantity.unit}</span></span></label>{/each}</div><label class="checkbox-label panel gap-top"><input type="checkbox" bind:checked={deduct}/><span><strong>在庫から使用量を引く</strong><span class="check-note" style="display:block">希望する場合だけチェックしてください。</span></span></label>{#if deduct}<div class="panel gap-top"><h3>反映する内容</h3>{#each previewUse as result}<p class="subtitle">{foodName(result.foodId)}：{result.applied?`${D.quantityText(result.quantity)}を引きます`:result.reason}</p>{/each}</div>{/if}<button class="primary wide gap-top" onclick={finishCooking}>完了 <Check size={20}/></button><button class="text-button" onclick={()=>navigate('cooking')}>工程に戻る</button>{/if}</div>
- {:else if route==='settings'}
-  <div class="desktop-narrow"><div class="page-header"><div><span class="eyebrow">MAKE IT YOURS</span><h1>好みと、保存の設定。</h1></div></div><div class="stack"><section class="panel"><h2>食べられない食材</h2><p class="subtitle gap-bottom">検索・アレンジ・偶然の一品に反映します。加工食品は商品の原材料も確認してください。</p><div class="settings-options">{#each foods as food}<button class="chip" class:on={excludedFoods.includes(food.id)} aria-pressed={excludedFoods.includes(food.id)} onclick={()=>excludedFoods=toggleList(excludedFoods,food.id)}>{excludedFoods.includes(food.id)?'✓ ':''}{food.name}</button>{/each}</div></section><section class="panel"><h2>常備調味料</h2><p class="subtitle gap-bottom">家にある種類の目安です。実際に足りる量かは調理前に確認します。</p><div class="settings-options">{#each foods.filter(f=>f.pantry) as food}<button class="chip" class:on={pantryFoods.includes(food.id)} aria-pressed={pantryFoods.includes(food.id)} onclick={()=>pantryFoods=toggleList(pantryFoods,food.id)}>{pantryFoods.includes(food.id)?'✓ ':''}{food.name}</button>{/each}</div></section><section class="panel"><h2>使う器具</h2><div class="row wrap gap-top">{#each ['フライパン','鍋','電子レンジ','包丁','まな板','ボウル','ケトル'] as tool}<button class="chip" class:on={equipment.includes(tool)} aria-pressed={equipment.includes(tool)} onclick={()=>equipment=toggleList(equipment,tool)}>{equipment.includes(tool)?'✓ ':''}{tool}</button>{/each}</div></section><button class="primary wide" onclick={saveSettings}>変更を保存</button><section class="panel"><h2>このブラウザのデータ</h2><p class="subtitle">冷蔵庫・保存・献立・調理状況などをこのブラウザに保存します。別端末への自動同期は、今回の試用版では未提供です。</p><div class="row wrap gap-top"><button class="secondary" onclick={downloadBackup}><Download size={18}/>データを書き出す</button><button class="secondary" onclick={()=>backupInput?.click()}><Upload size={18}/>データを読み込む</button></div><input class="visually-hidden" type="file" accept="application/json,.json" bind:this={backupInput} onchange={readBackup} aria-label="バックアップを選ぶ"/><p class="check-note gap-top">安全な保存に必要なWeb Locksを使えないブラウザでは、閲覧・書き出しのみ利用できます。最新版のブラウザでお試しください。読込みは、形式を検証した後に全置換の確認を表示します。ブラウザのデータ削除前には書き出しておいてください。</p><button class="text-button" style="color:#b34b36" onclick={()=>modal='erase'}><Trash2 size={16}/>この端末のデータを消去</button></section><button class="secondary" onclick={()=>navigate('help')}><CircleHelp size={18}/>使い方・Q&A</button></div></div>
- {:else if route==='help'}
-  <div class="desktop-narrow"><div class="page-header"><div><span class="eyebrow">A LITTLE HELP</span><h1>使い方と、よくある質問。</h1><p class="subtitle">最初の一品から、レシートの取り消しまで。</p></div></div><div class="stack"><a class="panel text-button between" href={`${base}help/manual.html`} target="_blank" rel="noreferrer"><span><h2>利用者向けマニュアル</h2><p class="subtitle">画像の番号に沿って、ひとつずつ。</p></span><ArrowRight/></a><a class="panel text-button between" href={`${base}help/faq.html`} target="_blank" rel="noreferrer"><span><h2>よくある質問</h2><p class="subtitle">分量・レシート・在庫・保存の疑問に。</p></span><ArrowRight/></a><div class="panel"><h2>試用版でできること</h2><div class="list gap-top"><p>✓ 8品のサンプル料理を、食材から検索</p><p>✓ レシート画像をこの端末内で文字読取</p><p>✓ 冷蔵庫・保存・献立と、人数・材料量の調整</p><p>✓ 調理手順・再開・終了時刻を保持するタイマー</p><p>✓ このブラウザの保存・JSON書き出しと復元</p></div><div class="notice gap-top">ログイン・端末間の自動同期は未提供です。タイマーは画面を閉じた状態で音による通知を行いません。切り方ガイドは図と文章で提供します。</div><p class="check-note gap-top">画像と料理は操作を試すための見本です。任意の食材の組合せすべてを検索できる版ではありません。</p></div></div></div>
- {:else}<div class="empty"><Leaf size={36}/><h2>この画面は開けませんでした。</h2><p>料理や調理データがない場合は、ホームから選び直してください。</p><button class="primary" onclick={()=>navigate('home')}>ホームへ</button></div>{/if}
- <footer class="footer-note"><span>RecipeWeave · 食材から、まだ知らない一品へ。</span><span>Dev 0.1 · このブラウザに保存</span></footer>
- </main>
- <nav class="bottom-nav" aria-label="メインメニュー">{#each [{id:'home',name:'ホーム',icon:Home},{id:'fridge',name:'冷蔵庫',icon:Refrigerator},{id:'meal',name:'献立',icon:CookingPot},{id:'saved',name:'保存',icon:Bookmark}] as item}<button class="nav-item" class:active={route===item.id||(item.id==='fridge'&&['receipt','history'].includes(route))||(item.id==='meal'&&['plan','shopping','cooking','complete'].includes(route))} onclick={()=>navigate(item.id)} aria-current={route===item.id?'page':undefined}><item.icon size={21}/>{item.name}</button>{/each}</nav>
+<svelte:head
+  ><title
+    >{route === "home" ? "今日の一品、ここから。" : "RecipeWeave 試用版"} — RecipeWeave</title
+  ></svelte:head
+>
+<div class="app-shell" inert={modal ? true : undefined}>
+  <header class="topbar">
+    <button
+      class="brand"
+      onclick={() => navigate("home")}
+      aria-label="RecipeWeave ホーム"
+      ><CookingPot class="brand-mark" />RecipeWeave<span
+        style="color:var(--orange)">.</span
+      ></button
+    >
+    <div class="top-actions">
+      <span class="dev-pill">DEV · SAMPLE 08</span><button
+        class="icon-button"
+        onclick={() => navigate("help")}
+        aria-label="使い方・Q&A"><CircleHelp size={19} /></button
+      ><button
+        class="icon-button"
+        onclick={() => navigate("settings")}
+        aria-label="設定"><Settings size={19} /></button
+      >
+    </div>
+  </header>
+  <main class="page" id="main">
+    {#if storageIssue}<div class="notice error gap-bottom" role="alert">
+        保存データを開けません：{storageIssue}<button
+          class="text-button"
+          onclick={() => navigate("settings")}
+          >設定からバックアップを復元</button
+        >
+      </div>{/if}
+    {#if error}<div class="notice error gap-bottom" role="alert">
+        {error}<button class="text-button" onclick={() => (error = "")}
+          >閉じる</button
+        >
+      </div>{/if}
+    {#if route === "home"}
+      <div class="home-title">
+        <span class="eyebrow">A LITTLE CHOICE, A NEW DISH.</span>
+        <h1>今日の一品、ここから。</h1>
+        <p class="subtitle">
+          使いたい食材を、ぽんと選ぶ。<br
+            class="mobile-break"
+          />いつもの材料に、新しいおいしさを。
+        </p>
+      </div>
+      {#if appState.cooking && appState.cooking.status !== "completed"}<button
+          class="notice wide row between gap-bottom"
+          onclick={() => {
+            change((s) => D.resumeCooking(s));
+            navigate("cooking");
+          }}
+          ><span
+            >調理を再開 · {appState.cooking.plan[appState.cooking.index]
+              ?.recipeName} / 工程{appState.cooking.index + 1}</span
+          ><ArrowRight size={20} /></button
+        >{/if}
+      <div class="columns">
+        <section>
+          <div class="section-head">
+            <h2>何を使おう？</h2>
+            <span class="muted">いくつでも選べます</span>
+          </div>
+          <div class="food-grid">
+            {#each foods
+              .filter((f) => f.imageIndex !== null)
+              .slice(0, 12) as food}<FoodTile
+                {food}
+                selected={selectedFoods.includes(food.id)}
+                onselect={() => toggleFood(food.id)}
+              />{/each}
+          </div>
+          <div class="row between">
+            <span class="selection-summary"
+              >{selectedFoods.length
+                ? selectedFoods.map(foodName).join("・")
+                : "写真を押すと、チェックが付きます"}</span
+            ><button class="text-button" onclick={() => navigate("ingredients")}
+              >食材をもっと見る <ArrowRight size={15} /></button
+            >
+          </div>
+          <div class="search-dock">
+            <button class="primary" onclick={() => doSearch()}
+              ><Search size={19} />{selectedFoods.length
+                ? `この${selectedFoods.length}つで探す`
+                : "すべての料理を見る"}<ArrowRight size={18} /></button
+            >
+          </div>
+          <div class="quick-receipt">
+            <Receipt size={31} />
+            <div>
+              <strong>買ったものは、レシートから。</strong>
+              <p>撮って、確認。冷蔵庫にまとめて追加。</p>
+            </div>
+            <button
+              class="icon-button"
+              aria-label="レシートから追加"
+              onclick={() => navigate("receipt")}
+              ><ArrowRight size={19} /></button
+            >
+          </div>
+        </section>
+        <aside>
+          <div class="discover">
+            <div class="section-head">
+              <span class="eyebrow" style="margin:0">偶然の一品</span><button
+                class="shuffle-button"
+                onclick={chooseRandom}><Shuffle size={16} />別の一品</button
+              >
+            </div>
+            {#if random}<RecipeCard
+                recipe={random}
+                large
+                onclick={() => openRecipe(random)}
+              />{:else}<p>食べられない食材の設定に合う料理がありません。</p>
+              <button class="text-button" onclick={() => navigate("settings")}
+                >設定を確認する</button
+              >{/if}
+            <p class="discover-note">
+              いつもと少し違う料理に出会う。<br />気になる一品を、今日の食卓に。
+            </p>
+          </div>
+          <span class="hero-tag"
+            ><Sparkles
+              size={13}
+            />まずは8品のサンプルから。人数・分量は料理を選んだあとに。</span
+          >
+        </aside>
+      </div>
+    {:else if route === "ingredients"}
+      <button class="back" onclick={() => navigate("home")}
+        ><ArrowLeft size={16} />ホームへ</button
+      >
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">INGREDIENTS</span>
+          <h1>食材を選ぶ</h1>
+        </div>
+        <span class="muted">{selectedFoods.length}つ選択中</span>
+      </div>
+      <label class="field gap-bottom"
+        >食材名<input
+          type="search"
+          bind:value={query}
+          placeholder="例：なす、ツナ、カップ焼きそば"
+        /></label
+      >
+      <div class="row wrap gap-bottom">
+        {#each categories as c}<button
+            class="chip"
+            class:on={category === c}
+            onclick={() => (category = c)}>{c}</button
+          >{/each}
+      </div>
+      <div class="food-grid">
+        {#each visibleFoods as food}<FoodTile
+            {food}
+            selected={selectedFoods.includes(food.id)}
+            onselect={() => toggleFood(food.id)}
+          />{/each}
+      </div>
+      {#if !visibleFoods.length}<p class="notice">
+          候補がありません。名前を短くして探してみてください。
+        </p>{/if}
+      <div class="sticky-actions">
+        <button class="primary wide" onclick={() => doSearch()}
+          >選んだ食材で探す <ArrowRight size={18} /></button
+        >
+      </div>
+    {:else if route === "results" || route === "meal-add"}
+      <button
+        class="back"
+        onclick={() => navigate(route === "meal-add" ? "meal" : "home")}
+        ><ArrowLeft size={16} />戻る</button
+      >
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">FIND YOUR DISH</span>
+          <h1>
+            {route === "meal-add" ? "献立にもう一品" : "こんな一品、どう？"}
+          </h1>
+          <p class="subtitle">
+            {selectedFoods.length
+              ? selectedFoods.map(foodName).join("・")
+              : "すべての食材"}
+            <span class="muted"
+              >/ {appState.search.match === "all"
+                ? "選んだ食材をすべて使う"
+                : "いずれかを使う"}</span
+            >
+          </p>
+        </div>
+        <button class="secondary" onclick={openFilters}
+          ><SlidersHorizontal size={17} />条件</button
+        >
+      </div>
+      <p class="muted gap-bottom">
+        {searchResults.length}品のサンプル ·
+        人数と材料量は、料理を開いたあとで変更できます。
+      </p>
+      {#if searchResults.length}<div class="grid-results">
+          {#each searchResults as recipe}<div>
+              <RecipeCard {recipe} onclick={() => openRecipe(recipe)} />
+              <p class="check-note" style="padding:8px 4px">
+                {stockSummary(recipe)}
+              </p>
+            </div>{/each}
+        </div>{:else}<div class="empty">
+          <Search size={38} />
+          <h2>この条件の料理は、まだありません。</h2>
+          <p>
+            今回は8品のサンプルです。食材を選び直すか、時間や買い足し条件を変更できます。
+          </p>
+          <div class="row wrap" style="justify-content:center">
+            <button class="primary" onclick={() => navigate("ingredients")}
+              >食材を選び直す</button
+            ><button class="secondary" onclick={openFilters}
+              >条件を変える</button
+            >
+          </div>
+        </div>{/if}
+    {:else if route === "fridge"}
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">MY FRIDGE</span>
+          <h1>冷蔵庫に、何がある？</h1>
+          <p class="subtitle">使いたい食材を選んで、そのまま料理へ。</p>
+        </div>
+        <button class="secondary" onclick={() => navigate("history")}
+          ><History size={18} />レシート履歴</button
+        >
+      </div>
+      <div class="columns">
+        <section>
+          <div class="row gap-bottom">
+            <button class="primary" onclick={() => navigate("receipt")}
+              ><Receipt size={19} />レシートから追加</button
+            ><button class="secondary" onclick={() => openStock()}
+              ><Plus size={18} />手入力で追加</button
+            >
+          </div>
+          {#if activeLots.length}<div class="list">
+              {#each activeLots as lot}<div class="stock-row">
+                  <button
+                    class="stock-select"
+                    aria-pressed={selectedLots.includes(lot.id)}
+                    onclick={() => toggleLot(lot.id)}
+                    ><span
+                      class="check-square"
+                      class:checked={selectedLots.includes(lot.id)}
+                      aria-hidden="true"
+                      >{selectedLots.includes(lot.id) ? "✓" : ""}</span
+                    ><span
+                      ><strong
+                        >{foodName(lot.foodId)}
+                        {#if lot.priority}<span class="badge warning"
+                            >優先して使う</span
+                          >{/if}</strong
+                      ><span class="muted"
+                        >{D.quantityText(lot.quantity)} · {lot.location}{lot.expiresOn
+                          ? ` · 期限 ${lot.expiresOn}`
+                          : ""}</span
+                      ></span
+                    ></button
+                  ><button
+                    class="text-button"
+                    aria-label={`${foodName(lot.foodId)}を編集`}
+                    onclick={() => openStock(lot)}>編集</button
+                  >
+                </div>{/each}
+            </div>
+            <div class="sticky-actions">
+              <button
+                class="primary wide"
+                disabled={!selectedLots.length}
+                onclick={() =>
+                  doSearch(
+                    activeLots
+                      .filter((l) => selectedLots.includes(l.id))
+                      .map((l) => l.foodId),
+                  )}>選んだ食材で探す <ArrowRight size={18} /></button
+              >
+            </div>{:else}<div class="empty">
+              <Refrigerator size={40} />
+              <h2>最初の食材を、入れてみよう。</h2>
+              <p>
+                レシートからまとめて登録。<br
+                />ひとつずつ手入力でも、量はあとからでも。
+              </p>
+              <button class="secondary" onclick={() => (modal = "sample-stock")}
+                >サンプル在庫を入れる</button
+              >
+              <p class="check-note" style="margin-top:14px;margin-bottom:0">
+                明示して選んだときだけ見本の3件を追加します。
+              </p>
+            </div>{/if}
+        </section>
+        <aside class="stack">
+          <div class="panel">
+            <span class="eyebrow">LESS INPUT, MORE COOKING</span>
+            <h2>買い物のあと、<br />レシートを1枚。</h2>
+            <p class="subtitle">
+              食材の候補を自動で読み取り。最後に名前を確かめたら、冷蔵庫ができあがります。
+            </p>
+            <button class="text-button" onclick={() => navigate("receipt")}
+              >レシートから追加 <ArrowRight size={17} /></button
+            >
+          </div>
+          <p class="check-note">
+            このブラウザ内に保存します。数量が分からなくても登録できます。購入日は食品の期限として扱いません。
+          </p>
+        </aside>
+      </div>
+    {:else if route === "receipt"}
+      <div class="desktop-narrow">
+        <button class="back" onclick={cancelReceipt}
+          ><ArrowLeft size={16} />冷蔵庫へ</button
+        >
+        <div class="page-header">
+          <div>
+            <span class="eyebrow">RECEIPT TO FRIDGE</span>
+            <h1>
+              {receiptPhase === "success"
+                ? "冷蔵庫に追加しました"
+                : receiptPhase === "review"
+                  ? "食材を確認する"
+                  : receiptPhase === "reading"
+                    ? "食材を読み取り中"
+                    : "レシートから追加"}
+            </h1>
+          </div>
+          <span class="badge sample"
+            >{sampleReceipt ? "サンプル読取結果" : "この端末内で読取"}</span
+          >
+        </div>
+        {#if receiptPhase === "upload"}
+          <p class="subtitle gap-bottom">
+            買った食材を、自動で候補に。<br
+            />読み取ったあとで、名前と量を確認できます。
+          </p>
+          <input
+            class="visually-hidden"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            capture="environment"
+            bind:this={captureInput}
+            onchange={pickReceipt}
+            aria-label="レシートを撮影"
+          /><input
+            class="visually-hidden"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            bind:this={fileInput}
+            onchange={pickReceipt}
+            aria-label="レシート画像を選ぶ"
+          />
+          <div class="upload-zone">
+            <Receipt size={46} />
+            <h2>{receiptFile ? receiptFile.name : "レシートを撮る・選ぶ"}</h2>
+            <p class="muted">商品名が読めるように、明るい場所で。</p>
+            {#if receiptPreview}<img
+                class="receipt-preview"
+                src={receiptPreview}
+                alt="読み取るレシートのプレビュー"
+              />{/if}
+            <div class="row wrap gap-top" style="justify-content:center">
+              <button class="secondary" onclick={() => captureInput?.click()}
+                ><Camera size={20} />撮影する</button
+              ><button class="secondary" onclick={() => fileInput?.click()}
+                ><Image size={20} />画像を選ぶ</button
+              >
+            </div>
+            <p class="check-note gap-top">
+              JPEG・PNG・WebP / 1枚10MBまで<br
+              />HEICはJPEG等に変換してから選んでください。
+            </p>
+          </div>
+          {#if ocrError}<div class="notice error gap-top" role="alert">
+              {ocrError}
+              <div class="row wrap">
+                <button class="text-button" onclick={() => fileInput?.click()}
+                  >画像を選び直す</button
+                ><button
+                  class="text-button"
+                  onclick={() => {
+                    navigate("fridge", "add");
+                  }}>手入力で追加</button
+                >
+              </div>
+            </div>{/if}<button
+            class="primary wide gap-top"
+            disabled={!receiptFile}
+            onclick={runOcr}
+            >{ocrError ? "もう一度読み取る" : "読み取る"}
+            <ArrowRight size={19} /></button
+          ><button
+            class="text-button wide"
+            style="justify-content:center"
+            onclick={sampleRead}>サンプルで試す</button
+          >
+          <div class="notice gap-top">
+            画像をサービスのサーバーへ送りません。読取用データの初回準備に少し時間がかかります。画像・読取全文は登録やキャンセル後に破棄します。
+          </div>
+        {:else if receiptPhase === "reading"}<div class="panel">
+            <Receipt size={42} color="var(--green)" />
+            <h2 class="gap-top">この端末で、文字を読んでいます。</h2>
+            <p class="subtitle">この時点では冷蔵庫は変わりません。</p>
+            <div
+              class="progress"
+              role="progressbar"
+              aria-valuenow={ocrProgress}
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-label="読み取り進捗"
+            >
+              <span style={`width:${ocrProgress}%`}></span>
+            </div>
+            <p class="muted">
+              {ocrProgress}% · {ocrStatus === "recognizing text"
+                ? "商品名を読み取り中"
+                : "読み取りの準備中"}
+            </p>
+            <button class="secondary wide gap-top" onclick={cancelOcr}
+              >キャンセル</button
+            >
+          </div>
+        {:else if receiptPhase === "review"}
+          <p class="subtitle gap-bottom">
+            名前が違うときは「修正」。<br />量は、分かるものだけで大丈夫です。
+          </p>
+          {#if sampleReceipt}<p class="notice gap-bottom">
+              これは操作確認用のサンプルです。実際のレシートを読み取った結果ではありません。
+            </p>{/if}
+          <div class="list">
+            {#each candidates.filter((c) => c.status !== "excluded") as c}<div
+                class="receipt-row"
+              >
+                <button
+                  class="check-square"
+                  class:checked={c.selected}
+                  style="min-width:24px;min-height:24px;padding:12px;box-sizing:content-box"
+                  aria-label={`${c.foodId ? foodName(c.foodId) : c.rawText}の登録選択`}
+                  aria-pressed={c.selected}
+                  onclick={() => toggleCandidate(c.id)}
+                  >{c.selected ? "✓" : ""}</button
+                >
+                <div class="candidate-main">
+                  <strong
+                    >{c.foodId ? foodName(c.foodId) : "食材名を確認"}
+                    {#if c.status === "review"}<span class="badge warning"
+                        >要確認</span
+                      >{/if}</strong
+                  ><span class="muted">{D.quantityText(c.quantity)}</span><small
+                    >読取：{c.rawText}</small
+                  >
+                </div>
+                <button class="text-button" onclick={() => editReceipt(c)}
+                  >{c.foodId ? "修正" : "食材を選ぶ"}</button
+                >
+              </div>{/each}
+          </div>
+          <button
+            class="text-button"
+            onclick={() => (excludedOpen = !excludedOpen)}
+            >除外した行（{candidates.filter((c) => c.status === "excluded")
+              .length}）{excludedOpen ? "を閉じる" : "を見る"}</button
+          >{#if excludedOpen}<div class="panel list">
+              {#each candidates.filter((c) => c.status === "excluded") as c}<div
+                  class="row between"
+                >
+                  <span
+                    ><strong>{c.rawText}</strong><span
+                      class="muted"
+                      style="display:block">{c.reason}</span
+                    ></span
+                  ><button class="text-button" onclick={() => editReceipt(c)}
+                    >食材として戻す</button
+                  >
+                </div>{/each}
+            </div>{/if}
+          <div class="notice gap-top">
+            金額から分量は推測しません。パックの内容量が分からない場合は、内容量不明のままで登録します。
+          </div>
+          <div class="sticky-actions">
+            <div class="row between gap-bottom">
+              <strong>選択中 {selectedCandidates.length}件</strong
+              >{#if invalidCandidates}<span class="badge warning"
+                  >要確認の食材を修正するか外してください</span
+                >{/if}
+            </div>
+            <button
+              class="primary wide"
+              disabled={!selectedCandidates.length ||
+                invalidCandidates ||
+                registrationBusy}
+              onclick={prepareRegister}
+              >この内容で登録 <ArrowRight size={18} /></button
+            ><button
+              class="text-button wide"
+              style="justify-content:center"
+              onclick={cancelReceipt}>キャンセル</button
+            >
+          </div>
+        {:else}<div class="panel" style="text-align:center">
+            <div class="success-icon">✓</div>
+            <h2>買った食材が、次の一品に。</h2>
+            <p class="subtitle">
+              選んだ食材を、このブラウザの冷蔵庫に登録しました。
+            </p>
+            <div class="list gap-top" style="text-align:left">
+              {#each appState.lots.filter((l) => l.sourceImportId === lastImportId && l.status === "active") as lot}<div
+                  class="row between"
+                >
+                  <strong>{foodName(lot.foodId)}</strong><span class="muted"
+                    >{D.quantityText(lot.quantity)}</span
+                  >
+                </div>{/each}
+            </div>
+            <button
+              class="primary wide gap-top"
+              onclick={() =>
+                doSearch(
+                  appState.lots
+                    .filter(
+                      (l) =>
+                        l.sourceImportId === lastImportId &&
+                        l.status === "active",
+                    )
+                    .map((l) => l.foodId),
+                )}>この食材で料理を探す <ArrowRight size={18} /></button
+            ><button
+              class="secondary wide gap-top"
+              onclick={() => openUndo(lastImportId)}
+              >今回の登録を取り消す</button
+            >
+          </div>{/if}
+      </div>
+    {:else if route === "history"}
+      <div class="desktop-narrow">
+        <button class="back" onclick={() => navigate("fridge")}
+          ><ArrowLeft size={16} />冷蔵庫へ</button
+        >
+        <div class="page-header">
+          <div>
+            <span class="eyebrow">RECEIPT HISTORY</span>
+            <h1>レシート履歴</h1>
+          </div>
+        </div>
+        <p class="subtitle gap-bottom">
+          登録した食材と状態を確認できます。元のレシート画像は保存していません。
+        </p>
+        {#if !appState.imports.length}<div class="empty">
+            <Receipt size={36} />
+            <h2>まだ登録はありません。</h2>
+            <button class="primary" onclick={() => navigate("receipt")}
+              >レシートから追加</button
+            >
+          </div>{:else}<div class="list">
+            {#each [...appState.imports].reverse() as imp}<div class="panel">
+                <div class="row between">
+                  <strong
+                    >{new Date(imp.createdAt).toLocaleString("ja-JP")}</strong
+                  ><span class="badge" class:warning={imp.state === "undone"}
+                    >{imp.state === "registered"
+                      ? "登録済み"
+                      : "取消済み"}</span
+                  >
+                </div>
+                <p class="subtitle">
+                  {imp.createdLotIds
+                    .map((id) => appState.lots.find((l) => l.id === id))
+                    .filter((l) => l !== undefined)
+                    .map(
+                      (l) =>
+                        `${foodName(l.foodId)} ${D.quantityText(l.quantity)}`,
+                    )
+                    .join("・")}
+                </p>
+                <button
+                  class="secondary wide gap-top"
+                  disabled={imp.state === "undone"}
+                  onclick={() => openUndo(imp.id)}>今回の登録を取り消す</button
+                >
+              </div>{/each}
+          </div>{/if}
+      </div>
+    {:else if route === "detail" && currentRecipe && draft}
+      <div class="recipe-detail">
+        <button class="back" onclick={() => navigate("results")}
+          ><ArrowLeft size={16} />料理一覧へ</button
+        >
+        <div class="columns">
+          <section>
+            <img
+              class="recipe-hero"
+              src={`${base}food/${currentRecipe.id}.png`}
+              alt={currentRecipe.name}
+            />
+            <div class="row wrap gap-top">
+              {#each currentRecipe.tags as tag}<span class="badge">{tag}</span
+                >{/each}<span class="badge sample">サンプル料理・画像</span>
+            </div>
+            <h1 class="recipe-detail-heading">{currentRecipe.name}</h1>
+            <p class="subtitle">{currentRecipe.description}</p>
+            <div class="row wrap gap-top">
+              <span class="chip"
+                ><Clock size={15} />{currentRecipe.minutes}分</span
+              ><span class="chip"
+                ><CookingPot size={15} />{currentRecipe.equipment.join(
+                  "・",
+                )}</span
+              ><button
+                class="chip"
+                class:on={appState.saved.includes(currentRecipe.id)}
+                onclick={() => saveRecipe(currentRecipe.id)}
+                ><Bookmark size={15} />{appState.saved.includes(
+                  currentRecipe.id,
+                )
+                  ? "保存済み"
+                  : "保存"}</button
+              >
+            </div>
+            <div class="row gap-top">
+              <button
+                class="secondary"
+                onclick={() => navigate("arrangements", currentRecipe.id)}
+                ><Shuffle size={16} />アレンジ</button
+              ><button class="secondary" onclick={() => addMeal(draft)}
+                ><Plus size={17} />献立に追加</button
+              >
+            </div>
+            <p class="check-note gap-top">
+              人数を変えても加熱時間は比例させません。料理の状態を見て調整してください。{currentRecipe.ingredients.some(
+                (i) => !foods.find((f) => f.id === i.foodId)?.componentsKnown,
+              )
+                ? "加工食品は原材料未確認です。商品表示も確認してください。"
+                : ""}
+            </p>
+          </section>
+          <section>
+            <div class="panel">
+              <div class="row between gap-bottom">
+                <h2>材料</h2>
+                <div class="row">
+                  <div class="stepper">
+                    <button
+                      aria-label="人数を減らす"
+                      onclick={() => adjustServings(-1)}>−</button
+                    ><input
+                      aria-label="人数"
+                      type="number"
+                      min="0.1"
+                      step="any"
+                      value={draft.servings}
+                      onchange={(e) => changeServings(e.currentTarget.value)}
+                    /><button
+                      aria-label="人数を増やす"
+                      onclick={() => adjustServings(1)}>＋</button
+                    >
+                  </div>
+                  <span class="muted">人分</span>
+                </div>
+              </div>
+              {#if draft.adjusted}<span class="badge warning">調整済み</span
+                >{/if}{#each currentRecipe.ingredients as ingredient}{@const stock =
+                  recipeStock(currentRecipe).rows.find(
+                    (r) => r.foodId === ingredient.foodId,
+                  )}<label class="ingredient-row"
+                  ><span
+                    >{foodName(ingredient.foodId)}{#if stock}<small
+                        class="muted"
+                        style="display:block"
+                        >手持ち {D.quantityText(stock.available)} · {stock.status ===
+                        "buy"
+                          ? `買い足し ${D.quantityText(stock.toBuy)}`
+                          : stock.status === "enough"
+                            ? "手持ちで足りる"
+                            : "量を確認"}</small
+                      >{/if}{#if ingredient.note}<small
+                        class="muted"
+                        style="display:block">{ingredient.note}</small
+                      >{/if}</span
+                  ><span class="row"
+                    ><input
+                      aria-label={`${foodName(ingredient.foodId)}の量`}
+                      type="number"
+                      min="0"
+                      step="any"
+                      value={draft.amounts[ingredient.foodId]?.value ?? ""}
+                      placeholder="不明"
+                      onchange={(e) =>
+                        changeAmount(ingredient.foodId, e.currentTarget.value)}
+                    /><span class="muted"
+                      >{draft.amounts[ingredient.foodId]?.unit}</span
+                    ></span
+                  ></label
+                >{/each}<button
+                class="text-button"
+                onclick={() => change((s) => D.resetDraft(s, currentRecipe.id))}
+                >元の分量に戻す</button
+              >
+            </div>
+            <button class="primary wide gap-top" onclick={cookSingle}
+              ><Play size={18} />この料理を作る <ArrowRight size={18} /></button
+            >
+            <div class="gap-top">
+              <h2 class="gap-bottom">作り方</h2>
+              <div class="step-list">
+                {#each currentRecipe.steps as step}<article>
+                    <h3>{step.title}</h3>
+                    <p>{step.instruction}</p>
+                  </article>{/each}
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    {:else if route === "arrangements" && currentRecipe}
+      <button class="back" onclick={() => navigate("detail", currentRecipe.id)}
+        ><ArrowLeft size={16} />料理に戻る</button
+      >
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">SAME INGREDIENTS, A NEW TASTE</span>
+          <h1>同じ食材で、もうひとつ。</h1>
+          <p class="subtitle">味付けや作り方を変えて、違う一品に。</p>
+        </div>
+      </div>
+      {#if D.arrangements(appState, currentRecipe.id).length}<div
+          class="grid-results"
+        >
+          {#each D.arrangements(appState, currentRecipe.id) as recipe}<RecipeCard
+              {recipe}
+              onclick={() => openRecipe(recipe)}
+            />{/each}
+        </div>{:else}<div class="empty">
+          <Shuffle size={36} />
+          <h2>この料理の別アレンジは準備中です。</h2>
+          <p>食べられない食材の設定に合わない料理も表示しません。</p>
+          <button class="primary" onclick={() => navigate("results")}
+            >ほかの料理を見る</button
+          >
+        </div>{/if}
+    {:else if route === "saved"}
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">YOUR FAVORITES</span>
+          <h1>また作りたい、一品。</h1>
+          <p class="subtitle">気になる料理を、いつでもここに。</p>
+        </div>
+        <span class="badge">{appState.saved.length}品保存中</span>
+      </div>
+      {#if appState.saved.length}<div class="grid-results">
+          {#each appState.saved as id}{@const recipe = D.RECIPES.find(
+              (r) => r.id === id,
+            )}{#if recipe}<RecipeCard
+                {recipe}
+                onclick={() => openRecipe(recipe)}
+              />{:else}<div class="notice">
+                公開が終了した料理です。<button
+                  class="text-button"
+                  onclick={() => saveRecipe(id)}>保存を外す</button
+                >
+              </div>{/if}{/each}
+        </div>{:else}<div class="empty">
+          <Bookmark size={38} />
+          <h2>おいしそう、を保存しよう。</h2>
+          <p>
+            料理の「保存」を押すと、ここに並びます。<br
+            />人数・分量の下書きは別に保持します。
+          </p>
+          <button class="primary" onclick={() => navigate("home")}
+            >料理を探す</button
+          >
+        </div>{/if}
+    {:else if route === "meal"}
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">TODAY'S TABLE</span>
+          <h1>今日の献立</h1>
+          <p class="subtitle">一品ずつ、ちょうどいい人数で。</p>
+        </div>
+        <button
+          class="secondary"
+          onclick={() => {
+            change((s) => ({
+              ...s,
+              search: { ...s.search, selectedFoodIds: [] },
+            }));
+            navigate("meal-add");
+          }}><Plus size={18} />料理を追加</button
+        >
+      </div>
+      {#if appState.cooking && appState.cooking.status !== "completed"}<button
+          class="notice wide row between gap-bottom"
+          onclick={() => {
+            change((s) => D.resumeCooking(s));
+            navigate("cooking");
+          }}
+          >調理を再開 · {appState.cooking.plan[appState.cooking.index]
+            ?.recipeName} / 工程{appState.cooking.index + 1}<ArrowRight
+            size={18}
+          /></button
+        >{/if}{#if appState.meal.length}<div class="columns">
+          <div class="list">
+            {#each appState.meal as item}{@const recipe = D.getRecipe(
+                item.recipeId,
+              )}
+              <div class="panel">
+                <div class="row">
+                  <img
+                    class="meal-thumb"
+                    src={`${base}food/${recipe.id}.png`}
+                    alt={recipe.name}
+                  />
+                  <div style="flex:1">
+                    <button
+                      style="text-align:left;padding:0;min-height:48px"
+                      onclick={() => openRecipe(recipe)}
+                      ><h3>{recipe.name}</h3></button
+                    ><span class="muted"
+                      >{recipe.minutes}分 · {item.adjusted
+                        ? "調整した分量"
+                        : "標準の分量"}</span
+                    >
+                  </div>
+                  <button
+                    class="icon-button"
+                    aria-label={`${recipe.name}を献立から外す`}
+                    onclick={() =>
+                      change(
+                        (s) => D.removeFromMeal(s, item.id),
+                        "献立から外しました。",
+                      )}><X size={17} /></button
+                  >
+                </div>
+                <div class="row between gap-top">
+                  <span class="muted">この料理の人数</span>
+                  <div class="row">
+                    <div class="stepper">
+                      <button
+                        aria-label={`${recipe.name}の人数を減らす`}
+                        onclick={() => adjustServings(-1, item.id)}>−</button
+                      ><input
+                        aria-label={`${recipe.name}の人数`}
+                        type="number"
+                        min="0.1"
+                        step="any"
+                        value={item.servings}
+                        onchange={(e) =>
+                          changeServings(e.currentTarget.value, item)}
+                      /><button
+                        aria-label={`${recipe.name}の人数を増やす`}
+                        onclick={() => adjustServings(1, item.id)}>＋</button
+                      >
+                    </div>
+                    <span class="muted">人分</span>
+                  </div>
+                </div>
+              </div>{/each}
+          </div>
+          <aside class="stack">
+            <div class="panel">
+              <h2>{appState.meal.length}品を、まとめて準備。</h2>
+              <p class="subtitle">
+                必要な材料と手持ちを整理。料理の順番も、一度に確認できます。
+              </p>
+              <button
+                class="secondary wide gap-top"
+                onclick={() => navigate("shopping")}
+                ><ShoppingBasket size={19} />買い物リスト</button
+              ><button
+                class="primary wide gap-top"
+                onclick={() => navigate("plan")}
+                ><CookingPot size={19} />段取りを見る</button
+              >
+            </div>
+            <p class="check-note">
+              料理ごとの人数を変えても、ほかの料理の分量は変わりません。
+            </p>
+          </aside>
+        </div>{:else}<div class="empty">
+          <Utensils size={40} />
+          <h2>今日作る料理を、選ぼう。</h2>
+          <p>
+            料理を開いて「献立に追加」。<br
+            />一食分の材料と作業を、まとめられます。
+          </p>
+          <button
+            class="primary"
+            onclick={() => {
+              change((s) => ({
+                ...s,
+                search: { ...s.search, selectedFoodIds: [] },
+              }));
+              navigate("meal-add");
+            }}>料理を追加</button
+          >
+        </div>{/if}
+    {:else if route === "shopping"}
+      <button class="back" onclick={() => navigate("meal")}
+        ><ArrowLeft size={16} />献立へ</button
+      >
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">SHOPPING MEMO</span>
+          <h1>買うもの、これだけ。</h1>
+          <p class="subtitle">
+            チェックは買い物のメモ。在庫は買ったあとに登録します。
+          </p>
+        </div>
+      </div>
+      {#if shopping.rows.length}<div class="panel" style="overflow-x:auto">
+          <table class="shopping-table">
+            <thead
+              ><tr
+                ><th>食材</th><th>必要量</th><th>手持ち</th><th>買う量</th></tr
+              ></thead
+            ><tbody
+              >{#each shopping.rows as row}<tr
+                  ><td
+                    ><button
+                      class="row"
+                      style="min-height:48px;text-align:left"
+                      onclick={() =>
+                        change((s) => D.toggleShoppingCheck(s, row.key))}
+                      aria-pressed={row.checked}
+                      ><span class="check-square" class:checked={row.checked}
+                        >{row.checked ? "✓" : ""}</span
+                      ><strong>{foodName(row.foodId)}</strong></button
+                    ></td
+                  ><td>{D.quantityText(row.required)}</td><td
+                    >{D.quantityText(row.available)}</td
+                  ><td
+                    >{#if row.status === "unknown" || row.status === "incompatible"}<span
+                        class="badge warning">量を確認</span
+                      >{:else if row.status === "enough"}<span class="badge"
+                        >手持ちで足りる</span
+                      >{:else}<strong>{D.quantityText(row.toBuy)}</strong
+                      >{/if}<small
+                      class="muted"
+                      style="display:block;max-width:160px">{row.reason}</small
+                    ></td
+                  ></tr
+                >{/each}</tbody
+            >
+          </table>
+        </div>{:else}<p class="notice">
+          献立に料理を追加すると、必要な材料が表示されます。
+        </p>{/if}{#if shopping.previous.length}<div class="panel gap-top">
+          <h2>以前の購入メモ</h2>
+          <p class="muted gap-top">
+            献立の変更で、現在のリストから外れた項目です。
+          </p>
+          {#each shopping.previous as row}<p class="subtitle">
+              ✓ {foodName(row.foodId)}
+              {D.quantityText(row.quantity)}
+            </p>{/each}
+        </div>{/if}
+      <div class="row wrap gap-top">
+        <button class="primary" onclick={() => navigate("receipt")}
+          ><Receipt size={18} />レシートから追加</button
+        ><button class="secondary" onclick={() => navigate("meal")}
+          >献立に戻る</button
+        >
+      </div>
+    {:else if route === "plan"}
+      {@const plan = planned.steps}
+      <div class="desktop-narrow">
+        <button class="back" onclick={() => navigate("meal")}
+          ><ArrowLeft size={16} />献立へ</button
+        >
+        <div class="page-header">
+          <div>
+            <span class="eyebrow">COOKING PLAN</span>
+            <h1>無理なく、ひとつずつ。</h1>
+            <p class="subtitle">
+              一人で進められる順番に整理しました。器具を同時に使いません。
+            </p>
+          </div>
+        </div>
+        {#if plan.length}<div class="panel">
+            {#each plan as step}<article class="plan-step">
+                <span class="plan-time"
+                  >{step.startMinute}–{step.endMinute}分</span
+                >
+                <div>
+                  <span class="eyebrow">{step.recipeName}</span>
+                  <h3>{step.title}</h3>
+                  <p class="subtitle">{step.instruction}</p>
+                  <span class="badge"
+                    >{step.equipment.join("・") || "手作業"}</span
+                  >
+                </div>
+              </article>{/each}
+          </div>
+          <button class="primary wide gap-top" onclick={startMealCooking}
+            ><Play size={18} />調理を始める</button
+          >{:else}<p class="notice warning">
+            {planned.error || "まず献立に料理を追加してください。"}
+          </p>
+          {#if planned.error}<button
+              class="secondary gap-top"
+              onclick={() => navigate("settings")}>使う器具の設定を確認</button
+            >{/if}{/if}
+      </div>
+    {:else if route === "cooking" && appState.cooking && currentStep}
+      <div class="focus-screen">
+        <div class="row between">
+          <span class="eyebrow"
+            >COOKING · {appState.cooking.index + 1} / {appState.cooking.plan
+              .length}</span
+          ><button
+            class="secondary"
+            onclick={() => {
+              change((s) => D.pauseCooking(s));
+              navigate("home");
+            }}><Pause size={17} />中断</button
+          >
+        </div>
+        <div class="progress">
+          <span
+            style={`width:${((appState.cooking.index + 1) / appState.cooking.plan.length) * 100}%`}
+          ></span>
+        </div>
+        <span class="muted">{currentStep.recipeName}</span>
+        <div class="focus-step">
+          <span class="eyebrow"
+            >STEP {String(appState.cooking.index + 1).padStart(2, "0")}</span
+          >
+          <h1>{currentStep.title}</h1>
+          <p>{currentStep.instruction}</p>
+          <div class="row wrap gap-top">
+            <span class="chip"
+              ><CookingPot size={16} />{currentStep.equipment.join("・") ||
+                "手作業"}</span
+            >{#if currentStep.guide}<button
+                class="secondary"
+                onclick={() => (modal = "guide")}
+                >切り方を見る <ArrowRight size={17} /></button
+              >{/if}
+          </div>
+          {#if currentStep.minutes > 0}<div class="divider"></div>
+            {@const timer = appState.cooking.timers.find(
+              (t) => t.stepKey === currentStep.key,
+            )}{#if timer}<div class="row between">
+                <span class="timer" role="timer"
+                  >{secondsLabel(D.timerRemaining(timer, now))}</span
+                ><span class="badge"
+                  >{D.timerRemaining(timer, now) === 0
+                    ? "時間になりました"
+                    : "タイマー作動中"}</span
+                >
+              </div>{:else}<button
+                class="secondary wide"
+                onclick={() =>
+                  change((s) => D.startTimer(s, currentStep.key, Date.now()))}
+                ><Clock
+                  size={18}
+                />{currentStep.minutes}分のタイマーを始める</button
+              >{/if}
+            <p class="check-note gap-top">
+              画面を閉じている間も終了時刻は保持します。終了通知の音は鳴りません。再開時に残り時間を表示します。
+            </p>{/if}
+        </div>
+        <div class="row gap-top">
+          <button
+            class="secondary"
+            disabled={appState.cooking.index === 0}
+            onclick={() => change((s) => D.moveCooking(s, -1))}
+            ><ArrowLeft size={18} />戻る</button
+          ><button class="primary" style="flex:1" onclick={nextStep}
+            >{appState.cooking.index === appState.cooking.plan.length - 1
+              ? "使用量を確認する"
+              : "次へ"}
+            <ArrowRight size={19} /></button
+          >
+        </div>
+      </div>
+    {:else if route === "complete" && appState.cooking}
+      <div class="desktop-narrow">
+        {#if completedMessage || appState.cooking.status === "completed"}<div
+            class="panel"
+            style="text-align:center"
+          >
+            <div class="success-icon">✓</div>
+            <span class="eyebrow">WELL COOKED.</span>
+            <h1>いただきます。</h1>
+            <p class="subtitle">今日の料理、おつかれさまでした。</p>
+            {#if appState.cooking.consumptionResults.length}<div
+                class="list gap-top"
+                style="text-align:left"
+              >
+                {#each appState.cooking.consumptionResults as result}<div
+                    class="row between"
+                  >
+                    <strong>{foodName(result.foodId)}</strong><span
+                      class="badge"
+                      class:warning={!result.applied}
+                      >{result.applied ? "在庫に反映" : result.reason}</span
+                    >
+                  </div>{/each}
+              </div>{:else}<p class="notice gap-top">
+                在庫は変更していません。
+              </p>{/if}<button
+              class="primary wide gap-top"
+              onclick={() => navigate("home")}>ホームへ</button
+            >
+          </div>{:else}<div class="page-header">
+            <div>
+              <span class="eyebrow">FINISH COOKING</span>
+              <h1>最後に、使った量を確認。</h1>
+              <p class="subtitle">実際に使った量が違えば、ここで直せます。</p>
+            </div>
+          </div>
+          <div class="panel">
+            {#each consumption as request, i}<label class="ingredient-row"
+                ><span>{foodName(request.foodId)}</span><span class="row"
+                  ><input
+                    type="number"
+                    min="0"
+                    step="any"
+                    aria-label={`${foodName(request.foodId)}の実使用量`}
+                    value={request.quantity.value ?? ""}
+                    onchange={(e) =>
+                      updateConsumption(i, e.currentTarget.value)}
+                  /><span class="muted">{request.quantity.unit}</span></span
+                ></label
+              >{/each}
+          </div>
+          <label class="checkbox-label panel gap-top"
+            ><input type="checkbox" bind:checked={deduct} /><span
+              ><strong>在庫から使用量を引く</strong><span
+                class="check-note"
+                style="display:block"
+                >希望する場合だけチェックしてください。</span
+              ></span
+            ></label
+          >{#if deduct}<div class="panel gap-top">
+              <h3>反映する内容</h3>
+              {#each previewUse as result}<p class="subtitle">
+                  {foodName(result.foodId)}：{result.applied
+                    ? `${D.quantityText(result.quantity)}を引きます`
+                    : result.reason}
+                </p>{/each}
+            </div>{/if}<button
+            class="primary wide gap-top"
+            onclick={finishCooking}>完了 <Check size={20} /></button
+          ><button class="text-button" onclick={() => navigate("cooking")}
+            >工程に戻る</button
+          >{/if}
+      </div>
+    {:else if route === "settings"}
+      <div class="desktop-narrow">
+        <div class="page-header">
+          <div>
+            <span class="eyebrow">MAKE IT YOURS</span>
+            <h1>好みと、保存の設定。</h1>
+          </div>
+        </div>
+        <div class="stack">
+          <section class="panel">
+            <h2>食べられない食材</h2>
+            <p class="subtitle gap-bottom">
+              検索・アレンジ・偶然の一品に反映します。加工食品は商品の原材料も確認してください。
+            </p>
+            <div class="settings-options">
+              {#each foods as food}<button
+                  class="chip"
+                  class:on={excludedFoods.includes(food.id)}
+                  aria-pressed={excludedFoods.includes(food.id)}
+                  onclick={() =>
+                    (excludedFoods = toggleList(excludedFoods, food.id))}
+                  >{excludedFoods.includes(food.id)
+                    ? "✓ "
+                    : ""}{food.name}</button
+                >{/each}
+            </div>
+          </section>
+          <section class="panel">
+            <h2>常備調味料</h2>
+            <p class="subtitle gap-bottom">
+              家にある種類の目安です。実際に足りる量かは調理前に確認します。
+            </p>
+            <div class="settings-options">
+              {#each foods.filter((f) => f.pantry) as food}<button
+                  class="chip"
+                  class:on={pantryFoods.includes(food.id)}
+                  aria-pressed={pantryFoods.includes(food.id)}
+                  onclick={() =>
+                    (pantryFoods = toggleList(pantryFoods, food.id))}
+                  >{pantryFoods.includes(food.id)
+                    ? "✓ "
+                    : ""}{food.name}</button
+                >{/each}
+            </div>
+          </section>
+          <section class="panel">
+            <h2>使う器具</h2>
+            <div class="row wrap gap-top">
+              {#each ["フライパン", "鍋", "電子レンジ", "包丁", "まな板", "ボウル", "ケトル"] as tool}<button
+                  class="chip"
+                  class:on={equipment.includes(tool)}
+                  aria-pressed={equipment.includes(tool)}
+                  onclick={() => (equipment = toggleList(equipment, tool))}
+                  >{equipment.includes(tool) ? "✓ " : ""}{tool}</button
+                >{/each}
+            </div>
+          </section>
+          <button class="primary wide" onclick={saveSettings}>変更を保存</button
+          >
+          <section class="panel">
+            <h2>このブラウザのデータ</h2>
+            <p class="subtitle">
+              冷蔵庫・保存・献立・調理状況などをこのブラウザに保存します。別端末への自動同期は、今回の試用版では未提供です。
+            </p>
+            <div class="row wrap gap-top">
+              <button class="secondary" onclick={downloadBackup}
+                ><Download size={18} />データを書き出す</button
+              ><button class="secondary" onclick={() => backupInput?.click()}
+                ><Upload size={18} />データを読み込む</button
+              >
+            </div>
+            <input
+              class="visually-hidden"
+              type="file"
+              accept="application/json,.json"
+              bind:this={backupInput}
+              onchange={readBackup}
+              aria-label="バックアップを選ぶ"
+            />
+            <p class="check-note gap-top">
+              安全な保存に必要なWeb
+              Locksを使えないブラウザでは、閲覧・書き出しのみ利用できます。最新版のブラウザでお試しください。読込みは、形式を検証した後に全置換の確認を表示します。ブラウザのデータ削除前には書き出しておいてください。
+            </p>
+            <button
+              class="text-button"
+              style="color:#b34b36"
+              onclick={() => (modal = "erase")}
+              ><Trash2 size={16} />この端末のデータを消去</button
+            >
+          </section>
+          <button class="secondary" onclick={() => navigate("help")}
+            ><CircleHelp size={18} />使い方・Q&A</button
+          >
+        </div>
+      </div>
+    {:else if route === "help"}
+      <div class="desktop-narrow">
+        <div class="page-header">
+          <div>
+            <span class="eyebrow">A LITTLE HELP</span>
+            <h1>使い方と、よくある質問。</h1>
+            <p class="subtitle">最初の一品から、レシートの取り消しまで。</p>
+          </div>
+        </div>
+        <div class="stack">
+          <a
+            class="panel text-button between"
+            href={`${base}help/manual.html`}
+            target="_blank"
+            rel="noreferrer"
+            ><span
+              ><h2>利用者向けマニュアル</h2>
+              <p class="subtitle">画像の番号に沿って、ひとつずつ。</p></span
+            ><ArrowRight /></a
+          ><a
+            class="panel text-button between"
+            href={`${base}help/faq.html`}
+            target="_blank"
+            rel="noreferrer"
+            ><span
+              ><h2>よくある質問</h2>
+              <p class="subtitle">分量・レシート・在庫・保存の疑問に。</p></span
+            ><ArrowRight /></a
+          >
+          <div class="panel">
+            <h2>試用版でできること</h2>
+            <div class="list gap-top">
+              <p>✓ 8品のサンプル料理を、食材から検索</p>
+              <p>✓ レシート画像をこの端末内で文字読取</p>
+              <p>✓ 冷蔵庫・保存・献立と、人数・材料量の調整</p>
+              <p>✓ 調理手順・再開・終了時刻を保持するタイマー</p>
+              <p>✓ このブラウザの保存・JSON書き出しと復元</p>
+            </div>
+            <div class="notice gap-top">
+              ログイン・端末間の自動同期は未提供です。タイマーは画面を閉じた状態で音による通知を行いません。切り方ガイドは図と文章で提供します。
+            </div>
+            <p class="check-note gap-top">
+              画像と料理は操作を試すための見本です。任意の食材の組合せすべてを検索できる版ではありません。
+            </p>
+          </div>
+        </div>
+      </div>
+    {:else}<div class="empty">
+        <Leaf size={36} />
+        <h2>この画面は開けませんでした。</h2>
+        <p>料理や調理データがない場合は、ホームから選び直してください。</p>
+        <button class="primary" onclick={() => navigate("home")}
+          >ホームへ</button
+        >
+      </div>{/if}
+    <footer class="footer-note">
+      <span>RecipeWeave · 食材から、まだ知らない一品へ。</span><span
+        >Dev 0.1 · このブラウザに保存</span
+      >
+    </footer>
+  </main>
+  <nav class="bottom-nav" aria-label="メインメニュー">
+    {#each [{ id: "home", name: "ホーム", icon: Home }, { id: "fridge", name: "冷蔵庫", icon: Refrigerator }, { id: "meal", name: "献立", icon: CookingPot }, { id: "saved", name: "保存", icon: Bookmark }] as item}<button
+        class="nav-item"
+        class:active={route === item.id ||
+          (item.id === "fridge" && ["receipt", "history"].includes(route)) ||
+          (item.id === "meal" &&
+            ["plan", "shopping", "cooking", "complete"].includes(route))}
+        onclick={() => navigate(item.id)}
+        aria-current={route === item.id ? "page" : undefined}
+        ><item.icon size={21} />{item.name}</button
+      >{/each}
+  </nav>
 </div>
-{#if toast}<div class="toast" role="status"><span>{toast}</span>{#if undoAction}<button onclick={()=>{undoAction?.();toast='';undoAction=null;}}>取り消す</button>{:else}<button aria-label="通知を閉じる" onclick={()=>toast=''}><X size={16}/></button>{/if}</div>{/if}
+{#if toast}<div class="toast" role="status">
+    <span>{toast}</span>{#if undoAction}<button
+        onclick={() => {
+          undoAction?.();
+          toast = "";
+          undoAction = null;
+        }}>取り消す</button
+      >{:else}<button aria-label="通知を閉じる" onclick={() => (toast = "")}
+        ><X size={16} /></button
+      >{/if}
+  </div>{/if}
 {#if modal}
- <div class="modal-backdrop" role="presentation"><div class="modal" bind:this={modalRoot} role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1"><div class="row between"><h2 id="modal-title">{modal==='stock'?(editLot?'食材を編集':'食材を追加'):modal==='candidate'?'読み取った食材を修正':modal==='filters'?'検索条件':modal==='duplicate'?'登録済みの可能性があります':modal==='duplicate-history'?'登録履歴を照合する':modal==='undo-import'?'今回の登録を取り消す':modal==='backup'?'データを置き換えますか？':modal==='erase'?'この端末のデータを消去':modal==='cancel-receipt'?'読み取りをやめますか？':modal==='guide'?'切り方ガイド':'サンプル在庫を追加'}</h2><button class="icon-button" aria-label="閉じる" onclick={()=>{modal=modal==='duplicate-history'?'duplicate':'';error='';}}><X size={18}/></button></div>
-  {#if error}<p class="notice error gap-bottom" role="alert">{error}</p>{/if}
-  {#if modal==='stock'||modal==='candidate'}
-   {#if modal==='candidate'}<p class="notice gap-bottom">読取原文：{candidates.find(c=>c.id===editCandidate)?.rawText}</p>{/if}<div class="stack"><label class="field">食材<select value={editFood} onchange={e=>selectEditFood(e.currentTarget.value)}><option value="">名前を直接入力する</option>{#each foods as food}<option value={food.id}>{food.name}</option>{/each}</select></label>{#if !editFood}<label class="field">新しい食材名<input bind:value={editName} maxlength="80" placeholder="食品の名前"/></label>{/if}<div class="form-grid"><label class="field">数量（空欄は数量不明）<input type="number" min="0" step="any" value={editValue} oninput={e=>editValue=e.currentTarget.value} placeholder="数量不明" style="width:100%"/></label><label class="field">単位<select bind:value={editUnit}>{#each UNITS as unit}<option>{unit}</option>{/each}</select></label></div><button class="text-button" onclick={()=>editValue=''}>数量不明に戻す</button>{#if modal==='stock'}<label class="field">保存場所<select bind:value={editLocation}><option>冷蔵</option><option>冷凍</option><option>常温</option></select></label><label class="field">食品に表示された期限（任意）<input type="date" bind:value={editExpiry}/></label><label class="checkbox-label"><input type="checkbox" bind:checked={editPriority}/>優先して使う</label>{/if}<p class="check-note">価格は分量に変換しません。「パック」は内容量が分からなければ、そのままで構いません。</p></div><div class="modal-actions">{#if editLot}<button class="danger" onclick={()=>{if(window.confirm(`${foodName(editFood)}を削除しますか？`))deleteLot();}}>削除する</button>{:else}<button class="secondary" onclick={()=>modal=''}>キャンセル</button>{/if}<button class="primary" onclick={saveEdit}>{modal==='candidate'?'確認して戻る':editLot?'変更を保存':'登録する'}</button></div>
-  {:else if modal==='filters'}<div class="stack"><label class="field">食材の使い方<select bind:value={stagedMatch}><option value="all">選んだ食材をすべて使う</option><option value="any">いずれかを使う</option></select></label><label class="field">調理時間<select bind:value={stagedMax}><option value="">指定なし</option><option value="10">10分以内</option><option value="15">15分以内</option><option value="30">30分以内</option></select></label><label class="checkbox-label"><input type="checkbox" bind:checked={stagedNoShopping}/>買い足しなし（量は調理前に確認）</label><div><h3>使える器具</h3><div class="row wrap gap-top">{#each ['フライパン','鍋','電子レンジ','包丁','まな板','ボウル','ケトル'] as tool}<button class="chip" class:on={stagedEquipment.includes(tool)} onclick={()=>stagedEquipment=toggleList(stagedEquipment,tool)}>{tool}</button>{/each}</div><p class="check-note gap-top">選択なしなら器具で絞りません。選択した場合は、その器具で作れる料理を表示します。</p></div></div><div class="modal-actions"><button class="secondary" onclick={()=>modal=''}>閉じる</button><button class="primary" onclick={applyFilters}>この条件で探す</button></div>
-  {:else if modal==='duplicate'}<p>同じ画像、または同じ購入内容が履歴にあります。別の買い物か確認してから登録してください。</p><div class="list gap-top">{#each duplicates as id}{@const imp=appState.imports.find(i=>i.id===id)}{#if imp}<div class="notice"><strong>{new Date(imp.createdAt).toLocaleString('ja-JP')} · {imp.state==='undone'?'取消済み':'登録済み'}</strong><p>{imp.createdLotIds.map(lid=>appState.lots.find(l=>l.id===lid)).filter(l=>l!==undefined).map(l=>foodName(l.foodId)).join('・')}</p></div>{/if}{/each}</div><p class="check-note gap-top">取消済みでも、現在の在庫を確認してください。すべての重複を検出できるとは限りません。</p><button class="text-button" onclick={()=>modal='duplicate-history'}>履歴を見る</button><div class="modal-actions"><button class="secondary" onclick={()=>{modal='';candidates=[];void clearReceipt();navigate('fridge');}}>登録をやめる</button><button class="primary" onclick={()=>registerReceipt(true)}>別の買い物として登録</button></div>
-  {:else if modal==='duplicate-history'}<p>読み取り中の候補は保持しています。登録日時と食材を比べてください。</p><div class="list gap-top">{#each duplicates as id}{@const imp=appState.imports.find(i=>i.id===id)}{#if imp}<div class="panel"><strong>{new Date(imp.createdAt).toLocaleString('ja-JP')} · {imp.state==='undone'?'取消済み':'登録済み'}</strong>{#each imp.createdLotIds as lotId}{@const lot=appState.lots.find(l=>l.id===lotId)}{#if lot}<p class="subtitle">{foodName(lot.originalFoodId)} · 登録時 {D.quantityText(lot.originalQuantity)} / 現在 {lot.status==='active'?D.quantityText(lot.quantity):'残量なし'}</p>{/if}{/each}</div>{/if}{/each}</div><button class="primary wide gap-top" onclick={()=>modal='duplicate'}>読取内容の確認に戻る</button>
-  {:else if modal==='undo-import'&&undoPreview}<p>この登録で追加した、まだ使っていない残量だけを取り消します。以前からの在庫と使用履歴は残ります。</p><div class="list gap-top">{#each undoPreview.lots as lot}<div class="panel"><strong>{foodName(lot.foodId)}</strong><p class="subtitle">登録時 {foodName(lot.originalFoodId)} {D.quantityText(lot.originalQuantity)} → 現在 {lot.status==='active'?D.quantityText(lot.quantity):'残量なし'}</p><p class="subtitle">取消後：この登録の残量なし</p>{#if lot.edited||lot.consumed.length}<span class="badge warning">使用・編集済み：現在の残量を確認してください</span>{/if}</div>{/each}</div><div class="modal-actions"><button class="secondary" onclick={()=>modal=''}>戻る</button><button class="danger" disabled={undoPreview.alreadyUndone} onclick={confirmUndo}>{undoPreview.alreadyUndone?'取消済み':'この内容で取り消す'}</button></div>
-  {:else if modal==='backup'&&backup}<p>このブラウザの現在のデータを、ファイルの内容に置き換えます。合算はしません。</p><div class="notice gap-top">読込み内容：在庫 {backup.lots.filter(l=>l.status==='active').length}件、保存 {backup.saved.length}品、献立 {backup.meal.length}品、登録履歴 {backup.imports.length}件</div><p class="subtitle">冷蔵庫・保存・献立・調理状況・設定が置換対象です。必要なら先に現在のデータを書き出してください。</p><button class="text-button" onclick={downloadBackup}>現在のデータを書き出す</button><div class="modal-actions"><button class="secondary" onclick={()=>{backup=null;modal='';}}>キャンセル</button><button class="primary" onclick={confirmBackup}>この内容で置き換える</button></div>
-  {:else if modal==='erase'}<p>このブラウザの冷蔵庫・献立・保存・履歴・調理・設定を消去します。元に戻すには書き出したバックアップが必要です。</p><button class="text-button" onclick={downloadBackup}>消去前にデータを書き出す</button><div class="modal-actions"><button class="secondary" onclick={()=>modal=''}>キャンセル</button><button class="danger" onclick={async()=>{try{if(storageIssue){appState=await recoverBackup(recoveryToken??inspectRecovery(),D.createInitialState());storageIssue='';notify('このブラウザのデータを消去しました。');}else if(!await change(()=>D.createInitialState(),'このブラウザのデータを消去しました。'))return;modal='';chooseRandom();navigate('home');}catch(e){error=e instanceof Error?e.message:'消去できませんでした。';}}}>データを消去する</button></div>
-  {:else if modal==='cancel-receipt'}<p>画像と修正中の候補を破棄します。冷蔵庫の在庫は変更しません。</p><div class="modal-actions"><button class="secondary" onclick={()=>modal=''}>候補に戻る</button><button class="danger" onclick={()=>{modal='';candidates=[];void clearReceipt();navigate('fridge');}}>破棄してやめる</button></div>
-  {:else if modal==='guide'}<p class="muted">{currentStep?.recipeName} · 工程{(appState.cooking?.index??0)+1}</p><h3 class="gap-top">{currentStep?.guide||'食材を切る'}</h3>{#if currentStep?.guide==='半月切り'}<div class="guide-diagram" aria-label="丸い食材を縦に切り、半円にして薄切りにする図"><span class="guide-piece"></span><ArrowRight/><span class="guide-piece half"></span><ArrowRight/><span class="row"><span class="guide-piece half" style="width:12px"></span><span class="guide-piece half" style="width:12px"></span><span class="guide-piece half" style="width:12px"></span></span></div><p>① 食材を安定する向きでまな板に置きます。<br/>② 縦半分に切り、平らな面を下にします。<br/>③ 指先を内側に丸め、端から同じ厚さに切ります。</p>{:else if currentStep?.guide==='くし形切り'}<div class="guide-diagram" aria-label="トマトを縦半分に切り、中心を通って放射状に切る図"><span class="guide-piece" style="background:#e89a64;border-color:#cd6647"></span><ArrowRight/><span class="guide-piece" style="background:#e89a64;border-color:#cd6647;border-radius:100% 0 0 0"></span></div><p>① トマトを縦半分に切り、へたを取ります。<br/>② 切り口を下に置いて安定させます。<br/>③ 中心を通るように包丁を入れ、くしの形に分けます。</p>{:else if currentStep?.guide==='角切り'}<div class="guide-diagram" aria-label="豆腐を板状、棒状、角状に順番に切る図"><span class="guide-piece" style="border-radius:4px;border-color:#ded3ae;background:#fffcec"></span><ArrowRight/><span style="display:grid;grid-template-columns:repeat(3,18px);gap:4px">{#each [1,2,3,4,5,6] as piece}<span style="width:18px;height:18px;background:#fffcec;border:2px solid #ded3ae"></span>{/each}</span></div><p>① 豆腐を板状に切ります。<br/>② 縦に切って棒の形にします。<br/>③ 向きを変え、同じ幅で切って立方体にします。</p>{:else}<div class="guide-diagram" aria-label="葉ものを広げ、食べやすい大きさにざく切りする図"><span class="guide-piece" style="background:#b9c890;border-color:#819663;border-radius:15px"></span><ArrowRight/><span class="guide-piece" style="width:24px;height:30px;background:#b9c890;border-color:#819663;border-radius:8px"></span><span class="guide-piece" style="width:28px;height:26px;background:#b9c890;border-color:#819663;border-radius:8px"></span></div><p>① キャベツのかたい芯を切り分けます。<br/>② 葉を重ね、食べやすい幅に切ります。<br/>③ 向きを変えて切り、ひと口大にそろえます。</p>{/if}<p class="check-note gap-top">図と文章のガイドです。動画は今回の試用版では未提供です。</p><button class="primary wide gap-top" onclick={()=>modal=''}>元の工程に戻る</button>
-  {:else if modal==='sample-stock'}<p>操作を試すために、なす（数量不明）・卵（1個）・豆腐（300g）を追加します。実際の手持ちとは異なるサンプルです。</p><div class="modal-actions"><button class="secondary" onclick={()=>modal=''}>キャンセル</button><button class="primary" onclick={()=>{sampleStock();modal='';}}>サンプル在庫を入れる</button></div>{/if}
- </div></div>
+  <div class="modal-backdrop" role="presentation">
+    <div
+      class="modal"
+      bind:this={modalRoot}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      tabindex="-1"
+    >
+      <div class="row between">
+        <h2 id="modal-title">
+          {modal === "stock"
+            ? editLot
+              ? "食材を編集"
+              : "食材を追加"
+            : modal === "candidate"
+              ? "読み取った食材を修正"
+              : modal === "filters"
+                ? "検索条件"
+                : modal === "duplicate"
+                  ? "登録済みの可能性があります"
+                  : modal === "duplicate-history"
+                    ? "登録履歴を照合する"
+                    : modal === "undo-import"
+                      ? "今回の登録を取り消す"
+                      : modal === "backup"
+                        ? "データを置き換えますか？"
+                        : modal === "erase"
+                          ? "この端末のデータを消去"
+                          : modal === "cancel-receipt"
+                            ? "読み取りをやめますか？"
+                            : modal === "guide"
+                              ? "切り方ガイド"
+                              : "サンプル在庫を追加"}
+        </h2>
+        <button
+          class="icon-button"
+          aria-label="閉じる"
+          onclick={() => {
+            modal = modal === "duplicate-history" ? "duplicate" : "";
+            error = "";
+          }}><X size={18} /></button
+        >
+      </div>
+      {#if error}<p class="notice error gap-bottom" role="alert">
+          {error}
+        </p>{/if}
+      {#if modal === "stock" || modal === "candidate"}
+        {#if modal === "candidate"}<p class="notice gap-bottom">
+            読取原文：{candidates.find((c) => c.id === editCandidate)?.rawText}
+          </p>{/if}
+        <div class="stack">
+          <label class="field"
+            >食材<select
+              value={editFood}
+              onchange={(e) => selectEditFood(e.currentTarget.value)}
+              ><option value="">名前を直接入力する</option
+              >{#each foods as food}<option value={food.id}>{food.name}</option
+                >{/each}</select
+            ></label
+          >{#if !editFood}<label class="field"
+              >新しい食材名<input
+                bind:value={editName}
+                maxlength="80"
+                placeholder="食品の名前"
+              /></label
+            >{/if}
+          <div class="form-grid">
+            <label class="field"
+              >数量（空欄は数量不明）<input
+                type="number"
+                min="0"
+                step="any"
+                value={editValue}
+                oninput={(e) => (editValue = e.currentTarget.value)}
+                placeholder="数量不明"
+                style="width:100%"
+              /></label
+            ><label class="field"
+              >単位<select bind:value={editUnit}
+                >{#each UNITS as unit}<option>{unit}</option>{/each}</select
+              ></label
+            >
+          </div>
+          <button class="text-button" onclick={() => (editValue = "")}
+            >数量不明に戻す</button
+          >{#if modal === "stock"}<label class="field"
+              >保存場所<select bind:value={editLocation}
+                ><option>冷蔵</option><option>冷凍</option><option>常温</option
+                ></select
+              ></label
+            ><label class="field"
+              >食品に表示された期限（任意）<input
+                type="date"
+                bind:value={editExpiry}
+              /></label
+            ><label class="checkbox-label"
+              ><input
+                type="checkbox"
+                bind:checked={editPriority}
+              />優先して使う</label
+            >{/if}
+          <p class="check-note">
+            価格は分量に変換しません。「パック」は内容量が分からなければ、そのままで構いません。
+          </p>
+        </div>
+        <div class="modal-actions">
+          {#if editLot}<button
+              class="danger"
+              onclick={() => {
+                if (window.confirm(`${foodName(editFood)}を削除しますか？`))
+                  deleteLot();
+              }}>削除する</button
+            >{:else}<button class="secondary" onclick={() => (modal = "")}
+              >キャンセル</button
+            >{/if}<button class="primary" onclick={saveEdit}
+            >{modal === "candidate"
+              ? "確認して戻る"
+              : editLot
+                ? "変更を保存"
+                : "登録する"}</button
+          >
+        </div>
+      {:else if modal === "filters"}<div class="stack">
+          <label class="field"
+            >食材の使い方<select bind:value={stagedMatch}
+              ><option value="all">選んだ食材をすべて使う</option><option
+                value="any">いずれかを使う</option
+              ></select
+            ></label
+          ><label class="field"
+            >調理時間<select bind:value={stagedMax}
+              ><option value="">指定なし</option><option value="10"
+                >10分以内</option
+              ><option value="15">15分以内</option><option value="30"
+                >30分以内</option
+              ></select
+            ></label
+          ><label class="checkbox-label"
+            ><input
+              type="checkbox"
+              bind:checked={stagedNoShopping}
+            />買い足しなし（量は調理前に確認）</label
+          >
+          <div>
+            <h3>使える器具</h3>
+            <div class="row wrap gap-top">
+              {#each ["フライパン", "鍋", "電子レンジ", "包丁", "まな板", "ボウル", "ケトル"] as tool}<button
+                  class="chip"
+                  class:on={stagedEquipment.includes(tool)}
+                  onclick={() =>
+                    (stagedEquipment = toggleList(stagedEquipment, tool))}
+                  >{tool}</button
+                >{/each}
+            </div>
+            <p class="check-note gap-top">
+              選択なしなら器具で絞りません。選択した場合は、その器具で作れる料理を表示します。
+            </p>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="secondary" onclick={() => (modal = "")}>閉じる</button
+          ><button class="primary" onclick={applyFilters}>この条件で探す</button
+          >
+        </div>
+      {:else if modal === "duplicate"}<p>
+          同じ画像、または同じ購入内容が履歴にあります。別の買い物か確認してから登録してください。
+        </p>
+        <div class="list gap-top">
+          {#each duplicates as id}{@const imp = appState.imports.find(
+              (i) => i.id === id,
+            )}{#if imp}<div class="notice">
+                <strong
+                  >{new Date(imp.createdAt).toLocaleString("ja-JP")} · {imp.state ===
+                  "undone"
+                    ? "取消済み"
+                    : "登録済み"}</strong
+                >
+                <p>
+                  {imp.createdLotIds
+                    .map((lid) => appState.lots.find((l) => l.id === lid))
+                    .filter((l) => l !== undefined)
+                    .map((l) => foodName(l.foodId))
+                    .join("・")}
+                </p>
+              </div>{/if}{/each}
+        </div>
+        <p class="check-note gap-top">
+          取消済みでも、現在の在庫を確認してください。すべての重複を検出できるとは限りません。
+        </p>
+        <button
+          class="text-button"
+          onclick={() => (modal = "duplicate-history")}>履歴を見る</button
+        >
+        <div class="modal-actions">
+          <button
+            class="secondary"
+            onclick={() => {
+              modal = "";
+              candidates = [];
+              void clearReceipt();
+              navigate("fridge");
+            }}>登録をやめる</button
+          ><button class="primary" onclick={() => registerReceipt(true)}
+            >別の買い物として登録</button
+          >
+        </div>
+      {:else if modal === "duplicate-history"}<p>
+          読み取り中の候補は保持しています。登録日時と食材を比べてください。
+        </p>
+        <div class="list gap-top">
+          {#each duplicates as id}{@const imp = appState.imports.find(
+              (i) => i.id === id,
+            )}{#if imp}<div class="panel">
+                <strong
+                  >{new Date(imp.createdAt).toLocaleString("ja-JP")} · {imp.state ===
+                  "undone"
+                    ? "取消済み"
+                    : "登録済み"}</strong
+                >{#each imp.createdLotIds as lotId}{@const lot =
+                    appState.lots.find((l) => l.id === lotId)}{#if lot}<p
+                      class="subtitle"
+                    >
+                      {foodName(lot.originalFoodId)} · 登録時 {D.quantityText(
+                        lot.originalQuantity,
+                      )} / 現在 {lot.status === "active"
+                        ? D.quantityText(lot.quantity)
+                        : "残量なし"}
+                    </p>{/if}{/each}
+              </div>{/if}{/each}
+        </div>
+        <button
+          class="primary wide gap-top"
+          onclick={() => (modal = "duplicate")}>読取内容の確認に戻る</button
+        >
+      {:else if modal === "undo-import" && undoPreview}<p>
+          この登録で追加した、まだ使っていない残量だけを取り消します。以前からの在庫と使用履歴は残ります。
+        </p>
+        <div class="list gap-top">
+          {#each undoPreview.lots as lot}<div class="panel">
+              <strong>{foodName(lot.foodId)}</strong>
+              <p class="subtitle">
+                登録時 {foodName(lot.originalFoodId)}
+                {D.quantityText(lot.originalQuantity)} → 現在 {lot.status ===
+                "active"
+                  ? D.quantityText(lot.quantity)
+                  : "残量なし"}
+              </p>
+              <p class="subtitle">取消後：この登録の残量なし</p>
+              {#if lot.edited || lot.consumed.length}<span class="badge warning"
+                  >使用・編集済み：現在の残量を確認してください</span
+                >{/if}
+            </div>{/each}
+        </div>
+        <div class="modal-actions">
+          <button class="secondary" onclick={() => (modal = "")}>戻る</button
+          ><button
+            class="danger"
+            disabled={undoPreview.alreadyUndone}
+            onclick={confirmUndo}
+            >{undoPreview.alreadyUndone
+              ? "取消済み"
+              : "この内容で取り消す"}</button
+          >
+        </div>
+      {:else if modal === "backup" && backup}<p>
+          このブラウザの現在のデータを、ファイルの内容に置き換えます。合算はしません。
+        </p>
+        <div class="notice gap-top">
+          読込み内容：在庫 {backup.lots.filter((l) => l.status === "active")
+            .length}件、保存 {backup.saved.length}品、献立 {backup.meal
+            .length}品、登録履歴 {backup.imports.length}件
+        </div>
+        <p class="subtitle">
+          冷蔵庫・保存・献立・調理状況・設定が置換対象です。必要なら先に現在のデータを書き出してください。
+        </p>
+        <button class="text-button" onclick={downloadBackup}
+          >現在のデータを書き出す</button
+        >
+        <div class="modal-actions">
+          <button
+            class="secondary"
+            onclick={() => {
+              backup = null;
+              modal = "";
+            }}>キャンセル</button
+          ><button class="primary" onclick={confirmBackup}
+            >この内容で置き換える</button
+          >
+        </div>
+      {:else if modal === "erase"}<p>
+          このブラウザの冷蔵庫・献立・保存・履歴・調理・設定を消去します。元に戻すには書き出したバックアップが必要です。
+        </p>
+        <button class="text-button" onclick={downloadBackup}
+          >消去前にデータを書き出す</button
+        >
+        <div class="modal-actions">
+          <button class="secondary" onclick={() => (modal = "")}
+            >キャンセル</button
+          ><button
+            class="danger"
+            onclick={async () => {
+              try {
+                if (storageIssue) {
+                  appState = await recoverBackup(
+                    recoveryToken ?? inspectRecovery(),
+                    D.createInitialState(),
+                  );
+                  storageIssue = "";
+                  notify("このブラウザのデータを消去しました。");
+                } else if (
+                  !(await change(
+                    () => D.createInitialState(),
+                    "このブラウザのデータを消去しました。",
+                  ))
+                )
+                  return;
+                modal = "";
+                chooseRandom();
+                navigate("home");
+              } catch (e) {
+                error =
+                  e instanceof Error ? e.message : "消去できませんでした。";
+              }
+            }}>データを消去する</button
+          >
+        </div>
+      {:else if modal === "cancel-receipt"}<p>
+          画像と修正中の候補を破棄します。冷蔵庫の在庫は変更しません。
+        </p>
+        <div class="modal-actions">
+          <button class="secondary" onclick={() => (modal = "")}
+            >候補に戻る</button
+          ><button
+            class="danger"
+            onclick={() => {
+              modal = "";
+              candidates = [];
+              void clearReceipt();
+              navigate("fridge");
+            }}>破棄してやめる</button
+          >
+        </div>
+      {:else if modal === "guide"}<p class="muted">
+          {currentStep?.recipeName} · 工程{(appState.cooking?.index ?? 0) + 1}
+        </p>
+        <h3 class="gap-top">{currentStep?.guide || "食材を切る"}</h3>
+        {#if currentStep?.guide === "半月切り"}<div
+            class="guide-diagram"
+            aria-label="丸い食材を縦に切り、半円にして薄切りにする図"
+          >
+            <span class="guide-piece"></span><ArrowRight /><span
+              class="guide-piece half"
+            ></span><ArrowRight /><span class="row"
+              ><span class="guide-piece half" style="width:12px"></span><span
+                class="guide-piece half"
+                style="width:12px"
+              ></span><span class="guide-piece half" style="width:12px"
+              ></span></span
+            >
+          </div>
+          <p>
+            ① 食材を安定する向きでまな板に置きます。<br />②
+            縦半分に切り、平らな面を下にします。<br />③
+            指先を内側に丸め、端から同じ厚さに切ります。
+          </p>{:else if currentStep?.guide === "くし形切り"}<div
+            class="guide-diagram"
+            aria-label="トマトを縦半分に切り、中心を通って放射状に切る図"
+          >
+            <span
+              class="guide-piece"
+              style="background:#e89a64;border-color:#cd6647"
+            ></span><ArrowRight /><span
+              class="guide-piece"
+              style="background:#e89a64;border-color:#cd6647;border-radius:100% 0 0 0"
+            ></span>
+          </div>
+          <p>
+            ① トマトを縦半分に切り、へたを取ります。<br />②
+            切り口を下に置いて安定させます。<br />③
+            中心を通るように包丁を入れ、くしの形に分けます。
+          </p>{:else if currentStep?.guide === "角切り"}<div
+            class="guide-diagram"
+            aria-label="豆腐を板状、棒状、角状に順番に切る図"
+          >
+            <span
+              class="guide-piece"
+              style="border-radius:4px;border-color:#ded3ae;background:#fffcec"
+            ></span><ArrowRight /><span
+              style="display:grid;grid-template-columns:repeat(3,18px);gap:4px"
+              >{#each [1, 2, 3, 4, 5, 6] as piece}<span
+                  style="width:18px;height:18px;background:#fffcec;border:2px solid #ded3ae"
+                ></span>{/each}</span
+            >
+          </div>
+          <p>
+            ① 豆腐を板状に切ります。<br />② 縦に切って棒の形にします。<br />③
+            向きを変え、同じ幅で切って立方体にします。
+          </p>{:else}<div
+            class="guide-diagram"
+            aria-label="葉ものを広げ、食べやすい大きさにざく切りする図"
+          >
+            <span
+              class="guide-piece"
+              style="background:#b9c890;border-color:#819663;border-radius:15px"
+            ></span><ArrowRight /><span
+              class="guide-piece"
+              style="width:24px;height:30px;background:#b9c890;border-color:#819663;border-radius:8px"
+            ></span><span
+              class="guide-piece"
+              style="width:28px;height:26px;background:#b9c890;border-color:#819663;border-radius:8px"
+            ></span>
+          </div>
+          <p>
+            ① キャベツのかたい芯を切り分けます。<br />②
+            葉を重ね、食べやすい幅に切ります。<br />③
+            向きを変えて切り、ひと口大にそろえます。
+          </p>{/if}
+        <p class="check-note gap-top">
+          図と文章のガイドです。動画は今回の試用版では未提供です。
+        </p>
+        <button class="primary wide gap-top" onclick={() => (modal = "")}
+          >元の工程に戻る</button
+        >
+      {:else if modal === "sample-stock"}<p>
+          操作を試すために、なす（数量不明）・卵（1個）・豆腐（300g）を追加します。実際の手持ちとは異なるサンプルです。
+        </p>
+        <div class="modal-actions">
+          <button class="secondary" onclick={() => (modal = "")}
+            >キャンセル</button
+          ><button
+            class="primary"
+            onclick={() => {
+              sampleStock();
+              modal = "";
+            }}>サンプル在庫を入れる</button
+          >
+        </div>{/if}
+    </div>
+  </div>
 {/if}
