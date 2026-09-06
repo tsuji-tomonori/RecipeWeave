@@ -2,6 +2,13 @@
 
 更新日: 2026-09-06。対象ブランチ: `feat/service-receipts-dev`。
 
+実装コミット `576353a75f28f6af7253bcda2bba7ae643bfcb78` の
+[CI run 34001846587](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34001846587) で、
+**verifyジョブが成功した**。84テスト、型・lint、実Lambda梱包、CDK strict合成、
+生成設計の差分検査、Pages用artifactの作成まで完了した。
+publishジョブはPages未有効による `Get Pages site failed / Not Found` で停止した。
+workflow全体の成功や、公開・AWS配備の完了は表明しない。
+
 ## 状況
 
 サービス概要・利用者マニュアル・Q&A・画面一覧を独立した評価者で2回確認し、
@@ -14,11 +21,12 @@
 | 利用者文書 | `docs/service/reviews/novice-review.md`、`receipt-review.md` に反復記録 |
 | 実装と動線 | 独立レビューの重大4件・中3件を修正し再確認。表示位置保持も追加 |
 | 数量・レシート・端末保存 | TypeScript strict、独立計算・保存23テスト成功 |
-| Svelte画面 | 型・build成功。疑似DOM11テストと計算・保存23テストを実行。最新CI確認待ち |
-| FastAPI | CIで26テスト、Ruff・Pyright・mypy成功。移行契約4件を追加して最新CI確認中 |
-| AWS CDK | 実Lambda梱包はCI成功。8構造検査中の期待値誤り1件を修正して再確認中 |
-| 実装由来の設計 | OpenAPIとSQL wrapperの生成成功。CDKを含む全体生成・差分確認はCI待ち |
-| GitHub Pages | 初期設定未完了。現連携から設定を変更できないため未公開 |
+| Svelte画面 | 型・build成功、svelte-checkは0 errors / 0 warnings。疑似DOM11件＋計算・保存23件が成功 |
+| FastAPI・移行 | 30テスト成功（API等26件、移行契約4件）。Ruff・Pyright・mypy・operation境界検査成功。backend branch coverageを含む集計85% |
+| 既存の生成処理 | Pythonの12テスト成功 |
+| AWS CDK | 実Lambda梱包、8構造検査、strict合成成功。参照保護をstrongと明示し、既定証明書に効かない設定を除いた |
+| 実装由来の設計 | OpenAPI・SQL wrapper・サービス構成・生成処理設計を再生成して追跡版と一致。未追跡ファイルも含め差分なし |
+| GitHub Pages | site artifact作成成功。publishはPages初期設定がないためNot Foundで停止。未公開 |
 | AWS実環境 | 接続が再認証を要求。未配備、Cognito/DSQL実接続は未受入 |
 | 実ブラウザ・実機 | この作業環境のローカルURL制限により未実施。疑似DOMテストと区別 |
 | OCR一般精度 | 実店舗の多様なレシートによる精度測定は未実施。必ず確認・訂正を通す |
@@ -35,12 +43,17 @@ Python lint/strict型/認証・CASテスト、Lambda梱包、CDK構造テスト�
 実装由来設計の差分確認、Pages配置を順に実行する。
 検査が失敗したビルドは公開しない。AWSへの自動配備はこのworkflowに含めない。
 
-生成物の差分検査は新規未追跡ファイルも検出する。初回CIの生成内容を確認して
-コードと同じブランチへ記録した後、再検査で一致を確認する。
+生成物の差分検査は新規未追跡ファイルも検出する。初回CIの生成内容はSHA-256を照合して
+所定の5ファイルだけを取り込み、コードと同じブランチへ記録した。
+再検査で一致し、サービス設計に記載した17の入力ファイルハッシュも照合した。
+
+pytestは依存するStarlette/TestClient由来の非推奨警告2件を出すが、テスト失敗はない。
+これは実機受入や将来の依存更新での互換性を保証するものではない。
 
 ## 公開に必要な設定
 
-リポジトリの **Settings → Pages → Build and deployment → Source → GitHub Actions** を選ぶ。
+リポジトリの [Pages設定](https://github.com/tsuji-tomonori/RecipeWeave/settings/pages) で
+**Settings → Pages → Build and deployment → Source → GitHub Actions** を選ぶ。
 その後、失敗したpublishジョブを再実行する。通常の `GITHUB_TOKEN` はPages初期有効化用の
 管理権限を持たず、接続中のGitHubツールにも設定変更操作がないため、この初回設定を必要とする。
 
