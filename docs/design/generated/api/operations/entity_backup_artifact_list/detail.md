@@ -162,7 +162,7 @@
 
 | 関数 | 返却式 | 定義元 |
 |---|---|---|
-| handle | result | backend/src/app/apis/entities/backup_artifact_list/router.py:35 |
+| handle | result | backend/src/app/apis/entities/backup_artifact_list/router.py:38 |
 | execute | [BackupArtifactRow.model_validate(row) for row in rows] | backend/src/app/apis/entities/backup_artifact_list/functions.py:9 |
 | parse_etag | value[1:-1] | backend/src/app/core/entity_service.py:23 |
 | EntityService.execute | rows | backend/src/app/core/entity_service.py:39 |
@@ -173,7 +173,7 @@ APIとして返す型・status・headerは [インターフェース](interface.
 
 | 関数 | 処理 | 定義元 |
 |---|---|---|
-| handle | 本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持するの一覧。認証情報は依存から取得し、本人所有または管理者権限を検査する。 | backend/src/app/apis/entities/backup_artifact_list/router.py:35 |
+| handle | 本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持するの一覧。認証情報は依存から取得し、本人所有または管理者権限を検査する。 | backend/src/app/apis/entities/backup_artifact_list/router.py:38 |
 | execute | 本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持するの一覧を固定操作契約で実行し、DB行を専用応答型へ検証する。 | backend/src/app/apis/entities/backup_artifact_list/functions.py:9 |
 | parse_etag | ワイルドカードや複数指定を拒否し、読取り時の行版を必須にする。 | backend/src/app/core/entity_service.py:23 |
 | EntityService.execute | 本人の行を絞り込み、更新前の版と親所有権を検証して実行する。 | backend/src/app/core/entity_service.py:39 |

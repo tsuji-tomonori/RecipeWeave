@@ -21,6 +21,9 @@
 | `8fe62ae`・[独立ブラウザCI 34029055375](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34029055375) | APIは200で本人データを返す一方、URLのみホームへ移動してDOMがログイン画面に残る不具合を確認。追跡により、ランダム料理APIの応答を料理本体と誤解して描画中に停止する直接原因を確認。応答の展開・候補ゼロ処理を修正。アプリ内遷移の同期も改善し、関連13単体試験成功。修正後の実ブラウザは次CIで確認 |
 | `0a3a9bf`・[実DB CI 34029672097](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34029672097) | 173件成功・2件失敗・14件setupエラー・スキップ0件。バックアップ5件はすべて成功。残りは試験用の旧参照名2件と、工程試験fixtureの必須役割設定漏れ14件を修正 |
 | PC・モバイルの実ブラウザ | 現行版の全利用動線と品質サイトの成功はCIで確認中。ローカルChromiumはOSのsocket権限により起動前に停止し、そこで実画面検証に成功したとは記録しない |
+| `0387ded`・[実DB CI 34031436919](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34031436919) | **189件成功・スキップ0件**。34表のバックアップ復元、所有権、復元競合と原子性、人数変更時の工程時間確認を含む |
+| `0387ded`・[独立ブラウザCI 34031436926](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34031436926) | **PC・モバイル22件成功**。検索から3人分への変更、時間確認、調理完了、レシートOCR・取消、別タブ、復元を確認 |
+| `0387ded`・[総合CI 34031436929](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34031436929) | Python806件、Vitest57件、CDK9件、品質サイト6件成功。SQLFluff703ファイルで違反0件、生成設計2,404ファイル差分なし、Mermaid1,736図を検証。Ruffの生成説明文8行の長さ超過と、設定の器具返却順が揺れるE2E1件を検出し、公開を停止。後続修正は最新のPR・CI成果物で確認する |
 
 ## 証跡と再現
 
@@ -32,7 +35,7 @@
 
 ## 実配備の境界
 
-`dfeb67f5` と `1acc6a4` のCIは、`DEV_API_BASE_URL`、`DEV_COGNITO_DOMAIN`、`DEV_COGNITO_CLIENT_ID`、`AWS_DEPLOY_ROLE_ARN`、`PRODUCTION_WEB_CALLBACK_URL` の全5設定が未設定だったことを記録した。値の内容は成果物へ出力しない。
+`dfeb67f5`、`1acc6a4`、`0387ded` のCIは、`DEV_API_BASE_URL`、`DEV_COGNITO_DOMAIN`、`DEV_COGNITO_CLIENT_ID`、`AWS_DEPLOY_ROLE_ARN`、`PRODUCTION_WEB_CALLBACK_URL` の全5設定が未設定だったことを記録した。値の内容は成果物へ出力しない。
 
 AWS接続への読み取り専用STS照会は応答を取得できず、認証状態・アカウント・既存stack・実APIの存在を確認できていない。明示的な再認証要求や権限エラーも受け取っていない。AWS実配備を完了とは記録しない。
 

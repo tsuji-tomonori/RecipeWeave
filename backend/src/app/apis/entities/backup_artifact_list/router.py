@@ -13,7 +13,10 @@ from app.core.identity import IdentityDependency
 
 router = APIRouter(
     tags=[
-        "正規化データ: 本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持する"
+        (
+            "正規化データ: 本人へ発行したバックアップの証拠。本文を保存せず、削除後"
+            "も匿名化した発行記録を保持する"
+        )
     ]
 )
 

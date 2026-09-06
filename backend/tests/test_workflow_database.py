@@ -428,3 +428,32 @@ def test_first_cognito_login_initializes_only_internal_resources_once(
             row["capacity"] is None and row["quantity"] == 1 and row["active"] for row in rows
         )
     get_settings.cache_clear()
+
+
+@pytest.mark.parametrize("subject", ["alice", "bob"])
+def test_workspace_set_order_does_not_follow_kitchen_heap_order(
+    workflow_client: WorkflowClient, subject: str
+) -> None:
+    """器具の同値更新で物理行順が変わっても、読取り結果と版を変えない。"""
+    before = workspace(workflow_client, subject)
+    assert before["settings"]["equipment"]
+    with psycopg.Connection[dict[str, Any]].connect(
+        os.environ["TEST_DATABASE_URL"], row_factory=dict_row
+    ) as connection:
+        connection.execute("SELECT set_config('recipeweave.role', 'admin', true)")
+        rows = connection.execute(
+            """SELECT kitchen.id FROM recipeweave.kitchen_resource AS kitchen
+            JOIN recipeweave.app_user AS person ON kitchen.user_id = person.id
+            WHERE person.auth_subject = %s ORDER BY kitchen.id DESC""",
+            ("local:" + subject,),
+        ).fetchall()
+        for row in rows:
+            connection.execute(
+                "UPDATE recipeweave.kitchen_resource SET name = name WHERE id = %s",
+                (row["id"],),
+            )
+    after = workspace(workflow_client, subject)
+    assert after == before
+    assert after["settings"]["equipment"] == sorted(after["settings"]["equipment"])
+    assert after["settings"]["excludedFoodIds"] == sorted(after["settings"]["excludedFoodIds"])
+    assert after["settings"]["pantryFoodIds"] == sorted(after["settings"]["pantryFoodIds"])

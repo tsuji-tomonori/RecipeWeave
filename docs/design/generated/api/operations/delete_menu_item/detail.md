@@ -260,6 +260,8 @@
 |---|---|
 | user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:324) |
 
+代入・選択式: `settings.kind; settings.setting_value`
+
 ### `backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql`
 
 実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
@@ -360,7 +362,7 @@
 |---|---|---|
 | recipeweave.food_form | R | id: 不変の行識別子; food_id: 対応食材; name: 生皮付き・冷凍刻み等 |
 | recipeweave.ingredient_total | R | id: 不変の行識別子; session_id: 固定計算対象; form_id: 合算可能な形態; product_version_id: 商品固定; unit_id: 基準単位; required_amount: 必要量; actual_amount: 利用者が確定した実使用量。不明はNULL; consumption_outcome: 未要求・反映済み・在庫不足・数量不明・単位不一致の結果 |
-| recipeweave.pantry_consumption | R | id: 不変の行識別子; session_id: 消費した調理セッション; lot_id: 消費元ロット; amount: 消費数量 |
+| recipeweave.pantry_consumption | R | id: 不変の行識別子; created_at: 作成日時（UTC）; session_id: 消費した調理セッション; lot_id: 消費元ロット; amount: 消費数量 |
 | recipeweave.pantry_lot | R | id: 不変の行識別子; form_id: 食材形態; product_version_id: 商品版; unit_id: 単位 |
 | recipeweave.unit | R | id: 不変の行識別子; code: 単位コード |
 
@@ -370,7 +372,7 @@
 |---|---|
 | session_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
 
-代入・選択式: `total.id; fm.food_id; fm.name AS form; total.required_amount; total.actual_amount; total.consumption_outcome; u.code AS unit; COALESCE(SUM(c.amount), 0) AS consumed_amount; ARRAY_AGG(c.lot_id) FILTER(WHERE c.id IS NOT NULL) AS lot_ids`
+代入・選択式: `total.id; fm.food_id; fm.name AS form; total.required_amount; total.actual_amount; total.consumption_outcome; u.code AS unit; COALESCE(SUM(c.amount), 0) AS consumed_amount; ARRAY_AGG(c.lot_id ORDER BY c.created_at, c.id) FILTER(WHERE c.id IS NOT NULL) AS lot_ids`
 
 ### `backend/src/app/apis/auth/get_me/sql/q001_set_identity.sql`
 

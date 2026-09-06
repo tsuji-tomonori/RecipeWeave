@@ -12,22 +12,24 @@ class Parameters(TypedDict):
     page_limit: int
 
 
-SQL = """-- 本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持するを一覧取得する。
--- 値は名前付きパラメータで束縛する。
-SELECT
-    t.id,
-    t.created_at,
-    t.user_id,
-    t.body_sha256,
-    t.format_version,
-    t.xmin::TEXT AS etag
-FROM recipeweave.backup_artifact AS t
-WHERE
-    t.user_id = %(actor_id)s
-    AND (%(after_id)s::UUID IS NULL OR t.id > %(after_id)s)
-ORDER BY t.id
-LIMIT %(page_limit)s;
-"""
+SQL = (
+    "-- 本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化し"
+    "た発行記録を保持するを一覧取得する。\n"
+    "-- 値は名前付きパラメータで束縛する。\n"
+    "SELECT\n"
+    "    t.id,\n"
+    "    t.created_at,\n"
+    "    t.user_id,\n"
+    "    t.body_sha256,\n"
+    "    t.format_version,\n"
+    "    t.xmin::TEXT AS etag\n"
+    "FROM recipeweave.backup_artifact AS t\n"
+    "WHERE\n"
+    "    t.user_id = %(actor_id)s\n"
+    "    AND (%(after_id)s::UUID IS NULL OR t.id > %(after_id)s)\n"
+    "ORDER BY t.id\n"
+    "LIMIT %(page_limit)s;\n"
+)
 
 
 def execute(

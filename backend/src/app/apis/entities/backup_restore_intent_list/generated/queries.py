@@ -12,25 +12,27 @@ class Parameters(TypedDict):
     page_limit: int
 
 
-SQL = """-- 復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費するを一覧取得する。
--- 値は名前付きパラメータで束縛する。
-SELECT
-    t.id,
-    t.created_at,
-    t.user_id,
-    t.artifact_id,
-    t.body_sha256,
-    t.current_revision,
-    t.expires_at,
-    t.consumed_at,
-    t.xmin::TEXT AS etag
-FROM recipeweave.backup_restore_intent AS t
-WHERE
-    t.user_id = %(actor_id)s
-    AND (%(after_id)s::UUID IS NULL OR t.id > %(after_id)s)
-ORDER BY t.id
-LIMIT %(page_limit)s;
-"""
+SQL = (
+    "-- 復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度"
+    "だけ消費するを一覧取得する。\n"
+    "-- 値は名前付きパラメータで束縛する。\n"
+    "SELECT\n"
+    "    t.id,\n"
+    "    t.created_at,\n"
+    "    t.user_id,\n"
+    "    t.artifact_id,\n"
+    "    t.body_sha256,\n"
+    "    t.current_revision,\n"
+    "    t.expires_at,\n"
+    "    t.consumed_at,\n"
+    "    t.xmin::TEXT AS etag\n"
+    "FROM recipeweave.backup_restore_intent AS t\n"
+    "WHERE\n"
+    "    t.user_id = %(actor_id)s\n"
+    "    AND (%(after_id)s::UUID IS NULL OR t.id > %(after_id)s)\n"
+    "ORDER BY t.id\n"
+    "LIMIT %(page_limit)s;\n"
+)
 
 
 def execute(

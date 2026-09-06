@@ -8,7 +8,7 @@ SELECT
     total.consumption_outcome,
     u.code AS unit,
     COALESCE(SUM(c.amount), 0) AS consumed_amount,
-    ARRAY_AGG(c.lot_id) FILTER (WHERE c.id IS NOT NULL) AS lot_ids
+    ARRAY_AGG(c.lot_id ORDER BY c.created_at, c.id) FILTER (WHERE c.id IS NOT NULL) AS lot_ids
 FROM recipeweave.ingredient_total AS total
 INNER JOIN recipeweave.food_form AS fm ON total.form_id = fm.id
 INNER JOIN recipeweave.unit AS u ON total.unit_id = u.id

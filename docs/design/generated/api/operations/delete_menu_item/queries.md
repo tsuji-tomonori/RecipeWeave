@@ -296,25 +296,33 @@ ORDER BY ranked.recipe_id;
 バインド変数: user_id
 
 ```sql
--- 除外・常備・器具を各設定表から一覧化する。
+-- 設定集合は物理行順を使わず、種類・値の固定順で返す。
+WITH settings AS (
+    SELECT
+        'excluded' AS kind,
+        food_id::TEXT AS setting_value
+    FROM recipeweave.user_exclusion
+    WHERE user_id = %(user_id)s AND food_id IS NOT NULL
+    UNION ALL
+    SELECT
+        'pantry' AS kind,
+        food_id::TEXT AS setting_value
+    FROM recipeweave.user_pantry_food
+    WHERE user_id = %(user_id)s
+    UNION ALL
+    SELECT
+        'equipment' AS kind,
+        r.name AS setting_value
+    FROM recipeweave.kitchen_resource AS k
+    INNER JOIN recipeweave.resource_type AS r ON k.resource_type_id = r.id
+    WHERE k.user_id = %(user_id)s AND k.active AND r.code NOT IN ('person', 'burner', 'bowl')
+)
+
 SELECT
-    'excluded' AS kind,
-    food_id::TEXT AS setting_value
-FROM recipeweave.user_exclusion
-WHERE user_id = %(user_id)s AND food_id IS NOT NULL
-UNION ALL
-SELECT
-    'pantry' AS kind,
-    food_id::TEXT AS setting_value
-FROM recipeweave.user_pantry_food
-WHERE user_id = %(user_id)s
-UNION ALL
-SELECT
-    'equipment' AS kind,
-    r.name AS setting_value
-FROM recipeweave.kitchen_resource AS k
-INNER JOIN recipeweave.resource_type AS r ON k.resource_type_id = r.id
-WHERE k.user_id = %(user_id)s AND k.active AND r.code NOT IN ('person', 'burner', 'bowl');
+    settings.kind,
+    settings.setting_value
+FROM settings
+ORDER BY settings.kind, CONVERT_TO(settings.setting_value, 'UTF8');
 ```
 
 ## backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql
@@ -471,7 +479,7 @@ ORDER BY t.id, r.name;
 |---|---|---|
 | recipeweave.food_form | R | food_id, id, name |
 | recipeweave.ingredient_total | R | actual_amount, consumption_outcome, form_id, id, product_version_id, required_amount, session_id, unit_id |
-| recipeweave.pantry_consumption | R | amount, id, lot_id, session_id |
+| recipeweave.pantry_consumption | R | amount, created_at, id, lot_id, session_id |
 | recipeweave.pantry_lot | R | form_id, id, product_version_id, unit_id |
 | recipeweave.unit | R | code, id |
 
@@ -488,7 +496,7 @@ SELECT
     total.consumption_outcome,
     u.code AS unit,
     COALESCE(SUM(c.amount), 0) AS consumed_amount,
-    ARRAY_AGG(c.lot_id) FILTER (WHERE c.id IS NOT NULL) AS lot_ids
+    ARRAY_AGG(c.lot_id ORDER BY c.created_at, c.id) FILTER (WHERE c.id IS NOT NULL) AS lot_ids
 FROM recipeweave.ingredient_total AS total
 INNER JOIN recipeweave.food_form AS fm ON total.form_id = fm.id
 INNER JOIN recipeweave.unit AS u ON total.unit_id = u.id

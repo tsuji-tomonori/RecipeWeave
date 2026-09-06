@@ -8,7 +8,7 @@
 
 ### router.py: `handle`
 
-定義元: `backend/src/app/apis/entities/backup_artifact_get/router.py:35`
+定義元: `backend/src/app/apis/entities/backup_artifact_get/router.py:38`
 
 ```mermaid
 sequenceDiagram

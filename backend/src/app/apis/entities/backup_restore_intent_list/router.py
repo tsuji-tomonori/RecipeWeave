@@ -13,7 +13,10 @@ from app.core.identity import IdentityDependency
 
 router = APIRouter(
     tags=[
-        "正規化データ: 復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費する"
+        (
+            "正規化データ: 復元内容の確認記録。本人・本文・確認時の更新版・期限を固"
+            "定し、一度だけ消費する"
+        )
     ]
 )
 

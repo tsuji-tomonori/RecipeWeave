@@ -1,5 +1,5 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 8528c1829f25064d89f9dbe2bc6684bed3678504a9c06afb4d5f876fa101417e
+# SQLのSHA256: 4e4ff21f64f8d3bc5a7c0409009d3208854d2738b2e13018ce6e86c40b9bf504
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
@@ -17,7 +17,7 @@ SELECT
     total.consumption_outcome,
     u.code AS unit,
     COALESCE(SUM(c.amount), 0) AS consumed_amount,
-    ARRAY_AGG(c.lot_id) FILTER (WHERE c.id IS NOT NULL) AS lot_ids
+    ARRAY_AGG(c.lot_id ORDER BY c.created_at, c.id) FILTER (WHERE c.id IS NOT NULL) AS lot_ids
 FROM recipeweave.ingredient_total AS total
 INNER JOIN recipeweave.food_form AS fm ON total.form_id = fm.id
 INNER JOIN recipeweave.unit AS u ON total.unit_id = u.id

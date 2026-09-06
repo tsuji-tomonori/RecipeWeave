@@ -9,6 +9,7 @@ from collections import defaultdict
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
+from unicodedata import east_asian_width
 
 ROOT = Path(__file__).resolve().parents[1]
 API_ROOT = ROOT / "backend/src/app/apis/entities"
@@ -326,6 +327,36 @@ def query_text(table: dict[str, Any], action: str, tables: dict[str, dict[str, A
     )
 
 
+def display_width(value: str) -> int:
+    """日本語の全角文字を2桁として、生成先の表示桁数を数える。"""
+    return sum(2 if east_asian_width(character) in {"F", "W"} else 1 for character in value)
+
+
+def python_string_literal(value: str) -> str:
+    """長い文字列を暗黙連結の定数へ分け、元の文字・改行・引用符を保持する。"""
+    if display_width(repr(value)) <= 72:
+        return repr(value)
+    pieces: list[str] = []
+    for line in value.splitlines(keepends=True):
+        part = ""
+        for character in line:
+            if part and display_width(repr(part + character)) > 72:
+                pieces.append(repr(part))
+                part = ""
+            part += character
+        if part:
+            pieces.append(repr(part))
+    return "(\n" + "\n".join("    " + piece for piece in pieces) + "\n)"
+
+
+def sql_string_literal(value: str) -> str:
+    """短いSQLは読みやすい三重引用符、長い説明は同値の文字列連結で出力する。"""
+    literal = '"""' + value + '"""'
+    if all(display_width(line) <= 100 for line in ("SQL = " + literal).splitlines()):
+        return literal
+    return python_string_literal(value)
+
+
 def wrapper(sql: str, function: str = "execute", table: dict[str, Any] | None = None) -> str:
     """値の集合をSQLから宣言し、列挙したパラメータ以外はドライバへ渡さない。"""
     names = sorted(set(re.findall(r"%\((\w+)\)s", sql)))
@@ -371,7 +402,7 @@ class Parameters(TypedDict):
 {fields}
 
 
-SQL = """{sql}"""
+SQL = {sql_string_literal(sql)}
 
 
 def {function}(connection: Connection[dict[str, Any]],
@@ -497,7 +528,7 @@ CONTRACT = OperationContract(
         HEADER
         + "\n".join(imports)
         + f'''\n
-router = APIRouter(tags=["正規化データ: {table["description"]}"])
+router = APIRouter(tags=[{python_string_literal("正規化データ: " + table["description"])}])
 
 
 @router.{method.lower()}(CONTRACT.path, operation_id=CONTRACT.operation_id,
@@ -545,7 +576,7 @@ def execute({", ".join(function_args)}) -> {results}:
     sql = query_text(table, action, tables)
     files[directory / f"sql/001_{action}.sql"] = sql
     files[directory / "generated/queries.py"] = wrapper(sql, table=table)
-    refs = []
+    refs: list[tuple[str, str]] = []
     if action in {"create", "update"}:
         for col in table["columns"]:
             if owned and col["reference"] == "recipe_version.id":
@@ -757,9 +788,7 @@ def render() -> dict[Path, str]:
         for path, target in pyfiles.items():
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(
-                files[path]
-                .replace("ノード", "節点")
-                .translate(str.maketrans({"（": "(", "）": ")", "×": "x", "：": ":"}))
+                files[path].replace("ノード", "節点").translate(str.maketrans("（）×：", "()x:"))
             )
         subprocess.run(
             [

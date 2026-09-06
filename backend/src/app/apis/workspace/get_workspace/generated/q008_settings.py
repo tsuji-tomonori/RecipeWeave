@@ -1,5 +1,5 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 24435f75e84a80e2a5e76609ba3dd6d1be2de3b19d24a94d9b4b99fa3bfdfac1
+# SQLのSHA256: d99f03a815c631bde6930cfe65f7c93920f31d65a403826f6214efa05e413b21
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
@@ -7,25 +7,33 @@ from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
     "query": """\
--- 除外・常備・器具を各設定表から一覧化する。
+-- 設定集合は物理行順を使わず、種類・値の固定順で返す。
+WITH settings AS (
+    SELECT
+        'excluded' AS kind,
+        food_id::TEXT AS setting_value
+    FROM recipeweave.user_exclusion
+    WHERE user_id = %(user_id)s AND food_id IS NOT NULL
+    UNION ALL
+    SELECT
+        'pantry' AS kind,
+        food_id::TEXT AS setting_value
+    FROM recipeweave.user_pantry_food
+    WHERE user_id = %(user_id)s
+    UNION ALL
+    SELECT
+        'equipment' AS kind,
+        r.name AS setting_value
+    FROM recipeweave.kitchen_resource AS k
+    INNER JOIN recipeweave.resource_type AS r ON k.resource_type_id = r.id
+    WHERE k.user_id = %(user_id)s AND k.active AND r.code NOT IN ('person', 'burner', 'bowl')
+)
+
 SELECT
-    'excluded' AS kind,
-    food_id::TEXT AS setting_value
-FROM recipeweave.user_exclusion
-WHERE user_id = %(user_id)s AND food_id IS NOT NULL
-UNION ALL
-SELECT
-    'pantry' AS kind,
-    food_id::TEXT AS setting_value
-FROM recipeweave.user_pantry_food
-WHERE user_id = %(user_id)s
-UNION ALL
-SELECT
-    'equipment' AS kind,
-    r.name AS setting_value
-FROM recipeweave.kitchen_resource AS k
-INNER JOIN recipeweave.resource_type AS r ON k.resource_type_id = r.id
-WHERE k.user_id = %(user_id)s AND k.active AND r.code NOT IN ('person', 'burner', 'bowl');
+    settings.kind,
+    settings.setting_value
+FROM settings
+ORDER BY settings.kind, CONVERT_TO(settings.setting_value, 'UTF8');
 """
 }
 PARAMETERS: dict[str, tuple[str, ...]] = {"query": ("user_id",)}

@@ -34,7 +34,7 @@ test("利用者DBを暗号化・削除保護し非公開2AZに保持する", () 
   });
 });
 
-test("OIDC trust is one repository branch and imports an existing provider only", () => {
+test("OIDCの信頼先を単一ブランチに限定し既存プロバイダーだけを参照する", () => {
   const oidcApp = new App();
   const oidc = new GitHubDeployStack(oidcApp, "TestGitHub", {
     env,
@@ -95,7 +95,7 @@ test("OIDC trust is one repository branch and imports an existing provider only"
   });
 });
 
-test("rejects wildcard deployment trust and missing actual build artifacts", () => {
+test("配備先のワイルドカードと実ビルド成果物の不足を拒否する", () => {
   assert.throws(
     () => readConfig(new App({ context: { githubBranch: "*" } })),
     /exact branch/,

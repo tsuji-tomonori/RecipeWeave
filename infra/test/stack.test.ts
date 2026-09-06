@@ -17,7 +17,7 @@ const service = new ServiceStack(app, "TestService", {
 const dataTemplate = Template.fromStack(data);
 const template = Template.fromStack(service);
 
-test("prohibits public static storage and restricts reads to its OAC distribution", () => {
+test("静的保存先を非公開にし専用のOAC配信だけに読み取りを許可する", () => {
   template.hasResource("AWS::S3::Bucket", {
     Properties: Match.objectLike({
       BucketEncryption: {
@@ -83,7 +83,7 @@ test("全APIをFastAPIの認証・所有権判定へ転送し本番local認証�
   });
 });
 
-test("never caches private state and forwards Authorization without the viewer Host", () => {
+test("個人データをキャッシュせず閲覧側Hostを除いて認証ヘッダーを転送する", () => {
   template.hasResourceProperties("AWS::CloudFront::Distribution", {
     DistributionConfig: Match.objectLike({
       CacheBehaviors: Match.arrayWith([
@@ -147,7 +147,7 @@ test("API実行と管理者移行を別Lambda・別secret権限に分離する",
     throw new Error("APIにDB管理者secretへの権限があります");
 });
 
-test("limits API load and avoids identity, tokens, images and request bodies in access logs", () => {
+test("API負荷を制限し利用者情報・トークン・画像・本文をアクセスログへ出さない", () => {
   template.hasResourceProperties("AWS::ApiGatewayV2::Stage", {
     DefaultRouteSettings: { ThrottlingBurstLimit: 30, ThrottlingRateLimit: 10 },
     AccessLogSettings: Match.objectLike({

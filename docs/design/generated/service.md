@@ -354,12 +354,13 @@
 |---|---|---|
 | `frontend/src/App.test.ts` | 検証コード | `237e51869d611439a320ce6321f67075231ea1508049405805522b1933b6b2dd` |
 | `frontend/src/lib/api-contract.ts` | `WorkspaceResponse`, `RevisionRequest`, `WorkspaceMutationResponse`, `CreatePantryLotRequest`, `UpdatePantryLotRequest`, `CommitReceiptRequest`, `AddMenuItemRequest`, `PutSettingsRequest`, `PutShoppingChecksRequest`, `CreateCookingSessionRequest`, `UpdateCookingSessionRequest`, `PreviewCookingPlanRequest`, `PreviewCookingPlanResponse`, `CreateCustomFoodRequest` | `cd1a70967466360896a5767d90a7bfaacf364d53439bd0e2ed1c9124880602d3` |
-| `frontend/src/lib/api.test.ts` | 検証コード | `f79deb83ab65135519619059aa7bee75abac74d352038f80c2112af9c8edff44` |
-| `frontend/src/lib/api.ts` | `User`, `StateEnvelope`, `RecipePage`, `ApiError`, `request`, `localLogin`, `currentUser`, `loadFoods`, `findRecipes`, `randomRecipe`, `loadRecipe`, `loadState`, `saveState`, `completeCooking`, `commitReceipt`, `previewCookingPlan`, `exportDatabaseBackup`, `previewDatabaseBackup`, `restoreDatabaseBackup` | `3ce0a37a0ab3d59c1362eb3c8cd3cbb5f173a463d64c428d7aa34e84529f2457` |
+| `frontend/src/lib/api.test.ts` | 検証コード | `c821f222704d51e54f938e0caed8eb371b33bcd7e26130c5974c3a485390aa78` |
+| `frontend/src/lib/api.ts` | `User`, `StateEnvelope`, `RecipePage`, `ApiError`, `request`, `localLogin`, `currentUser`, `loadFoods`, `findRecipes`, `randomRecipe`, `loadRecipe`, `loadState`, `saveState`, `completeCooking`, `commitReceipt`, `previewCookingPlan`, `exportDatabaseBackup`, `previewDatabaseBackup`, `restoreDatabaseBackup` | `eadd31beb4fdd8fd9c2d3cc2ed9942a2a7cd69a3a24d4b2001fa39b4ccceb2c7` |
 | `frontend/src/lib/auth.test.ts` | 検証コード | `007954eb06b22ad583e0f707501254830bb19c2f471ecb027091de90d258e586` |
 | `frontend/src/lib/auth.ts` | `localMode`, `getToken`, `setToken`, `clearToken`, `loginCognito`, `completeLogin`, `logout` | `1beef8d3417207cc4b5a8723dde17df38408e5b7072529cc5e7c5d98eac74a69` |
 | `frontend/src/lib/backup.test.ts` | 検証コード | `77efde125939de9173ad9b6c0edafb0fbf86b2ac441d7b55cdf88455c35be9f7` |
 | `frontend/src/lib/backup.ts` | `MAX_BACKUP_BYTES`, `BackupInput`, `BackupPreview`, `readBackupFile` | `1f548e6fd07931468623f1135f91ac72b9cd553273dcadf4aecb7c2074e615aa` |
+| `frontend/src/lib/catalog-contract.test.ts` | 検証コード | `a5380ab72d1d6c7cc8b77a8ac7bee26a47f24b8c6a74be3bdf85b0344086869c` |
 | `frontend/src/lib/domain.test.ts` | 検証コード | `05077452f7c0ef12e476e084678f3db16e96811fe19a30181d10a045eda8353e` |
 | `frontend/src/lib/domain.ts` | `FOODS`, `RECIPES`, `setCatalog`, `cacheRecipes`, `DomainError`, `newId`, `validateQuantity`, `createInitialState`, `allFoods`, `getFood`, `getRecipe`, `quantityText`, `ingredientKey`, `getDraft`, `scaleDraft`, `setDraftAmount`, `saveDraft`, `resetDraft`, `addToMeal`, `updateMeal`, `removeFromMeal`, `toggleSaved`, `addCustomFood`, `addStock`, `updateStock`, `deleteStock`, `restoreStock`, `duplicateImports`, `commitReceipt`, `previewUndoImport`, `undoImport`, `requiredQuantities`, `shoppingList`, `toggleShoppingCheck`, `searchRecipes`, `randomRecipe`, `arrangements`, `buildCookingPlan`, `startCooking`, `moveCooking`, `pauseCooking`, `resumeCooking`, `startTimer`, `timerRemaining`, `previewConsumption`, `completeCooking` | `146af9c0a7f055e52243e9e0965d84face2aeb8372e6d5331b15601a0b8e3c23` |
 | `frontend/src/lib/ocr.ts` | `OcrTask`, `validateReceiptImage`, `recognizeReceipt` | `e017bc1ff238edf30fe43b440752cd66c70d45172ad73bf3f9687b37947efeab` |
@@ -368,7 +369,8 @@
 | `frontend/src/lib/types.ts` | `UNITS`, `Unit`, `StorageLocation`, `Quantity`, `Food`, `RecipeIngredient`, `TimeScalingMode`, `DurationEstimate`, `RecipeStep`, `Recipe`, `RecipeDraft`, `MealItem`, `StockLot`, `ReceiptImport`, `ReceiptCandidate`, `ReceiptCommit`, `ShoppingCheck`, `ShoppingRow`, `ShoppingList`, `PlannedStep`, `CookingTimer`, `ConsumptionRequest`, `ConsumptionResult`, `CookingSession`, `Settings`, `SearchFilters`, `AppState`, `StockInput`, `UndoPreview` | `bc07fc8746fe109e30c585bc2b53256442c70d9972e5e81bfa22ce336444ffc2` |
 | `frontend/src/main.ts` | 画面コンポーネント／起動処理 | `ec315a1d373f5470b11a7dcaa0d972ab81e3f513113325bd18aea471c1ce2d62` |
 | `frontend/src/test-fixtures.ts` | `fixtureFoods`, `fixtureRecipes` | `7898608c422027651efb2521013d31dfdeb59d78cd50cd7a53bd90853a45e178` |
-| `frontend/src/App.svelte` | 画面コンポーネント／起動処理 | `c98f83119326734501f2630c2893af787b29fb9181138a7aedc6b2f19f319698` |
+| `frontend/src/App.svelte` | 画面コンポーネント／起動処理 | `10ae312c167c513c70519942fe5630f6cce5fceb71757f5a7081fdad4882c70e` |
+| `frontend/src/lib/FoodSettings.svelte` | 画面コンポーネント／起動処理 | `a812bfc75e03bf4b82c1dae1b46b765c1db19640456eed86b6518aa34dd662c7` |
 | `frontend/src/lib/FoodTile.svelte` | 画面コンポーネント／起動処理 | `8be1fc4f7ab1b54c026a7ff77fa74f67e479f8b09a7cf25c944807da71024333` |
 | `frontend/src/lib/RecipeCard.svelte` | 画面コンポーネント／起動処理 | `04bb0c6df673eacfba6aeeba92df6092dd54ec1f09af471114cf53186c7a6ace` |
 
@@ -1001,13 +1003,13 @@
 | `backend/src/app/apis/workspace/get_workspace/sql/q005_menu.sql` | `52c30cf9391c0a045fd22e0dee8918ae68770ff78895f3a7be1e3de85e6e4cd9` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql` | `74761a9be87f171bb68113911981ffec2378f041d5ee7989add4f0f95ce98f33` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q007_saved.sql` | `8895695343795f0816bccf7e0d06ddba7b2e90af5960afe19e614cf7617d8069` |
-| `backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql` | `24435f75e84a80e2a5e76609ba3dd6d1be2de3b19d24a94d9b4b99fa3bfdfac1` |
+| `backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql` | `d99f03a815c631bde6930cfe65f7c93920f31d65a403826f6214efa05e413b21` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql` | `9b9912f58fd1b54f8e991d3ffaa82011a371ead2f47fb0b8305e642485baa66d` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q010_shopping.sql` | `8501e5fb67600ef7dd7c34111f2f1c86a32c93a30b1d73cff7dbaa826cc2506e` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q011_session.sql` | `e1ca7f77863c8b79c88437d0e646bc3c7138247439875df88bb1479f4af34624` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql` | `0f474bd79716f319c05be3e7288aa47617d77065fa55e33465a2a13d3b92f718` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql` | `f6ed366fa2ff15dd7147993529dec399ed1a7defe21a012681df4966070026a7` |
-| `backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql` | `8528c1829f25064d89f9dbe2bc6684bed3678504a9c06afb4d5f876fa101417e` |
+| `backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql` | `4e4ff21f64f8d3bc5a7c0409009d3208854d2738b2e13018ce6e86c40b9bf504` |
 | `backend/src/app/apis/workspace/preview_cooking_plan/sql/q001_steps.sql` | `b4efabef703588c6d2d52d127fb7ac9df80a7e1c0945f51c14a4c8db517f4c88` |
 | `backend/src/app/apis/workspace/preview_cooking_plan/sql/q002_dependencies.sql` | `c2c8ab551635ef2b559ac4971956800919e9dcf5924d17205ffaa53586104533` |
 | `backend/src/app/apis/workspace/preview_cooking_plan/sql/q003_requirements.sql` | `5fc4046c89f9c1f496de07207a322e5a0fb332e1ec2ce9cf8ec265dced7a96dc` |

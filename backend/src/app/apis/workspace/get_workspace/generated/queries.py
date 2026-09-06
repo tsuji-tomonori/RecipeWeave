@@ -1,5 +1,5 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 6036a691c49e36afcaab33332b79745ea1e47fa55a711dc2740fb78dcc9be8a4
+# SQLのSHA256: 97d94db385412d0c5be8ea4a12adf68d72c98c1d270fb5a70f82fc6a8d334fdb
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
@@ -120,25 +120,33 @@ WHERE ranked.rank = 1 AND ranked.kind = 'liked'
 ORDER BY ranked.recipe_id;
 """,
     "q008_settings": """\
--- 除外・常備・器具を各設定表から一覧化する。
+-- 設定集合は物理行順を使わず、種類・値の固定順で返す。
+WITH settings AS (
+    SELECT
+        'excluded' AS kind,
+        food_id::TEXT AS setting_value
+    FROM recipeweave.user_exclusion
+    WHERE user_id = %(user_id)s AND food_id IS NOT NULL
+    UNION ALL
+    SELECT
+        'pantry' AS kind,
+        food_id::TEXT AS setting_value
+    FROM recipeweave.user_pantry_food
+    WHERE user_id = %(user_id)s
+    UNION ALL
+    SELECT
+        'equipment' AS kind,
+        r.name AS setting_value
+    FROM recipeweave.kitchen_resource AS k
+    INNER JOIN recipeweave.resource_type AS r ON k.resource_type_id = r.id
+    WHERE k.user_id = %(user_id)s AND k.active AND r.code NOT IN ('person', 'burner', 'bowl')
+)
+
 SELECT
-    'excluded' AS kind,
-    food_id::TEXT AS setting_value
-FROM recipeweave.user_exclusion
-WHERE user_id = %(user_id)s AND food_id IS NOT NULL
-UNION ALL
-SELECT
-    'pantry' AS kind,
-    food_id::TEXT AS setting_value
-FROM recipeweave.user_pantry_food
-WHERE user_id = %(user_id)s
-UNION ALL
-SELECT
-    'equipment' AS kind,
-    r.name AS setting_value
-FROM recipeweave.kitchen_resource AS k
-INNER JOIN recipeweave.resource_type AS r ON k.resource_type_id = r.id
-WHERE k.user_id = %(user_id)s AND k.active AND r.code NOT IN ('person', 'burner', 'bowl');
+    settings.kind,
+    settings.setting_value
+FROM settings
+ORDER BY settings.kind, CONVERT_TO(settings.setting_value, 'UTF8');
 """,
     "q009_custom_foods": """\
 -- 本人の独自食材は所有表を経由して取得する。
@@ -230,7 +238,7 @@ SELECT
     total.consumption_outcome,
     u.code AS unit,
     COALESCE(SUM(c.amount), 0) AS consumed_amount,
-    ARRAY_AGG(c.lot_id) FILTER (WHERE c.id IS NOT NULL) AS lot_ids
+    ARRAY_AGG(c.lot_id ORDER BY c.created_at, c.id) FILTER (WHERE c.id IS NOT NULL) AS lot_ids
 FROM recipeweave.ingredient_total AS total
 INNER JOIN recipeweave.food_form AS fm ON total.form_id = fm.id
 INNER JOIN recipeweave.unit AS u ON total.unit_id = u.id
