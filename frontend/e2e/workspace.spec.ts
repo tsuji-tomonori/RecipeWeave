@@ -1,3 +1,4 @@
+import { login } from "./login";
 import { test, expect, type Page, type TestInfo } from "@playwright/test";
 import type { AppState } from "../src/lib/types";
 
@@ -23,22 +24,6 @@ async function step(
       }
     }
   });
-}
-
-async function login(page: Page, username = "alice") {
-  await page.goto("/#/login");
-  await page.getByLabel("ユーザー名", { exact: true }).fill(username);
-  await page
-    .getByLabel("パスワード", { exact: true })
-    .fill("recipeweave-local");
-  await page
-    .locator("form")
-    .getByRole("button", { name: "ログイン", exact: true })
-    .click();
-  await expect(page.getByRole("button", { name: "ログアウト" })).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "今日の一品、ここから。" }),
-  ).toBeVisible();
 }
 
 async function workspace(page: Page): Promise<AppState> {
