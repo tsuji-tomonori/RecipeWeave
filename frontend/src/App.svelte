@@ -2955,6 +2955,7 @@
         <div class="stack">
           <label class="field"
             >食材<select
+              aria-label="食材"
               value={editFood}
               onchange={(e) => selectEditFood(e.currentTarget.value)}
               ><option value="">名前を直接入力する</option
@@ -2980,7 +2981,7 @@
                 style="width:100%"
               /></label
             ><label class="field"
-              >単位<select bind:value={editUnit}
+              >単位<select aria-label="単位" bind:value={editUnit}
                 >{#each UNITS as unit}<option>{unit}</option>{/each}</select
               ></label
             >
@@ -2988,7 +2989,7 @@
           <button class="text-button" onclick={() => (editValue = "")}
             >数量不明に戻す</button
           >{#if modal === "stock"}<label class="field"
-              >保存場所<select bind:value={editLocation}
+              >保存場所<select aria-label="保存場所" bind:value={editLocation}
                 ><option>冷蔵</option><option>冷凍</option><option>常温</option
                 ></select
               ></label
@@ -3026,13 +3027,15 @@
         </div>
       {:else if modal === "filters"}<div class="stack">
           <label class="field"
-            >食材の使い方<select bind:value={stagedMatch}
+            >食材の使い方<select
+              aria-label="食材の使い方"
+              bind:value={stagedMatch}
               ><option value="all">選んだ食材をすべて使う</option><option
                 value="any">いずれかを使う</option
               ></select
             ></label
           ><label class="field"
-            >調理時間<select bind:value={stagedMax}
+            >調理時間<select aria-label="調理時間" bind:value={stagedMax}
               ><option value="">指定なし</option><option value="10"
                 >10分以内</option
               ><option value="15">15分以内</option><option value="30"

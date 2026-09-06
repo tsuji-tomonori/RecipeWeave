@@ -15,6 +15,8 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL || "http://127.0.0.1:5173",
     locale: "ja-JP",
+    actionTimeout: 15000,
+    navigationTimeout: 30000,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     ...(process.env.PW_CHROMIUM
