@@ -1,0 +1,138 @@
+{
+  "components": {
+    "schemas": {
+      "FoodIdentityMemberRow": {
+        "additionalProperties": false,
+        "description": "購買食品から同一性への対応のDB応答。",
+        "properties": {
+          "created_at": {
+            "description": "作成日時",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "food_id": {
+            "description": "元の食品",
+            "format": "uuid",
+            "title": "Food Id",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変ID",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "identity_id": {
+            "description": "同一性ID",
+            "format": "uuid",
+            "title": "Identity Id",
+            "type": "string"
+          },
+          "normalizer_version": {
+            "description": "正規化器版",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Normalizer Version",
+            "type": "string"
+          },
+          "reason": {
+            "description": "同一視の理由",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "food_id",
+          "identity_id",
+          "normalizer_version",
+          "reason",
+          "etag"
+        ],
+        "title": "FoodIdentityMemberRow",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/food_identity_member/{row_id}": {
+      "get": {
+        "description": "購買食品から同一性への対応の取得。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_food_identity_member_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FoodIdentityMemberRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "404": {
+            "description": "対象なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "購買食品から同一性への対応の取得",
+        "tags": [
+          "正規化データ: 購買食品から同一性への対応"
+        ]
+      }
+    }
+  }
+}

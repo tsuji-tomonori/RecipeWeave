@@ -1,0 +1,29 @@
+-- 手持ち食材ロットを一覧取得する。
+-- 値は名前付きパラメータで束縛する。
+SELECT
+    t.id,
+    t.created_at,
+    t.user_id,
+    t.form_id,
+    t.product_version_id,
+    t.amount,
+    t.unit_id,
+    t.expires_on,
+    t.opened_at,
+    t.location,
+    t.priority,
+    t.status,
+    t.source_import_id,
+    t.quantity_quality,
+    t.original_form_id,
+    t.original_amount,
+    t.original_unit_id,
+    t.updated_at,
+    t.edited,
+    t.xmin::TEXT AS etag
+FROM recipeweave.pantry_lot AS t
+WHERE
+    t.user_id = %(actor_id)s
+    AND (%(after_id)s::UUID IS NULL OR t.id > %(after_id)s)
+ORDER BY t.id
+LIMIT %(page_limit)s;

@@ -1,0 +1,227 @@
+{
+  "components": {
+    "schemas": {
+      "ReceiptLineRow": {
+        "additionalProperties": false,
+        "description": "レシートの商品候補と確定した在庫の対応のDB応答。",
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "数量。不明はNULL",
+            "title": "Amount"
+          },
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decision": {
+            "description": "accepted/skipped/unresolved",
+            "enum": [
+              "accepted",
+              "skipped",
+              "unresolved"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "form_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "確定した食材形態",
+            "title": "Form Id"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "import_id": {
+            "description": "レシート処理",
+            "format": "uuid",
+            "title": "Import Id",
+            "type": "string"
+          },
+          "line_no": {
+            "description": "レシート内の表示順",
+            "exclusiveMinimum": 0.0,
+            "title": "Line No",
+            "type": "integer"
+          },
+          "pantry_lot_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "登録したロット",
+            "title": "Pantry Lot Id"
+          },
+          "product_version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "確定した商品版",
+            "title": "Product Version Id"
+          },
+          "raw_name": {
+            "description": "利用者が確認できる商品原表記",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Raw Name",
+            "type": "string"
+          },
+          "unit_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "確定数量の単位",
+            "title": "Unit Id"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "import_id",
+          "line_no",
+          "raw_name",
+          "form_id",
+          "product_version_id",
+          "amount",
+          "unit_id",
+          "decision",
+          "pantry_lot_id",
+          "etag"
+        ],
+        "title": "ReceiptLineRow",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/receipt_line/{row_id}": {
+      "delete": {
+        "description": "レシートの商品候補と確定した在庫の対応の削除。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_receipt_line_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptLineRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "428": {
+            "description": "If-Matchが必要"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "レシートの商品候補と確定した在庫の対応の削除",
+        "tags": [
+          "正規化データ: レシートの商品候補と確定した在庫の対応"
+        ]
+      }
+    }
+  }
+}

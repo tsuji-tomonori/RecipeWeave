@@ -1,2 +1,9 @@
-language: unknown
+language: typescript
 layer: configuration
+tasks:
+  install:
+    command: npm ci --no-audit --no-fund
+  check:
+    command: npm run check
+  synth:
+    command: npm run synth

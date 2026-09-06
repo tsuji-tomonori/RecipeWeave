@@ -1,0 +1,11 @@
+.git
+.venv
+**/node_modules
+**/__pycache__
+**/.pytest_cache
+**/.build
+**/dist
+**/cdk.out
+reports
+frontend/test-results
+frontend/playwright-report

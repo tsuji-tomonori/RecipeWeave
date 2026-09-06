@@ -1,0 +1,5714 @@
+{
+  "operations": [
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "source_record_list",
+      "operation_id": "entity_source_record_list",
+      "owned": false,
+      "references": [],
+      "table": "source_record"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "source_record_get",
+      "operation_id": "entity_source_record_get",
+      "owned": false,
+      "references": [],
+      "table": "source_record"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "title",
+        "url",
+        "locator",
+        "retrieved_at",
+        "content_hash",
+        "license_note"
+      ],
+      "json_columns": [],
+      "key": "source_record_create",
+      "operation_id": "entity_source_record_create",
+      "owned": false,
+      "references": [],
+      "table": "source_record"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "title",
+        "url",
+        "locator",
+        "retrieved_at",
+        "content_hash",
+        "license_note"
+      ],
+      "json_columns": [],
+      "key": "source_record_update",
+      "operation_id": "entity_source_record_update",
+      "owned": false,
+      "references": [],
+      "table": "source_record"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "catalog_release_list",
+      "operation_id": "entity_catalog_release_list",
+      "owned": false,
+      "references": [],
+      "table": "catalog_release"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "catalog_release_get",
+      "operation_id": "entity_catalog_release_get",
+      "owned": false,
+      "references": [],
+      "table": "catalog_release"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "version",
+        "manifest_hash",
+        "published_at"
+      ],
+      "json_columns": [],
+      "key": "catalog_release_create",
+      "operation_id": "entity_catalog_release_create",
+      "owned": false,
+      "references": [
+        [
+          "owner_id",
+          "reference_owner_id"
+        ]
+      ],
+      "table": "catalog_release"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "version",
+        "manifest_hash",
+        "published_at"
+      ],
+      "json_columns": [],
+      "key": "catalog_release_update",
+      "operation_id": "entity_catalog_release_update",
+      "owned": false,
+      "references": [
+        [
+          "owner_id",
+          "reference_owner_id"
+        ]
+      ],
+      "table": "catalog_release"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "unit_list",
+      "operation_id": "entity_unit_list",
+      "owned": false,
+      "references": [],
+      "table": "unit"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "unit_get",
+      "operation_id": "entity_unit_get",
+      "owned": false,
+      "references": [],
+      "table": "unit"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "dimension",
+        "factor",
+        "offset",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "unit_create",
+      "operation_id": "entity_unit_create",
+      "owned": false,
+      "references": [],
+      "table": "unit"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "dimension",
+        "factor",
+        "offset",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "unit_update",
+      "operation_id": "entity_unit_update",
+      "owned": false,
+      "references": [],
+      "table": "unit"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_list",
+      "operation_id": "entity_food_list",
+      "owned": false,
+      "references": [],
+      "table": "food"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_get",
+      "operation_id": "entity_food_get",
+      "owned": false,
+      "references": [],
+      "table": "food"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "kind",
+        "parent_id",
+        "release_id",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "food_create",
+      "operation_id": "entity_food_create",
+      "owned": false,
+      "references": [
+        [
+          "owner_id",
+          "reference_owner_id"
+        ]
+      ],
+      "table": "food"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "kind",
+        "parent_id",
+        "release_id",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "food_update",
+      "operation_id": "entity_food_update",
+      "owned": false,
+      "references": [
+        [
+          "owner_id",
+          "reference_owner_id"
+        ]
+      ],
+      "table": "food"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_alias_list",
+      "operation_id": "entity_food_alias_list",
+      "owned": false,
+      "references": [],
+      "table": "food_alias"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_alias_get",
+      "operation_id": "entity_food_alias_get",
+      "owned": false,
+      "references": [],
+      "table": "food_alias"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "food_id",
+        "alias",
+        "locale"
+      ],
+      "json_columns": [],
+      "key": "food_alias_create",
+      "operation_id": "entity_food_alias_create",
+      "owned": false,
+      "references": [],
+      "table": "food_alias"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "food_id",
+        "alias",
+        "locale"
+      ],
+      "json_columns": [],
+      "key": "food_alias_update",
+      "operation_id": "entity_food_alias_update",
+      "owned": false,
+      "references": [],
+      "table": "food_alias"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_form_list",
+      "operation_id": "entity_food_form_list",
+      "owned": false,
+      "references": [],
+      "table": "food_form"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_form_get",
+      "operation_id": "entity_food_form_get",
+      "owned": false,
+      "references": [],
+      "table": "food_form"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "food_id",
+        "name",
+        "state",
+        "base_unit_id",
+        "quantity_basis",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "food_form_create",
+      "operation_id": "entity_food_form_create",
+      "owned": false,
+      "references": [],
+      "table": "food_form"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "food_id",
+        "name",
+        "state",
+        "base_unit_id",
+        "quantity_basis",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "food_form_update",
+      "operation_id": "entity_food_form_update",
+      "owned": false,
+      "references": [],
+      "table": "food_form"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "conversion_list",
+      "operation_id": "entity_conversion_list",
+      "owned": false,
+      "references": [],
+      "table": "conversion"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "conversion_get",
+      "operation_id": "entity_conversion_get",
+      "owned": false,
+      "references": [],
+      "table": "conversion"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "form_id",
+        "from_unit_id",
+        "to_unit_id",
+        "factor",
+        "quality",
+        "source_id",
+        "conditions",
+        "release_id"
+      ],
+      "json_columns": [],
+      "key": "conversion_create",
+      "operation_id": "entity_conversion_create",
+      "owned": false,
+      "references": [],
+      "table": "conversion"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "form_id",
+        "from_unit_id",
+        "to_unit_id",
+        "factor",
+        "quality",
+        "source_id",
+        "conditions",
+        "release_id"
+      ],
+      "json_columns": [],
+      "key": "conversion_update",
+      "operation_id": "entity_conversion_update",
+      "owned": false,
+      "references": [],
+      "table": "conversion"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "form_yield_list",
+      "operation_id": "entity_form_yield_list",
+      "owned": false,
+      "references": [],
+      "table": "form_yield"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "form_yield_get",
+      "operation_id": "entity_form_yield_get",
+      "owned": false,
+      "references": [],
+      "table": "form_yield"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "input_form_id",
+        "output_form_id",
+        "yield_ratio",
+        "source_id",
+        "quality",
+        "conditions"
+      ],
+      "json_columns": [],
+      "key": "form_yield_create",
+      "operation_id": "entity_form_yield_create",
+      "owned": false,
+      "references": [],
+      "table": "form_yield"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "product_list",
+      "operation_id": "entity_product_list",
+      "owned": false,
+      "references": [],
+      "table": "product"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "product_get",
+      "operation_id": "entity_product_get",
+      "owned": false,
+      "references": [],
+      "table": "product"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "food_id",
+        "brand",
+        "name",
+        "gtin",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "product_create",
+      "operation_id": "entity_product_create",
+      "owned": false,
+      "references": [],
+      "table": "product"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "food_id",
+        "brand",
+        "name",
+        "gtin",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "product_update",
+      "operation_id": "entity_product_update",
+      "owned": false,
+      "references": [],
+      "table": "product"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "product_version_list",
+      "operation_id": "entity_product_version_list",
+      "owned": false,
+      "references": [],
+      "table": "product_version"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "product_version_get",
+      "operation_id": "entity_product_version_get",
+      "owned": false,
+      "references": [],
+      "table": "product_version"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "product_id",
+        "version",
+        "form_id",
+        "net_amount",
+        "unit_id",
+        "drain_amount",
+        "source_id",
+        "preparation_note",
+        "valid_from"
+      ],
+      "json_columns": [],
+      "key": "product_version_create",
+      "operation_id": "entity_product_version_create",
+      "owned": false,
+      "references": [],
+      "table": "product_version"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "product_component_list",
+      "operation_id": "entity_product_component_list",
+      "owned": false,
+      "references": [],
+      "table": "product_component"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "product_component_get",
+      "operation_id": "entity_product_component_get",
+      "owned": false,
+      "references": [],
+      "table": "product_component"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "product_version_id",
+        "form_id",
+        "name",
+        "amount",
+        "unit_id",
+        "quality"
+      ],
+      "json_columns": [],
+      "key": "product_component_create",
+      "operation_id": "entity_product_component_create",
+      "owned": false,
+      "references": [],
+      "table": "product_component"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "allergen_list",
+      "operation_id": "entity_allergen_list",
+      "owned": false,
+      "references": [],
+      "table": "allergen"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "allergen_get",
+      "operation_id": "entity_allergen_get",
+      "owned": false,
+      "references": [],
+      "table": "allergen"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "source_id"
+      ],
+      "json_columns": [],
+      "key": "allergen_create",
+      "operation_id": "entity_allergen_create",
+      "owned": false,
+      "references": [],
+      "table": "allergen"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "source_id"
+      ],
+      "json_columns": [],
+      "key": "allergen_update",
+      "operation_id": "entity_allergen_update",
+      "owned": false,
+      "references": [],
+      "table": "allergen"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_allergen_list",
+      "operation_id": "entity_food_allergen_list",
+      "owned": false,
+      "references": [],
+      "table": "food_allergen"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_allergen_get",
+      "operation_id": "entity_food_allergen_get",
+      "owned": false,
+      "references": [],
+      "table": "food_allergen"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "form_id",
+        "allergen_id",
+        "presence",
+        "source_id"
+      ],
+      "json_columns": [],
+      "key": "food_allergen_create",
+      "operation_id": "entity_food_allergen_create",
+      "owned": false,
+      "references": [],
+      "table": "food_allergen"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "product_allergen_list",
+      "operation_id": "entity_product_allergen_list",
+      "owned": false,
+      "references": [],
+      "table": "product_allergen"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "product_allergen_get",
+      "operation_id": "entity_product_allergen_get",
+      "owned": false,
+      "references": [],
+      "table": "product_allergen"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "product_version_id",
+        "allergen_id",
+        "presence",
+        "source_id"
+      ],
+      "json_columns": [],
+      "key": "product_allergen_create",
+      "operation_id": "entity_product_allergen_create",
+      "owned": false,
+      "references": [],
+      "table": "product_allergen"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "nutrient_list",
+      "operation_id": "entity_nutrient_list",
+      "owned": false,
+      "references": [],
+      "table": "nutrient"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "nutrient_get",
+      "operation_id": "entity_nutrient_get",
+      "owned": false,
+      "references": [],
+      "table": "nutrient"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "unit_label"
+      ],
+      "json_columns": [],
+      "key": "nutrient_create",
+      "operation_id": "entity_nutrient_create",
+      "owned": false,
+      "references": [],
+      "table": "nutrient"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "unit_label"
+      ],
+      "json_columns": [],
+      "key": "nutrient_update",
+      "operation_id": "entity_nutrient_update",
+      "owned": false,
+      "references": [],
+      "table": "nutrient"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "nutrition_fact_list",
+      "operation_id": "entity_nutrition_fact_list",
+      "owned": false,
+      "references": [],
+      "table": "nutrition_fact"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "nutrition_fact_get",
+      "operation_id": "entity_nutrition_fact_get",
+      "owned": false,
+      "references": [],
+      "table": "nutrition_fact"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "form_id",
+        "product_version_id",
+        "nutrient_id",
+        "amount",
+        "basis_amount",
+        "basis_unit_id",
+        "source_id"
+      ],
+      "json_columns": [],
+      "key": "nutrition_fact_create",
+      "operation_id": "entity_nutrition_fact_create",
+      "owned": false,
+      "references": [],
+      "table": "nutrition_fact"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "axis_list",
+      "operation_id": "entity_axis_list",
+      "owned": false,
+      "references": [],
+      "table": "axis"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "axis_get",
+      "operation_id": "entity_axis_get",
+      "owned": false,
+      "references": [],
+      "table": "axis"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "purpose",
+        "selection",
+        "release_id",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "axis_create",
+      "operation_id": "entity_axis_create",
+      "owned": false,
+      "references": [],
+      "table": "axis"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "purpose",
+        "selection",
+        "release_id",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "axis_update",
+      "operation_id": "entity_axis_update",
+      "owned": false,
+      "references": [],
+      "table": "axis"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "axis_option_list",
+      "operation_id": "entity_axis_option_list",
+      "owned": false,
+      "references": [],
+      "table": "axis_option"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "axis_option_get",
+      "operation_id": "entity_axis_option_get",
+      "owned": false,
+      "references": [],
+      "table": "axis_option"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "axis_id",
+        "code",
+        "label",
+        "definition",
+        "parent_id",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "axis_option_create",
+      "operation_id": "entity_axis_option_create",
+      "owned": false,
+      "references": [],
+      "table": "axis_option"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "axis_id",
+        "code",
+        "label",
+        "definition",
+        "parent_id",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "axis_option_update",
+      "operation_id": "entity_axis_option_update",
+      "owned": false,
+      "references": [],
+      "table": "axis_option"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_axis_option_list",
+      "operation_id": "entity_food_axis_option_list",
+      "owned": false,
+      "references": [],
+      "table": "food_axis_option"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_axis_option_get",
+      "operation_id": "entity_food_axis_option_get",
+      "owned": false,
+      "references": [],
+      "table": "food_axis_option"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "food_id",
+        "option_id"
+      ],
+      "json_columns": [],
+      "key": "food_axis_option_create",
+      "operation_id": "entity_food_axis_option_create",
+      "owned": false,
+      "references": [],
+      "table": "food_axis_option"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "food_id",
+        "option_id"
+      ],
+      "json_columns": [],
+      "key": "food_axis_option_update",
+      "operation_id": "entity_food_axis_option_update",
+      "owned": false,
+      "references": [],
+      "table": "food_axis_option"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_list",
+      "operation_id": "entity_recipe_list",
+      "owned": false,
+      "references": [],
+      "table": "recipe"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_get",
+      "operation_id": "entity_recipe_get",
+      "owned": false,
+      "references": [],
+      "table": "recipe"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "title",
+        "family_option_id",
+        "status",
+        "withdrawal_reason"
+      ],
+      "json_columns": [],
+      "key": "recipe_create",
+      "operation_id": "entity_recipe_create",
+      "owned": false,
+      "references": [],
+      "table": "recipe"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "title",
+        "family_option_id",
+        "status",
+        "withdrawal_reason"
+      ],
+      "json_columns": [],
+      "key": "recipe_update",
+      "operation_id": "entity_recipe_update",
+      "owned": false,
+      "references": [],
+      "table": "recipe"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_version_list",
+      "operation_id": "entity_recipe_version_list",
+      "owned": false,
+      "references": [],
+      "table": "recipe_version"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_version_get",
+      "operation_id": "entity_recipe_version_get",
+      "owned": false,
+      "references": [],
+      "table": "recipe_version"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_id",
+        "version",
+        "release_id",
+        "base_servings",
+        "output_amount",
+        "output_unit_id",
+        "status",
+        "validation",
+        "content_hash",
+        "published_at",
+        "description"
+      ],
+      "json_columns": [],
+      "key": "recipe_version_create",
+      "operation_id": "entity_recipe_version_create",
+      "owned": false,
+      "references": [],
+      "table": "recipe_version"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_id",
+        "version",
+        "release_id",
+        "base_servings",
+        "output_amount",
+        "output_unit_id",
+        "status",
+        "validation",
+        "content_hash",
+        "published_at",
+        "description"
+      ],
+      "json_columns": [],
+      "key": "recipe_version_update",
+      "operation_id": "entity_recipe_version_update",
+      "owned": false,
+      "references": [],
+      "table": "recipe_version"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_option_list",
+      "operation_id": "entity_recipe_option_list",
+      "owned": false,
+      "references": [],
+      "table": "recipe_option"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_option_get",
+      "operation_id": "entity_recipe_option_get",
+      "owned": false,
+      "references": [],
+      "table": "recipe_option"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "option_id"
+      ],
+      "json_columns": [],
+      "key": "recipe_option_create",
+      "operation_id": "entity_recipe_option_create",
+      "owned": false,
+      "references": [],
+      "table": "recipe_option"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "option_id"
+      ],
+      "json_columns": [],
+      "key": "recipe_option_update",
+      "operation_id": "entity_recipe_option_update",
+      "owned": false,
+      "references": [],
+      "table": "recipe_option"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "scaling_rule_list",
+      "operation_id": "entity_scaling_rule_list",
+      "owned": false,
+      "references": [],
+      "table": "scaling_rule"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "scaling_rule_get",
+      "operation_id": "entity_scaling_rule_get",
+      "owned": false,
+      "references": [],
+      "table": "scaling_rule"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "name",
+        "mode",
+        "min_servings",
+        "max_servings",
+        "batch_capacity",
+        "round_mode",
+        "round_increment",
+        "source_id"
+      ],
+      "json_columns": [],
+      "key": "scaling_rule_create",
+      "operation_id": "entity_scaling_rule_create",
+      "owned": false,
+      "references": [],
+      "table": "scaling_rule"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "scaling_point_list",
+      "operation_id": "entity_scaling_point_list",
+      "owned": false,
+      "references": [],
+      "table": "scaling_point"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "scaling_point_get",
+      "operation_id": "entity_scaling_point_get",
+      "owned": false,
+      "references": [],
+      "table": "scaling_point"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "rule_id",
+        "servings",
+        "multiplier"
+      ],
+      "json_columns": [],
+      "key": "scaling_point_create",
+      "operation_id": "entity_scaling_point_create",
+      "owned": false,
+      "references": [],
+      "table": "scaling_point"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_ingredient_list",
+      "operation_id": "entity_recipe_ingredient_list",
+      "owned": false,
+      "references": [],
+      "table": "recipe_ingredient"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_ingredient_get",
+      "operation_id": "entity_recipe_ingredient_get",
+      "owned": false,
+      "references": [],
+      "table": "recipe_ingredient"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "line_no",
+        "form_id",
+        "product_version_id",
+        "component_id",
+        "kit_parent_line_id",
+        "role",
+        "demand_kind",
+        "amount_mode",
+        "amount",
+        "amount_max",
+        "unit_id",
+        "canonical_amount",
+        "conversion_id",
+        "scaling_rule_id",
+        "optional",
+        "note"
+      ],
+      "json_columns": [],
+      "key": "recipe_ingredient_create",
+      "operation_id": "entity_recipe_ingredient_create",
+      "owned": false,
+      "references": [],
+      "table": "recipe_ingredient"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "line_no",
+        "form_id",
+        "product_version_id",
+        "component_id",
+        "kit_parent_line_id",
+        "role",
+        "demand_kind",
+        "amount_mode",
+        "amount",
+        "amount_max",
+        "unit_id",
+        "canonical_amount",
+        "conversion_id",
+        "scaling_rule_id",
+        "optional",
+        "note"
+      ],
+      "json_columns": [],
+      "key": "recipe_ingredient_update",
+      "operation_id": "entity_recipe_ingredient_update",
+      "owned": false,
+      "references": [],
+      "table": "recipe_ingredient"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "operation_list",
+      "operation_id": "entity_operation_list",
+      "owned": false,
+      "references": [],
+      "table": "operation"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "operation_get",
+      "operation_id": "entity_operation_get",
+      "owned": false,
+      "references": [],
+      "table": "operation"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "definition",
+        "precondition",
+        "completion_cue",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "operation_create",
+      "operation_id": "entity_operation_create",
+      "owned": false,
+      "references": [],
+      "table": "operation"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "definition",
+        "precondition",
+        "completion_cue",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "operation_update",
+      "operation_id": "entity_operation_update",
+      "owned": false,
+      "references": [],
+      "table": "operation"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "allowed_values"
+      ],
+      "key": "operation_parameter_list",
+      "operation_id": "entity_operation_parameter_list",
+      "owned": false,
+      "references": [],
+      "table": "operation_parameter"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "allowed_values"
+      ],
+      "key": "operation_parameter_get",
+      "operation_id": "entity_operation_parameter_get",
+      "owned": false,
+      "references": [],
+      "table": "operation_parameter"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "operation_id",
+        "code",
+        "name",
+        "value_type",
+        "unit_id",
+        "required",
+        "min_value",
+        "max_value",
+        "allowed_values"
+      ],
+      "json_columns": [
+        "allowed_values"
+      ],
+      "key": "operation_parameter_create",
+      "operation_id": "entity_operation_parameter_create",
+      "owned": false,
+      "references": [],
+      "table": "operation_parameter"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "operation_id",
+        "code",
+        "name",
+        "value_type",
+        "unit_id",
+        "required",
+        "min_value",
+        "max_value",
+        "allowed_values"
+      ],
+      "json_columns": [
+        "allowed_values"
+      ],
+      "key": "operation_parameter_update",
+      "operation_id": "entity_operation_parameter_update",
+      "owned": false,
+      "references": [],
+      "table": "operation_parameter"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_step_list",
+      "operation_id": "entity_recipe_step_list",
+      "owned": false,
+      "references": [],
+      "table": "recipe_step"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_step_get",
+      "operation_id": "entity_recipe_step_get",
+      "owned": false,
+      "references": [],
+      "table": "recipe_step"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "step_no",
+        "operation_id",
+        "instruction",
+        "attention",
+        "duration_min_s",
+        "duration_max_s",
+        "scaling_rule_id",
+        "completion_cue",
+        "title"
+      ],
+      "json_columns": [],
+      "key": "recipe_step_create",
+      "operation_id": "entity_recipe_step_create",
+      "owned": false,
+      "references": [],
+      "table": "recipe_step"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "step_no",
+        "operation_id",
+        "instruction",
+        "attention",
+        "duration_min_s",
+        "duration_max_s",
+        "scaling_rule_id",
+        "completion_cue",
+        "title"
+      ],
+      "json_columns": [],
+      "key": "recipe_step_update",
+      "operation_id": "entity_recipe_step_update",
+      "owned": false,
+      "references": [],
+      "table": "recipe_step"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "step_parameter_list",
+      "operation_id": "entity_step_parameter_list",
+      "owned": false,
+      "references": [],
+      "table": "step_parameter"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "step_parameter_get",
+      "operation_id": "entity_step_parameter_get",
+      "owned": false,
+      "references": [],
+      "table": "step_parameter"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "step_id",
+        "parameter_id",
+        "number_value",
+        "text_value",
+        "bool_value"
+      ],
+      "json_columns": [],
+      "key": "step_parameter_create",
+      "operation_id": "entity_step_parameter_create",
+      "owned": false,
+      "references": [],
+      "table": "step_parameter"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "step_id",
+        "parameter_id",
+        "number_value",
+        "text_value",
+        "bool_value"
+      ],
+      "json_columns": [],
+      "key": "step_parameter_update",
+      "operation_id": "entity_step_parameter_update",
+      "owned": false,
+      "references": [],
+      "table": "step_parameter"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "material_node_list",
+      "operation_id": "entity_material_node_list",
+      "owned": false,
+      "references": [],
+      "table": "material_node"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "material_node_get",
+      "operation_id": "entity_material_node_get",
+      "owned": false,
+      "references": [],
+      "table": "material_node"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "name",
+        "kind",
+        "ingredient_line_id",
+        "producer_step_id",
+        "amount",
+        "unit_id"
+      ],
+      "json_columns": [],
+      "key": "material_node_create",
+      "operation_id": "entity_material_node_create",
+      "owned": false,
+      "references": [],
+      "table": "material_node"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "name",
+        "kind",
+        "ingredient_line_id",
+        "producer_step_id",
+        "amount",
+        "unit_id"
+      ],
+      "json_columns": [],
+      "key": "material_node_update",
+      "operation_id": "entity_material_node_update",
+      "owned": false,
+      "references": [],
+      "table": "material_node"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "step_input_list",
+      "operation_id": "entity_step_input_list",
+      "owned": false,
+      "references": [],
+      "table": "step_input"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "step_input_get",
+      "operation_id": "entity_step_input_get",
+      "owned": false,
+      "references": [],
+      "table": "step_input"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "step_id",
+        "material_id",
+        "fraction"
+      ],
+      "json_columns": [],
+      "key": "step_input_create",
+      "operation_id": "entity_step_input_create",
+      "owned": false,
+      "references": [],
+      "table": "step_input"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "step_id",
+        "material_id",
+        "fraction"
+      ],
+      "json_columns": [],
+      "key": "step_input_update",
+      "operation_id": "entity_step_input_update",
+      "owned": false,
+      "references": [],
+      "table": "step_input"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "step_dependency_list",
+      "operation_id": "entity_step_dependency_list",
+      "owned": false,
+      "references": [],
+      "table": "step_dependency"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "step_dependency_get",
+      "operation_id": "entity_step_dependency_get",
+      "owned": false,
+      "references": [],
+      "table": "step_dependency"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "before_step_id",
+        "after_step_id",
+        "kind",
+        "min_lag_s",
+        "max_lag_s"
+      ],
+      "json_columns": [],
+      "key": "step_dependency_create",
+      "operation_id": "entity_step_dependency_create",
+      "owned": false,
+      "references": [],
+      "table": "step_dependency"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "before_step_id",
+        "after_step_id",
+        "kind",
+        "min_lag_s",
+        "max_lag_s"
+      ],
+      "json_columns": [],
+      "key": "step_dependency_update",
+      "operation_id": "entity_step_dependency_update",
+      "owned": false,
+      "references": [],
+      "table": "step_dependency"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "resource_type_list",
+      "operation_id": "entity_resource_type_list",
+      "owned": false,
+      "references": [],
+      "table": "resource_type"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "resource_type_get",
+      "operation_id": "entity_resource_type_get",
+      "owned": false,
+      "references": [],
+      "table": "resource_type"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "capacity_unit_id",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "resource_type_create",
+      "operation_id": "entity_resource_type_create",
+      "owned": false,
+      "references": [],
+      "table": "resource_type"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "code",
+        "name",
+        "capacity_unit_id",
+        "status"
+      ],
+      "json_columns": [],
+      "key": "resource_type_update",
+      "operation_id": "entity_resource_type_update",
+      "owned": false,
+      "references": [],
+      "table": "resource_type"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "step_resource_list",
+      "operation_id": "entity_step_resource_list",
+      "owned": false,
+      "references": [],
+      "table": "step_resource"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "step_resource_get",
+      "operation_id": "entity_step_resource_get",
+      "owned": false,
+      "references": [],
+      "table": "step_resource"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "step_id",
+        "resource_type_id",
+        "quantity",
+        "capacity_min",
+        "exclusive"
+      ],
+      "json_columns": [],
+      "key": "step_resource_create",
+      "operation_id": "entity_step_resource_create",
+      "owned": false,
+      "references": [],
+      "table": "step_resource"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "step_id",
+        "resource_type_id",
+        "quantity",
+        "capacity_min",
+        "exclusive"
+      ],
+      "json_columns": [],
+      "key": "step_resource_update",
+      "operation_id": "entity_step_resource_update",
+      "owned": false,
+      "references": [],
+      "table": "step_resource"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [
+        "parameter_contract"
+      ],
+      "key": "media_asset_list",
+      "operation_id": "entity_media_asset_list",
+      "owned": false,
+      "references": [],
+      "table": "media_asset"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [
+        "parameter_contract"
+      ],
+      "key": "media_asset_get",
+      "operation_id": "entity_media_asset_get",
+      "owned": false,
+      "references": [],
+      "table": "media_asset"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "operation_id",
+        "media_type",
+        "uri",
+        "sha256",
+        "locale",
+        "version",
+        "parameter_contract",
+        "source_id",
+        "validation"
+      ],
+      "json_columns": [
+        "parameter_contract"
+      ],
+      "key": "media_asset_create",
+      "operation_id": "entity_media_asset_create",
+      "owned": false,
+      "references": [],
+      "table": "media_asset"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "step_media_list",
+      "operation_id": "entity_step_media_list",
+      "owned": false,
+      "references": [],
+      "table": "step_media"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "step_media_get",
+      "operation_id": "entity_step_media_get",
+      "owned": false,
+      "references": [],
+      "table": "step_media"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "step_id",
+        "media_id",
+        "start_ms",
+        "end_ms"
+      ],
+      "json_columns": [],
+      "key": "step_media_create",
+      "operation_id": "entity_step_media_create",
+      "owned": false,
+      "references": [],
+      "table": "step_media"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "step_id",
+        "media_id",
+        "start_ms",
+        "end_ms"
+      ],
+      "json_columns": [],
+      "key": "step_media_update",
+      "operation_id": "entity_step_media_update",
+      "owned": false,
+      "references": [],
+      "table": "step_media"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [
+        "parameter_json"
+      ],
+      "key": "generation_policy_list",
+      "operation_id": "entity_generation_policy_list",
+      "owned": false,
+      "references": [],
+      "table": "generation_policy"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [
+        "parameter_json"
+      ],
+      "key": "generation_policy_get",
+      "operation_id": "entity_generation_policy_get",
+      "owned": false,
+      "references": [],
+      "table": "generation_policy"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "version",
+        "prompt_template",
+        "model_identifier",
+        "parameter_json",
+        "schema_version",
+        "release_id"
+      ],
+      "json_columns": [
+        "parameter_json"
+      ],
+      "key": "generation_policy_create",
+      "operation_id": "entity_generation_policy_create",
+      "owned": false,
+      "references": [],
+      "table": "generation_policy"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "generation_job_list",
+      "operation_id": "entity_generation_job_list",
+      "owned": false,
+      "references": [],
+      "table": "generation_job"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "generation_job_get",
+      "operation_id": "entity_generation_job_get",
+      "owned": false,
+      "references": [],
+      "table": "generation_job"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "policy_id",
+        "idempotency_key",
+        "status",
+        "started_at",
+        "finished_at",
+        "seed",
+        "error_code",
+        "attempt_count"
+      ],
+      "json_columns": [],
+      "key": "generation_job_create",
+      "operation_id": "entity_generation_job_create",
+      "owned": false,
+      "references": [],
+      "table": "generation_job"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "policy_id",
+        "idempotency_key",
+        "status",
+        "started_at",
+        "finished_at",
+        "seed",
+        "error_code",
+        "attempt_count"
+      ],
+      "json_columns": [],
+      "key": "generation_job_update",
+      "operation_id": "entity_generation_job_update",
+      "owned": false,
+      "references": [],
+      "table": "generation_job"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "generation_choice_list",
+      "operation_id": "entity_generation_choice_list",
+      "owned": false,
+      "references": [],
+      "table": "generation_choice"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "generation_choice_get",
+      "operation_id": "entity_generation_choice_get",
+      "owned": false,
+      "references": [],
+      "table": "generation_choice"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "job_id",
+        "option_id"
+      ],
+      "json_columns": [],
+      "key": "generation_choice_create",
+      "operation_id": "entity_generation_choice_create",
+      "owned": false,
+      "references": [],
+      "table": "generation_choice"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "job_id",
+        "option_id"
+      ],
+      "json_columns": [],
+      "key": "generation_choice_update",
+      "operation_id": "entity_generation_choice_update",
+      "owned": false,
+      "references": [],
+      "table": "generation_choice"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "generation_food_list",
+      "operation_id": "entity_generation_food_list",
+      "owned": false,
+      "references": [],
+      "table": "generation_food"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "generation_food_get",
+      "operation_id": "entity_generation_food_get",
+      "owned": false,
+      "references": [],
+      "table": "generation_food"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "job_id",
+        "form_id",
+        "role"
+      ],
+      "json_columns": [],
+      "key": "generation_food_create",
+      "operation_id": "entity_generation_food_create",
+      "owned": false,
+      "references": [],
+      "table": "generation_food"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "job_id",
+        "form_id",
+        "role"
+      ],
+      "json_columns": [],
+      "key": "generation_food_update",
+      "operation_id": "entity_generation_food_update",
+      "owned": false,
+      "references": [],
+      "table": "generation_food"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "input_snapshot"
+      ],
+      "key": "generation_result_list",
+      "operation_id": "entity_generation_result_list",
+      "owned": false,
+      "references": [],
+      "table": "generation_result"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "input_snapshot"
+      ],
+      "key": "generation_result_get",
+      "operation_id": "entity_generation_result_get",
+      "owned": false,
+      "references": [],
+      "table": "generation_result"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "job_id",
+        "policy_id",
+        "input_snapshot",
+        "raw_output_uri",
+        "raw_output_hash"
+      ],
+      "json_columns": [
+        "input_snapshot"
+      ],
+      "key": "generation_result_create",
+      "operation_id": "entity_generation_result_create",
+      "owned": false,
+      "references": [],
+      "table": "generation_result"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [
+        "predicate"
+      ],
+      "key": "compatibility_rule_list",
+      "operation_id": "entity_compatibility_rule_list",
+      "owned": false,
+      "references": [],
+      "table": "compatibility_rule"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [
+        "predicate"
+      ],
+      "key": "compatibility_rule_get",
+      "operation_id": "entity_compatibility_rule_get",
+      "owned": false,
+      "references": [],
+      "table": "compatibility_rule"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "code",
+        "version",
+        "severity",
+        "predicate",
+        "message",
+        "source_id",
+        "status"
+      ],
+      "json_columns": [
+        "predicate"
+      ],
+      "key": "compatibility_rule_create",
+      "operation_id": "entity_compatibility_rule_create",
+      "owned": false,
+      "references": [],
+      "table": "compatibility_rule"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "evidence"
+      ],
+      "key": "validation_result_list",
+      "operation_id": "entity_validation_result_list",
+      "owned": false,
+      "references": [],
+      "table": "validation_result"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "evidence"
+      ],
+      "key": "validation_result_get",
+      "operation_id": "entity_validation_result_get",
+      "owned": false,
+      "references": [],
+      "table": "validation_result"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "rule_id",
+        "state",
+        "evidence",
+        "validator_version",
+        "evaluated_at"
+      ],
+      "json_columns": [
+        "evidence"
+      ],
+      "key": "validation_result_create",
+      "operation_id": "entity_validation_result_create",
+      "owned": false,
+      "references": [],
+      "table": "validation_result"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "canonical_payload"
+      ],
+      "key": "recipe_signature_list",
+      "operation_id": "entity_recipe_signature_list",
+      "owned": false,
+      "references": [],
+      "table": "recipe_signature"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "canonical_payload"
+      ],
+      "key": "recipe_signature_get",
+      "operation_id": "entity_recipe_signature_get",
+      "owned": false,
+      "references": [],
+      "table": "recipe_signature"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "algorithm_version",
+        "exact_hash",
+        "canonical_payload",
+        "cluster_key"
+      ],
+      "json_columns": [
+        "canonical_payload"
+      ],
+      "key": "recipe_signature_create",
+      "operation_id": "entity_recipe_signature_create",
+      "owned": false,
+      "references": [],
+      "table": "recipe_signature"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_similarity_list",
+      "operation_id": "entity_recipe_similarity_list",
+      "owned": false,
+      "references": [],
+      "table": "recipe_similarity"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_similarity_get",
+      "operation_id": "entity_recipe_similarity_get",
+      "owned": false,
+      "references": [],
+      "table": "recipe_similarity"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "left_version_id",
+        "right_version_id",
+        "algorithm_version",
+        "score",
+        "explanation"
+      ],
+      "json_columns": [],
+      "key": "recipe_similarity_create",
+      "operation_id": "entity_recipe_similarity_create",
+      "owned": false,
+      "references": [],
+      "table": "recipe_similarity"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "left_version_id",
+        "right_version_id",
+        "algorithm_version",
+        "score",
+        "explanation"
+      ],
+      "json_columns": [],
+      "key": "recipe_similarity_update",
+      "operation_id": "entity_recipe_similarity_update",
+      "owned": false,
+      "references": [],
+      "table": "recipe_similarity"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "app_user_list",
+      "operation_id": "entity_app_user_list",
+      "owned": true,
+      "references": [],
+      "table": "app_user"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "app_user_get",
+      "operation_id": "entity_app_user_get",
+      "owned": true,
+      "references": [],
+      "table": "app_user"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "locale",
+        "timezone"
+      ],
+      "json_columns": [],
+      "key": "app_user_update",
+      "operation_id": "entity_app_user_update",
+      "owned": true,
+      "references": [],
+      "table": "app_user"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_preference_list",
+      "operation_id": "entity_user_preference_list",
+      "owned": true,
+      "references": [],
+      "table": "user_preference"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_preference_get",
+      "operation_id": "entity_user_preference_get",
+      "owned": true,
+      "references": [],
+      "table": "user_preference"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "option_id",
+        "weight"
+      ],
+      "json_columns": [],
+      "key": "user_preference_create",
+      "operation_id": "entity_user_preference_create",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "user_preference"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "option_id",
+        "weight"
+      ],
+      "json_columns": [],
+      "key": "user_preference_update",
+      "operation_id": "entity_user_preference_update",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "user_preference"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_preference_delete",
+      "operation_id": "entity_user_preference_delete",
+      "owned": true,
+      "references": [],
+      "table": "user_preference"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_exclusion_list",
+      "operation_id": "entity_user_exclusion_list",
+      "owned": true,
+      "references": [],
+      "table": "user_exclusion"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_exclusion_get",
+      "operation_id": "entity_user_exclusion_get",
+      "owned": true,
+      "references": [],
+      "table": "user_exclusion"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "food_id",
+        "allergen_id",
+        "strict"
+      ],
+      "json_columns": [],
+      "key": "user_exclusion_create",
+      "operation_id": "entity_user_exclusion_create",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "user_exclusion"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "food_id",
+        "allergen_id",
+        "strict"
+      ],
+      "json_columns": [],
+      "key": "user_exclusion_update",
+      "operation_id": "entity_user_exclusion_update",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "user_exclusion"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_exclusion_delete",
+      "operation_id": "entity_user_exclusion_delete",
+      "owned": true,
+      "references": [],
+      "table": "user_exclusion"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_recipe_event_list",
+      "operation_id": "entity_user_recipe_event_list",
+      "owned": true,
+      "references": [],
+      "table": "user_recipe_event"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_recipe_event_get",
+      "operation_id": "entity_user_recipe_event_get",
+      "owned": true,
+      "references": [],
+      "table": "user_recipe_event"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "recipe_version_id",
+        "kind",
+        "occurred_at",
+        "request_key"
+      ],
+      "json_columns": [],
+      "key": "user_recipe_event_create",
+      "operation_id": "entity_user_recipe_event_create",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ],
+        [
+          "recipe_version_id",
+          "reference_recipe_version_id"
+        ]
+      ],
+      "table": "user_recipe_event"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_recipe_event_delete",
+      "operation_id": "entity_user_recipe_event_delete",
+      "owned": true,
+      "references": [],
+      "table": "user_recipe_event"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "menu_list",
+      "operation_id": "entity_menu_list",
+      "owned": true,
+      "references": [],
+      "table": "menu"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "menu_get",
+      "operation_id": "entity_menu_get",
+      "owned": true,
+      "references": [],
+      "table": "menu"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "name",
+        "servings"
+      ],
+      "json_columns": [],
+      "key": "menu_create",
+      "operation_id": "entity_menu_create",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "menu"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "name",
+        "servings"
+      ],
+      "json_columns": [],
+      "key": "menu_update",
+      "operation_id": "entity_menu_update",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "menu"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "menu_delete",
+      "operation_id": "entity_menu_delete",
+      "owned": true,
+      "references": [],
+      "table": "menu"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "menu_item_list",
+      "operation_id": "entity_menu_item_list",
+      "owned": true,
+      "references": [],
+      "table": "menu_item"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "menu_item_get",
+      "operation_id": "entity_menu_item_get",
+      "owned": true,
+      "references": [],
+      "table": "menu_item"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "menu_id",
+        "recipe_version_id",
+        "servings",
+        "role_option_id",
+        "position"
+      ],
+      "json_columns": [],
+      "key": "menu_item_create",
+      "operation_id": "entity_menu_item_create",
+      "owned": true,
+      "references": [
+        [
+          "menu_id",
+          "reference_menu_id"
+        ],
+        [
+          "recipe_version_id",
+          "reference_recipe_version_id"
+        ]
+      ],
+      "table": "menu_item"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "menu_id",
+        "recipe_version_id",
+        "servings",
+        "role_option_id",
+        "position"
+      ],
+      "json_columns": [],
+      "key": "menu_item_update",
+      "operation_id": "entity_menu_item_update",
+      "owned": true,
+      "references": [
+        [
+          "menu_id",
+          "reference_menu_id"
+        ],
+        [
+          "recipe_version_id",
+          "reference_recipe_version_id"
+        ]
+      ],
+      "table": "menu_item"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "menu_item_delete",
+      "operation_id": "entity_menu_item_delete",
+      "owned": true,
+      "references": [],
+      "table": "menu_item"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "menu_ingredient_override_list",
+      "operation_id": "entity_menu_ingredient_override_list",
+      "owned": true,
+      "references": [],
+      "table": "menu_ingredient_override"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "menu_ingredient_override_get",
+      "operation_id": "entity_menu_ingredient_override_get",
+      "owned": true,
+      "references": [],
+      "table": "menu_ingredient_override"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "menu_item_id",
+        "ingredient_line_id",
+        "selected",
+        "amount",
+        "form_id",
+        "product_version_id"
+      ],
+      "json_columns": [],
+      "key": "menu_ingredient_override_create",
+      "operation_id": "entity_menu_ingredient_override_create",
+      "owned": true,
+      "references": [
+        [
+          "menu_item_id",
+          "reference_menu_item_id"
+        ]
+      ],
+      "table": "menu_ingredient_override"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "menu_item_id",
+        "ingredient_line_id",
+        "selected",
+        "amount",
+        "form_id",
+        "product_version_id"
+      ],
+      "json_columns": [],
+      "key": "menu_ingredient_override_update",
+      "operation_id": "entity_menu_ingredient_override_update",
+      "owned": true,
+      "references": [
+        [
+          "menu_item_id",
+          "reference_menu_item_id"
+        ]
+      ],
+      "table": "menu_ingredient_override"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "menu_ingredient_override_delete",
+      "operation_id": "entity_menu_ingredient_override_delete",
+      "owned": true,
+      "references": [],
+      "table": "menu_ingredient_override"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "kitchen_resource_list",
+      "operation_id": "entity_kitchen_resource_list",
+      "owned": true,
+      "references": [],
+      "table": "kitchen_resource"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "kitchen_resource_get",
+      "operation_id": "entity_kitchen_resource_get",
+      "owned": true,
+      "references": [],
+      "table": "kitchen_resource"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "resource_type_id",
+        "name",
+        "capacity",
+        "quantity",
+        "active"
+      ],
+      "json_columns": [],
+      "key": "kitchen_resource_create",
+      "operation_id": "entity_kitchen_resource_create",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "kitchen_resource"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "resource_type_id",
+        "name",
+        "capacity",
+        "quantity",
+        "active"
+      ],
+      "json_columns": [],
+      "key": "kitchen_resource_update",
+      "operation_id": "entity_kitchen_resource_update",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "kitchen_resource"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "kitchen_resource_delete",
+      "operation_id": "entity_kitchen_resource_delete",
+      "owned": true,
+      "references": [],
+      "table": "kitchen_resource"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "input_snapshot"
+      ],
+      "key": "cooking_session_list",
+      "operation_id": "entity_cooking_session_list",
+      "owned": true,
+      "references": [],
+      "table": "cooking_session"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "input_snapshot"
+      ],
+      "key": "cooking_session_get",
+      "operation_id": "entity_cooking_session_get",
+      "owned": true,
+      "references": [],
+      "table": "cooking_session"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "menu_id",
+        "menu_revision",
+        "status",
+        "target_at",
+        "planner_version",
+        "input_snapshot",
+        "input_hash",
+        "current_task_index"
+      ],
+      "json_columns": [
+        "input_snapshot"
+      ],
+      "key": "cooking_session_create",
+      "operation_id": "entity_cooking_session_create",
+      "owned": true,
+      "references": [
+        [
+          "menu_id",
+          "reference_menu_id"
+        ]
+      ],
+      "table": "cooking_session"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "menu_id",
+        "menu_revision",
+        "status",
+        "target_at",
+        "planner_version",
+        "input_snapshot",
+        "input_hash",
+        "current_task_index"
+      ],
+      "json_columns": [
+        "input_snapshot"
+      ],
+      "key": "cooking_session_update",
+      "operation_id": "entity_cooking_session_update",
+      "owned": true,
+      "references": [
+        [
+          "menu_id",
+          "reference_menu_id"
+        ]
+      ],
+      "table": "cooking_session"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "input_snapshot"
+      ],
+      "key": "cooking_session_delete",
+      "operation_id": "entity_cooking_session_delete",
+      "owned": true,
+      "references": [],
+      "table": "cooking_session"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "session_task_list",
+      "operation_id": "entity_session_task_list",
+      "owned": true,
+      "references": [],
+      "table": "session_task"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "session_task_get",
+      "operation_id": "entity_session_task_get",
+      "owned": true,
+      "references": [],
+      "table": "session_task"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "session_id",
+        "menu_item_id",
+        "step_id",
+        "batch_no",
+        "planned_start_s",
+        "planned_end_s",
+        "status",
+        "actual_start_at",
+        "actual_end_at",
+        "timer_started_at",
+        "timer_duration_s",
+        "duration_source",
+        "confirmed_duration_s"
+      ],
+      "json_columns": [],
+      "key": "session_task_create",
+      "operation_id": "entity_session_task_create",
+      "owned": true,
+      "references": [
+        [
+          "session_id",
+          "reference_session_id"
+        ],
+        [
+          "menu_item_id",
+          "reference_menu_item_id"
+        ]
+      ],
+      "table": "session_task"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "session_id",
+        "menu_item_id",
+        "step_id",
+        "batch_no",
+        "planned_start_s",
+        "planned_end_s",
+        "status",
+        "actual_start_at",
+        "actual_end_at",
+        "timer_started_at",
+        "timer_duration_s",
+        "duration_source",
+        "confirmed_duration_s"
+      ],
+      "json_columns": [],
+      "key": "session_task_update",
+      "operation_id": "entity_session_task_update",
+      "owned": true,
+      "references": [
+        [
+          "session_id",
+          "reference_session_id"
+        ],
+        [
+          "menu_item_id",
+          "reference_menu_item_id"
+        ]
+      ],
+      "table": "session_task"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "session_task_delete",
+      "operation_id": "entity_session_task_delete",
+      "owned": true,
+      "references": [],
+      "table": "session_task"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "task_dependency_list",
+      "operation_id": "entity_task_dependency_list",
+      "owned": true,
+      "references": [],
+      "table": "task_dependency"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "task_dependency_get",
+      "operation_id": "entity_task_dependency_get",
+      "owned": true,
+      "references": [],
+      "table": "task_dependency"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "before_task_id",
+        "after_task_id",
+        "min_lag_s",
+        "max_lag_s",
+        "reason"
+      ],
+      "json_columns": [],
+      "key": "task_dependency_create",
+      "operation_id": "entity_task_dependency_create",
+      "owned": true,
+      "references": [
+        [
+          "before_task_id",
+          "reference_before_task_id"
+        ],
+        [
+          "after_task_id",
+          "reference_after_task_id"
+        ]
+      ],
+      "table": "task_dependency"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "before_task_id",
+        "after_task_id",
+        "min_lag_s",
+        "max_lag_s",
+        "reason"
+      ],
+      "json_columns": [],
+      "key": "task_dependency_update",
+      "operation_id": "entity_task_dependency_update",
+      "owned": true,
+      "references": [
+        [
+          "before_task_id",
+          "reference_before_task_id"
+        ],
+        [
+          "after_task_id",
+          "reference_after_task_id"
+        ]
+      ],
+      "table": "task_dependency"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "task_dependency_delete",
+      "operation_id": "entity_task_dependency_delete",
+      "owned": true,
+      "references": [],
+      "table": "task_dependency"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "resource_reservation_list",
+      "operation_id": "entity_resource_reservation_list",
+      "owned": true,
+      "references": [],
+      "table": "resource_reservation"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "resource_reservation_get",
+      "operation_id": "entity_resource_reservation_get",
+      "owned": true,
+      "references": [],
+      "table": "resource_reservation"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "task_id",
+        "resource_id",
+        "start_s",
+        "end_s",
+        "quantity"
+      ],
+      "json_columns": [],
+      "key": "resource_reservation_create",
+      "operation_id": "entity_resource_reservation_create",
+      "owned": true,
+      "references": [
+        [
+          "task_id",
+          "reference_task_id"
+        ],
+        [
+          "resource_id",
+          "reference_resource_id"
+        ]
+      ],
+      "table": "resource_reservation"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "task_id",
+        "resource_id",
+        "start_s",
+        "end_s",
+        "quantity"
+      ],
+      "json_columns": [],
+      "key": "resource_reservation_update",
+      "operation_id": "entity_resource_reservation_update",
+      "owned": true,
+      "references": [
+        [
+          "task_id",
+          "reference_task_id"
+        ],
+        [
+          "resource_id",
+          "reference_resource_id"
+        ]
+      ],
+      "table": "resource_reservation"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "resource_reservation_delete",
+      "operation_id": "entity_resource_reservation_delete",
+      "owned": true,
+      "references": [],
+      "table": "resource_reservation"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "ingredient_total_list",
+      "operation_id": "entity_ingredient_total_list",
+      "owned": true,
+      "references": [],
+      "table": "ingredient_total"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "ingredient_total_get",
+      "operation_id": "entity_ingredient_total_get",
+      "owned": true,
+      "references": [],
+      "table": "ingredient_total"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "pantry_lot_list",
+      "operation_id": "entity_pantry_lot_list",
+      "owned": true,
+      "references": [],
+      "table": "pantry_lot"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "pantry_lot_get",
+      "operation_id": "entity_pantry_lot_get",
+      "owned": true,
+      "references": [],
+      "table": "pantry_lot"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "form_id",
+        "product_version_id",
+        "amount",
+        "unit_id",
+        "expires_on",
+        "opened_at",
+        "location",
+        "priority",
+        "status",
+        "source_import_id",
+        "quantity_quality",
+        "original_form_id",
+        "original_amount",
+        "original_unit_id",
+        "updated_at",
+        "edited"
+      ],
+      "json_columns": [],
+      "key": "pantry_lot_create",
+      "operation_id": "entity_pantry_lot_create",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ],
+        [
+          "source_import_id",
+          "reference_source_import_id"
+        ]
+      ],
+      "table": "pantry_lot"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "form_id",
+        "product_version_id",
+        "amount",
+        "unit_id",
+        "expires_on",
+        "opened_at",
+        "location",
+        "priority",
+        "status",
+        "source_import_id",
+        "quantity_quality",
+        "original_form_id",
+        "original_amount",
+        "original_unit_id",
+        "updated_at",
+        "edited"
+      ],
+      "json_columns": [],
+      "key": "pantry_lot_update",
+      "operation_id": "entity_pantry_lot_update",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ],
+        [
+          "source_import_id",
+          "reference_source_import_id"
+        ]
+      ],
+      "table": "pantry_lot"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "pantry_lot_delete",
+      "operation_id": "entity_pantry_lot_delete",
+      "owned": true,
+      "references": [],
+      "table": "pantry_lot"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "shopping_item_list",
+      "operation_id": "entity_shopping_item_list",
+      "owned": true,
+      "references": [],
+      "table": "shopping_item"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "shopping_item_get",
+      "operation_id": "entity_shopping_item_get",
+      "owned": true,
+      "references": [],
+      "table": "shopping_item"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "session_id",
+        "total_id",
+        "product_version_id",
+        "net_shortage",
+        "package_count",
+        "surplus_amount",
+        "checked",
+        "client_key",
+        "checked_at",
+        "archived"
+      ],
+      "json_columns": [],
+      "key": "shopping_item_create",
+      "operation_id": "entity_shopping_item_create",
+      "owned": true,
+      "references": [
+        [
+          "session_id",
+          "reference_session_id"
+        ],
+        [
+          "total_id",
+          "reference_total_id"
+        ]
+      ],
+      "table": "shopping_item"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "session_id",
+        "total_id",
+        "product_version_id",
+        "net_shortage",
+        "package_count",
+        "surplus_amount",
+        "checked",
+        "client_key",
+        "checked_at",
+        "archived"
+      ],
+      "json_columns": [],
+      "key": "shopping_item_update",
+      "operation_id": "entity_shopping_item_update",
+      "owned": true,
+      "references": [
+        [
+          "session_id",
+          "reference_session_id"
+        ],
+        [
+          "total_id",
+          "reference_total_id"
+        ]
+      ],
+      "table": "shopping_item"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "shopping_item_delete",
+      "operation_id": "entity_shopping_item_delete",
+      "owned": true,
+      "references": [],
+      "table": "shopping_item"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "audit_event_list",
+      "operation_id": "entity_audit_event_list",
+      "owned": false,
+      "references": [],
+      "table": "audit_event"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "audit_event_get",
+      "operation_id": "entity_audit_event_get",
+      "owned": false,
+      "references": [],
+      "table": "audit_event"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "payload"
+      ],
+      "key": "outbox_event_list",
+      "operation_id": "entity_outbox_event_list",
+      "owned": false,
+      "references": [],
+      "table": "outbox_event"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [
+        "payload"
+      ],
+      "key": "outbox_event_get",
+      "operation_id": "entity_outbox_event_get",
+      "owned": false,
+      "references": [],
+      "table": "outbox_event"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [
+        "parameter_contract"
+      ],
+      "key": "product_preparation_rule_list",
+      "operation_id": "entity_product_preparation_rule_list",
+      "owned": false,
+      "references": [],
+      "table": "product_preparation_rule"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [
+        "parameter_contract"
+      ],
+      "key": "product_preparation_rule_get",
+      "operation_id": "entity_product_preparation_rule_get",
+      "owned": false,
+      "references": [],
+      "table": "product_preparation_rule"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "product_version_id",
+        "operation_id",
+        "allowed",
+        "use_original_container",
+        "parameter_contract",
+        "source_id"
+      ],
+      "json_columns": [
+        "parameter_contract"
+      ],
+      "key": "product_preparation_rule_create",
+      "operation_id": "entity_product_preparation_rule_create",
+      "owned": false,
+      "references": [],
+      "table": "product_preparation_rule"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_identity_list",
+      "operation_id": "entity_food_identity_list",
+      "owned": false,
+      "references": [],
+      "table": "food_identity"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_identity_get",
+      "operation_id": "entity_food_identity_get",
+      "owned": false,
+      "references": [],
+      "table": "food_identity"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "code",
+        "name",
+        "normalizer_version"
+      ],
+      "json_columns": [],
+      "key": "food_identity_create",
+      "operation_id": "entity_food_identity_create",
+      "owned": false,
+      "references": [],
+      "table": "food_identity"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_identity_member_list",
+      "operation_id": "entity_food_identity_member_list",
+      "owned": false,
+      "references": [],
+      "table": "food_identity_member"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "food_identity_member_get",
+      "operation_id": "entity_food_identity_member_get",
+      "owned": false,
+      "references": [],
+      "table": "food_identity_member"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": true,
+      "input_columns": [
+        "food_id",
+        "identity_id",
+        "normalizer_version",
+        "reason"
+      ],
+      "json_columns": [],
+      "key": "food_identity_member_create",
+      "operation_id": "entity_food_identity_member_create",
+      "owned": false,
+      "references": [],
+      "table": "food_identity_member"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [
+        "candidate_count"
+      ],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [
+        "contract"
+      ],
+      "key": "generation_template_list",
+      "operation_id": "entity_generation_template_list",
+      "owned": false,
+      "references": [],
+      "table": "generation_template"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [
+        "candidate_count"
+      ],
+      "immutable": true,
+      "input_columns": [],
+      "json_columns": [
+        "contract"
+      ],
+      "key": "generation_template_get",
+      "operation_id": "entity_generation_template_get",
+      "owned": false,
+      "references": [],
+      "table": "generation_template"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [
+        "candidate_count"
+      ],
+      "immutable": true,
+      "input_columns": [
+        "code",
+        "version",
+        "release_id",
+        "contract",
+        "candidate_count",
+        "contract_hash"
+      ],
+      "json_columns": [
+        "contract"
+      ],
+      "key": "generation_template_create",
+      "operation_id": "entity_generation_template_create",
+      "owned": false,
+      "references": [],
+      "table": "generation_template"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [
+        "start_ordinal",
+        "end_ordinal",
+        "next_ordinal",
+        "fence_token"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "generation_shard_list",
+      "operation_id": "entity_generation_shard_list",
+      "owned": false,
+      "references": [],
+      "table": "generation_shard"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [
+        "start_ordinal",
+        "end_ordinal",
+        "next_ordinal",
+        "fence_token"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "generation_shard_get",
+      "operation_id": "entity_generation_shard_get",
+      "owned": false,
+      "references": [],
+      "table": "generation_shard"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [
+        "start_ordinal",
+        "end_ordinal",
+        "next_ordinal",
+        "fence_token"
+      ],
+      "immutable": false,
+      "input_columns": [
+        "template_id",
+        "start_ordinal",
+        "end_ordinal",
+        "next_ordinal",
+        "lease_owner",
+        "lease_expires_at",
+        "fence_token",
+        "state"
+      ],
+      "json_columns": [],
+      "key": "generation_shard_create",
+      "operation_id": "entity_generation_shard_create",
+      "owned": false,
+      "references": [],
+      "table": "generation_shard"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [
+        "ordinal"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "candidate_attempt_list",
+      "operation_id": "entity_candidate_attempt_list",
+      "owned": false,
+      "references": [],
+      "table": "candidate_attempt"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [
+        "ordinal"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "candidate_attempt_get",
+      "operation_id": "entity_candidate_attempt_get",
+      "owned": false,
+      "references": [],
+      "table": "candidate_attempt"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [
+        "ordinal"
+      ],
+      "immutable": false,
+      "input_columns": [
+        "template_id",
+        "ordinal",
+        "design_key",
+        "job_id",
+        "state",
+        "reason_code",
+        "recipe_version_id",
+        "attempts"
+      ],
+      "json_columns": [],
+      "key": "candidate_attempt_create",
+      "operation_id": "entity_candidate_attempt_create",
+      "owned": false,
+      "references": [],
+      "table": "candidate_attempt"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [
+        "ordinal"
+      ],
+      "immutable": false,
+      "input_columns": [
+        "template_id",
+        "ordinal",
+        "design_key",
+        "job_id",
+        "state",
+        "reason_code",
+        "recipe_version_id",
+        "attempts"
+      ],
+      "json_columns": [],
+      "key": "candidate_attempt_update",
+      "operation_id": "entity_candidate_attempt_update",
+      "owned": false,
+      "references": [],
+      "table": "candidate_attempt"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_search_document_list",
+      "operation_id": "entity_recipe_search_document_list",
+      "owned": false,
+      "references": [],
+      "table": "recipe_search_document"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_search_document_get",
+      "operation_id": "entity_recipe_search_document_get",
+      "owned": false,
+      "references": [],
+      "table": "recipe_search_document"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_embedding_list",
+      "operation_id": "entity_recipe_embedding_list",
+      "owned": false,
+      "references": [],
+      "table": "recipe_embedding"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "recipe_embedding_get",
+      "operation_id": "entity_recipe_embedding_get",
+      "owned": false,
+      "references": [],
+      "table": "recipe_embedding"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "model_version",
+        "content_hash",
+        "embedding",
+        "created_for_index"
+      ],
+      "json_columns": [],
+      "key": "recipe_embedding_create",
+      "operation_id": "entity_recipe_embedding_create",
+      "owned": false,
+      "references": [],
+      "table": "recipe_embedding"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "recipe_version_id",
+        "model_version",
+        "content_hash",
+        "embedding",
+        "created_for_index"
+      ],
+      "json_columns": [],
+      "key": "recipe_embedding_update",
+      "operation_id": "entity_recipe_embedding_update",
+      "owned": false,
+      "references": [],
+      "table": "recipe_embedding"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [
+        "attempted",
+        "valid",
+        "unique_count",
+        "publishable",
+        "input_tokens",
+        "output_tokens"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "generation_stratum_metric_list",
+      "operation_id": "entity_generation_stratum_metric_list",
+      "owned": false,
+      "references": [],
+      "table": "generation_stratum_metric"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [
+        "attempted",
+        "valid",
+        "unique_count",
+        "publishable",
+        "input_tokens",
+        "output_tokens"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "generation_stratum_metric_get",
+      "operation_id": "entity_generation_stratum_metric_get",
+      "owned": false,
+      "references": [],
+      "table": "generation_stratum_metric"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [
+        "attempted",
+        "valid",
+        "unique_count",
+        "publishable",
+        "input_tokens",
+        "output_tokens"
+      ],
+      "immutable": false,
+      "input_columns": [
+        "template_id",
+        "window_start",
+        "window_end",
+        "attempted",
+        "valid",
+        "unique_count",
+        "publishable",
+        "input_tokens",
+        "output_tokens",
+        "cost_amount",
+        "currency",
+        "stratum_key"
+      ],
+      "json_columns": [],
+      "key": "generation_stratum_metric_create",
+      "operation_id": "entity_generation_stratum_metric_create",
+      "owned": false,
+      "references": [],
+      "table": "generation_stratum_metric"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [
+        "revision"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "receipt_import_list",
+      "operation_id": "entity_receipt_import_list",
+      "owned": true,
+      "references": [],
+      "table": "receipt_import"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [
+        "revision"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "receipt_import_get",
+      "operation_id": "entity_receipt_import_get",
+      "owned": true,
+      "references": [],
+      "table": "receipt_import"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [
+        "revision"
+      ],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "file_sha256",
+        "idempotency_key",
+        "status",
+        "revision",
+        "committed_at",
+        "reverted_at",
+        "undo_preserved_count"
+      ],
+      "json_columns": [],
+      "key": "receipt_import_create",
+      "operation_id": "entity_receipt_import_create",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "receipt_import"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [
+        "revision"
+      ],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "file_sha256",
+        "idempotency_key",
+        "status",
+        "revision",
+        "committed_at",
+        "reverted_at",
+        "undo_preserved_count"
+      ],
+      "json_columns": [],
+      "key": "receipt_import_update",
+      "operation_id": "entity_receipt_import_update",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "receipt_import"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [
+        "revision"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "receipt_import_delete",
+      "operation_id": "entity_receipt_import_delete",
+      "owned": true,
+      "references": [],
+      "table": "receipt_import"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "receipt_line_list",
+      "operation_id": "entity_receipt_line_list",
+      "owned": true,
+      "references": [],
+      "table": "receipt_line"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "receipt_line_get",
+      "operation_id": "entity_receipt_line_get",
+      "owned": true,
+      "references": [],
+      "table": "receipt_line"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "import_id",
+        "line_no",
+        "raw_name",
+        "form_id",
+        "product_version_id",
+        "amount",
+        "unit_id",
+        "decision",
+        "pantry_lot_id"
+      ],
+      "json_columns": [],
+      "key": "receipt_line_create",
+      "operation_id": "entity_receipt_line_create",
+      "owned": true,
+      "references": [
+        [
+          "import_id",
+          "reference_import_id"
+        ],
+        [
+          "pantry_lot_id",
+          "reference_pantry_lot_id"
+        ]
+      ],
+      "table": "receipt_line"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "import_id",
+        "line_no",
+        "raw_name",
+        "form_id",
+        "product_version_id",
+        "amount",
+        "unit_id",
+        "decision",
+        "pantry_lot_id"
+      ],
+      "json_columns": [],
+      "key": "receipt_line_update",
+      "operation_id": "entity_receipt_line_update",
+      "owned": true,
+      "references": [
+        [
+          "import_id",
+          "reference_import_id"
+        ],
+        [
+          "pantry_lot_id",
+          "reference_pantry_lot_id"
+        ]
+      ],
+      "table": "receipt_line"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "receipt_line_delete",
+      "operation_id": "entity_receipt_line_delete",
+      "owned": true,
+      "references": [],
+      "table": "receipt_line"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [
+        "revision"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "workspace_revision_list",
+      "operation_id": "entity_workspace_revision_list",
+      "owned": true,
+      "references": [],
+      "table": "workspace_revision"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [
+        "revision"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "workspace_revision_get",
+      "operation_id": "entity_workspace_revision_get",
+      "owned": true,
+      "references": [],
+      "table": "workspace_revision"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_food_list",
+      "operation_id": "entity_user_food_list",
+      "owned": true,
+      "references": [],
+      "table": "user_food"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_food_get",
+      "operation_id": "entity_user_food_get",
+      "owned": true,
+      "references": [],
+      "table": "user_food"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "food_id"
+      ],
+      "json_columns": [],
+      "key": "user_food_create",
+      "operation_id": "entity_user_food_create",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "user_food"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "food_id"
+      ],
+      "json_columns": [],
+      "key": "user_food_update",
+      "operation_id": "entity_user_food_update",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "user_food"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_food_delete",
+      "operation_id": "entity_user_food_delete",
+      "owned": true,
+      "references": [],
+      "table": "user_food"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_pantry_food_list",
+      "operation_id": "entity_user_pantry_food_list",
+      "owned": true,
+      "references": [],
+      "table": "user_pantry_food"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_pantry_food_get",
+      "operation_id": "entity_user_pantry_food_get",
+      "owned": true,
+      "references": [],
+      "table": "user_pantry_food"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "food_id"
+      ],
+      "json_columns": [],
+      "key": "user_pantry_food_create",
+      "operation_id": "entity_user_pantry_food_create",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "user_pantry_food"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "food_id"
+      ],
+      "json_columns": [],
+      "key": "user_pantry_food_update",
+      "operation_id": "entity_user_pantry_food_update",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "user_pantry_food"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_pantry_food_delete",
+      "operation_id": "entity_user_pantry_food_delete",
+      "owned": true,
+      "references": [],
+      "table": "user_pantry_food"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "pantry_consumption_list",
+      "operation_id": "entity_pantry_consumption_list",
+      "owned": true,
+      "references": [],
+      "table": "pantry_consumption"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "pantry_consumption_get",
+      "operation_id": "entity_pantry_consumption_get",
+      "owned": true,
+      "references": [],
+      "table": "pantry_consumption"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_shopping_check_list",
+      "operation_id": "entity_user_shopping_check_list",
+      "owned": true,
+      "references": [],
+      "table": "user_shopping_check"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_shopping_check_get",
+      "operation_id": "entity_user_shopping_check_get",
+      "owned": true,
+      "references": [],
+      "table": "user_shopping_check"
+    },
+    {
+      "action": "create",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "key",
+        "signature",
+        "food_id",
+        "amount",
+        "unit_id",
+        "checked_at",
+        "archived"
+      ],
+      "json_columns": [],
+      "key": "user_shopping_check_create",
+      "operation_id": "entity_user_shopping_check_create",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "user_shopping_check"
+    },
+    {
+      "action": "update",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [
+        "user_id",
+        "key",
+        "signature",
+        "food_id",
+        "amount",
+        "unit_id",
+        "checked_at",
+        "archived"
+      ],
+      "json_columns": [],
+      "key": "user_shopping_check_update",
+      "operation_id": "entity_user_shopping_check_update",
+      "owned": true,
+      "references": [
+        [
+          "user_id",
+          "reference_user_id"
+        ]
+      ],
+      "table": "user_shopping_check"
+    },
+    {
+      "action": "delete",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "user_shopping_check_delete",
+      "operation_id": "entity_user_shopping_check_delete",
+      "owned": true,
+      "references": [],
+      "table": "user_shopping_check"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "backup_artifact_list",
+      "operation_id": "entity_backup_artifact_list",
+      "owned": true,
+      "references": [],
+      "table": "backup_artifact"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "backup_artifact_get",
+      "operation_id": "entity_backup_artifact_get",
+      "owned": true,
+      "references": [],
+      "table": "backup_artifact"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [
+        "current_revision"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "backup_restore_intent_list",
+      "operation_id": "entity_backup_restore_intent_list",
+      "owned": true,
+      "references": [],
+      "table": "backup_restore_intent"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [
+        "current_revision"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "backup_restore_intent_get",
+      "operation_id": "entity_backup_restore_intent_get",
+      "owned": true,
+      "references": [],
+      "table": "backup_restore_intent"
+    }
+  ],
+  "schemaVersion": 1,
+  "tables": [
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "source_record",
+      "retention": "catalog",
+      "rule": "URLのみで権利を推定しない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "catalog_release",
+      "retention": "version",
+      "rule": "公開後は対象マスタを更新しない。変更は新ID・新release"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "unit",
+      "retention": "catalog",
+      "rule": "g/ml/個/s/℃/mm/Wを基準。数値は有限、factor>0"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "food",
+      "retention": "catalog",
+      "rule": "親はカテゴリ分類のみ。購入量を親へ自動合算しない。親循環禁止"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "food_alias",
+      "retention": "catalog",
+      "rule": "同名で複数候補ありなら検索時に候補選択"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "food_form",
+      "retention": "catalog",
+      "rule": "乾物と復水後、生米と炊飯後を別IDにする"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "conversion",
+      "retention": "version",
+      "rule": "factor>0;質量体積変換に全食材共通密度を使わない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "form_yield",
+      "retention": "version",
+      "rule": "ratio>0;復水では1超可;同一次元のみ直接比率換算"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "product",
+      "retention": "catalog",
+      "rule": "商品名と分量を同じ列へ詰め込まない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "product_version",
+      "retention": "version",
+      "rule": "内容量>0;原材料・添付品・容器変更で新しい版"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "product_component",
+      "retention": "version",
+      "rule": "原材料表示から配合量を逆算しない。全量不明でも1袋単位を使える"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "allergen",
+      "retention": "catalog",
+      "rule": "法定表示対象とは別。制度版はsourceで管理"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "food_allergen",
+      "retention": "version",
+      "rule": "行がない場合もunknownとする"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "product_allergen",
+      "retention": "version",
+      "rule": "汎用食材の不使用判定より商品情報を優先"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "nutrient",
+      "retention": "catalog",
+      "rule": "栄養値は新規性判定に使わない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "nutrition_fact",
+      "retention": "version",
+      "rule": "対象2列はXOR;basis>0;amount>=0;欠測を0にしない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "axis",
+      "retention": "catalog",
+      "rule": "数量・工程の正本をEAVへ逃がさない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "axis_option",
+      "retention": "catalog",
+      "rule": "親は同軸のみ;循環禁止"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "food_axis_option",
+      "retention": "catalog",
+      "rule": "食材選択の候補はfoodを直接使い重複マスタを作らない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "recipe",
+      "retention": "catalog",
+      "rule": "名前や盛付変更だけでは新規レシピ扱いしない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "recipe_version",
+      "retention": "version",
+      "rule": "公開後不変;base_servings/output_amount>0;publishedはpassed必須"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "recipe_option",
+      "retention": "version",
+      "rule": "軸の単一選択制約を公開時に確認"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "scaling_rule",
+      "retention": "version",
+      "rule": "0<min<=max;刻み>0;人数範囲外は再検証"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "scaling_point",
+      "retention": "version",
+      "rule": "線形補間は隣接する検証点の範囲内のみ"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "recipe_ingredient",
+      "retention": "version",
+      "rule": "kit構成は同版の親へ紐付け;確定値>0;exact以外は精密総量に混ぜない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "operation",
+      "retention": "catalog",
+      "rule": "媒体表示と実行の正本を共通operationに揃える"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "operation_parameter",
+      "retention": "catalog",
+      "rule": "任意JSON不可;定義済み型・単位・範囲を検査"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "recipe_step",
+      "retention": "version",
+      "rule": "0<=min<=max;時間だけで加熱完了としない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "step_parameter",
+      "retention": "version",
+      "rule": "値3列のうち厳密に1つ;工程のoperationと定義が一致"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "material_node",
+      "retention": "version",
+      "rule": "ingredientなら明細のみ;その他ならproducer必須;同版所属"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "step_input",
+      "retention": "version",
+      "rule": "0<fraction<=1;同材料への全入力合計<=1;不足残量は明示"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "step_dependency",
+      "retention": "version",
+      "rule": "同版;自己辺禁止;循環禁止;max>=min>=0;材料由来辺も必須"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "resource_type",
+      "retention": "catalog",
+      "rule": "コンロと鍋と人を別資源で同時予約"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "step_resource",
+      "retention": "version",
+      "rule": "quantity>0;見守りも作業負荷として人を確保"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "media_asset",
+      "retention": "version",
+      "rule": "食材形状が異なる動画を黙って代用しない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "step_media",
+      "retention": "version",
+      "rule": "0<=start<end;operation一致"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "generation_policy",
+      "retention": "version",
+      "rule": "実行可能コードをプロンプト出力から実行しない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "generation_job",
+      "retention": "transient",
+      "rule": "リース取得・再試行上限は運用設定;LLM同出力の保証はしない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "generation_choice",
+      "retention": "transient",
+      "rule": "同一releaseか検証"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "generation_food",
+      "retention": "transient",
+      "rule": "食材ペアの文字列を入力正本としない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "generation_result",
+      "retention": "version",
+      "rule": "ジョブ削除時SET NULL;方針と入力は残す"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "compatibility_rule",
+      "retention": "version",
+      "rule": "JSON DSLのみ;任意SQL/eval禁止"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "validation_result",
+      "retention": "version",
+      "rule": "AI生成済みと調理検証済みを分ける"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "recipe_signature",
+      "retention": "version",
+      "rule": "hash同値時はpayload比較;改訂版も保持するためhashをUNIQUEにしない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "recipe_similarity",
+      "retention": "transient",
+      "rule": "left<right;0<=score<=1;類似度は新規性の補助"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "update"
+      ],
+      "name": "app_user",
+      "retention": "owned",
+      "rule": "パスワードは保持しない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "user_preference",
+      "retention": "owned",
+      "rule": "認可はuser_id一致;体調などを推定しない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "user_exclusion",
+      "retention": "owned",
+      "rule": "food/allergen XOR;strict時unknownを許可しない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "delete"
+      ],
+      "name": "user_recipe_event",
+      "retention": "owned",
+      "rule": "日付・recipe_id・類似群で既出除外;閲覧だけで調理済み扱いしない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "menu",
+      "retention": "owned",
+      "rule": "servings>0;人数は整数限定にしない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "menu_item",
+      "retention": "owned",
+      "rule": "レシピ更新後も献立版の内容は変えない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "menu_ingredient_override",
+      "retention": "owned",
+      "rule": "対象recipe_version一致;代替したら安全・数量・工程を再検証"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "kitchen_resource",
+      "retention": "owned",
+      "rule": "quantity>0;鍋とバーナーは別登録"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "cooking_session",
+      "retention": "owned",
+      "rule": "同入力+同plannerなら同じ順序;推定時間の実現は保証しない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "session_task",
+      "retention": "owned",
+      "rule": "開始<=終了;共有下処理は別途同一性証明するまで統合しない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "task_dependency",
+      "retention": "owned",
+      "rule": "同一session;DAG;加熱待機に他料理を配置できる"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "resource_reservation",
+      "retention": "owned",
+      "rule": "[start,end)で扱う;重複合計<=供給;0<=start<end"
+    },
+    {
+      "actions": [
+        "list",
+        "get"
+      ],
+      "name": "ingredient_total",
+      "retention": "transient",
+      "rule": "kit構成は親購入量と二重加算しない;集計は再生成可能"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "pantry_lot",
+      "retention": "owned",
+      "rule": "amount>=0;在庫引当と消費更新はトランザクション"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "shopping_item",
+      "retention": "owned",
+      "rule": "包装数=ceil(不足量/1包装量);異なる商品の包装量を混ぜない"
+    },
+    {
+      "actions": [
+        "list",
+        "get"
+      ],
+      "name": "audit_event",
+      "retention": "audit",
+      "rule": "個人データ本文を監査に複製しない;アプリappend-only"
+    },
+    {
+      "actions": [
+        "list",
+        "get"
+      ],
+      "name": "outbox_event",
+      "retention": "transient",
+      "rule": "公開/取下げ/削除と同一トランザクションで挿入"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "product_preparation_rule",
+      "retention": "version",
+      "rule": "記録なしはunknown。商品専用パラメータを汎用品へ転用しない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "food_identity",
+      "retention": "version",
+      "rule": "版を跨いだ変更では署名を再計算"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "food_identity_member",
+      "retention": "version",
+      "rule": "同じ正規化版で食品は1同一性へ。調理形態差は工程署名で保持"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "generation_template",
+      "retention": "version",
+      "rule": "大きな直積は数と契約だけ保存。候補点の全事前展開はしない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "generation_shard",
+      "retention": "transient",
+      "rule": "同テンプレート範囲の重複を排他制約で禁止。SKIP LOCKED+fenceを使用"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "candidate_attempt",
+      "retention": "transient",
+      "rule": "未試行点は行を作らない。台帳削除時も完了範囲/拒否キーを別保持"
+    },
+    {
+      "actions": [
+        "list",
+        "get"
+      ],
+      "name": "recipe_search_document",
+      "retention": "transient",
+      "rule": "正規化DBを正本とする再構築可能な派生表。配列FKの代用品に使わない"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update"
+      ],
+      "name": "recipe_embedding",
+      "retention": "transient",
+      "rule": "HNSW等のANNは評価して採用。モデル更新は並行構築後切替"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create"
+      ],
+      "name": "generation_stratum_metric",
+      "retention": "version",
+      "rule": "条件付き率と信頼区間を計算。初期採用率の過大外挿を防ぐ"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "receipt_import",
+      "retention": "owned",
+      "rule": "本人のみ操作。再送と取消をDB整合制約で検査"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "receipt_line",
+      "retention": "owned",
+      "rule": "本人のみ操作。再送と取消をDB整合制約で検査"
+    },
+    {
+      "actions": [
+        "list",
+        "get"
+      ],
+      "name": "workspace_revision",
+      "retention": "owned",
+      "rule": "本人のみ操作。再送と取消をDB整合制約で検査"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "user_food",
+      "retention": "owned",
+      "rule": "本人のみ操作。再送と取消をDB整合制約で検査"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "user_pantry_food",
+      "retention": "owned",
+      "rule": "本人のみ操作。再送と取消をDB整合制約で検査"
+    },
+    {
+      "actions": [
+        "list",
+        "get"
+      ],
+      "name": "pantry_consumption",
+      "retention": "owned",
+      "rule": "本人のみ操作。再送と取消をDB整合制約で検査"
+    },
+    {
+      "actions": [
+        "list",
+        "get",
+        "create",
+        "update",
+        "delete"
+      ],
+      "name": "user_shopping_check",
+      "retention": "owned",
+      "rule": "調理前の購入確認。本人内安定キーで冪等化"
+    },
+    {
+      "actions": [
+        "list",
+        "get"
+      ],
+      "name": "backup_artifact",
+      "retention": "audit",
+      "rule": "本人への発行事実を本文なしで保持する。汎用APIは読取りのみ。更新・削除は禁止し、本人消去時の匿名化だけを許可する。"
+    },
+    {
+      "actions": [
+        "list",
+        "get"
+      ],
+      "name": "backup_restore_intent",
+      "retention": "audit",
+      "rule": "確認済みの本人・本文・現在版・期限は不変。専用の復元処理で一度だけ使用し、全置換と同じトランザクションで確定する。汎用APIは読取りのみ。"
+    }
+  ]
+}

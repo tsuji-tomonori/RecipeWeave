@@ -1,4 +1,4 @@
-"""Every design point is materialized; manifests are not a substitute for rows."""
+"""すべての設計点を行として出力し、マニフェストで実データの代わりにしない。"""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ COLS = ("ordinal", "template", "main", "support1", "support2", "support3", "flav
 
 
 def _validate_manifest(manifest: dict[str, Any]) -> None:
-    """Accept only an ordered prefix of the declared, fixed-size shards."""
+    """宣言済みの固定サイズの分割ファイルについて、先頭から順に並ぶ部分だけを受け入れる。"""
     if manifest.get("schema_version") != 1 or manifest.get("columns") != list(COLS):
         raise ValueError("unsupported manifest schema or columns")
     if manifest.get("status") not in ("complete", "incomplete"):
@@ -97,7 +97,7 @@ def export_all(space: Space, output: Path, shard_size: int = 1_000_000) -> dict[
         saved_dictionary = json.loads((output / "dictionary.json").read_text())
         if saved_dictionary != dictionary:
             raise ValueError("dictionary corruption; recover before resuming")
-        # Validate every completed file before changing any saved state.
+        # 保存済みの状態を変更する前に、すべての完了済みファイルを検証する。
         for entry in manifest["shards"]:
             shard = output / entry["file"]
             if shard.stat().st_size != entry["bytes"] or file_hash(shard) != entry["sha256"]:

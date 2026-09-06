@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "tables": {
+    "recipeweave.user_state": {
+      "description": "認証済み利用者ごとに、検証済みの端末状態とサーバー側の版を保持する。レシピ正規化DBの将来設計とは別の、Dev同期用の物理テーブル。",
+      "columns": {
+        "subject": "検証済みCognitoアクセストークンのsub。呼出者から任意の利用者IDを受け取らない。",
+        "revision": "サーバー側の楽観ロック用の版。新規は1、更新は期待版に一致するときだけ1増える。",
+        "payload": "AppSnapshotの検証を通ったJSON状態。画像、OCR全文、トークン等は格納しない。内部の版とサーバーrevisionは別に扱う。",
+        "updated_at": "SQLのCURRENT_TIMESTAMPで記録する作成・更新時刻。"
+      }
+    },
+    "recipeweave.schema_migrations": {
+      "description": "移行IDとchecksum、完了時刻を保持する運用台帳。DDLの構造確認が成功した後に記録し、アプリAPIから更新しない。",
+      "columns": {
+        "id": "適用したマイグレーションの一意なID。",
+        "checksum": "移行SQLと事後確認SQLのSHA-256。適用済み内容の変更を検出する。",
+        "applied_at": "移行台帳の登録時刻。DDLと別のトランザクションで記録する。"
+      }
+    }
+  }
+}

@@ -78,7 +78,7 @@ def test_export_resume_and_corruption_detection(tmp_path):
     assert m["status"] == "complete"
     assert verify_all(tmp_path)["rows_verified"] == s.total
     assert export_all(s, tmp_path, 7) == m
-    # A interrupted run retains only finalized shard entries.
+    # 実行が中断された場合は、完了済みの分割ファイルの記録だけを保持する。
     manifest_path = tmp_path / "manifest.json"
     interrupted = json.loads(manifest_path.read_text())
     interrupted["shards"] = interrupted["shards"][:1]
@@ -134,7 +134,7 @@ def test_full_verification_rejects_checksum_consistent_wrong_candidate(tmp_path)
     path = tmp_path / manifest["shards"][0]["file"]
     with gzip.open(path, "rt", newline="") as stream:
         rows = list(csv.reader(stream))
-    # Keep an existing route ID and valid ordinal; checksums alone cannot detect this.
+    # 既存の調理経路IDと有効な通し番号を保つため、この変更はチェックサムだけでは検出できない。
     rows[1][7] = str(1 - int(rows[1][7]))
     with gzip.open(path, "wt", newline="") as stream:
         csv.writer(stream, lineterminator="\n").writerows(rows)

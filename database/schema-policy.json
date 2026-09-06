@@ -1,0 +1,560 @@
+{
+  "schemaVersion": 1,
+  "source": "spec/database/source-sheet.json",
+  "tables": {
+    "source_record": {
+      "retention": "catalog",
+      "domain": "共通",
+      "owner_path": null,
+      "source_rules": "URLのみで権利を推定しない"
+    },
+    "catalog_release": {
+      "retention": "version",
+      "domain": "共通",
+      "owner_path": null,
+      "source_rules": "公開後は対象マスタを更新しない。変更は新ID・新release"
+    },
+    "unit": {
+      "retention": "catalog",
+      "domain": "数量",
+      "owner_path": null,
+      "source_rules": "g/ml/個/s/℃/mm/Wを基準。数値は有限、factor>0"
+    },
+    "food": {
+      "retention": "catalog",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "親はカテゴリ分類のみ。購入量を親へ自動合算しない。親循環禁止"
+    },
+    "food_alias": {
+      "retention": "catalog",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "同名で複数候補ありなら検索時に候補選択"
+    },
+    "food_form": {
+      "retention": "catalog",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "乾物と復水後、生米と炊飯後を別IDにする"
+    },
+    "conversion": {
+      "retention": "version",
+      "domain": "数量",
+      "owner_path": null,
+      "source_rules": "factor>0;質量体積変換に全食材共通密度を使わない"
+    },
+    "form_yield": {
+      "retention": "version",
+      "domain": "数量",
+      "owner_path": null,
+      "source_rules": "ratio>0;復水では1超可;同一次元のみ直接比率換算"
+    },
+    "product": {
+      "retention": "catalog",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "商品名と分量を同じ列へ詰め込まない"
+    },
+    "product_version": {
+      "retention": "version",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "内容量>0;原材料・添付品・容器変更で新しい版"
+    },
+    "product_component": {
+      "retention": "version",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "原材料表示から配合量を逆算しない。全量不明でも1袋単位を使える"
+    },
+    "allergen": {
+      "retention": "catalog",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "法定表示対象とは別。制度版はsourceで管理"
+    },
+    "food_allergen": {
+      "retention": "version",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "行がない場合もunknownとする"
+    },
+    "product_allergen": {
+      "retention": "version",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "汎用食材の不使用判定より商品情報を優先"
+    },
+    "nutrient": {
+      "retention": "catalog",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "栄養値は新規性判定に使わない"
+    },
+    "nutrition_fact": {
+      "retention": "version",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "対象2列はXOR;basis>0;amount>=0;欠測を0にしない"
+    },
+    "axis": {
+      "retention": "catalog",
+      "domain": "発想",
+      "owner_path": null,
+      "source_rules": "数量・工程の正本をEAVへ逃がさない"
+    },
+    "axis_option": {
+      "retention": "catalog",
+      "domain": "発想",
+      "owner_path": null,
+      "source_rules": "親は同軸のみ;循環禁止"
+    },
+    "food_axis_option": {
+      "retention": "catalog",
+      "domain": "発想",
+      "owner_path": null,
+      "source_rules": "食材選択の候補はfoodを直接使い重複マスタを作らない"
+    },
+    "recipe": {
+      "retention": "catalog",
+      "domain": "レシピ",
+      "owner_path": null,
+      "source_rules": "名前や盛付変更だけでは新規レシピ扱いしない"
+    },
+    "recipe_version": {
+      "retention": "version",
+      "domain": "レシピ",
+      "owner_path": null,
+      "source_rules": "公開後不変;base_servings/output_amount>0;publishedはpassed必須"
+    },
+    "recipe_option": {
+      "retention": "version",
+      "domain": "レシピ",
+      "owner_path": null,
+      "source_rules": "軸の単一選択制約を公開時に確認"
+    },
+    "scaling_rule": {
+      "retention": "version",
+      "domain": "数量",
+      "owner_path": null,
+      "source_rules": "0<min<=max;刻み>0;人数範囲外は再検証"
+    },
+    "scaling_point": {
+      "retention": "version",
+      "domain": "数量",
+      "owner_path": null,
+      "source_rules": "線形補間は隣接する検証点の範囲内のみ"
+    },
+    "recipe_ingredient": {
+      "retention": "version",
+      "domain": "レシピ",
+      "owner_path": null,
+      "source_rules": "kit構成は同版の親へ紐付け;確定値>0;exact以外は精密総量に混ぜない"
+    },
+    "operation": {
+      "retention": "catalog",
+      "domain": "工程",
+      "owner_path": null,
+      "source_rules": "媒体表示と実行の正本を共通operationに揃える"
+    },
+    "operation_parameter": {
+      "retention": "catalog",
+      "domain": "工程",
+      "owner_path": null,
+      "source_rules": "任意JSON不可;定義済み型・単位・範囲を検査"
+    },
+    "recipe_step": {
+      "retention": "version",
+      "domain": "工程",
+      "owner_path": null,
+      "source_rules": "0<=min<=max;時間だけで加熱完了としない"
+    },
+    "step_parameter": {
+      "retention": "version",
+      "domain": "工程",
+      "owner_path": null,
+      "source_rules": "値3列のうち厳密に1つ;工程のoperationと定義が一致"
+    },
+    "material_node": {
+      "retention": "version",
+      "domain": "工程",
+      "owner_path": null,
+      "source_rules": "ingredientなら明細のみ;その他ならproducer必須;同版所属"
+    },
+    "step_input": {
+      "retention": "version",
+      "domain": "工程",
+      "owner_path": null,
+      "source_rules": "0<fraction<=1;同材料への全入力合計<=1;不足残量は明示"
+    },
+    "step_dependency": {
+      "retention": "version",
+      "domain": "工程",
+      "owner_path": null,
+      "source_rules": "同版;自己辺禁止;循環禁止;max>=min>=0;材料由来辺も必須"
+    },
+    "resource_type": {
+      "retention": "catalog",
+      "domain": "工程",
+      "owner_path": null,
+      "source_rules": "コンロと鍋と人を別資源で同時予約"
+    },
+    "step_resource": {
+      "retention": "version",
+      "domain": "工程",
+      "owner_path": null,
+      "source_rules": "quantity>0;見守りも作業負荷として人を確保"
+    },
+    "media_asset": {
+      "retention": "version",
+      "domain": "表示",
+      "owner_path": null,
+      "source_rules": "食材形状が異なる動画を黙って代用しない"
+    },
+    "step_media": {
+      "retention": "version",
+      "domain": "表示",
+      "owner_path": null,
+      "source_rules": "0<=start<end;operation一致"
+    },
+    "generation_policy": {
+      "retention": "version",
+      "domain": "生成",
+      "owner_path": null,
+      "source_rules": "実行可能コードをプロンプト出力から実行しない"
+    },
+    "generation_job": {
+      "retention": "transient",
+      "domain": "生成",
+      "owner_path": null,
+      "source_rules": "リース取得・再試行上限は運用設定;LLM同出力の保証はしない"
+    },
+    "generation_choice": {
+      "retention": "transient",
+      "domain": "生成",
+      "owner_path": null,
+      "source_rules": "同一releaseか検証"
+    },
+    "generation_food": {
+      "retention": "transient",
+      "domain": "生成",
+      "owner_path": null,
+      "source_rules": "食材ペアの文字列を入力正本としない"
+    },
+    "generation_result": {
+      "retention": "version",
+      "domain": "生成",
+      "owner_path": null,
+      "source_rules": "ジョブ削除時SET NULL;方針と入力は残す"
+    },
+    "compatibility_rule": {
+      "retention": "version",
+      "domain": "生成",
+      "owner_path": null,
+      "source_rules": "JSON DSLのみ;任意SQL/eval禁止"
+    },
+    "validation_result": {
+      "retention": "version",
+      "domain": "生成",
+      "owner_path": null,
+      "source_rules": "AI生成済みと調理検証済みを分ける"
+    },
+    "recipe_signature": {
+      "retention": "version",
+      "domain": "検索",
+      "owner_path": null,
+      "source_rules": "hash同値時はpayload比較;改訂版も保持するためhashをUNIQUEにしない"
+    },
+    "recipe_similarity": {
+      "retention": "transient",
+      "domain": "検索",
+      "owner_path": null,
+      "source_rules": "left<right;0<=score<=1;類似度は新規性の補助"
+    },
+    "app_user": {
+      "retention": "owned",
+      "domain": "利用者",
+      "owner_path": [],
+      "source_rules": "パスワードは保持しない"
+    },
+    "user_preference": {
+      "retention": "owned",
+      "domain": "利用者",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "認可はuser_id一致;体調などを推定しない"
+    },
+    "user_exclusion": {
+      "retention": "owned",
+      "domain": "利用者",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "food/allergen XOR;strict時unknownを許可しない"
+    },
+    "user_recipe_event": {
+      "retention": "owned",
+      "domain": "利用者",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "日付・recipe_id・類似群で既出除外;閲覧だけで調理済み扱いしない"
+    },
+    "menu": {
+      "retention": "owned",
+      "domain": "献立",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "servings>0;人数は整数限定にしない"
+    },
+    "menu_item": {
+      "retention": "owned",
+      "domain": "献立",
+      "owner_path": [
+        "menu_id",
+        "user_id"
+      ],
+      "source_rules": "レシピ更新後も献立版の内容は変えない"
+    },
+    "menu_ingredient_override": {
+      "retention": "owned",
+      "domain": "献立",
+      "owner_path": [
+        "menu_item_id",
+        "menu_id",
+        "user_id"
+      ],
+      "source_rules": "対象recipe_version一致;代替したら安全・数量・工程を再検証"
+    },
+    "kitchen_resource": {
+      "retention": "owned",
+      "domain": "献立",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "quantity>0;鍋とバーナーは別登録"
+    },
+    "cooking_session": {
+      "retention": "owned",
+      "domain": "献立",
+      "owner_path": [
+        "menu_id",
+        "user_id"
+      ],
+      "source_rules": "同入力+同plannerなら同じ順序;推定時間の実現は保証しない"
+    },
+    "session_task": {
+      "retention": "owned",
+      "domain": "献立",
+      "owner_path": [
+        "session_id",
+        "menu_id",
+        "user_id"
+      ],
+      "source_rules": "開始<=終了;共有下処理は別途同一性証明するまで統合しない"
+    },
+    "task_dependency": {
+      "retention": "owned",
+      "domain": "献立",
+      "owner_path": [
+        "before_task_id",
+        "session_id",
+        "menu_id",
+        "user_id"
+      ],
+      "source_rules": "同一session;DAG;加熱待機に他料理を配置できる"
+    },
+    "resource_reservation": {
+      "retention": "owned",
+      "domain": "献立",
+      "owner_path": [
+        "task_id",
+        "session_id",
+        "menu_id",
+        "user_id"
+      ],
+      "source_rules": "[start,end)で扱う;重複合計<=供給;0<=start<end"
+    },
+    "ingredient_total": {
+      "retention": "transient",
+      "domain": "献立",
+      "owner_path": [
+        "session_id",
+        "menu_id",
+        "user_id"
+      ],
+      "source_rules": "kit構成は親購入量と二重加算しない;集計は再生成可能"
+    },
+    "pantry_lot": {
+      "retention": "owned",
+      "domain": "献立",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "amount>=0;在庫引当と消費更新はトランザクション"
+    },
+    "shopping_item": {
+      "retention": "owned",
+      "domain": "献立",
+      "owner_path": [
+        "session_id",
+        "menu_id",
+        "user_id"
+      ],
+      "source_rules": "包装数=ceil(不足量/1包装量);異なる商品の包装量を混ぜない"
+    },
+    "audit_event": {
+      "retention": "audit",
+      "domain": "運用",
+      "owner_path": null,
+      "source_rules": "個人データ本文を監査に複製しない;アプリappend-only"
+    },
+    "outbox_event": {
+      "retention": "transient",
+      "domain": "運用",
+      "owner_path": null,
+      "source_rules": "公開/取下げ/削除と同一トランザクションで挿入"
+    },
+    "product_preparation_rule": {
+      "retention": "version",
+      "domain": "食材",
+      "owner_path": null,
+      "source_rules": "記録なしはunknown。商品専用パラメータを汎用品へ転用しない"
+    },
+    "food_identity": {
+      "retention": "version",
+      "domain": "大規模生成",
+      "owner_path": null,
+      "source_rules": "版を跨いだ変更では署名を再計算"
+    },
+    "food_identity_member": {
+      "retention": "version",
+      "domain": "大規模生成",
+      "owner_path": null,
+      "source_rules": "同じ正規化版で食品は1同一性へ。調理形態差は工程署名で保持"
+    },
+    "generation_template": {
+      "retention": "version",
+      "domain": "大規模生成",
+      "owner_path": null,
+      "source_rules": "大きな直積は数と契約だけ保存。候補点の全事前展開はしない"
+    },
+    "generation_shard": {
+      "retention": "transient",
+      "domain": "大規模生成",
+      "owner_path": null,
+      "source_rules": "同テンプレート範囲の重複を排他制約で禁止。SKIP LOCKED+fenceを使用"
+    },
+    "candidate_attempt": {
+      "retention": "transient",
+      "domain": "大規模生成",
+      "owner_path": null,
+      "source_rules": "未試行点は行を作らない。台帳削除時も完了範囲/拒否キーを別保持"
+    },
+    "recipe_search_document": {
+      "retention": "transient",
+      "domain": "大規模生成",
+      "owner_path": null,
+      "source_rules": "正規化DBを正本とする再構築可能な派生表。配列FKの代用品に使わない"
+    },
+    "recipe_embedding": {
+      "retention": "transient",
+      "domain": "大規模生成",
+      "owner_path": null,
+      "source_rules": "HNSW等のANNは評価して採用。モデル更新は並行構築後切替"
+    },
+    "generation_stratum_metric": {
+      "retention": "version",
+      "domain": "大規模生成",
+      "owner_path": null,
+      "source_rules": "条件付き率と信頼区間を計算。初期採用率の過大外挿を防ぐ"
+    },
+    "receipt_import": {
+      "retention": "owned",
+      "domain": "利用者操作",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "本人のみ操作。再送と取消をDB整合制約で検査",
+      "source_origin": "service-extension"
+    },
+    "receipt_line": {
+      "retention": "owned",
+      "domain": "利用者操作",
+      "owner_path": [
+        "import_id",
+        "user_id"
+      ],
+      "source_rules": "本人のみ操作。再送と取消をDB整合制約で検査",
+      "source_origin": "service-extension"
+    },
+    "workspace_revision": {
+      "retention": "owned",
+      "domain": "利用者操作",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "本人のみ操作。再送と取消をDB整合制約で検査",
+      "source_origin": "service-extension"
+    },
+    "user_food": {
+      "retention": "owned",
+      "domain": "利用者操作",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "本人のみ操作。再送と取消をDB整合制約で検査",
+      "source_origin": "service-extension"
+    },
+    "user_pantry_food": {
+      "retention": "owned",
+      "domain": "利用者操作",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "本人のみ操作。再送と取消をDB整合制約で検査",
+      "source_origin": "service-extension"
+    },
+    "pantry_consumption": {
+      "retention": "owned",
+      "domain": "利用者操作",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "本人のみ操作。再送と取消をDB整合制約で検査",
+      "source_origin": "service-extension"
+    },
+    "user_shopping_check": {
+      "retention": "owned",
+      "domain": "利用者操作",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "調理前の購入確認。本人内安定キーで冪等化",
+      "source_origin": "service-extension"
+    },
+    "backup_artifact": {
+      "retention": "audit",
+      "domain": "バックアップ復元",
+      "owner_path": ["user_id"],
+      "source_rules": "本人への発行事実を本文なしで保持する。汎用APIは読取りのみ。更新・削除は禁止し、本人消去時の匿名化だけを許可する。",
+      "source_origin": "service-extension"
+    },
+    "backup_restore_intent": {
+      "retention": "audit",
+      "domain": "バックアップ復元",
+      "owner_path": ["user_id"],
+      "source_rules": "確認済みの本人・本文・現在版・期限は不変。専用の復元処理で一度だけ使用し、全置換と同じトランザクションで確定する。汎用APIは読取りのみ。",
+      "source_origin": "service-extension"
+    }
+  },
+  "column_evolutions": {
+    "pantry_lot.amount": {
+      "nullable": true,
+      "reason": "レシート等の数量未確定を0にせずNULLで保持する。quantity_qualityで保証範囲を区別する。"
+    }
+  }
+}

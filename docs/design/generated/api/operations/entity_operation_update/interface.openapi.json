@@ -1,0 +1,244 @@
+{
+  "components": {
+    "schemas": {
+      "OperationRow": {
+        "additionalProperties": false,
+        "description": "標準調理動作のDB応答。",
+        "properties": {
+          "code": {
+            "description": "cut_ginkgo等",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "completion_cue": {
+            "description": "完了確認方法",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Completion Cue",
+            "type": "string"
+          },
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "definition": {
+            "description": "動作の意味",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Definition",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "description": "いちょう切り等",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "precondition": {
+            "description": "入力食材・必要状態",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Precondition",
+            "type": "string"
+          },
+          "status": {
+            "description": "使用状態",
+            "enum": [
+              "active",
+              "retired"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "code",
+          "name",
+          "definition",
+          "precondition",
+          "completion_cue",
+          "status",
+          "etag"
+        ],
+        "title": "OperationRow",
+        "type": "object"
+      },
+      "OperationWrite": {
+        "additionalProperties": false,
+        "description": "標準調理動作の編集可能列。未指定NULL列はNULLにする。",
+        "properties": {
+          "code": {
+            "description": "cut_ginkgo等",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "completion_cue": {
+            "description": "完了確認方法",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Completion Cue",
+            "type": "string"
+          },
+          "definition": {
+            "description": "動作の意味",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Definition",
+            "type": "string"
+          },
+          "name": {
+            "description": "いちょう切り等",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "precondition": {
+            "description": "入力食材・必要状態",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Precondition",
+            "type": "string"
+          },
+          "status": {
+            "description": "使用状態",
+            "enum": [
+              "active",
+              "retired"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "definition",
+          "precondition",
+          "completion_cue",
+          "status"
+        ],
+        "title": "OperationWrite",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/operation/{row_id}": {
+      "put": {
+        "description": "標準調理動作の更新。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_operation_update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OperationWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "428": {
+            "description": "If-Matchが必要"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "標準調理動作の更新",
+        "tags": [
+          "正規化データ: 標準調理動作"
+        ]
+      }
+    }
+  }
+}

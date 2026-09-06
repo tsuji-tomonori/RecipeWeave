@@ -1,0 +1,193 @@
+{
+  "components": {
+    "schemas": {
+      "CandidateAttemptRow": {
+        "additionalProperties": false,
+        "description": "試行済み設計点の台帳のDB応答。",
+        "properties": {
+          "attempts": {
+            "description": "試行上限(暫定)",
+            "title": "Attempts",
+            "type": "integer"
+          },
+          "created_at": {
+            "description": "作成日時",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "design_key": {
+            "description": "正規化した設計キー",
+            "maxLength": 64,
+            "minLength": 64,
+            "title": "Design Key",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変ID",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "job_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "生成ジョブ",
+            "title": "Job Id"
+          },
+          "ordinal": {
+            "description": "設計点の序数",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Ordinal",
+            "type": "string"
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "maxLength": 20000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "棄却理由",
+            "title": "Reason Code"
+          },
+          "recipe_version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "採用した版",
+            "title": "Recipe Version Id"
+          },
+          "state": {
+            "description": "候補の段階",
+            "enum": [
+              "pending",
+              "invalid",
+              "generated",
+              "duplicate",
+              "accepted",
+              "failed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "template_id": {
+            "description": "定義版",
+            "format": "uuid",
+            "title": "Template Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "template_id",
+          "ordinal",
+          "design_key",
+          "job_id",
+          "state",
+          "reason_code",
+          "recipe_version_id",
+          "attempts",
+          "etag"
+        ],
+        "title": "CandidateAttemptRow",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/candidate_attempt/{row_id}": {
+      "get": {
+        "description": "試行済み設計点の台帳の取得。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_candidate_attempt_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateAttemptRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "404": {
+            "description": "対象なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "試行済み設計点の台帳の取得",
+        "tags": [
+          "正規化データ: 試行済み設計点の台帳"
+        ]
+      }
+    }
+  }
+}

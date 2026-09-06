@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "tests": [
+    {
+      "test_node": "backend/tests/test_backup_api.py::test_backup_requires_complete_table_set_and_current_format",
+      "operation_ids": [
+        "preview_backup",
+        "restore_backup"
+      ],
+      "factor": "旧形式・欠落表・監査混入",
+      "given": "形式1または必須表欠落の本文",
+      "when": "形式2の型検証",
+      "then": "SQLを実行する前に入力を拒否する"
+    },
+    {
+      "test_node": "backend/tests/test_backup_api.py::test_decimal_precision_survives_canonical_backup_round_trip",
+      "operation_ids": [
+        "export_backup",
+        "preview_backup",
+        "restore_backup"
+      ],
+      "factor": "numeric精度",
+      "given": "numeric(20,6)境界に近い小数",
+      "when": "正規化JSON往復",
+      "then": "Decimalとdigestが完全一致する"
+    },
+    {
+      "test_node": "backend/tests/test_backup_api.py::test_export_proof_and_owner_are_required_even_for_admin",
+      "operation_ids": [
+        "preview_backup",
+        "restore_backup"
+      ],
+      "factor": "真正性・本人限定",
+      "given": "別人または未発行の本文",
+      "when": "所有者と発行根拠を照合",
+      "then": "管理者でも403を返す"
+    },
+    {
+      "test_node": "backend/tests/test_backup_api.py::test_restore_requires_explicit_confirmation_and_revision",
+      "operation_ids": [
+        "restore_backup"
+      ],
+      "factor": "最終確認必須",
+      "given": "未確認または現在版なしの入力",
+      "when": "復元要求を型検証",
+      "then": "SQL前に拒否する"
+    },
+    {
+      "test_node": "backend/tests/test_backup_api.py::test_backup_column_sets_match_current_physical_schema",
+      "operation_ids": [
+        "export_backup",
+        "preview_backup",
+        "restore_backup"
+      ],
+      "factor": "列の保持",
+      "given": "34表のDDLメタデータ",
+      "when": "生成された復元列と照合",
+      "then": "ID・時刻・追加列を含む全列が一致する"
+    },
+    {
+      "test_node": "backend/tests/test_backup_database.py::test_backup_database_round_trip_preserves_complete_rows_and_decimal",
+      "operation_ids": [
+        "export_backup",
+        "preview_backup",
+        "restore_backup"
+      ],
+      "factor": "全表往復・精度・隔離",
+      "given": "私有食品・未知数量・大きい正確な小数",
+      "when": "preview後の全置換",
+      "then": "全業務列が同値で共有・別人に変更がない"
+    },
+    {
+      "test_node": "backend/tests/test_backup_database.py::test_backup_database_tamper_foreign_owner_cas_and_single_use",
+      "operation_ids": [
+        "export_backup",
+        "preview_backup",
+        "restore_backup"
+      ],
+      "factor": "改竄・別人・競合・単回確認",
+      "given": "発行済みバックアップと現在版",
+      "when": "改竄・他人・古い版・再送で復元",
+      "then": "現在データを変更せず拒否する"
+    },
+    {
+      "test_node": "backend/tests/test_backup_database.py::test_backup_database_late_failure_rolls_back_rows_revision_and_intent",
+      "operation_ids": [
+        "export_backup",
+        "preview_backup",
+        "restore_backup"
+      ],
+      "factor": "原子的取消し",
+      "given": "置換・確認消費・版更新後",
+      "when": "監査追記で実DB例外",
+      "then": "全業務行・版・確認消費がロールバックされる"
+    },
+    {
+      "test_node": "backend/tests/test_backup_database.py::test_backup_database_preserves_completed_cooking_receipts_and_consumption",
+      "operation_ids": [
+        "export_backup",
+        "preview_backup",
+        "restore_backup"
+      ],
+      "factor": "過去調理と消費の完全保持",
+      "given": "レシート・手動時間・確定した調理と消費台帳",
+      "when": "本人exportを確認後に全置換",
+      "then": "元ID・入力hash・数量・時間根拠・台帳を全列同値で保持する"
+    },
+    {
+      "test_node": "backend/tests/test_backup_database.py::test_backup_database_export_proof_restores_withdrawn_history_without_self_grant",
+      "operation_ids": [
+        "export_backup",
+        "preview_backup",
+        "restore_backup"
+      ],
+      "factor": "取下げ版と発行証跡",
+      "given": "発行後に現在履歴が消失し料理版が取下げ",
+      "when": "発行根拠の一致する本人本文を復元",
+      "then": "元履歴は回復し他人の本文や改竄は拒否する"
+    }
+  ]
+}

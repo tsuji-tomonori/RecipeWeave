@@ -1,0 +1,65 @@
+# app-docs による自動生成。直接編集しない。
+# SQLのSHA256: 82003254031f8b26ae85bf7f8156528aef4c1319662f8143db2e30b974c50974
+from collections.abc import Mapping
+from typing import Any, LiteralString
+
+from psycopg import Connection
+
+QUERIES: dict[str, LiteralString] = {
+    "query": """\
+-- 料理版の工程と加熱時間の換算規則を読む。
+SELECT
+    mi.id AS item_id,
+    mi.position,
+    mi.servings,
+    rv.base_servings,
+    rv.recipe_id,
+    st.id AS step_id,
+    st.step_no,
+    st.duration_max_s,
+    st.attention,
+    sc.mode AS scaling_mode,
+    sc.batch_capacity,
+    GREATEST(sc.min_servings, (
+        SELECT MAX(ingredient_rule.min_servings)
+        FROM recipeweave.recipe_ingredient AS ingredient
+        INNER JOIN recipeweave.scaling_rule AS ingredient_rule
+            ON ingredient.scaling_rule_id = ingredient_rule.id
+        WHERE ingredient.recipe_version_id = rv.id
+    )) AS min_servings,
+    LEAST(sc.max_servings, (
+        SELECT MIN(ingredient_rule.max_servings)
+        FROM recipeweave.recipe_ingredient AS ingredient
+        INNER JOIN recipeweave.scaling_rule AS ingredient_rule
+            ON ingredient.scaling_rule_id = ingredient_rule.id
+        WHERE ingredient.recipe_version_id = rv.id
+    )) AS max_servings
+FROM recipeweave.menu_item AS mi
+INNER JOIN recipeweave.recipe_version AS rv ON mi.recipe_version_id = rv.id
+INNER JOIN recipeweave.recipe_step AS st ON rv.id = st.recipe_version_id
+INNER JOIN recipeweave.scaling_rule AS sc ON st.scaling_rule_id = sc.id
+WHERE mi.menu_id = %(menu_id)s
+ORDER BY mi.position, st.step_no;
+"""
+}
+PARAMETERS: dict[str, tuple[str, ...]] = {"query": ("menu_id",)}
+
+
+def _execute(
+    connection: Connection[dict[str, Any]], name: str, params: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    """許可された固定SQLだけに、宣言と一致する束縛値を別渡しする。"""
+    if name not in QUERIES or set(params) != set(PARAMETERS[name]):
+        raise ValueError("SQL名または束縛パラメータが操作契約にありません")
+    cursor = connection.execute(QUERIES[name], dict(params))
+    return list(cursor.fetchall()) if cursor.description is not None else []
+
+
+SQL = QUERIES["query"]
+
+
+def execute(
+    connection: Connection[dict[str, Any]], values: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    """固定した単文SQLを実行する。"""
+    return _execute(connection, "query", values)

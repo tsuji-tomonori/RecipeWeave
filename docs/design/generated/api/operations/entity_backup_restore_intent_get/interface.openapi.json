@@ -1,0 +1,165 @@
+{
+  "components": {
+    "schemas": {
+      "BackupRestoreIntentRow": {
+        "additionalProperties": false,
+        "description": "復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費するのDB応答。",
+        "properties": {
+          "artifact_id": {
+            "description": "本人へ発行したバックアップ証拠の識別子",
+            "format": "uuid",
+            "title": "Artifact Id",
+            "type": "string"
+          },
+          "body_sha256": {
+            "description": "確認した本文全体のSHA-256。発行記録と一致する",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Body Sha256",
+            "type": "string"
+          },
+          "consumed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "復元と同一トランザクションで確定する使用日時。取消・再使用は不可",
+            "title": "Consumed At"
+          },
+          "created_at": {
+            "description": "復元内容を検証して確認記録を発行した日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "current_revision": {
+            "description": "確認時の現在データの更新版。復元直前にも同じ値であることを検査する",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Current Revision",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "expires_at": {
+            "description": "確認の有効期限。発行から最大15分",
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "description": "確認画面へ返す不変の復元確認識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "復元する本人。利用者消去後だけNULLへ匿名化する",
+            "title": "User Id"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "user_id",
+          "artifact_id",
+          "body_sha256",
+          "current_revision",
+          "expires_at",
+          "consumed_at",
+          "etag"
+        ],
+        "title": "BackupRestoreIntentRow",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/backup_restore_intent/{row_id}": {
+      "get": {
+        "description": "復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費するの取得。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_backup_restore_intent_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BackupRestoreIntentRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "404": {
+            "description": "対象なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費するの取得",
+        "tags": [
+          "正規化データ: 復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費する"
+        ]
+      }
+    }
+  }
+}

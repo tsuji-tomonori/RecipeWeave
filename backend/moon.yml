@@ -1,2 +1,26 @@
-language: unknown
+language: python
 layer: application
+tasks:
+  generate:
+    command: uv run --locked --package recipeweave-api app-docs
+    options:
+      runFromWorkspaceRoot: true
+  check:
+    command: uv run --locked --package recipeweave-api app-archlint
+    deps: [generate]
+    options:
+      runFromWorkspaceRoot: true
+  sql-lint:
+    command: uv run --locked --package recipeweave-api app-sql-lint
+    options:
+      runFromWorkspaceRoot: true
+  test:
+    command: uv run --locked pytest backend/tests --cov=app --cov-branch --cov-report=term-missing
+    deps: [generate]
+    options:
+      runFromWorkspaceRoot: true
+  package:
+    command: uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64
+    deps: [generate]
+    options:
+      runFromWorkspaceRoot: true

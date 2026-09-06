@@ -1,4 +1,4 @@
-"""Offline, explicit commands; no model API or paid generation is invoked."""
+"""明示したオフラインコマンドだけを実行し、モデルAPIや有料生成は呼び出さない。"""
 
 from __future__ import annotations
 

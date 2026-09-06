@@ -1,2 +1,11 @@
-language: unknown
+language: typescript
 layer: application
+tasks:
+  check:
+    command: npm run check
+  test:
+    command: npm test
+  build:
+    command: npm run build
+    outputs:
+      - dist

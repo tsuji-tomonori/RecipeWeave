@@ -1,0 +1,489 @@
+{
+  "eggplant-egg": {
+    "dishRoleCode": "dish_role_002",
+    "dishRoleName": "主菜",
+    "familyCode": "dish_family_001",
+    "familyName": "炒め物",
+    "seasonings": [
+      "oil",
+      "soy-sauce"
+    ],
+    "steps": [
+      {
+        "operation": "cut_halfmoon",
+        "completion": "なすが半月形に切れ、卵が溶けている。",
+        "inputs": [
+          "ingredient/eggplant",
+          "ingredient/egg"
+        ],
+        "outputs": [
+          {
+            "key": "cut_eggplant",
+            "name": "半月切りのなす"
+          },
+          {
+            "key": "beaten_egg",
+            "name": "溶き卵"
+          }
+        ]
+      },
+      {
+        "operation": "saute",
+        "completion": "なす全体がやわらかくなったことを確認する。",
+        "parameters": {
+          "heat": "medium",
+          "duration_s": 360
+        },
+        "inputs": [
+          "cut_eggplant",
+          "ingredient/oil"
+        ],
+        "outputs": [
+          {
+            "key": "fried_eggplant",
+            "name": "炒めたなす"
+          }
+        ]
+      },
+      {
+        "operation": "saute",
+        "completion": "卵に生の部分がなく、全体に火が通る。",
+        "inputs": [
+          "fried_eggplant",
+          "beaten_egg",
+          "ingredient/soy-sauce"
+        ],
+        "outputs": [
+          {
+            "key": "dish",
+            "name": "なすと卵の醤油炒め"
+          }
+        ]
+      }
+    ]
+  },
+  "eggplant-curry": {
+    "dishRoleCode": "dish_role_002",
+    "dishRoleName": "主菜",
+    "familyCode": "dish_family_001",
+    "familyName": "炒め物",
+    "seasonings": [
+      "oil",
+      "curry-powder",
+      "salt"
+    ],
+    "steps": [
+      {
+        "operation": "cut_halfmoon",
+        "completion": "なすが半月形に切れ、卵が溶けている。",
+        "inputs": [
+          "ingredient/eggplant",
+          "ingredient/egg"
+        ],
+        "outputs": [
+          {
+            "key": "cut_eggplant",
+            "name": "半月切りのなす"
+          },
+          {
+            "key": "beaten_egg",
+            "name": "溶き卵"
+          }
+        ]
+      },
+      {
+        "operation": "saute",
+        "completion": "なす全体がやわらかくなったことを確認する。",
+        "parameters": {
+          "heat": "medium",
+          "duration_s": 360
+        },
+        "inputs": [
+          "cut_eggplant",
+          "ingredient/oil"
+        ],
+        "outputs": [
+          {
+            "key": "fried_eggplant",
+            "name": "炒めたなす"
+          }
+        ]
+      },
+      {
+        "operation": "saute",
+        "completion": "卵に生の部分がなく、全体に火が通る。",
+        "inputs": [
+          "fried_eggplant",
+          "beaten_egg",
+          "ingredient/curry-powder",
+          "ingredient/salt"
+        ],
+        "outputs": [
+          {
+            "key": "dish",
+            "name": "なすと卵のカレー炒め"
+          }
+        ]
+      }
+    ]
+  },
+  "tomato-egg": {
+    "dishRoleCode": "dish_role_002",
+    "dishRoleName": "主菜",
+    "familyCode": "dish_family_001",
+    "familyName": "炒め物",
+    "seasonings": [
+      "oil",
+      "salt"
+    ],
+    "steps": [
+      {
+        "operation": "cut_wedge",
+        "completion": "トマトがくし形に切れ、卵が溶けている。",
+        "inputs": [
+          "ingredient/tomato",
+          "ingredient/egg"
+        ],
+        "outputs": [
+          {
+            "key": "cut_tomato",
+            "name": "くし形切りのトマト"
+          },
+          {
+            "key": "beaten_egg",
+            "name": "溶き卵"
+          }
+        ]
+      },
+      {
+        "operation": "saute",
+        "completion": "トマトの表面が温まったことを確認する。",
+        "parameters": {
+          "heat": "medium",
+          "duration_s": 180
+        },
+        "inputs": [
+          "cut_tomato",
+          "ingredient/oil"
+        ],
+        "outputs": [
+          {
+            "key": "fried_tomato",
+            "name": "炒めたトマト"
+          }
+        ]
+      },
+      {
+        "operation": "saute",
+        "completion": "卵に生の部分がなく、全体に火が通る。",
+        "inputs": [
+          "fried_tomato",
+          "beaten_egg",
+          "ingredient/salt"
+        ],
+        "outputs": [
+          {
+            "key": "dish",
+            "name": "トマトと卵の炒めもの"
+          }
+        ]
+      }
+    ]
+  },
+  "tofu-soup": {
+    "dishRoleCode": "dish_role_004",
+    "dishRoleName": "汁物",
+    "familyCode": "dish_family_063",
+    "familyName": "スープ",
+    "seasonings": [
+      "stock",
+      "soy-sauce"
+    ],
+    "steps": [
+      {
+        "operation": "cut_cube",
+        "completion": "豆腐が食べやすい角切りになる。",
+        "inputs": [
+          "ingredient/tofu"
+        ],
+        "outputs": [
+          {
+            "key": "cut_tofu",
+            "name": "角切りの豆腐"
+          }
+        ]
+      },
+      {
+        "operation": "simmer",
+        "completion": "鍋の中で豆腐がだしに浸かり、加熱が始まる。",
+        "inputs": [
+          "cut_tofu",
+          "ingredient/water",
+          "ingredient/stock"
+        ],
+        "outputs": [
+          {
+            "key": "heated_tofu",
+            "name": "加熱中の豆腐とだし"
+          }
+        ]
+      },
+      {
+        "operation": "simmer",
+        "completion": "弱火で温まり、吹きこぼれがないことを確認する。",
+        "parameters": {
+          "heat": "low",
+          "duration_s": 300
+        },
+        "inputs": [
+          "heated_tofu"
+        ],
+        "outputs": [
+          {
+            "key": "warm_soup",
+            "name": "温まった豆腐の汁"
+          }
+        ]
+      },
+      {
+        "operation": "simmer",
+        "completion": "わかめが十分に戻り、全体が温まる。",
+        "inputs": [
+          "warm_soup",
+          "ingredient/wakame",
+          "ingredient/soy-sauce"
+        ],
+        "outputs": [
+          {
+            "key": "dish",
+            "name": "豆腐とわかめのスープ"
+          }
+        ]
+      }
+    ]
+  },
+  "cabbage-tuna": {
+    "dishRoleCode": "dish_role_003",
+    "dishRoleName": "副菜",
+    "familyCode": "dish_family_053",
+    "familyName": "和え物",
+    "seasonings": [
+      "mayonnaise",
+      "pepper"
+    ],
+    "steps": [
+      {
+        "operation": "cut_rough",
+        "completion": "キャベツが食べやすいざく切りになる。",
+        "inputs": [
+          "ingredient/cabbage"
+        ],
+        "outputs": [
+          {
+            "key": "cut_cabbage",
+            "name": "ざく切りのキャベツ"
+          }
+        ]
+      },
+      {
+        "operation": "microwave",
+        "completion": "キャベツのやわらかさを確認し、加熱むらがあれば短時間ずつ追加する。",
+        "parameters": {
+          "power_w": 600,
+          "duration_s": 180
+        },
+        "inputs": [
+          "cut_cabbage"
+        ],
+        "outputs": [
+          {
+            "key": "warm_cabbage",
+            "name": "温めたキャベツ"
+          }
+        ]
+      },
+      {
+        "operation": "mix",
+        "completion": "余分な水気を切り、具と調味料が均一に混ざる。",
+        "inputs": [
+          "warm_cabbage",
+          "ingredient/tuna",
+          "ingredient/mayonnaise",
+          "ingredient/pepper"
+        ],
+        "outputs": [
+          {
+            "key": "dish",
+            "name": "キャベツとツナの和え物"
+          }
+        ]
+      }
+    ]
+  },
+  "yakisoba-cheese": {
+    "dishRoleCode": "dish_role_001",
+    "dishRoleName": "主食",
+    "familyCode": "bootstrap_cup_arrangement",
+    "familyName": "カップ麺アレンジ",
+    "seasonings": [
+      "pepper"
+    ],
+    "steps": [
+      {
+        "operation": "label_prepare",
+        "completion": "実際の商品表示で付属品・湯量・容器の扱いを確認する。商品仕様は未登録。",
+        "inputs": [
+          "ingredient/yakisoba"
+        ],
+        "outputs": [
+          {
+            "key": "prepared_cup",
+            "name": "表示に従って準備したカップ焼きそば"
+          }
+        ]
+      },
+      {
+        "operation": "label_wait",
+        "completion": "実際の商品表示の戻し時間に達したことを確認する。3分の固定条件として扱わない。",
+        "inputs": [
+          "prepared_cup"
+        ],
+        "outputs": [
+          {
+            "key": "hydrated_cup",
+            "name": "戻したカップ焼きそば"
+          }
+        ]
+      },
+      {
+        "operation": "mix",
+        "completion": "安全に湯切りし、ソースとチーズが全体に混ざる。",
+        "inputs": [
+          "hydrated_cup",
+          "ingredient/cheese",
+          "ingredient/pepper"
+        ],
+        "outputs": [
+          {
+            "key": "dish",
+            "name": "カップ焼きそばのチーズアレンジ"
+          }
+        ]
+      }
+    ]
+  },
+  "tuna-corn-rice": {
+    "dishRoleCode": "dish_role_001",
+    "dishRoleName": "主食",
+    "familyCode": "dish_family_080",
+    "familyName": "混ぜご飯",
+    "seasonings": [
+      "soy-sauce",
+      "butter"
+    ],
+    "steps": [
+      {
+        "operation": "prepare",
+        "completion": "加熱済みごはんと水分を切ったツナ・コーンを用意する。",
+        "inputs": [
+          "ingredient/rice",
+          "ingredient/tuna",
+          "ingredient/corn"
+        ],
+        "outputs": [
+          {
+            "key": "rice_mix",
+            "name": "ごはんとツナ・コーン"
+          }
+        ]
+      },
+      {
+        "operation": "microwave",
+        "completion": "全体が温まり、加熱むらがあれば短時間ずつ追加する。",
+        "parameters": {
+          "power_w": 600,
+          "duration_s": 180
+        },
+        "inputs": [
+          "rice_mix"
+        ],
+        "outputs": [
+          {
+            "key": "warm_rice",
+            "name": "温めたごはんと具"
+          }
+        ]
+      },
+      {
+        "operation": "mix",
+        "completion": "バターが溶け、醤油が均一に混ざる。",
+        "inputs": [
+          "warm_rice",
+          "ingredient/soy-sauce",
+          "ingredient/butter"
+        ],
+        "outputs": [
+          {
+            "key": "dish",
+            "name": "ツナとコーンの混ぜご飯"
+          }
+        ]
+      }
+    ]
+  },
+  "mushroom-butter": {
+    "dishRoleCode": "dish_role_003",
+    "dishRoleName": "副菜",
+    "familyCode": "dish_family_001",
+    "familyName": "炒め物",
+    "seasonings": [
+      "butter",
+      "soy-sauce",
+      "pepper"
+    ],
+    "steps": [
+      {
+        "operation": "prepare",
+        "completion": "しめじの根元を除き、食べやすい房に分かれる。",
+        "inputs": [
+          "ingredient/mushroom"
+        ],
+        "outputs": [
+          {
+            "key": "prepared_mushroom",
+            "name": "ほぐしたしめじ"
+          }
+        ]
+      },
+      {
+        "operation": "saute",
+        "completion": "しめじ全体に火が通り、やわらかくなる。",
+        "inputs": [
+          "prepared_mushroom",
+          "ingredient/butter"
+        ],
+        "outputs": [
+          {
+            "key": "fried_mushroom",
+            "name": "バターで炒めたしめじ"
+          }
+        ]
+      },
+      {
+        "operation": "saute",
+        "completion": "醤油とこしょうが全体にからむ。",
+        "inputs": [
+          "fried_mushroom",
+          "ingredient/soy-sauce",
+          "ingredient/pepper"
+        ],
+        "outputs": [
+          {
+            "key": "dish",
+            "name": "しめじのバター醤油炒め"
+          }
+        ]
+      }
+    ]
+  }
+}

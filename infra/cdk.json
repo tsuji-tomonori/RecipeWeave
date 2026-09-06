@@ -1,0 +1,10 @@
+{
+  "app": "node --import tsx bin/recipeweave.ts",
+  "versionReporting": false,
+  "context": {
+    "@aws-cdk/core:checkSecretUsage": true,
+    "@aws-cdk/core:defaultCrossStackReferences": "strong",
+    "@aws-cdk/aws-lambda:useCdkManagedLogGroup": false,
+    "stage": "dev"
+  }
+}

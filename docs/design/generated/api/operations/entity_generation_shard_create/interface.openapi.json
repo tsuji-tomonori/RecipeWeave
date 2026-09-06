@@ -1,0 +1,264 @@
+{
+  "components": {
+    "schemas": {
+      "GenerationShardRow": {
+        "additionalProperties": false,
+        "description": "列挙範囲・リース管理のDB応答。",
+        "properties": {
+          "created_at": {
+            "description": "作成日時",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "end_ordinal": {
+            "description": "終了序数(排他的)",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "End Ordinal",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "fence_token": {
+            "description": "古い所有者の書込みを拒否",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Fence Token",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変ID",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lease_expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "有効期限",
+            "title": "Lease Expires At"
+          },
+          "lease_owner": {
+            "anyOf": [
+              {
+                "maxLength": 20000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ワーカー識別子",
+            "title": "Lease Owner"
+          },
+          "next_ordinal": {
+            "description": "再開位置",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Next Ordinal",
+            "type": "string"
+          },
+          "start_ordinal": {
+            "description": "開始序数",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Start Ordinal",
+            "type": "string"
+          },
+          "state": {
+            "description": "待機/実行/完了/停止",
+            "enum": [
+              "queued",
+              "running",
+              "done",
+              "failed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "template_id": {
+            "description": "テンプレート版",
+            "format": "uuid",
+            "title": "Template Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "template_id",
+          "start_ordinal",
+          "end_ordinal",
+          "next_ordinal",
+          "lease_owner",
+          "lease_expires_at",
+          "fence_token",
+          "state",
+          "etag"
+        ],
+        "title": "GenerationShardRow",
+        "type": "object"
+      },
+      "GenerationShardWrite": {
+        "additionalProperties": false,
+        "description": "列挙範囲・リース管理の編集可能列。未指定NULL列はNULLにする。",
+        "properties": {
+          "end_ordinal": {
+            "description": "終了序数(排他的)",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "End Ordinal",
+            "type": "string"
+          },
+          "fence_token": {
+            "description": "古い所有者の書込みを拒否",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Fence Token",
+            "type": "string"
+          },
+          "lease_expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "有効期限",
+            "title": "Lease Expires At"
+          },
+          "lease_owner": {
+            "anyOf": [
+              {
+                "maxLength": 20000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ワーカー識別子",
+            "title": "Lease Owner"
+          },
+          "next_ordinal": {
+            "description": "再開位置",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Next Ordinal",
+            "type": "string"
+          },
+          "start_ordinal": {
+            "description": "開始序数",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Start Ordinal",
+            "type": "string"
+          },
+          "state": {
+            "description": "待機/実行/完了/停止",
+            "enum": [
+              "queued",
+              "running",
+              "done",
+              "failed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "template_id": {
+            "description": "テンプレート版",
+            "format": "uuid",
+            "title": "Template Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "template_id",
+          "start_ordinal",
+          "end_ordinal",
+          "next_ordinal",
+          "fence_token",
+          "state"
+        ],
+        "title": "GenerationShardWrite",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/generation_shard": {
+      "post": {
+        "description": "列挙範囲・リース管理の作成。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_generation_shard_create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerationShardWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerationShardRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "列挙範囲・リース管理の作成",
+        "tags": [
+          "正規化データ: 列挙範囲・リース管理"
+        ]
+      }
+    }
+  }
+}

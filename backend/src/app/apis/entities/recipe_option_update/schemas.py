@@ -1,0 +1,3 @@
+# generate_entity_apis.py による自動生成。直接編集しない。
+from app.entities.models import RecipeOptionRow as RecipeOptionRow
+from app.entities.models import RecipeOptionWrite as RecipeOptionWrite

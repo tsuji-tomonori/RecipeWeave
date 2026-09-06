@@ -1,4 +1,4 @@
-"""Compile reviewed role allowlists. Unknown items fail closed, never guess by regex."""
+"""確認済みの役割別許可リストを構築し、不明な項目は正規表現で推測せず拒否する。"""
 
 from __future__ import annotations
 
@@ -80,7 +80,7 @@ def compile_catalog(
         }
         if cross := template.get("cross_pool"):
             other = pools[cross]
-            # Each pair has a distinct culinary role, with symmetric identities deduplicated.
+            # 各組は異なる調理上の役割を持ち、入れ替えて同等になる食品の組は重複を除く。
             pairs = {tuple(sorted((a, b))) for a, b in itertools.product(supports, other) if a != b}
             sets = {(x,) for x in supports} | pairs
             block["supports"] = supports | other

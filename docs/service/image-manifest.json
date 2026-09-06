@@ -1,0 +1,224 @@
+[
+  {
+    "path": "docs/service/images/01.png",
+    "bytes": 1581705,
+    "sha256": "04675ebcdc2ba3f19327478e1225cdfca772c85ac2c5588601458b6918063016",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/02.png",
+    "bytes": 1542037,
+    "sha256": "e322d5deeae44844448ce1f93b5626ebf79d86c885f997831810aa3b9bc1452a",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/03.png",
+    "bytes": 1608084,
+    "sha256": "72717bd7e5151acf26e36111e748294694ca56e931bd643dd2a189f2d86980c4",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/04.png",
+    "bytes": 1220787,
+    "sha256": "ace442a73f6434f1796b8c7f71a64d08bf31dbd793c0f1095a703889075ec1e7",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/05.png",
+    "bytes": 1260092,
+    "sha256": "488faebfda0389beb7cc6dafcbd0300c542ba267c93e1edea663b665b7af43e4",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/06.png",
+    "bytes": 1399717,
+    "sha256": "e7c67c8e978ee2f3efed5ddc506e84b90d87f0fc6b9f40e0a96042516224e8ee",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/07.png",
+    "bytes": 1525824,
+    "sha256": "88a7c2b8c7e4ff9ea0eb2f252412aec53dc2325dff3c68c97d95c97b1ff6353d",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/08.png",
+    "bytes": 1530378,
+    "sha256": "3f5333ba3716c1aa2dd36e2669f098116f8f4b8066fb65754787a6b403381339",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/09.png",
+    "bytes": 1452066,
+    "sha256": "30f6b693137cbc39169a90e1b0cd8b735e63d7e8e659ea84f0f6db1c5cfa2eeb",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/10.png",
+    "bytes": 1286762,
+    "sha256": "7a863275f471aa374396361c5854a6cfba251ff62d71d030a1cd0c1d6e763a04",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/11.png",
+    "bytes": 1415774,
+    "sha256": "39b5d8e45ea592c2351e6b474adc8c90463e2160a1fa9436ef9473f616d6db08",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/12.png",
+    "bytes": 1280416,
+    "sha256": "42adf890446f44702cc57ccf4f45a93529cc9bf00e76b9f17530c004192e201c",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/13.png",
+    "bytes": 1439930,
+    "sha256": "3d829a6322d6f326e1113e68b32fe674a6c9f919de4f0060834c8bdc899b3828",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/14.png",
+    "bytes": 1741967,
+    "sha256": "fbd19e8072e66cfb4470ac5c06a2d6fe5af76576106dcdff2f28c2347638bd95",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/15.png",
+    "bytes": 1457816,
+    "sha256": "6eab5a299d9fa40be6d3c9b6bd0930e49489249f4da14cbc83995e309bfe9836",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/16.png",
+    "bytes": 1592659,
+    "sha256": "10908872c2f37b323e5fea9d7ed86a2e080439b4df147d7237c7ee8a3c657755",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/17.png",
+    "bytes": 1351197,
+    "sha256": "886c7890e4c72be4006a8880e8a6e185ae09ea108ab18f80c98d9ba10dc3ef80",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/18.png",
+    "bytes": 1114244,
+    "sha256": "46c2d7bfab766f31ef7fd9043def5e0eff498eccef45527bae21c4a4b94f1c01",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/19.png",
+    "bytes": 1499859,
+    "sha256": "7d813bb9a67c5be3d077647000cad740451636cf17f1b51938776727ec73f2bf",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/20.png",
+    "bytes": 1186521,
+    "sha256": "64e591218e83ca9c33319578c728f77d96cea119207314c6bbff4fdaff176498",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/21-receipt-entry.png",
+    "bytes": 1444293,
+    "sha256": "5baa9f4345e92dfaefd009f2ff38e201a97443c449f5698cf9e71cc3635b36bf",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/22-receipt-upload.png",
+    "bytes": 1417555,
+    "sha256": "599a9cefe71b76e0e48539ab594b15e991aa63f86dcc3b91030fc99991411212",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/23-receipt-review.png",
+    "bytes": 1580714,
+    "sha256": "bbcd43607e81f6885dfa99d66821b638b77a5fd005d66eea909271370ff22411",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/24-receipt-complete.png",
+    "bytes": 1483915,
+    "sha256": "7b0af1270bfb5c916a80a142c7994a70b7c60b17bb4133ae6e77010cdb6ace36",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/25-search-guide.png",
+    "bytes": 1869618,
+    "sha256": "37847a2087701ac5c0d8157768b9fff680bf0d79aa4d50469c005f5998d49a47",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/26-cooking-guide.png",
+    "bytes": 1864321,
+    "sha256": "5a97b7beebda61664acc510db17ecd23df9e222fb6e60cab4bd87a32fda76eb7",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/27-meal-guide.png",
+    "bytes": 1683205,
+    "sha256": "f2b63930a66e93f80ecd1cc1aa724de98f1bdebde3866e2874f075e088027794",
+    "origin": "imagegen"
+  },
+  {
+    "path": "docs/service/images/28-receipt-history-guide.png",
+    "bytes": 1658685,
+    "sha256": "b8df019777b01edaf12320cbfe324245591f92f1cc13a8addaa8ce90b9385353",
+    "origin": "imagegen"
+  },
+  {
+    "path": "frontend/public/food/cabbage-tuna.png",
+    "bytes": 2445356,
+    "sha256": "b8f8cddf20491ad1e51b8d9febd179e7f501386eaede376e5e1f51f1ea1c6177",
+    "origin": "imagegen"
+  },
+  {
+    "path": "frontend/public/food/eggplant-curry.png",
+    "bytes": 2577847,
+    "sha256": "a7ea510786e30aeb6114c62d22860252afdebbbf8cf2fbad1b77379920273e1d",
+    "origin": "imagegen"
+  },
+  {
+    "path": "frontend/public/food/eggplant-egg.png",
+    "bytes": 2617127,
+    "sha256": "ffd40c4958e5530bd49294b0413506c6f3a42c7e2d0bb767ac22c60ebab8a073",
+    "origin": "imagegen"
+  },
+  {
+    "path": "frontend/public/food/ingredients-atlas.png",
+    "bytes": 1878726,
+    "sha256": "459a3fcdb88db4c72b809a63d7ba9334c82a4f0cbc34adc17c48e589f21f74c3",
+    "origin": "imagegen"
+  },
+  {
+    "path": "frontend/public/food/mushroom-butter.png",
+    "bytes": 2505991,
+    "sha256": "e7a00181feae13f185fa2e9d2e1a332e6864c149befab22bc0e956e574dbbb86",
+    "origin": "imagegen"
+  },
+  {
+    "path": "frontend/public/food/tofu-soup.png",
+    "bytes": 2097014,
+    "sha256": "bc0d4a78a8537ed9323972e70e35e415cbc5c6c0c43e43832f6c047415cfe86b",
+    "origin": "imagegen"
+  },
+  {
+    "path": "frontend/public/food/tomato-egg.png",
+    "bytes": 2484601,
+    "sha256": "35e2e79def2e8c4c2aa4d0fc9e357ba685c2a151f864982a7dafdefad0766d6e",
+    "origin": "imagegen"
+  },
+  {
+    "path": "frontend/public/food/tuna-corn-rice.png",
+    "bytes": 2303786,
+    "sha256": "abfe791c6720919a557fbee84f943ed312e31f07930497072664818459aa78f3",
+    "origin": "imagegen"
+  },
+  {
+    "path": "frontend/public/food/yakisoba-cheese.png",
+    "bytes": 2439213,
+    "sha256": "0b45939ce74bbe9d5004c9db8407ff126bdfe3d4296a480aa6a4457d4e49f5c6",
+    "origin": "imagegen"
+  }
+]

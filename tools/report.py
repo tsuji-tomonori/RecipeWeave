@@ -1,0 +1,504 @@
+"""CornellNoteWebv2に準じ、実際の検査結果と画面証跡を日本語で公開する。"""
+
+import html
+import json
+import os
+import re
+import shutil
+import struct
+import zlib
+from collections import Counter
+from pathlib import Path
+
+try:
+    from tools.test_results import render_results
+except ModuleNotFoundError:
+    from test_results import render_results
+
+ROOT = Path(__file__).resolve().parents[1]
+esc = html.escape
+GWT = re.compile(r"^(Given|When|Then):\s*(.+)$", re.DOTALL)
+NAV = [
+    ("index.html", "サマリー"),
+    ("e2e.html", "E2E"),
+    ("static.html", "静的解析"),
+    ("tests.html", "単体・結合テスト"),
+    ("coverage.html", "カバレッジ"),
+    ("design/", "設計書"),
+]
+LABELS = {
+    "passed": "成功",
+    "failed": "失敗",
+    "unexpected": "予期しない結果",
+    "timedOut": "時間切れ",
+    "interrupted": "中断",
+    "skipped": "スキップ",
+    "not-run": "未実行",
+    "flaky": "再試行で成功",
+    "missing": "証跡不足",
+}
+
+
+def load(path, default):
+    return json.loads(path.read_text()) if path.exists() else default
+
+
+def badge(status):
+    return f'<span class="badge {esc(status.lower())}">{esc(LABELS.get(status, status))}</span>'
+
+
+def shell(title, body, *, active, commit, wide=False):
+    nav = "".join(
+        f'<a href="{path}"{chr(32) + "aria-current=page" if path == active else ""}>{label}</a>'
+        for path, label in NAV
+    )
+    main = body if wide else '<main class="wrap" id="main">' + body + "</main>"
+    return (
+        f'<!doctype html><html lang="ja"><head>'
+        f'<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+        f"<title>{esc(title)} · RecipeWeave Quality</title>"
+        f'<link rel="stylesheet" href="assets/report.css">'
+        f'<script src="assets/report.js" defer>'
+        f'</script></head><body><a class="skip" href="#main">'
+        f'本文へ移動</a><header class="topbar"><a class="brand" href="index.html">'
+        f'RECIPEWEAVE / QUALITY</a><nav class="global-nav" aria-label="レポートの分類">'
+        f'{nav}</nav></header>{main}<footer class="page-footer">'
+        f"対象commit: <code>{esc(commit)}</code> · 実行結果に基づく品質レポート</footer>"
+        f"</body></html>"
+    )
+
+
+def png_dimensions(source):
+    """PNGの構造とCRCを検査し、偽の拡張子や途切れた証跡を拒否する。"""
+    data = source.read_bytes()
+    if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+        raise ValueError("PNGの署名がありません")
+    offset, size, image_data = 8, None, False
+    while offset + 12 <= len(data):
+        length = struct.unpack(">I", data[offset : offset + 4])[0]
+        end = offset + 12 + length
+        if end > len(data):
+            raise ValueError("PNGのチャンクが途中で切れています")
+        kind = data[offset + 4 : offset + 8]
+        payload = data[offset + 8 : offset + 8 + length]
+        crc = struct.unpack(">I", data[offset + 8 + length : end])[0]
+        if zlib.crc32(kind + payload) & 0xFFFFFFFF != crc:
+            raise ValueError("PNGのCRCが一致しません")
+        if kind == b"IHDR":
+            if size is not None or len(payload) != 13:
+                raise ValueError("PNGの寸法定義が不正です")
+            size = struct.unpack(">II", payload[:8])
+            if not all(size):
+                raise ValueError("PNGの寸法が0です")
+        elif kind == b"IDAT":
+            image_data = True
+        elif kind == b"IEND":
+            if size is None or not image_data or end != len(data):
+                raise ValueError("PNGに画面データがありません")
+            return size
+        offset = end
+    raise ValueError("PNGが終端まで保存されていません")
+
+
+def collect_cases(data, root, reports):
+    cases, count = [], 0
+    images = reports / "screenshots"
+    images.mkdir(parents=True, exist_ok=True)
+    for old in images.glob("*.png"):
+        old.unlink()
+
+    def walk(suite, parents):
+        title = suite.get("title", "")
+        hierarchy = (
+            (*parents, title) if title and (not parents or title != parents[-1]) else parents
+        )
+        for spec in suite.get("specs", []):
+            for test in spec.get("tests", []):
+                nonlocal count
+                result = next(iter(reversed(test.get("results", []))), {})
+                state = result.get("status", "not-run")
+                if test.get("status") in {"flaky", "unexpected"}:
+                    state = test["status"]
+                steps, problems = [], []
+                for attachment in result.get("attachments", []):
+                    match = GWT.fullmatch(attachment.get("name", ""))
+                    if not match or attachment.get("contentType") != "image/png":
+                        continue
+                    step = {"kind": match[1], "text": match[2], "image": None}
+                    path = attachment.get("path")
+                    if path:
+                        source = Path(path)
+                        if not source.is_absolute():
+                            source = root / "frontend" / source
+                        source = source.resolve()
+                        if not source.is_relative_to(root.resolve()):
+                            raise ValueError("画像のパスがリポジトリ外です")
+                        if source.is_file():
+                            try:
+                                dimensions = png_dimensions(source)
+                            except ValueError as error:
+                                problems.append(match[0] + "：" + str(error))
+                            else:
+                                count += 1
+                                name = f"{count:03}.png"
+                                shutil.copyfile(source, images / name)
+                                step["image"] = "screenshots/" + name
+                                step["dimensions"] = dimensions
+                    if not step["image"]:
+                        problems.append(match[0] + "：画像がありません")
+                    steps.append(step)
+
+                # 画面終了などで画像取得前に失敗した段階も、証跡不足として残す。
+                def missing_steps(items, steps, problems):
+                    for item in items:
+                        match = GWT.fullmatch(item.get("title", ""))
+                        if match and not any(
+                            s["kind"] == match[1] and s["text"] == match[2] for s in steps
+                        ):
+                            steps.append({"kind": match[1], "text": match[2], "image": None})
+                            problems.append(match[0] + "：画像を取得できませんでした")
+                        missing_steps(item.get("steps", []), steps, problems)
+
+                missing_steps(result.get("steps", []), steps, problems)
+                if state == "passed" and (
+                    {s["kind"] for s in steps} != {"Given", "When", "Then"} or problems
+                ):
+                    state = "missing"
+                    problems.append("成功ケースのGiven / When / Then証跡が揃っていません")
+                cases.append(
+                    {
+                        "id": f"case-{len(cases) + 1}",
+                        "title": spec["title"],
+                        "project": test.get("projectName", "未指定"),
+                        "hierarchy": hierarchy or (spec.get("file", "テスト"),),
+                        "status": state,
+                        "steps": steps,
+                        "errors": [e.get("message", "") for e in result.get("errors", [])]
+                        + problems,
+                        "duration": result.get("duration", 0),
+                    }
+                )
+        for child in suite.get("suites", []):
+            walk(child, hierarchy)
+
+    for suite in data.get("suites", []):
+        walk(suite, ())
+    return cases, count
+
+
+def case_tree(cases):
+    tree = {}
+    for case in cases:
+        branch = tree
+        for name in (case["project"], *case["hierarchy"]):
+            branch = branch.setdefault(name, {"groups": {}, "cases": []})["groups"]
+        branch.setdefault("", {"groups": {}, "cases": []})["cases"].append(case)
+
+    def render(branch):
+        result = "<ul>"
+        for name, value in branch.items():
+            if name:
+                label = {"desktop": "PC", "mobile": "スマートフォン"}.get(name, name)
+                result += (
+                    f'<li><span class="group-label">{esc(label)}</span>'
+                    f"{render(value['groups'])}</li>"
+                )
+            for case in value["cases"]:
+                result += (
+                    f'<li><a href="#{case["id"]}">{esc(case["title"])}<br>'
+                    f"{badge(case['status'])}</a></li>"
+                )
+        return result + "</ul>"
+
+    return '<nav class="case-tree" aria-label="テストケース一覧">' + render(tree) + "</nav>"
+
+
+def e2e_body(cases, count):
+    cards = []
+    for case in cases:
+        steps = []
+        for step in case["steps"]:
+            caption = step["kind"] + ": " + step["text"]
+            dimensions = step.get("dimensions")
+            size = f' width="{dimensions[0]}" height="{dimensions[1]}"' if dimensions else ""
+            shot = (
+                (
+                    f'<a class="shot" data-screenshot data-caption="{esc(caption)}" '
+                    f'href="{step["image"]}" target="_blank" rel="noopener" '
+                    f'aria-label="{esc(caption)}の画像を拡大">'
+                    f'<img src="{step["image"]}" alt="{esc(caption)}"{size} loading="lazy">'
+                    f"<span>クリックして拡大 ↗</span></a>"
+                )
+                if step["image"]
+                else '<p class="notice">この段階の画像は取得できませんでした。</p>'
+            )
+            steps.append(
+                f'<section class="step"><div><span class="phase">'
+                f'{step["kind"]}</span><p class="step-text">'
+                f"{esc(step['text'])}</p></div>{shot}</section>"
+            )
+        errors = "".join(f'<pre class="notice">{esc(e)}</pre>' for e in case["errors"])
+        cards.append(
+            f'<article class="case" id="{case["id"]}">'
+            f'<p class="case-meta">{esc(case["project"])} / '
+            f"{esc(' / '.join(case['hierarchy']))} · "
+            f"{case['duration'] / 1000:.1f}秒</p>"
+            f"<h2>{esc(case['title'])}</h2>{badge(case['status'])}{''.join(steps)}{errors}</article>"
+        )
+    dialog = (
+        '<dialog class="zoom" id="screenshot-dialog" aria-labelledby="screenshot-title">'
+        '<header><h2 id="screenshot-title">スクリーンショット</h2>'
+        '<button type="button">閉じる</button></header>'
+        '<div class="image-stage"><img alt="">'
+        '</div><footer><a data-original target="_blank" rel="noopener">'
+        "原寸画像を開く</a> · Escキーでも閉じられます</footer></dialog>"
+    )
+    return (
+        '<div class="layout"><aside class="sidebar"><h2>テストケース</h2>'
+        + case_tree(cases)
+        + (
+            '</aside><main id="main"><div class="intro">'
+            '<p class="eyebrow">END TO END</p><h1>'
+            "操作と結果を、段階ごとに。</h1>"
+        )
+        + (
+            f"<p>{len(cases)}ケース · Given / When / Thenの画像 {count}枚</p>"
+            f'<p class="muted">左の一覧からケースへ移動できます。'
+            f"全ケースを常時表示し、各段階の画像だけを掲載しています。"
+            f"</p></div>"
+        )
+        + ("".join(cards) or '<p class="notice">E2Eは未実行です。</p>')
+        + "</main></div>"
+        + dialog
+    )
+
+
+def check_summary(checks):
+    if not checks:
+        return "未実行"
+    failures = sum(c["exit_code"] != 0 for c in checks)
+    return f"{len(checks) - failures} / {len(checks)} 成功" + (
+        f" · {failures} 失敗" if failures else ""
+    )
+
+
+def check_details(checks):
+    return (
+        "".join(
+            (
+                f'<article class="panel"><h2>{esc(c["name"])}</h2>'
+                f"{badge('passed' if c['exit_code'] == 0 else 'failed')}<pre>"
+                f"{esc(c['output'])}</pre></article>"
+            )
+            for c in checks
+        )
+        or '<p class="notice">検査結果がありません。</p>'
+    )
+
+
+def coverage_values(reports):
+    py = load(reports / "python-coverage.json", {}).get("totals", {})
+    ts = load(reports / "frontend-coverage/coverage-summary.json", {}).get("total", {})
+
+    def fraction(hit, total):
+        return f"{hit / total * 100:.1f}% ({hit}/{total})" if total else "対象なし"
+
+    return [
+        (
+            "Python C0（実行可能行）",
+            fraction(py["covered_lines"], py["num_statements"]) if py else "未計測",
+            "python-coverage/index.html",
+        ),
+        (
+            "Python C1（分岐）",
+            fraction(py.get("covered_branches", 0), py.get("num_branches", 0)) if py else "未計測",
+            "python-coverage/index.html",
+        ),
+        *[
+            (
+                "TypeScript " + label,
+                fraction(ts[key]["covered"], ts[key]["total"]) if key in ts else "未計測",
+                "frontend-coverage/index.html",
+            )
+            for key, label in [
+                ("statements", "C0（命令）"),
+                ("branches", "C1（分岐）"),
+                ("lines", "行"),
+                ("functions", "関数"),
+            ]
+        ],
+    ]
+
+
+def generate(root=ROOT):
+    reports = root / "reports"
+    reports.mkdir(exist_ok=True)
+    data = load(reports / "playwright.json", load(root / "frontend/test-results/results.json", {}))
+    ui = load(reports / "report-ui.json", load(root / "frontend/test-results/quality.json", {}))
+    combined = dict(data)
+    combined["suites"] = list(data.get("suites", []))
+    if ui.get("suites"):
+        combined["suites"].append({"title": "品質サイトUI", "suites": ui["suites"]})
+    cases, count = collect_cases(combined, root, reports)
+    quality = load(reports / "quality.json", [])
+    static = [c for c in quality if not c["name"].startswith(("pytest", "Vitest"))]
+    unit = [c for c in quality if c["name"].startswith(("pytest", "Vitest"))]
+    if ui:
+        stats = ui.get("stats", {})
+        unit.append(
+            {
+                "name": "レポートUI (Playwright)",
+                "exit_code": 1
+                if stats.get("unexpected", 0)
+                or stats.get("flaky", 0)
+                or not stats.get("expected", 0)
+                else 0,
+                "output": (
+                    f"成功 {stats.get('expected', 0)} / "
+                    f"失敗 {stats.get('unexpected', 0)} / "
+                    f"スキップ {stats.get('skipped', 0)}"
+                ),
+            }
+        )
+    commit = os.getenv("VERIFIED_SHA", os.getenv("GITHUB_SHA", "local"))
+    states = Counter(c["status"] for c in cases)
+    summary = " · ".join(f"{LABELS.get(k, k)} {v}" for k, v in sorted(states.items())) or "未実行"
+    coverage = coverage_values(reports)
+    intro = (
+        '<div class="intro"><p class="eyebrow">'
+        "QUALITY OVERVIEW</p><h1>品質の状態を、ひと目で。</h1>"
+        "<p>各検査の結果から、詳しい証跡へ進めます。</p>"
+    ) + f'<p class="revision">対象commit: <code>{esc(commit)}</code></p></div>'
+
+    def card(title, value, detail, href):
+        return (
+            f'<article class="panel"><h2>{title}</h2>'
+            f'<p class="metric">{esc(value)}</p><p class="muted">'
+            f'{esc(detail)}</p><a class="card-link" href="{href}">'
+            f"{title}の詳細を見る →</a></article>"
+        )
+
+    dashboard = (
+        intro
+        + '<section class="grid" aria-label="検査結果のサマリー">'
+        + card("E2E", f"{len(cases)} ケース", summary + f" / GWT画像 {count}枚", "e2e.html")
+        + card(
+            "静的解析",
+            check_summary(static),
+            "リンター・フォーマッター・型検査・SQL・生成差分",
+            "static.html",
+        )
+        + card(
+            "単体・結合テスト",
+            check_summary(unit),
+            "Python / TypeScript / CDK assertions・nag・snapshot",
+            "tests.html",
+        )
+        + card(
+            "カバレッジ",
+            "C0・C1",
+            "Python C0 " + coverage[0][1] + " / TypeScript C0 " + coverage[2][1],
+            "coverage.html",
+        )
+        + card(
+            "自動生成設計書",
+            "検索・ER図・API仕様",
+            "API・DB・画面・インフラ・要件の仕様",
+            "design/",
+        )
+        + "</section>"
+    )
+    run_errors = data.get("errors", [])
+    if run_errors:
+        dashboard += (
+            '<section class="panel"><h2>E2E実行エラー</h2>'
+            + "".join(f"<pre>{esc(e.get('message', str(e)))}</pre>" for e in run_errors)
+            + "</section>"
+        )
+    pages = {
+        "index.html": ("品質サマリー", dashboard, False),
+        "e2e.html": ("E2Eテスト", e2e_body(cases, count), True),
+        "static.html": (
+            "静的解析",
+            '<h1>静的解析・フォーマット</h1><p><a href="sql.html">'
+            "SQLFluffの指摘をSQLソースで確認 →</a></p>" + check_details(static),
+            False,
+        ),
+        "tests.html": (
+            "単体・結合テスト",
+            (
+                "<h1>単体・結合テスト</h1><p>実行コマンドの成否と検証結果です。"
+                'コード行の実測値は<a href="coverage.html">カバレッジ</a>'
+                "から確認できます。</p>"
+            )
+            + render_results(reports)
+            + "<h2>検査コマンドの結果</h2>"
+            + check_details(unit),
+            False,
+        ),
+    }
+    coverage_rows = "".join(
+        f"<tr><td>{label}</td><td>{esc(value)}</td><td>"
+        + (
+            f'<a href="{link}">コード行の詳細 →</a>'
+            if (reports / link).exists()
+            else "レポート未生成"
+        )
+        + "</td></tr>"
+        for label, value, link in coverage
+    )
+    pages["coverage.html"] = (
+        "カバレッジ",
+        (
+            "<h1>コードから確認するカバレッジ</h1><p>C0は命令網羅、C1は分岐網羅です。"
+            "Pythonのcoverage.pyは実行可能な文を行単位、TypeScriptのV8/Istanbulは命令単位で計測します。"
+            "C1は分岐の実行数／総分岐数です。単体・結合テストの実測値でありE2E実行数ではありません。"
+            '未計測を0%や成功として扱いません。</p><div class="table-wrap">'
+            "<table><thead><tr><th>対象</th><th>カバレッジ</th>"
+            "<th>詳細</th></tr></thead><tbody>"
+        )
+        + coverage_rows
+        + "</tbody></table></div>",
+        False,
+    )
+    sql_sections = []
+    for entry in load(reports / "sqlfluff.json", []):
+        path = (root / entry["filepath"]).resolve()
+        if not path.is_relative_to(root.resolve()):
+            raise ValueError("SQL診断のパスがリポジトリ外です")
+        findings = (
+            esc(json.dumps(entry["violations"], ensure_ascii=False, indent=2))
+            if entry["violations"]
+            else "指摘なし"
+        )
+        lines = "\n".join(
+            f"{i:3}  {esc(line)}" for i, line in enumerate(path.read_text().splitlines(), 1)
+        )
+        sql_sections.append(
+            f'<article class="panel"><h2>{esc(entry["filepath"])}</h2>'
+            f"<p>{findings}</p><pre><code>{lines}</code>"
+            f"</pre></article>"
+        )
+    pages["sql.html"] = (
+        "SQLFluff",
+        "<h1>SQLFluff・SQLソース</h1>"
+        + ("".join(sql_sections) or '<p class="notice">未実行です。</p>'),
+        False,
+    )
+    pages["docs.html"] = (
+        "設計書サイト",
+        '<h1>設計書サイト</h1><p><a href="design/">検索できる設計書を開く →</a></p>',
+        False,
+    )
+    for filename, (title, body, wide) in pages.items():
+        (reports / filename).write_text(
+            shell(title, body, active=filename, commit=commit, wide=wide)
+        )
+    shutil.copytree(ROOT / "tools/report_assets", reports / "assets", dirs_exist_ok=True)
+    (reports / ".nojekyll").touch()
+    print(f"品質レポート: {len(cases)} ケース、GWT画像 {count} 枚、集計と階層別E2Eを生成")
+    return not any(c["status"] == "missing" for c in cases)
+
+
+if __name__ == "__main__":
+    raise SystemExit(0 if generate() else 1)

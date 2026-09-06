@@ -1,0 +1,3 @@
+# generate_entity_apis.py による自動生成。直接編集しない。
+from app.entities.models import UserPreferenceRow as UserPreferenceRow
+from app.entities.models import UserPreferenceWrite as UserPreferenceWrite

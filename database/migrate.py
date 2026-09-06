@@ -1,0 +1,216 @@
+"""チェックサム付き移行台帳を維持し、PostgreSQLの正規化DDLを原子的に適用する。
+
+--plan は接続不要。--apply は管理用DATABASE_URLで実行する。
+PL/pgSQL・遅延制約トリガーを使うため、サービスDBはPostgreSQL16を採用する。
+"""
+
+import argparse
+import hashlib
+import json
+import os
+import re
+from collections.abc import Callable
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Literal, Protocol, cast
+
+import boto3
+import certifi
+import pglast
+import psycopg
+import sqlglot
+from botocore.config import Config
+from psycopg import Connection, sql
+from pydantic import BaseModel, ConfigDict
+
+ROOT = Path(__file__).resolve().parent
+
+
+class AdminTokenClient(Protocol):
+    def generate_db_connect_admin_auth_token(
+        self, *, Hostname: str, Region: str, ExpiresIn: int
+    ) -> str: ...
+
+
+class Migration(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    id: str
+    file: str
+    kind: Literal["ddl", "dml", "index", "transaction"]
+    verify: str
+
+
+class Manifest(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    schemaVersion: Literal[1]
+    migrations: list[Migration]
+
+
+@dataclass(frozen=True)
+class PreparedMigration:
+    definition: Migration
+    statement: str
+    checksum: str
+
+
+def load_migrations(path: Path = ROOT / "migrations") -> list[PreparedMigration]:
+    """データベースへの操作前に移行の宣言を検証する。"""
+    manifest = Manifest.model_validate_json((path / "manifest.manual.json").read_text())
+    result: list[PreparedMigration] = []
+    seen: set[str] = set()
+    for item in manifest.migrations:
+        source = path / item.file
+        if source.parent != path or source.is_symlink() or item.id in seen:
+            raise ValueError("invalid migration path or duplicate identity")
+        seen.add(item.id)
+        statement = source.read_text()
+        parsed = statement.replace("INDEX ASYNC", "INDEX", 1) if item.kind == "index" else statement
+        if item.kind == "transaction":
+            if not pglast.parse_sql(parsed):
+                raise ValueError("空のトランザクション移行は適用できません")
+        elif len(sqlglot.parse(parsed, read="postgres")) != 1:
+            raise ValueError("単文移行にはSQLを1文だけ定義してください")
+        if len(sqlglot.parse(item.verify, read="postgres")) != 1:
+            raise ValueError("each verification must contain one SQL query")
+        checksum = hashlib.sha256((statement + "\n" + item.verify).encode()).hexdigest()
+        result.append(PreparedMigration(item, statement, checksum))
+    return result
+
+
+def connect_admin(host: str, region: str) -> Connection[tuple[object, ...]]:
+    if not re.fullmatch(r"[a-z0-9]+\.dsql\.[a-z0-9-]+\.on\.aws", host):
+        raise ValueError("invalid DSQL_HOST")
+    factory: Callable[..., AdminTokenClient] = getattr(boto3, "client")  # noqa: B009 -- 動的SDKの型境界
+    client = factory(
+        "dsql",
+        region_name=region,
+        config=Config(
+            retries={"total_max_attempts": 3, "mode": "standard"},
+            connect_timeout=5,
+            read_timeout=10,
+        ),
+    )
+    token = client.generate_db_connect_admin_auth_token(Hostname=host, Region=region, ExpiresIn=900)
+    return cast(
+        Connection[tuple[object, ...]],
+        psycopg.connect(
+            host=host,
+            port=5432,
+            dbname="postgres",
+            user="admin",
+            password=token,
+            sslmode="verify-full",
+            sslrootcert=certifi.where(),
+            connect_timeout=5,
+            autocommit=True,
+        ),
+    )
+
+
+def verified(connection: Connection[tuple[object, ...]], statement: str) -> bool:
+    # マニフェスト内の解析済みSQLは管理下の入力として扱い、値は別途束縛する。
+    row = connection.execute(statement.encode("utf-8")).fetchone()
+    return row is not None and row[0] is True
+
+
+def apply_migrations(
+    connection: Connection[tuple[object, ...]], items: list[PreparedMigration]
+) -> None:
+    """台帳記録前に確定したDDLは、構造を検証してから復旧する。"""
+    connection.execute("CREATE SCHEMA IF NOT EXISTS recipeweave")
+    connection.execute(
+        "CREATE TABLE IF NOT EXISTS recipeweave.schema_migrations "
+        "(id TEXT PRIMARY KEY, checksum TEXT NOT NULL, applied_at TIMESTAMPTZ NOT NULL)"
+    )
+    for item in items:
+        definition = item.definition
+        row = connection.execute(
+            "SELECT checksum FROM recipeweave.schema_migrations WHERE id = %s", (definition.id,)
+        ).fetchone()
+        if row is not None:
+            if row[0] != item.checksum:
+                raise ValueError(f"migration checksum mismatch: {definition.id}")
+            if not verified(connection, definition.verify):
+                raise ValueError(f"applied schema drift: {definition.id}")
+            continue
+        if definition.kind == "transaction":
+            with connection.transaction():
+                connection.execute(item.statement.encode("utf-8"))
+                if not verified(connection, definition.verify):
+                    raise ValueError(f"移行後の構造検証に失敗しました: {definition.id}")
+                connection.execute(
+                    "INSERT INTO recipeweave.schema_migrations (id, checksum, applied_at) "
+                    "VALUES (%s, %s, CURRENT_TIMESTAMP)",
+                    (definition.id, item.checksum),
+                )
+            continue
+        if not verified(connection, definition.verify):
+            cursor = connection.execute(item.statement.encode("utf-8"))
+            if definition.kind == "index":
+                job = cursor.fetchone()
+                if job is None or not isinstance(job[0], str):
+                    raise ValueError("async index creation returned no job id")
+                result = connection.execute("SELECT sys.wait_for_job(%s)", (job[0],)).fetchone()
+                if result is None or result[0] is not True:
+                    raise ValueError("async index creation failed")
+            if not verified(connection, definition.verify):
+                raise ValueError(f"migration postcondition failed: {definition.id}")
+        # このDMLは先行するDDLの自動コミットトランザクションから分離する。
+        connection.execute(
+            "INSERT INTO recipeweave.schema_migrations (id, checksum, applied_at) "
+            "VALUES (%s, %s, CURRENT_TIMESTAMP)",
+            (definition.id, item.checksum),
+        )
+
+
+def grant_application(connection: Connection[tuple[object, ...]], iam_arn: str) -> None:
+    """管理者ではないアプリケーションDBロールを、指定したIAMロールだけに対応付ける。"""
+    if not re.fullmatch(r"arn:aws(?:-cn|-us-gov)?:iam::\d{12}:role/[A-Za-z0-9+=,.@_/-]+", iam_arn):
+        raise ValueError("invalid DSQL_APP_IAM_ARN")
+    row = connection.execute(
+        "SELECT rolname FROM pg_roles WHERE rolname = %s", ("recipeweave_app",)
+    ).fetchone()
+    if row is None:
+        connection.execute("CREATE ROLE recipeweave_app WITH LOGIN")
+    connection.execute(sql.SQL("AWS IAM GRANT recipeweave_app TO {}").format(sql.Literal(iam_arn)))
+    connection.execute("GRANT USAGE ON SCHEMA recipeweave TO recipeweave_app")
+    connection.execute("GRANT SELECT, INSERT, UPDATE ON recipeweave.user_state TO recipeweave_app")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    choice = parser.add_mutually_exclusive_group()
+    choice.add_argument("--plan", action="store_true")
+    choice.add_argument("--apply", action="store_true")
+    args = parser.parse_args()
+    items = load_migrations()
+    if not args.apply:
+        print(
+            json.dumps(
+                [
+                    {
+                        "id": item.definition.id,
+                        "sha256": item.checksum,
+                        "kind": item.definition.kind,
+                    }
+                    for item in items
+                ],
+                indent=2,
+            )
+        )
+        return 0
+    database_url = os.environ.get("DATABASE_URL")
+    if not database_url or not database_url.startswith(("postgresql://", "postgres://")):
+        raise ValueError("PostgreSQL管理用のDATABASE_URLを設定してください")
+    with psycopg.connect(database_url, autocommit=True, connect_timeout=10) as connection:
+        connection.execute("SELECT pg_advisory_lock(782345611)")
+        try:
+            apply_migrations(connection, items)
+        finally:
+            connection.execute("SELECT pg_advisory_unlock(782345611)")
+    print("PostgreSQL移行とチェックサム検証が完了しました。")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

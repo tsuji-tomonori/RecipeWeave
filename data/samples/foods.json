@@ -1,0 +1,521 @@
+[
+  {
+    "id": "tomato",
+    "name": "トマト",
+    "aliases": [
+      "とまと"
+    ],
+    "category": "野菜",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": 0,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "eggplant",
+    "name": "なす",
+    "aliases": [
+      "ナス",
+      "茄子"
+    ],
+    "category": "野菜",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": 1,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "cabbage",
+    "name": "キャベツ",
+    "aliases": [
+      "きゃべつ"
+    ],
+    "category": "野菜",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": 2,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "egg",
+    "name": "卵",
+    "aliases": [
+      "たまご",
+      "玉子",
+      "タマゴ"
+    ],
+    "category": "卵・乳製品",
+    "defaultUnit": "個",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": 3,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "tofu",
+    "name": "豆腐",
+    "aliases": [
+      "とうふ",
+      "絹豆腐",
+      "木綿豆腐",
+      "絹ごし豆腐"
+    ],
+    "category": "豆・加工品",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": 4,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "tuna",
+    "name": "ツナ",
+    "aliases": [
+      "ツナ缶",
+      "シーチキン",
+      "まぐろ油漬"
+    ],
+    "category": "缶詰",
+    "defaultUnit": "g",
+    "location": "常温",
+    "pantry": false,
+    "imageIndex": 5,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "corn",
+    "name": "コーン",
+    "aliases": [
+      "とうもろこし",
+      "スイートコーン"
+    ],
+    "category": "野菜",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": 6,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "mushroom",
+    "name": "しめじ",
+    "aliases": [
+      "ぶなしめじ",
+      "ブナシメジ",
+      "きのこ"
+    ],
+    "category": "きのこ",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": 7,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "rice",
+    "name": "ごはん",
+    "aliases": [
+      "ご飯",
+      "パックごはん",
+      "白飯"
+    ],
+    "category": "主食",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": 8,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "yakisoba",
+    "name": "カップ焼きそば",
+    "aliases": [
+      "カップやきそば",
+      "カップ焼そば"
+    ],
+    "category": "即席食品",
+    "defaultUnit": "個",
+    "location": "常温",
+    "pantry": false,
+    "imageIndex": 9,
+    "componentsKnown": false,
+    "componentFoodIds": []
+  },
+  {
+    "id": "cheese",
+    "name": "チーズ",
+    "aliases": [
+      "とろけるチーズ",
+      "スライスチーズ"
+    ],
+    "category": "卵・乳製品",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": 10,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "wakame",
+    "name": "乾燥わかめ",
+    "aliases": [
+      "わかめ",
+      "カットワカメ",
+      "ワカメ"
+    ],
+    "category": "乾物",
+    "defaultUnit": "g",
+    "location": "常温",
+    "pantry": false,
+    "imageIndex": 11,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "onion",
+    "name": "玉ねぎ",
+    "aliases": [
+      "たまねぎ",
+      "タマネギ",
+      "玉葱"
+    ],
+    "category": "野菜",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "chicken",
+    "name": "鶏肉",
+    "aliases": [
+      "とり肉",
+      "鶏もも",
+      "若鶏",
+      "鶏むね"
+    ],
+    "category": "肉",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "pork",
+    "name": "豚肉",
+    "aliases": [
+      "豚こま",
+      "豚バラ"
+    ],
+    "category": "肉",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "beef",
+    "name": "牛肉",
+    "aliases": [
+      "牛こま"
+    ],
+    "category": "肉",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "carrot",
+    "name": "にんじん",
+    "aliases": [
+      "人参",
+      "ニンジン"
+    ],
+    "category": "野菜",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "potato",
+    "name": "じゃがいも",
+    "aliases": [
+      "ジャガイモ",
+      "馬鈴薯"
+    ],
+    "category": "野菜",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "spinach",
+    "name": "ほうれん草",
+    "aliases": [
+      "ほうれんそう"
+    ],
+    "category": "野菜",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "broccoli",
+    "name": "ブロッコリー",
+    "aliases": [
+      "ぶろっこりー"
+    ],
+    "category": "野菜",
+    "defaultUnit": "g",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "milk",
+    "name": "牛乳",
+    "aliases": [
+      "ミルク"
+    ],
+    "category": "卵・乳製品",
+    "defaultUnit": "ml",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "butter",
+    "name": "バター",
+    "aliases": [
+      "無塩バター"
+    ],
+    "category": "調味料",
+    "defaultUnit": "g",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "oil",
+    "name": "油",
+    "aliases": [
+      "サラダ油",
+      "米油"
+    ],
+    "category": "調味料",
+    "defaultUnit": "g",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "soy-sauce",
+    "name": "醤油",
+    "aliases": [
+      "しょうゆ",
+      "正油"
+    ],
+    "category": "調味料",
+    "defaultUnit": "ml",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "salt",
+    "name": "塩",
+    "aliases": [
+      "食塩"
+    ],
+    "category": "調味料",
+    "defaultUnit": "g",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "pepper",
+    "name": "こしょう",
+    "aliases": [
+      "胡椒",
+      "コショウ"
+    ],
+    "category": "調味料",
+    "defaultUnit": "g",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "curry-powder",
+    "name": "カレー粉",
+    "aliases": [
+      "カレーパウダー"
+    ],
+    "category": "調味料",
+    "defaultUnit": "g",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "sesame-oil",
+    "name": "ごま油",
+    "aliases": [
+      "胡麻油"
+    ],
+    "category": "調味料",
+    "defaultUnit": "g",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "stock",
+    "name": "顆粒だし",
+    "aliases": [
+      "和風だし",
+      "だしの素"
+    ],
+    "category": "調味料",
+    "defaultUnit": "g",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": false,
+    "componentFoodIds": []
+  },
+  {
+    "id": "water",
+    "name": "水",
+    "aliases": [
+      "飲料水"
+    ],
+    "category": "調味料",
+    "defaultUnit": "ml",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "mayonnaise",
+    "name": "マヨネーズ",
+    "aliases": [
+      "マヨ"
+    ],
+    "category": "調味料",
+    "defaultUnit": "g",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": false,
+    "componentFoodIds": []
+  },
+  {
+    "id": "lemon",
+    "name": "レモン汁",
+    "aliases": [
+      "レモン果汁"
+    ],
+    "category": "調味料",
+    "defaultUnit": "ml",
+    "location": "常温",
+    "pantry": true,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "frozen-udon",
+    "name": "冷凍うどん",
+    "aliases": [
+      "冷凍讃岐うどん"
+    ],
+    "category": "冷凍食品",
+    "defaultUnit": "個",
+    "location": "冷凍",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": true,
+    "componentFoodIds": []
+  },
+  {
+    "id": "retort-curry",
+    "name": "レトルトカレー",
+    "aliases": [
+      "カレー中辛"
+    ],
+    "category": "レトルト",
+    "defaultUnit": "パック",
+    "location": "常温",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": false,
+    "componentFoodIds": []
+  },
+  {
+    "id": "deli-croquette",
+    "name": "惣菜コロッケ",
+    "aliases": [
+      "コロッケ"
+    ],
+    "category": "惣菜",
+    "defaultUnit": "個",
+    "location": "冷蔵",
+    "pantry": false,
+    "imageIndex": null,
+    "componentsKnown": false,
+    "componentFoodIds": []
+  }
+]

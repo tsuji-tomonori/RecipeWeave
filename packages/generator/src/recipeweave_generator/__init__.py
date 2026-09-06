@@ -1,1 +1,1 @@
-"""Recipe design points are hypotheses, never validated cooking instructions."""
+"""レシピの設計点は仮説であり、検証済みの調理手順ではない。"""

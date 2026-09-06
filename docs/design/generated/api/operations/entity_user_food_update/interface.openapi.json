@@ -1,0 +1,172 @@
+{
+  "components": {
+    "schemas": {
+      "UserFoodRow": {
+        "additionalProperties": false,
+        "description": "利用者が追加した独自食材の所有のDB応答。",
+        "properties": {
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "food_id": {
+            "description": "独自食材",
+            "format": "uuid",
+            "title": "Food Id",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "所有者",
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "user_id",
+          "food_id",
+          "etag"
+        ],
+        "title": "UserFoodRow",
+        "type": "object"
+      },
+      "UserFoodWrite": {
+        "additionalProperties": false,
+        "description": "利用者が追加した独自食材の所有の編集可能列。未指定NULL列はNULLにする。",
+        "properties": {
+          "food_id": {
+            "description": "独自食材",
+            "format": "uuid",
+            "title": "Food Id",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "所有者",
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "food_id"
+        ],
+        "title": "UserFoodWrite",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/user_food/{row_id}": {
+      "put": {
+        "description": "利用者が追加した独自食材の所有の更新。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_user_food_update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserFoodWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserFoodRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "428": {
+            "description": "If-Matchが必要"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "利用者が追加した独自食材の所有の更新",
+        "tags": [
+          "正規化データ: 利用者が追加した独自食材の所有"
+        ]
+      }
+    }
+  }
+}
