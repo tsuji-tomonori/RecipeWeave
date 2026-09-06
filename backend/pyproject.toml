@@ -37,6 +37,7 @@ extend-select = ["B", "SIM", "ASYNC", "S", "RUF"]
 
 [tool.pyright]
 include = ["src", "tests", "tools", "../database"]
+extraPaths = [".."]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
 venvPath = ".."
@@ -47,4 +48,4 @@ python_version = "3.12"
 strict = true
 files = ["src", "tests", "tools"]
 explicit_package_bases = true
-mypy_path = "$MYPY_CONFIG_FILE_DIR/src"
+mypy_path = ["$MYPY_CONFIG_FILE_DIR/src", "$MYPY_CONFIG_FILE_DIR/.."]

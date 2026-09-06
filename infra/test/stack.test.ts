@@ -94,7 +94,9 @@ test("never caches private state and forwards Authorization without the viewer H
       CacheBehaviors: Match.arrayWith([
         Match.objectLike({
           PathPattern: "/api/*",
-          CachePolicyId: "413f1602-6f2c-4d71-8ba8-398b539e85a4",
+          // AWS managed CachingDisabled: minimum/default/maximum TTL are all 0.
+          // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-cache-policies.html#managed-cache-policy-caching-disabled
+          CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
           OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac",
           AllowedMethods: [
             "GET",

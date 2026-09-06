@@ -33,4 +33,5 @@ select = ["E", "F", "I", "UP"]
 
 [tool.pytest.ini_options]
 testpaths = ["packages", "tests", "backend/tests"]
+pythonpath = ["."]
 addopts = "--strict-config --strict-markers"
