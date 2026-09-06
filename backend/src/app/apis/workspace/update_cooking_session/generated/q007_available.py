@@ -1,12 +1,13 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 0acda7b22af27318d74c0c44d1e5262294a88aea244971a027a541285249dac1
+# SQLのSHA256: 75cd65561911bb1f6dbc6eed0fc23b13d9ba8f5281305046f6bb16927a59891f
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 同じ形態・単位の確定数量だけを期限と登録順で消費候補にする。
+    "query": """\
+-- 同じ形態・単位の確定数量だけを期限と登録順で消費候補にする。
 SELECT
     id,
     amount
@@ -14,7 +15,7 @@ FROM recipeweave.pantry_lot
 WHERE
     user_id = %(user_id)s AND form_id = %(form_id)s AND unit_id = %(unit_id)s
     AND product_version_id IS NOT DISTINCT FROM %(product_id)s
-AND status = 'active' AND quantity_quality = 'known' AND amount > 0
+    AND status = 'active' AND quantity_quality = 'known' AND amount > 0
 ORDER BY expires_on NULLS LAST, created_at, id FOR UPDATE;
 """
 }

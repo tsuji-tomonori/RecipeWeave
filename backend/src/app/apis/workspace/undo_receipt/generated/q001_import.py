@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 本人のレシート状態を確認して再取消を防ぐ。
+    "query": """\
+-- 本人のレシート状態を確認して再取消を防ぐ。
 SELECT
     id,
     status

@@ -4,9 +4,9 @@ SELECT
     f.food_id,
     f.name AS form,
     ri.id AS ingredient_id,
-    CASE WHEN ov.selected = FALSE THEN 0 ELSE ov.amount END AS override_amount,
     u.code AS unit,
     ov.id AS override_id,
+    CASE WHEN ov.selected = FALSE THEN 0 ELSE ov.amount END AS override_amount,
     ri.amount * mi.servings / rv.base_servings AS scaled_amount
 FROM recipeweave.menu_item AS mi INNER JOIN recipeweave.menu AS m ON mi.menu_id = m.id
 INNER JOIN recipeweave.recipe_version AS rv ON mi.recipe_version_id = rv.id

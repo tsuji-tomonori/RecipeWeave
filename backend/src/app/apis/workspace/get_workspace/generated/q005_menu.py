@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 現在の献立を固定した本人用IDで読む。
+    "query": """\
+-- 現在の献立を固定した本人用IDで読む。
 SELECT
     mi.id,
     rv.recipe_id,

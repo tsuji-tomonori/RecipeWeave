@@ -1,20 +1,21 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: a633521b37e30c375781beb47144a4fa9a8d201749719dcdd837a1d04fc4107f
+# SQLのSHA256: 74761a9be87f171bb68113911981ffec2378f041d5ee7989add4f0f95ce98f33
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 献立の確定分量を材料行と上書き行から復元する。
+    "query": """\
+-- 献立の確定分量を材料行と上書き行から復元する。
 SELECT
     mi.id AS menu_item_id,
     f.food_id,
     f.name AS form,
     ri.id AS ingredient_id,
-    CASE WHEN ov.selected = FALSE THEN 0 ELSE ov.amount END AS override_amount,
     u.code AS unit,
     ov.id AS override_id,
+    CASE WHEN ov.selected = FALSE THEN 0 ELSE ov.amount END AS override_amount,
     ri.amount * mi.servings / rv.base_servings AS scaled_amount
 FROM recipeweave.menu_item AS mi INNER JOIN recipeweave.menu AS m ON mi.menu_id = m.id
 INNER JOIN recipeweave.recipe_version AS rv ON mi.recipe_version_id = rv.id

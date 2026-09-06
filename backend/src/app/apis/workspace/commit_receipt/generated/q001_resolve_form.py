@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 食材形態と単位をDBから検証し、他人の独自食材は参照させない。
+    "query": """\
+-- 食材形態と単位をDBから検証し、他人の独自食材は参照させない。
 SELECT
     fm.id AS form_id,
     u.id AS unit_id

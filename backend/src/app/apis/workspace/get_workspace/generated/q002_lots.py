@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 在庫本体・登録時の値・食材形態・単位を別々の正規化行から復元する。
+    "query": """\
+-- 在庫本体・登録時の値・食材形態・単位を別々の正規化行から復元する。
 SELECT
     p.id,
     f.food_id,

@@ -3,6 +3,7 @@ import type {
   CookingSession,
   Food,
   MealItem,
+  PlannedStep,
   ReceiptCommit,
   Settings,
   ShoppingCheck,
@@ -41,6 +42,13 @@ export interface CreateCookingSessionRequest extends RevisionRequest {
 export interface UpdateCookingSessionRequest extends RevisionRequest {
   session: CookingSession;
   deduct?: boolean;
+}
+/** 段取りの確認は読取専用で、ワークスペースの版を進めない。 */
+export interface PreviewCookingPlanRequest {
+  items: MealItem[];
+}
+export interface PreviewCookingPlanResponse {
+  plan: PlannedStep[];
 }
 /** POST /api/foods/custom は、その利用者が登録した食品を作成する。 */
 export interface CreateCustomFoodRequest extends RevisionRequest {

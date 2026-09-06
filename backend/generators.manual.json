@@ -88,8 +88,8 @@
     },
     {
       "path": "database/migrations/*.sql",
-      "reason": "移行DDL・検証SQLは静的解析する。実DSQL接続はAWS配備後の受入で確認する。",
-      "supportStatus": "requires-live-dsql"
+      "reason": "移行DDL・検証SQLは静的解析し、PostgreSQL上の適用と非特権ロールの挙動を実DB試験で確認する。AWS配備の接続確認は別の受入記録へ対応させる。",
+      "supportStatus": "requires-live-postgresql"
     }
   ]
 }

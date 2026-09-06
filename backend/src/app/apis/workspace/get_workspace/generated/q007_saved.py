@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 保存と解除の追記イベントから、料理ごとの現在状態を導出する。
+    "query": """\
+-- 保存と解除の追記イベントから、料理ごとの現在状態を導出する。
 SELECT ranked.recipe_id FROM (
     SELECT
         rv.recipe_id,

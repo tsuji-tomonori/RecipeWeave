@@ -1,21 +1,22 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 196765aad339735fda204f4e2c398953a02c3c3d4b0c69d1c0d42f041b8037ca
+# SQLのSHA256: 9b9912f58fd1b54f8e991d3ffaa82011a371ead2f47fb0b8305e642485baa66d
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 本人の独自食材は所有表を経由して取得する。
+    "query": """\
+-- 本人の独自食材は所有表を経由して取得する。
 SELECT
     f.id,
     f.name,
     u.code AS unit
-FROM recipeweave.user_food AS owned
-INNER JOIN recipeweave.food AS f ON owned.food_id = f.id
+FROM recipeweave.user_food AS uf
+INNER JOIN recipeweave.food AS f ON uf.food_id = f.id
 INNER JOIN recipeweave.food_form AS fm ON f.id = fm.food_id
 INNER JOIN recipeweave.unit AS u ON fm.base_unit_id = u.id
-WHERE owned.user_id = %(user_id)s
+WHERE uf.user_id = %(user_id)s
 ORDER BY f.name, f.id;
 """
 }

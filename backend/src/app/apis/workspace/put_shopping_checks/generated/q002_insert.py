@@ -1,25 +1,26 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: d62cc746f0d8ffdac9b25b6d147f15b38df645bf0be3a1b27cf064cd2a6110fa
+# SQLのSHA256: 3d4949477bec1b07b53fc6efbed3a9ce5e9563e14966f1108658ce8a76ff04da
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 食品と単位を参照して、数量不明を含む購入確認を保存する。
+    "query": """\
+-- 食品と単位を参照して、数量不明を含む購入確認を保存する。
 INSERT INTO recipeweave.user_shopping_check (
     id, user_id, key, signature, food_id, amount, unit_id, checked_at, archived
 )
 SELECT
-    %(row_id)s,
-    %(user_id)s,
-    %(key)s,
-    %(signature)s,
-    %(food_id)s,
-    %(amount)s,
-    u.id,
-    %(checked_at)s,
-    %(archived)s
+    %(row_id)s AS id,
+    %(user_id)s AS user_id,
+    %(key)s AS key,
+    %(signature)s AS signature,
+    %(food_id)s AS food_id,
+    %(amount)s AS amount,
+    u.id AS unit_id,
+    %(checked_at)s AS checked_at,
+    %(archived)s AS archived
 FROM recipeweave.unit AS u
 WHERE u.code = %(unit)s AND u.status = 'active' RETURNING id;
 """

@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 料理版の工程と加熱時間の換算規則を読む。
+    "query": """\
+-- 料理版の工程と加熱時間の換算規則を読む。
 SELECT
     mi.id AS item_id,
     mi.position,

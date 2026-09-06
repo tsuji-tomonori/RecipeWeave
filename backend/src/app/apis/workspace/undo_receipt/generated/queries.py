@@ -6,14 +6,16 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "q001_import": """-- 本人のレシート状態を確認して再取消を防ぐ。
+    "q001_import": """\
+-- 本人のレシート状態を確認して再取消を防ぐ。
 SELECT
     id,
     status
 FROM recipeweave.receipt_import
 WHERE id = %(row_id)s AND user_id = %(user_id)s FOR UPDATE;
 """,
-    "q002_eligible_lots": """-- 消費・編集済み在庫を巻き戻さず、未使用の登録分だけを取り消す。
+    "q002_eligible_lots": """\
+-- 消費・編集済み在庫を巻き戻さず、未使用の登録分だけを取り消す。
 UPDATE recipeweave.pantry_lot AS p SET status = 'undone', updated_at = CURRENT_TIMESTAMP
 WHERE
     p.source_import_id = %(row_id)s AND p.user_id = %(user_id)s AND NOT p.edited
@@ -23,20 +25,24 @@ WHERE
     )
 RETURNING p.id;
 """,
-    "q003_revert": """-- 取消済みのレシートを再び登録状態へ戻さない。
+    "q003_revert": """\
+-- 取消済みのレシートを再び登録状態へ戻さない。
 UPDATE recipeweave.receipt_import SET
     status = 'reverted', reverted_at = CURRENT_TIMESTAMP, revision = revision + 1
 WHERE id = %(row_id)s AND user_id = %(user_id)s AND status = 'committed' RETURNING id;
 """,
-    "q900_lock_revision": """-- 本人の集約版を排他ロックして並行操作の順序を確定する。
+    "q900_lock_revision": """\
+-- 本人の集約版を排他ロックして並行操作の順序を確定する。
 SELECT revision FROM recipeweave.workspace_revision
 WHERE user_id = %(user_id)s FOR UPDATE;
 """,
-    "q901_advance_revision": """-- 業務行の更新と同じトランザクションで版を一度だけ進める。
+    "q901_advance_revision": """\
+-- 業務行の更新と同じトランザクションで版を一度だけ進める。
 UPDATE recipeweave.workspace_revision SET revision = revision + 1
 WHERE user_id = %(user_id)s RETURNING revision;
 """,
-    "q902_append_audit": """-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
+    "q902_append_audit": """\
+-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
 INSERT INTO recipeweave.audit_event (
     id, actor_id, action, entity_type, entity_key_hash, reason, occurred_at
 )

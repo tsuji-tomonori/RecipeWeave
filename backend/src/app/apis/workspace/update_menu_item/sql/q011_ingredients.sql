@@ -2,7 +2,8 @@
 SELECT
     ri.id,
     fm.food_id,
-    ri.amount, ri.optional,
+    ri.amount,
+    ri.optional,
     ri.unit_id,
     ri.form_id,
     u.code AS unit

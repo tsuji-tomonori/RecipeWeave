@@ -4,6 +4,8 @@ beforeEach(() => setCatalog(fixtureFoods, fixtureRecipes));
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   addStock,
+  cacheRecipes,
+  requiredQuantities,
   addToMeal,
   arrangements,
   buildCookingPlan,
@@ -86,6 +88,66 @@ function cookingTofu(state: AppState): AppState {
     "cook-1",
   );
 }
+
+describe("料理版と材料行の識別", () => {
+  it("同じ食品の下味と仕上げを独立して編集し、買い物量では合計する", () => {
+    const recipe = structuredClone(fixtureRecipes[0]);
+    recipe.versionId = "version-1";
+    const ingredient = recipe.ingredients[0];
+    recipe.ingredients = [
+      {
+        ...ingredient,
+        ingredientId: "seasoning",
+        quantity: { value: 10, unit: "g" },
+        note: "下味",
+      },
+      {
+        ...ingredient,
+        ingredientId: "finish",
+        quantity: { value: 5, unit: "g" },
+        note: "仕上げ",
+      },
+    ];
+    setCatalog(fixtureFoods, [recipe]);
+    const initial = getDraft(createInitialState(), recipe.id);
+    const edited = setDraftAmount(initial, "finish", { value: 7, unit: "g" });
+    expect(edited.amounts.seasoning.value).toBe(10);
+    expect(edited.amounts.finish.value).toBe(7);
+    expect(requiredQuantities([edited])).toEqual([
+      {
+        foodId: ingredient.foodId,
+        form: ingredient.form,
+        quantity: { value: 17, unit: "g" },
+      },
+    ]);
+    expect(scaleDraft(edited, recipe.servings * 2).amounts.finish.value).toBe(
+      14,
+    );
+  });
+  it("現在版を読み込んでも保存済みの献立は当時の分量と工程を使う", () => {
+    const historical = structuredClone(fixtureRecipes[0]);
+    historical.versionId = "version-1";
+    setCatalog(fixtureFoods, [historical]);
+    const draft = getDraft(createInitialState(), historical.id);
+    const current = structuredClone(historical);
+    current.versionId = "version-2";
+    current.ingredients[0].quantity.value = 999;
+    current.steps[0].title = "改訂後の工程";
+    cacheRecipes([current]);
+    cacheRecipes([historical], false);
+    cacheRecipes([current], false);
+    expect(getRecipe(historical.id).versionId).toBe("version-2");
+    expect(requiredQuantities([draft])[0].quantity.value).toBe(
+      historical.ingredients[0].quantity.value,
+    );
+    expect(
+      buildCookingPlan(
+        [{ ...draft, id: "saved-item" }],
+        createInitialState().settings.equipment,
+      )[0].title,
+    ).toBe(historical.steps[0].title);
+  });
+});
 
 describe("quantities and search", () => {
   it("scales latest edits by serving ratio without changing time", () => {
@@ -216,7 +278,9 @@ describe("receipt review and import integrity", () => {
     expect(previewUndoImport(state, "receipt-1").needsConfirmation).toBe(true);
     const undone = undoImport(state, "receipt-1");
     expect(undone.lots.find((x) => x.id === imported)?.status).toBe("active");
-    expect(undone.lots.find((x) => x.id === imported)?.quantity.value).toBe(200);
+    expect(undone.lots.find((x) => x.id === imported)?.quantity.value).toBe(
+      200,
+    );
     expect(undone.lots.find((x) => x.id === imported)?.consumed[0].value).toBe(
       100,
     );

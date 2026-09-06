@@ -1,13 +1,22 @@
 """Lambda実行時にだけDB資格情報を解決し、値をログへ出さない。"""
 
 import json
+from collections.abc import Callable
 from functools import lru_cache
-from typing import Protocol, cast
+from typing import Protocol, TypedDict, cast
 
 import boto3
 from botocore.config import Config
 
 from app.core.settings import AppSettings
+
+
+class ConnectionOptions(TypedDict):
+    host: str
+    dbname: str
+    user: str
+    password: str
+    sslmode: str
 
 
 class SecretClient(Protocol):
@@ -17,16 +26,14 @@ class SecretClient(Protocol):
 @lru_cache(maxsize=4)
 def client(region: str) -> SecretClient:
     """短いタイムアウトのSDKクライアントだけを共有し、secretは都度解決する。"""
-    return cast(
-        SecretClient,
-        boto3.client(
-            "secretsmanager",
-            region_name=region,
-            config=Config(
-                connect_timeout=3,
-                read_timeout=5,
-                retries={"mode": "standard", "total_max_attempts": 2},
-            ),
+    factory: Callable[..., SecretClient] = getattr(boto3, "client")  # noqa: B009 -- 動的SDKの型境界
+    return factory(
+        "secretsmanager",
+        region_name=region,
+        config=Config(
+            connect_timeout=3,
+            read_timeout=5,
+            retries={"mode": "standard", "total_max_attempts": 2},
         ),
     )
 
@@ -54,7 +61,7 @@ def read_credentials(secret_arn: str, region: str) -> tuple[str, str]:
     return username, password
 
 
-def connection_kwargs(settings: AppSettings) -> dict[str, str]:
+def connection_kwargs(settings: AppSettings) -> ConnectionOptions:
     """アプリ用secretとTLS必須の接続属性を返す。DSNへの文字列連結は行わない。"""
     if not settings.database_host or not settings.database_secret_arn:
         raise ValueError("AWSデータベースの接続設定が不足しています")

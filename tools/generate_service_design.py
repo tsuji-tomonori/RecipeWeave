@@ -96,8 +96,10 @@ def render(root: Path = ROOT) -> str:
         "",
         "- 画面の型検査・状態計算テストと、APIの型検査・認証/競合テストを別々に実行する。",
         "- OpenAPIとSQL wrapperは `app-docs --check`、本書は `--check` で追従を確認する。",
-        "- CDK構造検査と合成は配備前の検証。DSQL実接続・Cognito実ログインは別の受入を要する。",
-        "- 設計判断は [ADR-0001](../ADR-0001-service-dev.md) を参照する。",
+        "- CDK構造検査と合成は配備前の検証。"
+        "配備先のPostgreSQL実接続・Cognito実ログインは別の受入を要する。",
+        "- 現行の設計判断は [ADR-0002](../ADR-0002-relational-service.md)、"
+        "初期構成の履歴は [ADR-0001](../ADR-0001-service-dev.md) を参照する。",
         "",
     ]
     return "\n".join(lines)

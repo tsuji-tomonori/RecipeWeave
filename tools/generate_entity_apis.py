@@ -198,7 +198,8 @@ def field_line(column: dict[str, Any], optional_default: bool = False) -> str:
         length = int(column["type"][5:-1])
         options += [f"min_length={length}", f"max_length={length}"]
     if column["type"] == "text" and not column["enum"]:
-        options += ["min_length=1", "max_length=20000"]
+        maximum = min(20000, column.get("max_length", 20000))
+        options += ["min_length=1", f"max_length={maximum}"]
     if column["type"] == "vector(768)":
         options += ["min_length=768", "max_length=768"]
     if column["type"] == "uuid[]":
@@ -261,11 +262,9 @@ def identifier(name: str) -> str:
 
 def editable_columns(table: dict[str, Any]) -> list[dict[str, Any]]:
     """所有者の根と競合判定用の版はサーバーだけが管理する。"""
-    excluded = {"id", "created_at"}
+    excluded = {"id", "created_at", "owner_id"}
     excluded.update(
-        {"app_user": {"auth_subject", "state"}, "food": {"owner_id"}, "menu": {"revision"}}.get(
-            table["name"], set()
-        )
+        {"app_user": {"auth_subject", "state"}, "menu": {"revision"}}.get(table["name"], set())
     )
     return [col for col in table["columns"] if col["name"] not in excluded]
 
@@ -335,6 +334,7 @@ def wrapper(sql: str, function: str = "execute", table: dict[str, Any] | None = 
         "after_id": "UUID | None",
         "page_limit": "int",
         "expected_etag": "str",
+        "preview": "bool",
     }
     if table is not None:
         for column in table["columns"]:
@@ -546,7 +546,33 @@ def execute({", ".join(function_args)}) -> {results}:
     refs = []
     if action in {"create", "update"}:
         for col in table["columns"]:
-            if col["reference"] and scope(tables[col["reference"].split(".")[0]], tables) != "TRUE":
+            if owned and col["reference"] == "recipe_version.id":
+                refsql = """-- 新規書込みより前に料理版の公開条件または既存の本人履歴を検査する。
+SELECT t.id
+FROM recipeweave.recipe_version AS t
+INNER JOIN recipeweave.recipe AS recipe ON t.recipe_id = recipe.id
+WHERE t.id = %(reference_id)s
+    AND (
+        (t.status = 'published' AND t.validation = 'passed' AND recipe.status = 'published')
+        OR (%(preview)s AND t.status = 'draft' AND recipe.status = 'draft')
+        OR EXISTS (
+            SELECT 1 FROM recipeweave.menu_item AS history_item
+            INNER JOIN recipeweave.menu AS history_menu ON history_item.menu_id = history_menu.id
+            WHERE history_menu.user_id = %(actor_id)s AND history_item.recipe_version_id = t.id
+        )
+        OR EXISTS (
+            SELECT 1 FROM recipeweave.user_recipe_event AS history_event
+            WHERE history_event.user_id = %(actor_id)s AND history_event.recipe_version_id = t.id
+        )
+    );
+"""
+                refkey = "reference_" + col["name"]
+                files[directory / f"sql/{len(refs) + 2:03}_{refkey}.sql"] = refsql
+                files[directory / f"generated/{refkey}.py"] = wrapper(refsql)
+                refs.append((col["name"], refkey))
+            elif (
+                col["reference"] and scope(tables[col["reference"].split(".")[0]], tables) != "TRUE"
+            ):
                 parent = tables[col["reference"].split(".")[0]]
                 refsql = f"-- 参照先の{parent['description']}が同じ利用者に属することを検証する。\n"
                 refsql += f"SELECT t.id FROM recipeweave.{parent['name']} AS t\n"

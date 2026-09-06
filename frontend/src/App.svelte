@@ -35,6 +35,7 @@
   import FoodTile from "./lib/FoodTile.svelte";
   import RecipeCard from "./lib/RecipeCard.svelte";
   import type {
+    PlannedStep,
     AppState,
     Food,
     Recipe,
@@ -76,10 +77,11 @@
   let searchBusy = $state(false);
   let resultTotal = $state(0);
   let resultOffset = $state(0);
-  let afterLogin = { route: "home", id: "" };
+  let afterLogin = { route: "home", id: "", versionId: "" };
   let storageIssue = $state("");
   let route = $state("home");
   let routeId = $state("");
+  let routeVersion = $state("");
   let error = $state("");
   let toast = $state("");
   let undoAction: (() => void) | null = $state(null);
@@ -130,7 +132,13 @@
   let excludedFoods = $state<string[]>([]);
   let pantryFoods = $state<string[]>([]);
   let equipment = $state<string[]>([]);
-  const foods = $derived([...new Map([...catalogFoods, ...appState.customFoods, ...receiptCustomFoods].map((food) => [food.id, food])).values()]);
+  const foods = $derived([
+    ...new Map(
+      [...catalogFoods, ...appState.customFoods, ...receiptCustomFoods].map(
+        (food) => [food.id, food],
+      ),
+    ).values(),
+  ]);
   const activeLots = $derived(
     appState.lots
       .filter((l) => l.status === "active")
@@ -138,10 +146,17 @@
   );
   const selectedFoods = $derived(appState.search.selectedFoodIds);
   const currentRecipe = $derived(
-    routeId ? catalogRecipes.find((r) => r.id === routeId) : undefined,
+    routeId
+      ? catalogRecipes.find(
+          (r) =>
+            r.id === routeId && (!routeVersion || r.versionId === routeVersion),
+        )
+      : undefined,
   );
   const draft = $derived(
-    currentRecipe ? D.getDraft(appState, currentRecipe.id) : null,
+    currentRecipe
+      ? D.getDraft(appState, currentRecipe.id, currentRecipe.versionId)
+      : null,
   );
   const searchResults = $derived(
     resultRecipes.filter(
@@ -186,24 +201,48 @@
       return [];
     }
   });
-  const planned = $derived.by(() => {
-    try {
-      return {
-        steps: D.buildCookingPlan(appState.meal, appState.settings.equipment),
-        error: "",
-      };
-    } catch (e) {
-      return {
-        steps: [],
-        error:
-          e instanceof Error ? e.message : "器具の設定を確認してください。",
-      };
-    }
+  let planned = $state.raw<{
+    steps: PlannedStep[];
+    error: string;
+    loading: boolean;
+  }>({ steps: [], error: "", loading: false });
+  const planEquipmentIssue = $derived(/器具|設備|容量/.test(planned.error));
+  $effect(() => {
+    if (route !== "plan") return;
+    const items = appState.meal;
+    const revision = appState.version;
+    let cancelled = false;
+    planned = { steps: [], error: "", loading: items.length > 0 };
+    if (items.length)
+      void API.previewCookingPlan(items)
+        .then((result) => {
+          if (!cancelled && appState.version === revision)
+            planned = { steps: result.plan, error: "", loading: false };
+        })
+        .catch((cause: unknown) => {
+          if (!cancelled)
+            planned = {
+              steps: [],
+              error:
+                cause instanceof Error
+                  ? cause.message
+                  : "段取りを読み込めませんでした。",
+              loading: false,
+            };
+        });
+    return () => {
+      cancelled = true;
+    };
   });
   function recipeStock(recipe: Recipe) {
     return D.shoppingList({
       ...appState,
-      meal: [{ ...D.getDraft(appState, recipe.id), id: "stock-preview" }],
+      meal: [
+        {
+          ...D.getDraft(appState, recipe.id, recipe.versionId),
+          id: "stock-preview",
+        },
+      ],
     });
   }
   function stockSummary(recipe: Recipe) {
@@ -267,7 +306,7 @@
           e instanceof Error
             ? e.message
             : "保存できませんでした。もう一度お試しください。";
-        if (e instanceof API.ApiError && e.status === 401) user = null;
+        if (e instanceof API.ApiError && e.status === 401) expireSession();
         return false;
       } finally {
         busy = false;
@@ -287,7 +326,12 @@
     if (activeRouteKey)
       scrollPositions.set(activeRouteKey, Math.max(0, window.scrollY));
   }
-  function navigate(to: string, id = "", scrollMode: ScrollMode = "top") {
+  function navigate(
+    to: string,
+    id = "",
+    scrollMode: ScrollMode = "top",
+    versionId = "",
+  ) {
     if (
       route === "receipt" &&
       to !== "receipt" &&
@@ -300,7 +344,7 @@
       return;
     rememberScroll();
     pendingScrollMode = scrollMode;
-    const hash = `#/${to}${id ? "/" + id : ""}`;
+    const hash = `#/${to}${id ? "/" + id : ""}${versionId ? "/" + versionId : ""}`;
     if (window.location.hash === hash) readRoute();
     else window.location.hash = hash;
   }
@@ -323,7 +367,11 @@
         "plan",
       ].includes(next)
     ) {
-      afterLogin = { route: next, id: parts[1] || "" };
+      afterLogin = {
+        route: next,
+        id: parts[1] || "",
+        versionId: parts[2] || "",
+      };
       navigate("login");
       return;
     }
@@ -341,9 +389,10 @@
     }
     route = next;
     routeId = parts[1] || "";
+    routeVersion = parts[2] || "";
     if (!loading && next === "results") void refreshResults();
     if (!loading && next === "detail" && routeId)
-      void API.loadRecipe(routeId)
+      void API.loadRecipe(routeId, routeVersion || undefined)
         .then(() => {
           catalogRecipes = [...D.RECIPES];
         })
@@ -431,7 +480,7 @@
   }
   function openRecipe(r: Recipe) {
     recipeOrigins.set(r.id, { route, id: routeId });
-    navigate("detail", r.id);
+    navigate("detail", r.id, "top", r.versionId);
   }
   function returnFromRecipe() {
     const origin = recipeOrigins.get(routeId) ?? { route: "results", id: "" };
@@ -453,7 +502,12 @@
         );
       else if (currentRecipe) {
         const id = currentRecipe.id;
-        change((s) => D.saveDraft(s, D.scaleDraft(D.getDraft(s, id), n)));
+        change((s) =>
+          D.saveDraft(
+            s,
+            D.scaleDraft(D.getDraft(s, id, currentRecipe?.versionId), n),
+          ),
+        );
       }
     } catch (e) {
       notify(e instanceof Error ? e.message : "人数を確認してください。");
@@ -471,7 +525,7 @@
           D.scaleDraft(item, item.servings + delta),
         );
       }
-      const latest = D.getDraft(s, recipeId);
+      const latest = D.getDraft(s, recipeId, currentRecipe?.versionId);
       return D.saveDraft(s, D.scaleDraft(latest, latest.servings + delta));
     });
   }
@@ -480,7 +534,7 @@
     const id = currentRecipe.id;
     try {
       change((s) => {
-        const latest = D.getDraft(s, id);
+        const latest = D.getDraft(s, id, currentRecipe?.versionId);
         return D.saveDraft(
           s,
           D.setDraftAmount(latest, foodId, {
@@ -505,7 +559,7 @@
     const id = d.recipeId;
     if (
       await change(
-        (s) => D.addToMeal(s, D.getDraft(s, id)),
+        (s) => D.addToMeal(s, D.getDraft(s, id, currentRecipe?.versionId)),
         "献立に追加しました。",
       )
     )
@@ -827,7 +881,10 @@
     if (!recipeId) return;
     await writeQueue;
     startCooking([
-      { ...D.getDraft(appState, recipeId), id: crypto.randomUUID() },
+      {
+        ...D.getDraft(appState, recipeId, currentRecipe?.versionId),
+        id: crypto.randomUUID(),
+      },
     ]);
   }
   function nextStep() {
@@ -842,9 +899,9 @@
     if (!appState.cooking) return;
     const map = new Map<string, ConsumptionRequest>();
     for (const item of appState.cooking.mealSnapshot) {
-      const recipe = D.getRecipe(item.recipeId);
+      const recipe = D.getRecipe(item.recipeId, item.recipeVersionId);
       for (const ingredient of recipe.ingredients) {
-        const q = item.amounts[ingredient.foodId];
+        const q = item.amounts[D.ingredientKey(ingredient)];
         const key = `${ingredient.foodId}:${q.unit}:${ingredient.form}`;
         const old = map.get(key);
         map.set(key, {
@@ -944,7 +1001,7 @@
     } catch (e) {
       storageIssue =
         e instanceof Error ? e.message : "保存内容を読み込めませんでした。";
-      if (e instanceof API.ApiError && e.status === 401) user = null;
+      if (e instanceof API.ApiError && e.status === 401) expireSession();
     }
   }
   async function signIn() {
@@ -962,19 +1019,36 @@
       await refreshResults();
       await chooseRandom();
       catalogRecipes = [...D.RECIPES];
-      navigate(afterLogin.route, afterLogin.id);
-      afterLogin = { route: "home", id: "" };
+      navigate(afterLogin.route, afterLogin.id, "top", afterLogin.versionId);
+      afterLogin = { route: "home", id: "", versionId: "" };
     } catch (e) {
       error = e instanceof Error ? e.message : "ログインできませんでした。";
     } finally {
       busy = false;
     }
   }
-  function signOut() {
-    logout();
+  function clearPrivateView() {
     user = null;
     appState = D.createInitialState();
+    D.setCatalog([], []);
+    catalogFoods = [];
+    catalogRecipes = [];
+    resultRecipes = [];
+    resultTotal = 0;
+    randomId = "";
+    modal = "";
+  }
+  function expireSession() {
+    afterLogin = { route, id: routeId, versionId: routeVersion };
+    clearPrivateView();
+    navigate("login");
+    void initialize();
+  }
+  function signOut() {
+    logout();
+    clearPrivateView();
     navigate("home");
+    void initialize();
   }
   async function initialize() {
     loading = true;
@@ -1087,7 +1161,8 @@
     <div class="top-actions">
       {#if user}<span class="dev-pill">{user.display_name}</span><button
           class="text-button"
-          onclick={signOut}>ログアウト</button
+          onclick={signOut}
+          disabled={busy || loading}>ログアウト</button
         >{:else}<button class="secondary" onclick={() => navigate("login")}
           >ログイン</button
         >{/if}<button
@@ -1728,6 +1803,12 @@
             </div>
             <h1 class="recipe-detail-heading">{currentRecipe.name}</h1>
             <p class="subtitle">{currentRecipe.description}</p>
+            {#if currentRecipe.publicationStatus === "withdrawn"}
+              <p class="check-note gap-top" role="status">
+                このレシピは公開を取り下げています。保存した献立・履歴の内容を表示しています。{currentRecipe.withdrawalReason ||
+                  ""}
+              </p>
+            {/if}
             <div class="row wrap gap-top">
               <span class="chip"
                 ><Clock size={15} />{currentRecipe.minutes}分</span
@@ -1756,7 +1837,7 @@
               >
             </div>
             <p class="check-note gap-top">
-              人数を変えても加熱時間は比例させません。料理の状態を見て調整してください。{currentRecipe.ingredients.some(
+              人数は材料の量に反映されます。工程時間が確認できない人数では、調理開始前にお知らせします。{currentRecipe.ingredients.some(
                 (i) => !foods.find((f) => f.id === i.foodId)?.componentsKnown,
               )
                 ? "加工食品は原材料未確認です。商品表示も確認してください。"
@@ -1788,7 +1869,7 @@
                 </div>
               </div>
               {#if draft.adjusted}<span class="badge warning">調整済み</span
-                >{/if}{#each currentRecipe.ingredients as ingredient}{@const stock =
+                >{/if}{#each currentRecipe.ingredients as ingredient, ingredientIndex}{@const stock =
                   recipeStock(currentRecipe).rows.find(
                     (r) => r.foodId === ingredient.foodId,
                   )}<label class="ingredient-row"
@@ -1808,16 +1889,20 @@
                       >{/if}</span
                   ><span class="row"
                     ><input
-                      aria-label={`${foodName(ingredient.foodId)}の量`}
+                      aria-label={`${foodName(ingredient.foodId)}${currentRecipe.ingredients.filter((item) => item.foodId === ingredient.foodId).length > 1 ? `（${ingredient.note || ingredient.form}・${ingredientIndex + 1}）` : ""}の量`}
                       type="number"
                       min="0"
                       step="any"
-                      value={draft.amounts[ingredient.foodId]?.value ?? ""}
+                      value={draft.amounts[D.ingredientKey(ingredient)]
+                        ?.value ?? ""}
                       placeholder="不明"
                       onchange={(e) =>
-                        changeAmount(ingredient.foodId, e.currentTarget.value)}
+                        changeAmount(
+                          D.ingredientKey(ingredient),
+                          e.currentTarget.value,
+                        )}
                     /><span class="muted"
-                      >{draft.amounts[ingredient.foodId]?.unit}</span
+                      >{draft.amounts[D.ingredientKey(ingredient)]?.unit}</span
                     ></span
                   ></label
                 >{/each}<button
@@ -1933,6 +2018,7 @@
           <div class="list">
             {#each appState.meal as item}{@const recipe = D.getRecipe(
                 item.recipeId,
+                item.recipeVersionId,
               )}
               <div class="panel">
                 <div class="row">
@@ -2104,11 +2190,13 @@
             <span class="eyebrow">COOKING PLAN</span>
             <h1>無理なく、ひとつずつ。</h1>
             <p class="subtitle">
-              一人で進められる順番に整理しました。器具を同時に使いません。
+              工程の順序と、使える器具の数・容量に合わせた段取りです。
             </p>
           </div>
         </div>
-        {#if plan.length}<div class="panel">
+        {#if planned.loading}<p class="notice" role="status">
+            段取りを確認しています…
+          </p>{:else if plan.length}<div class="panel">
             {#each plan as step}<article class="plan-step">
                 <span class="plan-time"
                   >{step.startMinute}–{step.endMinute}分</span
@@ -2130,7 +2218,10 @@
           </p>
           {#if planned.error}<button
               class="secondary gap-top"
-              onclick={() => navigate("settings")}>使う器具の設定を確認</button
+              onclick={() => navigate(planEquipmentIssue ? "settings" : "meal")}
+              >{planEquipmentIssue
+                ? "使う器具の設定を確認"
+                : "献立の人数・分量を確認"}</button
             >{/if}{/if}
       </div>
     {:else if route === "cooking" && appState.cooking && currentStep}
@@ -2700,7 +2791,13 @@
                   ? D.quantityText(lot.quantity)
                   : "残量なし"}
               </p>
-              <p class="subtitle">取消後：{lot.edited || lot.consumed.length || lot.status !== "active" ? "この食材は変更しません" : "この登録を取り消します"}</p>
+              <p class="subtitle">
+                取消後：{lot.edited ||
+                lot.consumed.length ||
+                lot.status !== "active"
+                  ? "この食材は変更しません"
+                  : "この登録を取り消します"}
+              </p>
               {#if lot.edited || lot.consumed.length}<span class="badge warning"
                   >使用・編集済みの食材は残ります</span
                 >{/if}

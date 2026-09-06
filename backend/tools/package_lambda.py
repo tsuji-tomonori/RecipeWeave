@@ -3,8 +3,10 @@
 import argparse
 import hashlib
 import json
+import platform
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -66,6 +68,27 @@ def main() -> int:
         target / "app",
         ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "tools"),
     )
+    # 移行専用LambdaにSQLとchecksum台帳を同梱する。
+    shutil.copytree(
+        ROOT / "database",
+        target / "database",
+        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+    )
+    # 同じCPUの環境では、開発用site-packagesに依存せず両handlerをimportできることを確認する。
+    if platform.system() == "Linux" and platform.machine() in {architecture, args.architecture}:
+        subprocess.run(
+            [
+                sys.executable,
+                "-I",
+                "-S",
+                "-c",
+                "import sys; sys.path.insert(0, sys.argv[1]); "
+                "import app.handler; import app.integrations.database.migration_handler",
+                str(target),
+            ],
+            cwd=ROOT,
+            check=True,
+        )
     entries = {
         str(path.relative_to(target)): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(target.rglob("*"))

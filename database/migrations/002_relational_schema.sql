@@ -2448,7 +2448,8 @@ COMMENT ON COLUMN recipeweave.generation_stratum_metric.cost_amount IS '同一�
 
 COMMENT ON COLUMN recipeweave.generation_stratum_metric.currency IS 'JPY/USD等';
 
-COMMENT ON COLUMN recipeweave.generation_stratum_metric.stratum_key IS '層の安定キー（料理構造×食品カテゴリ×入手性）。集計定義はテンプレート版に固定';
+COMMENT ON COLUMN recipeweave.generation_stratum_metric.stratum_key
+IS '層の安定キー（料理構造×食品カテゴリ×入手性）。集計定義はテンプレート版に固定';
 
 ALTER TABLE recipeweave.food ADD CONSTRAINT fk_food_parent_id
 FOREIGN KEY (parent_id) REFERENCES recipeweave.food (id)
@@ -3088,7 +3089,8 @@ ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
 CREATE INDEX ix_menu_item_role_option_id ON recipeweave.menu_item (role_option_id);
 
-ALTER TABLE recipeweave.menu_ingredient_override ADD CONSTRAINT fk_menu_ingredient_override_menu_item_id
+ALTER TABLE recipeweave.menu_ingredient_override
+ADD CONSTRAINT fk_menu_ingredient_override_menu_item_id
 FOREIGN KEY (menu_item_id) REFERENCES recipeweave.menu_item (id)
 ON DELETE CASCADE ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
@@ -3096,11 +3098,13 @@ CREATE INDEX ix_menu_ingredient_override_menu_item_id ON recipeweave.menu_ingred
     menu_item_id
 );
 
-ALTER TABLE recipeweave.menu_ingredient_override ADD CONSTRAINT fk_menu_ingredient_override_ingredient_line_id
+ALTER TABLE recipeweave.menu_ingredient_override
+ADD CONSTRAINT fk_menu_ingredient_override_ingredient_line_id
 FOREIGN KEY (ingredient_line_id) REFERENCES recipeweave.recipe_ingredient (id)
 ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
-CREATE INDEX ix_menu_ingredient_override_ingredient_line_id ON recipeweave.menu_ingredient_override (
+CREATE INDEX ix_menu_ingredient_override_ingredient_line_id
+ON recipeweave.menu_ingredient_override (
     ingredient_line_id
 );
 
@@ -3110,11 +3114,13 @@ ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
 CREATE INDEX ix_menu_ingredient_override_form_id ON recipeweave.menu_ingredient_override (form_id);
 
-ALTER TABLE recipeweave.menu_ingredient_override ADD CONSTRAINT fk_menu_ingredient_override_product_version_id
+ALTER TABLE recipeweave.menu_ingredient_override
+ADD CONSTRAINT fk_menu_ingredient_override_product_version_id
 FOREIGN KEY (product_version_id) REFERENCES recipeweave.product_version (id)
 ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
-CREATE INDEX ix_menu_ingredient_override_product_version_id ON recipeweave.menu_ingredient_override (
+CREATE INDEX ix_menu_ingredient_override_product_version_id
+ON recipeweave.menu_ingredient_override (
     product_version_id
 );
 
@@ -3254,15 +3260,18 @@ ON DELETE SET NULL ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
 CREATE INDEX ix_audit_event_actor_id ON recipeweave.audit_event (actor_id);
 
-ALTER TABLE recipeweave.product_preparation_rule ADD CONSTRAINT fk_product_preparation_rule_product_version_id
+ALTER TABLE recipeweave.product_preparation_rule
+ADD CONSTRAINT fk_product_preparation_rule_product_version_id
 FOREIGN KEY (product_version_id) REFERENCES recipeweave.product_version (id)
 ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
-CREATE INDEX ix_product_preparation_rule_product_version_id ON recipeweave.product_preparation_rule (
+CREATE INDEX ix_product_preparation_rule_product_version_id
+ON recipeweave.product_preparation_rule (
     product_version_id
 );
 
-ALTER TABLE recipeweave.product_preparation_rule ADD CONSTRAINT fk_product_preparation_rule_operation_id
+ALTER TABLE recipeweave.product_preparation_rule
+ADD CONSTRAINT fk_product_preparation_rule_operation_id
 FOREIGN KEY (operation_id) REFERENCES recipeweave.operation (id)
 ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
@@ -3270,7 +3279,8 @@ CREATE INDEX ix_product_preparation_rule_operation_id ON recipeweave.product_pre
     operation_id
 );
 
-ALTER TABLE recipeweave.product_preparation_rule ADD CONSTRAINT fk_product_preparation_rule_source_id
+ALTER TABLE recipeweave.product_preparation_rule
+ADD CONSTRAINT fk_product_preparation_rule_source_id
 FOREIGN KEY (source_id) REFERENCES recipeweave.source_record (id)
 ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
@@ -3328,7 +3338,8 @@ ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
 CREATE INDEX ix_recipe_search_document_recipe_id ON recipeweave.recipe_search_document (recipe_id);
 
-ALTER TABLE recipeweave.recipe_search_document ADD CONSTRAINT fk_recipe_search_document_published_version_id
+ALTER TABLE recipeweave.recipe_search_document
+ADD CONSTRAINT fk_recipe_search_document_published_version_id
 FOREIGN KEY (published_version_id) REFERENCES recipeweave.recipe_version (id)
 ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
@@ -3344,7 +3355,8 @@ CREATE INDEX ix_recipe_embedding_recipe_version_id ON recipeweave.recipe_embeddi
     recipe_version_id
 );
 
-ALTER TABLE recipeweave.generation_stratum_metric ADD CONSTRAINT fk_generation_stratum_metric_template_id
+ALTER TABLE recipeweave.generation_stratum_metric
+ADD CONSTRAINT fk_generation_stratum_metric_template_id
 FOREIGN KEY (template_id) REFERENCES recipeweave.generation_template (id)
 ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
@@ -3588,6 +3600,10 @@ BEGIN
         GROUP BY axis.id HAVING count(*) > 1
     ) THEN RAISE EXCEPTION '単一選択軸に複数値を設定できません' USING ERRCODE = '23514'; END IF;
     IF current_version.status = 'published' THEN
+        IF NOT EXISTS (SELECT 1 FROM recipeweave.catalog_release
+            WHERE id = current_version.release_id AND published_at IS NOT NULL) THEN
+            RAISE EXCEPTION '公開版は公開済みカタログを参照する必要があります' USING ERRCODE = '23514';
+        END IF;
         IF EXISTS (SELECT 1 FROM recipeweave.recipe_ingredient ingredient
             JOIN recipeweave.food_form form ON form.id = ingredient.form_id
             JOIN recipeweave.food food ON food.id = form.food_id
@@ -4137,61 +4153,71 @@ FOR EACH ROW EXECUTE FUNCTION recipeweave.reject_identity_change();
 CREATE TRIGGER protect_recipe BEFORE UPDATE OR DELETE ON recipeweave.recipe_version
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content();
 
-CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_version
+CREATE CONSTRAINT TRIGGER recipe_integrity
+AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_version
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity();
 
 CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.recipe_ingredient
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content();
 
-CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_ingredient
+CREATE CONSTRAINT TRIGGER recipe_integrity
+AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_ingredient
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity();
 
 CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.recipe_option
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content();
 
-CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_option
+CREATE CONSTRAINT TRIGGER recipe_integrity
+AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_option
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity();
 
 CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.recipe_step
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content();
 
-CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_step
+CREATE CONSTRAINT TRIGGER recipe_integrity
+AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_step
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity();
 
 CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.step_parameter
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content();
 
-CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_parameter
+CREATE CONSTRAINT TRIGGER recipe_integrity
+AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_parameter
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity();
 
 CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.material_node
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content();
 
-CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.material_node
+CREATE CONSTRAINT TRIGGER recipe_integrity
+AFTER INSERT OR UPDATE OR DELETE ON recipeweave.material_node
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity();
 
 CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.step_input
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content();
 
-CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_input
+CREATE CONSTRAINT TRIGGER recipe_integrity
+AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_input
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity();
 
 CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.step_dependency
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content();
 
-CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_dependency
+CREATE CONSTRAINT TRIGGER recipe_integrity
+AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_dependency
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity();
 
 CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.step_resource
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content();
 
-CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_resource
+CREATE CONSTRAINT TRIGGER recipe_integrity
+AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_resource
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity();
 
 CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.step_media
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content();
 
-CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_media
+CREATE CONSTRAINT TRIGGER recipe_integrity
+AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_media
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity();
 
 CREATE CONSTRAINT TRIGGER hierarchy_integrity AFTER INSERT OR UPDATE ON recipeweave.food
@@ -4224,7 +4250,8 @@ DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cr
 CREATE CONSTRAINT TRIGGER cross_reference AFTER INSERT OR UPDATE ON recipeweave.candidate_attempt
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cross_reference();
 
-CREATE CONSTRAINT TRIGGER cross_reference AFTER INSERT OR UPDATE ON recipeweave.recipe_search_document
+CREATE CONSTRAINT TRIGGER cross_reference
+AFTER INSERT OR UPDATE ON recipeweave.recipe_search_document
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cross_reference();
 
 CREATE TRIGGER protect_catalog BEFORE UPDATE OR DELETE ON recipeweave.catalog_release
@@ -4269,7 +4296,8 @@ FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content();
 CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.product_allergen
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content();
 
-CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.product_preparation_rule
+CREATE TRIGGER protect_catalog
+BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.product_preparation_rule
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content();
 
 CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.conversion
@@ -4281,7 +4309,8 @@ FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content();
 CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.generation_template
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content();
 
-CREATE CONSTRAINT TRIGGER owned_integrity AFTER INSERT OR UPDATE ON recipeweave.menu_ingredient_override
+CREATE CONSTRAINT TRIGGER owned_integrity
+AFTER INSERT OR UPDATE ON recipeweave.menu_ingredient_override
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_owned_reference();
 
 CREATE CONSTRAINT TRIGGER owned_integrity AFTER INSERT OR UPDATE ON recipeweave.shopping_item
@@ -4326,11 +4355,11 @@ ALTER TABLE recipeweave.app_user FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.app_user
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.user_preference ENABLE ROW LEVEL SECURITY;
@@ -4339,11 +4368,11 @@ ALTER TABLE recipeweave.user_preference FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.user_preference
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.user_exclusion ENABLE ROW LEVEL SECURITY;
@@ -4352,11 +4381,11 @@ ALTER TABLE recipeweave.user_exclusion FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.user_exclusion
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.user_recipe_event ENABLE ROW LEVEL SECURITY;
@@ -4365,11 +4394,11 @@ ALTER TABLE recipeweave.user_recipe_event FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.user_recipe_event
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.menu ENABLE ROW LEVEL SECURITY;
@@ -4378,11 +4407,11 @@ ALTER TABLE recipeweave.menu FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.menu
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.menu_item ENABLE ROW LEVEL SECURITY;
@@ -4392,16 +4421,16 @@ ALTER TABLE recipeweave.menu_item FORCE ROW LEVEL SECURITY;
 CREATE POLICY owned_access ON recipeweave.menu_item
 USING (
     CURRENT_SETTING(
-        'recipeweave.role', true) = 'admin' OR (
+        'recipeweave.role', TRUE) = 'admin' OR (
         SELECT r0.user_id FROM recipeweave.menu AS r0
         WHERE r0.id = menu_item.menu_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''
     )::UUID
 ) WITH CHECK (CURRENT_SETTING(
-    'recipeweave.role', true) = 'admin' OR (
+    'recipeweave.role', TRUE) = 'admin' OR (
     SELECT r0.user_id FROM recipeweave.menu AS r0
     WHERE r0.id = menu_item.menu_id
-) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''
+) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''
 )::UUID);
 
 ALTER TABLE recipeweave.menu_ingredient_override ENABLE ROW LEVEL SECURITY;
@@ -4410,20 +4439,20 @@ ALTER TABLE recipeweave.menu_ingredient_override FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.menu_ingredient_override
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
     OR (
         SELECT r1.user_id
         FROM recipeweave.menu_item AS r0
         INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id
         WHERE r0.id = menu_ingredient_override.menu_item_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (
         SELECT r1.user_id
         FROM recipeweave.menu_item AS r0
         INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id
         WHERE r0.id = menu_ingredient_override.menu_item_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.kitchen_resource ENABLE ROW LEVEL SECURITY;
@@ -4432,11 +4461,11 @@ ALTER TABLE recipeweave.kitchen_resource FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.kitchen_resource
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.cooking_session ENABLE ROW LEVEL SECURITY;
@@ -4446,16 +4475,16 @@ ALTER TABLE recipeweave.cooking_session FORCE ROW LEVEL SECURITY;
 CREATE POLICY owned_access ON recipeweave.cooking_session
 USING (
     CURRENT_SETTING(
-        'recipeweave.role', true) = 'admin' OR (
+        'recipeweave.role', TRUE) = 'admin' OR (
         SELECT r0.user_id FROM recipeweave.menu AS r0
         WHERE r0.id = cooking_session.menu_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''
     )::UUID
 ) WITH CHECK (CURRENT_SETTING(
-    'recipeweave.role', true) = 'admin' OR (
+    'recipeweave.role', TRUE) = 'admin' OR (
     SELECT r0.user_id FROM recipeweave.menu AS r0
     WHERE r0.id = cooking_session.menu_id
-) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''
+) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''
 )::UUID);
 
 ALTER TABLE recipeweave.session_task ENABLE ROW LEVEL SECURITY;
@@ -4464,20 +4493,20 @@ ALTER TABLE recipeweave.session_task FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.session_task
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
     OR (
         SELECT r1.user_id
         FROM recipeweave.cooking_session AS r0
         INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id
         WHERE r0.id = session_task.session_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (
         SELECT r1.user_id
         FROM recipeweave.cooking_session AS r0
         INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id
         WHERE r0.id = session_task.session_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.task_dependency ENABLE ROW LEVEL SECURITY;
@@ -4486,22 +4515,22 @@ ALTER TABLE recipeweave.task_dependency FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.task_dependency
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
     OR (
         SELECT r2.user_id
         FROM recipeweave.session_task AS r0
         INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id
         INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id
         WHERE r0.id = task_dependency.before_task_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (
         SELECT r2.user_id
         FROM recipeweave.session_task AS r0
         INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id
         INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id
         WHERE r0.id = task_dependency.before_task_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.resource_reservation ENABLE ROW LEVEL SECURITY;
@@ -4510,22 +4539,22 @@ ALTER TABLE recipeweave.resource_reservation FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.resource_reservation
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
     OR (
         SELECT r2.user_id
         FROM recipeweave.session_task AS r0
         INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id
         INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id
         WHERE r0.id = resource_reservation.task_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (
         SELECT r2.user_id
         FROM recipeweave.session_task AS r0
         INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id
         INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id
         WHERE r0.id = resource_reservation.task_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.ingredient_total ENABLE ROW LEVEL SECURITY;
@@ -4534,20 +4563,20 @@ ALTER TABLE recipeweave.ingredient_total FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.ingredient_total
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
     OR (
         SELECT r1.user_id
         FROM recipeweave.cooking_session AS r0
         INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id
         WHERE r0.id = ingredient_total.session_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (
         SELECT r1.user_id
         FROM recipeweave.cooking_session AS r0
         INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id
         WHERE r0.id = ingredient_total.session_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.pantry_lot ENABLE ROW LEVEL SECURITY;
@@ -4556,11 +4585,11 @@ ALTER TABLE recipeweave.pantry_lot FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.pantry_lot
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 ALTER TABLE recipeweave.shopping_item ENABLE ROW LEVEL SECURITY;
@@ -4569,20 +4598,20 @@ ALTER TABLE recipeweave.shopping_item FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.shopping_item
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
     OR (
         SELECT r1.user_id
         FROM recipeweave.cooking_session AS r0
         INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id
         WHERE r0.id = shopping_item.session_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (
         SELECT r1.user_id
         FROM recipeweave.cooking_session AS r0
         INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id
         WHERE r0.id = shopping_item.session_id
-    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 CREATE FUNCTION recipeweave.guard_adopted_definition() RETURNS TRIGGER
@@ -4591,6 +4620,8 @@ DECLARE
     reference record;
     referenced boolean;
 BEGIN
+    IF TG_OP = 'UPDATE' AND to_jsonb(OLD) ? 'status'
+       AND (to_jsonb(NEW) - 'status') = (to_jsonb(OLD) - 'status') THEN RETURN NEW; END IF;
     FOR reference IN
         SELECT namespace.nspname AS schema_name, child.relname AS table_name, attribute.attname AS column_name
         FROM pg_constraint constraint_def
@@ -4635,4 +4666,10 @@ CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.generat
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition();
 
 CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.operation_parameter
+FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition();
+
+CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.unit
+FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition();
+
+CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.operation
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition();

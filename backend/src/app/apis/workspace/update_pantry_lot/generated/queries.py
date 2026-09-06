@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "q001_resolve_form": """-- 食材形態と単位をDBから検証し、他人の独自食材は参照させない。
+    "q001_resolve_form": """\
+-- 食材形態と単位をDBから検証し、他人の独自食材は参照させない。
 SELECT
     fm.id AS form_id,
     u.id AS unit_id
@@ -28,7 +29,8 @@ WHERE
     )
 ORDER BY fm.id LIMIT 1;
 """,
-    "q002_update_lot": """-- 本人の編集可能なロットだけを更新し、取消済みレシートの在庫は復元しない。
+    "q002_update_lot": """\
+-- 本人の編集可能なロットだけを更新し、取消済みレシートの在庫は復元しない。
 UPDATE recipeweave.pantry_lot AS p SET
     form_id = %(form_id)s, amount = %(amount)s,
     unit_id = %(unit_id)s, expires_on = %(expires_on)s, location = %(location)s,
@@ -43,15 +45,18 @@ WHERE
     )
 RETURNING p.id;
 """,
-    "q900_lock_revision": """-- 本人の集約版を排他ロックして並行操作の順序を確定する。
+    "q900_lock_revision": """\
+-- 本人の集約版を排他ロックして並行操作の順序を確定する。
 SELECT revision FROM recipeweave.workspace_revision
 WHERE user_id = %(user_id)s FOR UPDATE;
 """,
-    "q901_advance_revision": """-- 業務行の更新と同じトランザクションで版を一度だけ進める。
+    "q901_advance_revision": """\
+-- 業務行の更新と同じトランザクションで版を一度だけ進める。
 UPDATE recipeweave.workspace_revision SET revision = revision + 1
 WHERE user_id = %(user_id)s RETURNING revision;
 """,
-    "q902_append_audit": """-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
+    "q902_append_audit": """\
+-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
 INSERT INTO recipeweave.audit_event (
     id, actor_id, action, entity_type, entity_key_hash, reason, occurred_at
 )

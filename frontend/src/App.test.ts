@@ -33,6 +33,9 @@ vi.mock("./lib/api", async () => ({
     display_name: "Alice",
     role: "user",
   }),
+  previewCookingPlan: async (items: AppState["meal"]) => ({
+    plan: D.buildCookingPlan(items, backend.state!.settings.equipment),
+  }),
   loadFoods: async () => {
     if (backend.failLoad) throw new Error("サーバーに接続できません");
     return fixtureFoods;

@@ -1,27 +1,28 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 583eae64ec9b3b852f9c22a91d2f8cee8e1a29abcdf219e88280b708a4289ec2
+# SQLのSHA256: 24435f75e84a80e2a5e76609ba3dd6d1be2de3b19d24a94d9b4b99fa3bfdfac1
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 除外・常備・器具を各設定表から一覧化する。
+    "query": """\
+-- 除外・常備・器具を各設定表から一覧化する。
 SELECT
     'excluded' AS kind,
-    food_id::TEXT AS value
+    food_id::TEXT AS setting_value
 FROM recipeweave.user_exclusion
 WHERE user_id = %(user_id)s AND food_id IS NOT NULL
 UNION ALL
 SELECT
-    'pantry',
-    food_id::TEXT
+    'pantry' AS kind,
+    food_id::TEXT AS setting_value
 FROM recipeweave.user_pantry_food
 WHERE user_id = %(user_id)s
 UNION ALL
 SELECT
-    'equipment',
-    r.name
+    'equipment' AS kind,
+    r.name AS setting_value
 FROM recipeweave.kitchen_resource AS k
 INNER JOIN recipeweave.resource_type AS r ON k.resource_type_id = r.id
 WHERE k.user_id = %(user_id)s AND k.active AND r.code NOT IN ('person', 'burner', 'bowl');

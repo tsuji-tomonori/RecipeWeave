@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 同じ商品・形態・単位の確定需要を一つに合計する。
+    "query": """\
+-- 同じ商品・形態・単位の確定需要を一つに合計する。
 INSERT INTO recipeweave.ingredient_total
 (
     id,

@@ -4,6 +4,7 @@ import type { Construct } from "constructs";
 
 export interface GitHubDeployStackProps extends StackProps {
   readonly existingProviderArn: string;
+  readonly stage?: string;
   readonly branch: string;
   readonly bootstrapQualifier: string;
 }
@@ -48,6 +49,19 @@ export class GitHubDeployStack extends Stack {
             resourceName: `cdk-${props.bootstrapQualifier}-${purpose}-role-${this.account}-${this.region}`,
           }),
         ),
+      }),
+    );
+    // 配備後のスキーマ移行はこの環境の専用関数だけに限定する。
+    role.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["lambda:InvokeFunction"],
+        resources: [
+          this.formatArn({
+            service: "lambda",
+            resource: "function",
+            resourceName: `RecipeWeave-${props.stage ?? "dev"}-Service-Migration`,
+          }),
+        ],
       }),
     );
     new CfnOutput(this, "GitHubDeployRoleArn", { value: role.roleArn });

@@ -12,6 +12,8 @@ description: RecipeWeaveのAPI・DB・SQL・設計生成器を変更するとき
 - 永続義務を変更する場合は`spec/requirements/requirements.qnt`を更新し、`python tools/quintflow.py generate`でJSONと人向けMarkdownを生成する。生成された要件を手編集しない。
 - APIやDDLの変更時は[生成対象と入力契約](references/service-design.md)を読み、ソースと同じ変更で設計生成器・出力・対象検査を更新する。手書きの一覧で生成漏れを埋めない。
 - 人向けの生成設計は`docs/design/generated/`配下のMarkdownとする。機械用のOpenAPI JSONや要件JSONは、人向け仕様の代わりとして数えない。
+- 元DB正本は`spec/database/source-sheet.json`。全表・列・外部キーをDDLと照合し、実装済みの一部の表だけを数えて完了としない。必要な補完と元定義の進化は追加移行へ明記する。
+- 食品・料理の初期ファイルはseed入力専用とする。API・Webの実行時参照とJSON全状態保存を追加しない。料理版IDと材料行IDを保持する。
 
 ## SQLの扱い
 
@@ -33,6 +35,12 @@ description: RecipeWeaveのAPI・DB・SQL・設計生成器を変更するとき
 - 既存のSQL静的解析、型検査、生成されたクエリの回帰試験。
 
 コメント・docstring・生成文書の説明は原則日本語とし、ソースを修正してから再生成する。識別子や機械用指示等の例外は`AGENTS.md`に従う。現在の実装を説明する生成設計と、実際のAWS配備・認証同期の受入結果を区別する。
+
+実DBの制約・所有権・再送・競合の変更はPostgreSQLと非管理者アプリロールで検証する。
+実DBテストが接続不足でskipされた結果を、DB検証の成功へ読み替えない。
+E2Eは日本語Given/When/Thenごとに実画面を保存し、実行版と結果を対応させる。
+`tools/report.py`と`tools/docs_site.py`で品質と検索可能な設計サイトを生成する。
+出力先とCornellNoteWebv2の参照版は`docs/design/ADR-0002-relational-service.md`で確認する。
 
 ## 配布済みdev-standardとの境界
 

@@ -47,6 +47,7 @@ def prepare(root: Path = ROOT, base: str | None = None) -> int:
     if not files:
         raise ValueError("生成設計書がありません")
     outputs: dict[str, str] = {}
+    mapped = {item.resolve(): value for item, value in files.items()}
     json_files = {
         path.resolve(): path.parent.name + ".json"
         for path in (root / "docs/design/generated/api/operations").glob("*/interface.openapi.json")
@@ -72,7 +73,6 @@ def prepare(root: Path = ROOT, base: str | None = None) -> int:
             if not parsed.path.endswith(".md"):
                 return match[0]
             resolved = (path.parent / parsed.path).resolve()
-            mapped = {item.resolve(): value for item, value in files.items()}
             if resolved not in mapped:
                 raise ValueError(f"文書リンクの生成対象がありません: {path}: {target}")
             destination = base + "/" + (mapped[resolved] + "/" if mapped[resolved] else "")

@@ -24,4 +24,6 @@ class CatalogPort(Protocol):
         preview: bool = False,
         recipe_id: UUID | None = None,
         exclude_id: UUID | None = None,
+        version_id: UUID | None = None,
+        owner_id: UUID | None = None,
     ) -> tuple[list[Recipe], int]: ...

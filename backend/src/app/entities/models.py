@@ -70,6 +70,7 @@ class CatalogReleaseRow(EntityModel):
         description="採用したID・内容のハッシュ", min_length=64, max_length=64
     )
     published_at: AwareDatetime | None = Field(description="公開日時")
+    owner_id: UUID | None = Field(description="私有カタログの所有者。NULLは共通カタログ")
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
 
 
@@ -134,7 +135,7 @@ class FoodRow(EntityModel):
     id: UUID = Field(description="不変の行識別子")
     created_at: AwareDatetime = Field(description="作成日時(UTC)")
     code: str = Field(description="固定食材コード", min_length=1, max_length=20000)
-    name: str = Field(description="食材名・加工品種別", min_length=1, max_length=20000)
+    name: str = Field(description="食材名・加工品種別", min_length=1, max_length=100)
     kind: Literal["basic", "processed", "ready_meal", "kit", "utility"] = Field(
         description="基本食材か加工食品か"
     )
@@ -149,7 +150,7 @@ class FoodWrite(EntityModel):
     """購入・利用食材概念の編集可能列。未指定NULL列はNULLにする。"""
 
     code: str = Field(description="固定食材コード", min_length=1, max_length=20000)
-    name: str = Field(description="食材名・加工品種別", min_length=1, max_length=20000)
+    name: str = Field(description="食材名・加工品種別", min_length=1, max_length=100)
     kind: Literal["basic", "processed", "ready_meal", "kit", "utility"] = Field(
         description="基本食材か加工食品か"
     )
@@ -164,7 +165,7 @@ class FoodAliasRow(EntityModel):
     id: UUID = Field(description="不変の行識別子")
     created_at: AwareDatetime = Field(description="作成日時(UTC)")
     food_id: UUID = Field(description="正規食材")
-    alias: str = Field(description="別名・かな", min_length=1, max_length=20000)
+    alias: str = Field(description="別名・かな", min_length=1, max_length=500)
     locale: str = Field(description="言語・地域", min_length=1, max_length=20000)
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
 
@@ -173,7 +174,7 @@ class FoodAliasWrite(EntityModel):
     """食材別名の編集可能列。未指定NULL列はNULLにする。"""
 
     food_id: UUID = Field(description="正規食材")
-    alias: str = Field(description="別名・かな", min_length=1, max_length=20000)
+    alias: str = Field(description="別名・かな", min_length=1, max_length=500)
     locale: str = Field(description="言語・地域", min_length=1, max_length=20000)
 
 
@@ -183,7 +184,7 @@ class FoodFormRow(EntityModel):
     id: UUID = Field(description="不変の行識別子")
     created_at: AwareDatetime = Field(description="作成日時(UTC)")
     food_id: UUID = Field(description="対応食材")
-    name: str = Field(description="生皮付き・冷凍刻み等", min_length=1, max_length=20000)
+    name: str = Field(description="生皮付き・冷凍刻み等", min_length=1, max_length=500)
     state: Literal["raw", "dry", "frozen", "cooked", "rehydrated", "drained", "peeled", "ready"] = (
         Field(description="処理状態")
     )
@@ -199,7 +200,7 @@ class FoodFormWrite(EntityModel):
     """食材形態の編集可能列。未指定NULL列はNULLにする。"""
 
     food_id: UUID = Field(description="対応食材")
-    name: str = Field(description="生皮付き・冷凍刻み等", min_length=1, max_length=20000)
+    name: str = Field(description="生皮付き・冷凍刻み等", min_length=1, max_length=500)
     state: Literal["raw", "dry", "frozen", "cooked", "rehydrated", "drained", "peeled", "ready"] = (
         Field(description="処理状態")
     )
@@ -544,7 +545,7 @@ class AxisOptionRow(EntityModel):
     created_at: AwareDatetime = Field(description="作成日時(UTC)")
     axis_id: UUID = Field(description="親軸")
     code: str = Field(description="値コード", min_length=1, max_length=20000)
-    label: str = Field(description="候補名", min_length=1, max_length=20000)
+    label: str = Field(description="候補名", min_length=1, max_length=500)
     definition: str = Field(description="値の意味", min_length=1, max_length=20000)
     parent_id: UUID | None = Field(description="同軸の階層親")
     status: Literal["active", "retired"] = Field(description="選択可否")
@@ -556,7 +557,7 @@ class AxisOptionWrite(EntityModel):
 
     axis_id: UUID = Field(description="親軸")
     code: str = Field(description="値コード", min_length=1, max_length=20000)
-    label: str = Field(description="候補名", min_length=1, max_length=20000)
+    label: str = Field(description="候補名", min_length=1, max_length=500)
     definition: str = Field(description="値の意味", min_length=1, max_length=20000)
     parent_id: UUID | None = Field(default=None, description="同軸の階層親")
     status: Literal["active", "retired"] = Field(description="選択可否")
@@ -584,7 +585,7 @@ class RecipeRow(EntityModel):
 
     id: UUID = Field(description="不変の行識別子")
     created_at: AwareDatetime = Field(description="作成日時(UTC)")
-    title: str = Field(description="代表名", min_length=1, max_length=20000)
+    title: str = Field(description="代表名", min_length=1, max_length=500)
     family_option_id: UUID = Field(description="料理ファミリ")
     status: Literal["draft", "published", "withdrawn"] = Field(description="公開状態")
     withdrawal_reason: str | None = Field(description="取下げ理由", min_length=1, max_length=20000)
@@ -594,7 +595,7 @@ class RecipeRow(EntityModel):
 class RecipeWrite(EntityModel):
     """レシピ同一性の編集可能列。未指定NULL列はNULLにする。"""
 
-    title: str = Field(description="代表名", min_length=1, max_length=20000)
+    title: str = Field(description="代表名", min_length=1, max_length=500)
     family_option_id: UUID = Field(description="料理ファミリ")
     status: Literal["draft", "published", "withdrawn"] = Field(description="公開状態")
     withdrawal_reason: str | None = Field(
@@ -623,7 +624,7 @@ class RecipeVersionRow(EntityModel):
     )
     content_hash: str = Field(description="内容ハッシュ", min_length=64, max_length=64)
     published_at: AwareDatetime | None = Field(description="公開日時")
-    description: str | None = Field(description="料理の紹介文", min_length=1, max_length=20000)
+    description: str | None = Field(description="料理の紹介文", min_length=1, max_length=5000)
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
 
 
@@ -647,7 +648,7 @@ class RecipeVersionWrite(EntityModel):
     content_hash: str = Field(description="内容ハッシュ", min_length=64, max_length=64)
     published_at: AwareDatetime | None = Field(default=None, description="公開日時")
     description: str | None = Field(
-        default=None, description="料理の紹介文", min_length=1, max_length=20000
+        default=None, description="料理の紹介文", min_length=1, max_length=5000
     )
 
 
@@ -777,7 +778,7 @@ class RecipeIngredientRow(EntityModel):
     conversion_id: UUID | None = Field(description="非基準単位の換算根拠")
     scaling_rule_id: UUID = Field(description="人数変換規則")
     optional: bool = Field(description="任意追加材料")
-    note: str | None = Field(description="材料の補足", min_length=1, max_length=20000)
+    note: str | None = Field(description="材料の補足", min_length=1, max_length=500)
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
 
 
@@ -816,7 +817,7 @@ class RecipeIngredientWrite(EntityModel):
     conversion_id: UUID | None = Field(default=None, description="非基準単位の換算根拠")
     scaling_rule_id: UUID = Field(description="人数変換規則")
     optional: bool = Field(description="任意追加材料")
-    note: str | None = Field(default=None, description="材料の補足", min_length=1, max_length=20000)
+    note: str | None = Field(default=None, description="材料の補足", min_length=1, max_length=500)
 
 
 class OperationRow(EntityModel):
@@ -895,13 +896,13 @@ class RecipeStepRow(EntityModel):
     recipe_version_id: UUID = Field(description="所属版")
     step_no: int = Field(description="表示順(依存順とは別)", gt=0)
     operation_id: UUID = Field(description="標準動作")
-    instruction: str = Field(description="個別補足", min_length=1, max_length=20000)
+    instruction: str = Field(description="個別補足", min_length=1, max_length=5000)
     attention: Literal["active", "monitored", "passive"] = Field(description="作業者拘束")
     duration_min_s: int = Field(description="所要秒下限", ge=0)
     duration_max_s: int = Field(description="所要秒上限")
     scaling_rule_id: UUID = Field(description="時間の人数変更規則")
     completion_cue: str = Field(description="実測・目視の終了条件", min_length=1, max_length=20000)
-    title: str | None = Field(description="工程の短い見出し", min_length=1, max_length=20000)
+    title: str | None = Field(description="工程の短い見出し", min_length=1, max_length=500)
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
 
 
@@ -911,14 +912,14 @@ class RecipeStepWrite(EntityModel):
     recipe_version_id: UUID = Field(description="所属版")
     step_no: int = Field(description="表示順(依存順とは別)", gt=0)
     operation_id: UUID = Field(description="標準動作")
-    instruction: str = Field(description="個別補足", min_length=1, max_length=20000)
+    instruction: str = Field(description="個別補足", min_length=1, max_length=5000)
     attention: Literal["active", "monitored", "passive"] = Field(description="作業者拘束")
     duration_min_s: int = Field(description="所要秒下限", ge=0)
     duration_max_s: int = Field(description="所要秒上限")
     scaling_rule_id: UUID = Field(description="時間の人数変更規則")
     completion_cue: str = Field(description="実測・目視の終了条件", min_length=1, max_length=20000)
     title: str | None = Field(
-        default=None, description="工程の短い見出し", min_length=1, max_length=20000
+        default=None, description="工程の短い見出し", min_length=1, max_length=500
     )
 
 
@@ -1038,7 +1039,7 @@ class ResourceTypeRow(EntityModel):
     id: UUID = Field(description="不変の行識別子")
     created_at: AwareDatetime = Field(description="作成日時(UTC)")
     code: str = Field(description="burner/pan/person等", min_length=1, max_length=20000)
-    name: str = Field(description="道具名", min_length=1, max_length=20000)
+    name: str = Field(description="道具名", min_length=1, max_length=500)
     capacity_unit_id: UUID | None = Field(description="鍋容量等の単位")
     status: Literal["active", "retired"] = Field(description="使用状態")
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
@@ -1048,7 +1049,7 @@ class ResourceTypeWrite(EntityModel):
     """道具・設備・作業者種別の編集可能列。未指定NULL列はNULLにする。"""
 
     code: str = Field(description="burner/pan/person等", min_length=1, max_length=20000)
-    name: str = Field(description="道具名", min_length=1, max_length=20000)
+    name: str = Field(description="道具名", min_length=1, max_length=500)
     capacity_unit_id: UUID | None = Field(default=None, description="鍋容量等の単位")
     status: Literal["active", "retired"] = Field(description="使用状態")
 
@@ -1563,6 +1564,7 @@ class KitchenResourceRow(EntityModel):
         description="容量", max_digits=20, decimal_places=6, allow_inf_nan=False
     )
     quantity: int = Field(description="同等資源数", gt=0)
+    active: bool = Field(description="新規の調理計画で利用する資源か")
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
 
 
@@ -1576,6 +1578,7 @@ class KitchenResourceWrite(EntityModel):
         default=None, description="容量", max_digits=20, decimal_places=6, allow_inf_nan=False
     )
     quantity: int = Field(description="同等資源数", gt=0)
+    active: bool = Field(description="新規の調理計画で利用する資源か")
 
 
 class CookingSessionRow(EntityModel):
@@ -1585,14 +1588,12 @@ class CookingSessionRow(EntityModel):
     created_at: AwareDatetime = Field(description="作成日時(UTC)")
     menu_id: UUID = Field(description="対象献立")
     menu_revision: int = Field(description="献立版", gt=0)
-    status: Literal["planned", "cooking", "paused", "completed", "cancelled"] = Field(
-        description="実行状態"
-    )
+    status: Literal["planned", "cooking", "completed", "cancelled"] = Field(description="実行状態")
     target_at: AwareDatetime | None = Field(description="完成希望時刻")
     planner_version: str = Field(description="計画器の版", min_length=1, max_length=20000)
     input_snapshot: CookingInput = Field(description="材料・資源・人数の固定入力")
     input_hash: str = Field(description="入力ハッシュ", min_length=64, max_length=64)
-    current_task_index: int = Field(description="調理画面の現在の工程位置(0始まり)", ge=0)
+    current_task_index: int = Field(description="調理画面の現在の工程位置(0始まり)")
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
 
 
@@ -1601,14 +1602,12 @@ class CookingSessionWrite(EntityModel):
 
     menu_id: UUID = Field(description="対象献立")
     menu_revision: int = Field(description="献立版", gt=0)
-    status: Literal["planned", "cooking", "paused", "completed", "cancelled"] = Field(
-        description="実行状態"
-    )
+    status: Literal["planned", "cooking", "completed", "cancelled"] = Field(description="実行状態")
     target_at: AwareDatetime | None = Field(default=None, description="完成希望時刻")
     planner_version: str = Field(description="計画器の版", min_length=1, max_length=20000)
     input_snapshot: CookingInput = Field(description="材料・資源・人数の固定入力")
     input_hash: str = Field(description="入力ハッシュ", min_length=64, max_length=64)
-    current_task_index: int = Field(description="調理画面の現在の工程位置(0始まり)", ge=0)
+    current_task_index: int = Field(description="調理画面の現在の工程位置(0始まり)")
 
 
 class SessionTaskRow(EntityModel):
@@ -1716,9 +1715,11 @@ class IngredientTotalRow(EntityModel):
         decimal_places=6,
         allow_inf_nan=False,
     )
-    consumption_outcome: Literal[
-        "not_requested", "applied", "insufficient", "unknown", "incompatible"
-    ] = Field(description="未要求・反映済み・在庫不足・数量不明・単位不一致の結果")
+    consumption_outcome: str = Field(
+        description="未要求・反映済み・在庫不足・数量不明・単位不一致の結果",
+        min_length=1,
+        max_length=20000,
+    )
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
 
 
@@ -1743,9 +1744,11 @@ class IngredientTotalWrite(EntityModel):
         decimal_places=6,
         allow_inf_nan=False,
     )
-    consumption_outcome: Literal[
-        "not_requested", "applied", "insufficient", "unknown", "incompatible"
-    ] = Field(description="未要求・反映済み・在庫不足・数量不明・単位不一致の結果")
+    consumption_outcome: str = Field(
+        description="未要求・反映済み・在庫不足・数量不明・単位不一致の結果",
+        min_length=1,
+        max_length=20000,
+    )
 
 
 class PantryLotRow(EntityModel):
@@ -1762,12 +1765,10 @@ class PantryLotRow(EntityModel):
     unit_id: UUID = Field(description="単位")
     expires_on: date | None = Field(description="表示期限")
     opened_at: AwareDatetime | None = Field(description="開封時点")
-    location: Literal["fridge", "freezer", "pantry"] = Field(
-        description="冷蔵・冷凍・常温の保管場所"
-    )
-    priority: Literal["normal", "use_first"] = Field(description="先に使う優先指定")
-    status: Literal["active", "deleted", "undone"] = Field(
-        description="在庫の有効・削除・レシート取消状態"
+    location: str = Field(description="冷蔵・冷凍・常温の保管場所", min_length=1, max_length=20000)
+    priority: str = Field(description="先に使う優先指定", min_length=1, max_length=20000)
+    status: str = Field(
+        description="在庫の有効・削除・レシート取消状態", min_length=1, max_length=20000
     )
     source_import_id: UUID | None = Field(description="登録元レシート")
     quantity_quality: str = Field(description="数量の確定・不明", min_length=1, max_length=20000)
@@ -1793,12 +1794,10 @@ class PantryLotWrite(EntityModel):
     unit_id: UUID = Field(description="単位")
     expires_on: date | None = Field(default=None, description="表示期限")
     opened_at: AwareDatetime | None = Field(default=None, description="開封時点")
-    location: Literal["fridge", "freezer", "pantry"] = Field(
-        description="冷蔵・冷凍・常温の保管場所"
-    )
-    priority: Literal["normal", "use_first"] = Field(description="先に使う優先指定")
-    status: Literal["active", "deleted", "undone"] = Field(
-        description="在庫の有効・削除・レシート取消状態"
+    location: str = Field(description="冷蔵・冷凍・常温の保管場所", min_length=1, max_length=20000)
+    priority: str = Field(description="先に使う優先指定", min_length=1, max_length=20000)
+    status: str = Field(
+        description="在庫の有効・削除・レシート取消状態", min_length=1, max_length=20000
     )
     source_import_id: UUID | None = Field(default=None, description="登録元レシート")
     quantity_quality: str = Field(description="数量の確定・不明", min_length=1, max_length=20000)
@@ -2201,6 +2200,9 @@ class ReceiptImportRow(EntityModel):
     revision: BigInteger = Field(description="楽観ロック版")
     committed_at: AwareDatetime | None = Field(description="在庫へ登録した日時")
     reverted_at: AwareDatetime | None = Field(description="登録取消日時")
+    undo_preserved_count: int = Field(
+        description="レシート取消時に編集・消費済みとして残した在庫件数"
+    )
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
 
 
@@ -2223,6 +2225,9 @@ class ReceiptImportWrite(EntityModel):
     revision: BigInteger = Field(description="楽観ロック版")
     committed_at: AwareDatetime | None = Field(default=None, description="在庫へ登録した日時")
     reverted_at: AwareDatetime | None = Field(default=None, description="登録取消日時")
+    undo_preserved_count: int = Field(
+        description="レシート取消時に編集・消費済みとして残した在庫件数"
+    )
 
 
 class ReceiptLineRow(EntityModel):

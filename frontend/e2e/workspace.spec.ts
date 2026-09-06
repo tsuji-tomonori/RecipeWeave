@@ -175,11 +175,18 @@ test("ログインして実DBの食材を選び、料理の分量を変えて献
       ).toBeVisible();
       await page.getByRole("button", { name: "献立に戻る" }).click();
       // 初期レシピの工程時間は基準2人だけが登録済み。人数を推測で外挿しない。
-      const servings = page.getByRole("spinbutton", { name: "なすと卵の醤油炒めの人数" });
+      const servings = page.getByRole("spinbutton", {
+        name: "なすと卵の醤油炒めの人数",
+      });
       for (const input of await servings.all()) {
-        await input.fill("2"); await input.press("Tab");
+        await input.fill("2");
+        await input.press("Tab");
       }
-      await expect.poll(async () => (await workspace(page)).meal.every((item) => item.servings === 2)).toBe(true);
+      await expect
+        .poll(async () =>
+          (await workspace(page)).meal.every((item) => item.servings === 2),
+        )
+        .toBe(true);
       await page.getByRole("button", { name: "段取りを見る" }).click();
       await expect(
         page.getByRole("heading", { name: "無理なく、ひとつずつ。" }),

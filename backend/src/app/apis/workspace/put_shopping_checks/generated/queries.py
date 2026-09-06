@@ -1,41 +1,46 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: e0b65663768c3610ec7e0e3e0703b092cbcd57f6ff11cd953356925a2f3f98a4
+# SQLのSHA256: 9104f0b82446fbb0b830442da123fe299bb914aefe55db8db7cf88b45c429af1
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "q001_clear": """-- 現在の買い物確認を本人の範囲で置き換える。
+    "q001_clear": """\
+-- 現在の買い物確認を本人の範囲で置き換える。
 DELETE FROM recipeweave.user_shopping_check
 WHERE user_id = %(user_id)s;
 """,
-    "q002_insert": """-- 食品と単位を参照して、数量不明を含む購入確認を保存する。
+    "q002_insert": """\
+-- 食品と単位を参照して、数量不明を含む購入確認を保存する。
 INSERT INTO recipeweave.user_shopping_check (
     id, user_id, key, signature, food_id, amount, unit_id, checked_at, archived
 )
 SELECT
-    %(row_id)s,
-    %(user_id)s,
-    %(key)s,
-    %(signature)s,
-    %(food_id)s,
-    %(amount)s,
-    u.id,
-    %(checked_at)s,
-    %(archived)s
+    %(row_id)s AS id,
+    %(user_id)s AS user_id,
+    %(key)s AS key,
+    %(signature)s AS signature,
+    %(food_id)s AS food_id,
+    %(amount)s AS amount,
+    u.id AS unit_id,
+    %(checked_at)s AS checked_at,
+    %(archived)s AS archived
 FROM recipeweave.unit AS u
 WHERE u.code = %(unit)s AND u.status = 'active' RETURNING id;
 """,
-    "q900_lock_revision": """-- 本人の集約版を排他ロックして並行操作の順序を確定する。
+    "q900_lock_revision": """\
+-- 本人の集約版を排他ロックして並行操作の順序を確定する。
 SELECT revision FROM recipeweave.workspace_revision
 WHERE user_id = %(user_id)s FOR UPDATE;
 """,
-    "q901_advance_revision": """-- 業務行の更新と同じトランザクションで版を一度だけ進める。
+    "q901_advance_revision": """\
+-- 業務行の更新と同じトランザクションで版を一度だけ進める。
 UPDATE recipeweave.workspace_revision SET revision = revision + 1
 WHERE user_id = %(user_id)s RETURNING revision;
 """,
-    "q902_append_audit": """-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
+    "q902_append_audit": """\
+-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
 INSERT INTO recipeweave.audit_event (
     id, actor_id, action, entity_type, entity_key_hash, reason, occurred_at
 )

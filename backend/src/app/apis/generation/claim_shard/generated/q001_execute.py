@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 待機または失効した範囲を排他取得し、新しいフェンスでリースを開始する。
+    "query": """\
+-- 待機または失効した範囲を排他取得し、新しいフェンスでリースを開始する。
 WITH selected AS (
     SELECT id FROM recipeweave.generation_shard
     WHERE

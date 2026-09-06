@@ -1,0 +1,189 @@
+{
+  "components": {
+    "schemas": {
+      "RecipeSearchDocumentRow": {
+        "additionalProperties": false,
+        "description": "公開検索用文書のDB応答。",
+        "properties": {
+          "created_at": {
+            "description": "作成日時",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "display_title": {
+            "description": "表示タイトル",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Display Title",
+            "type": "string"
+          },
+          "eligible": {
+            "description": "公開可能か",
+            "title": "Eligible",
+            "type": "boolean"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "facet_option_ids": {
+            "description": "料理・味等の検索軸",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 1024,
+            "title": "Facet Option Ids",
+            "type": "array"
+          },
+          "food_identity_ids": {
+            "description": "検索用食品ID集合",
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "maxItems": 1024,
+            "title": "Food Identity Ids",
+            "type": "array"
+          },
+          "id": {
+            "description": "不変ID",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "projected_at": {
+            "description": "更新時点",
+            "format": "date-time",
+            "title": "Projected At",
+            "type": "string"
+          },
+          "projection_version": {
+            "description": "検索文書の生成器版",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Projection Version",
+            "type": "string"
+          },
+          "published_version_id": {
+            "description": "検索対象の公開版",
+            "format": "uuid",
+            "title": "Published Version Id",
+            "type": "string"
+          },
+          "recipe_id": {
+            "description": "同一性単位で1件",
+            "format": "uuid",
+            "title": "Recipe Id",
+            "type": "string"
+          },
+          "search_text": {
+            "description": "検索用本文",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Search Text",
+            "type": "string"
+          },
+          "source_hash": {
+            "description": "正本一致確認",
+            "maxLength": 64,
+            "minLength": 64,
+            "title": "Source Hash",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "recipe_id",
+          "published_version_id",
+          "projection_version",
+          "display_title",
+          "food_identity_ids",
+          "facet_option_ids",
+          "search_text",
+          "eligible",
+          "source_hash",
+          "projected_at",
+          "etag"
+        ],
+        "title": "RecipeSearchDocumentRow",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/recipe_search_document/{row_id}": {
+      "get": {
+        "description": "公開検索用文書の取得。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_recipe_search_document_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeSearchDocumentRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "404": {
+            "description": "対象なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "公開検索用文書の取得",
+        "tags": [
+          "正規化データ: 公開検索用文書"
+        ]
+      }
+    }
+  }
+}

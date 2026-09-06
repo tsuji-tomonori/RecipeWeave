@@ -2,7 +2,7 @@
 
 import os
 from dataclasses import dataclass
-from typing import Annotated, Any, Literal, cast
+from typing import Annotated, Any, Literal
 from uuid import NAMESPACE_URL, UUID, uuid5
 
 import jwt
@@ -44,16 +44,13 @@ def verified_identity(token: str) -> Identity:
         if settings.auth_mode == "local":
             if not local_auth_enabled():
                 raise ServiceUnavailableError("開発用認証の設定が不正です")
-            payload = cast(
-                dict[str, Any],
-                jwt.decode(
-                    token,
-                    settings.local_auth_secret,
-                    algorithms=["HS256"],
-                    issuer="recipeweave-local",
-                    audience="recipeweave-api",
-                    options={"require": ["exp", "iat", "sub", "iss", "aud", "role"]},
-                ),
+            payload: dict[str, Any] = jwt.decode(
+                token,
+                settings.local_auth_secret,
+                algorithms=["HS256"],
+                issuer="recipeweave-local",
+                audience="recipeweave-api",
+                options={"require": ["exp", "iat", "sub", "iss", "aud", "role"]},
             )
             subject = str(payload["sub"])
             if subject not in {"local:alice", "local:bob", "local:admin"}:
@@ -83,7 +80,9 @@ def require_identity(
     identity = verified_identity(credentials.credentials)
     queries = OperationQueries(database, "auth/get_me")
     queries.run("q001_set_identity", user_id=str(identity.user_id), role=identity.role)
-    queries.run("q002_initialize_user", user_id=identity.user_id, subject=identity.subject)
+    created = queries.run(
+        "q002_initialize_user", user_id=identity.user_id, subject=identity.subject
+    )
     rows = queries.run("q003_select_user", user_id=identity.user_id, subject=identity.subject)
     if not rows or rows[0]["state"] != "active":
         raise AuthenticationError("この利用者は利用を終了しています")
@@ -92,6 +91,16 @@ def require_identity(
         row_id=uuid5(identity.user_id, "workspace"),
         user_id=identity.user_id,
     )
+    if created:
+        for resource_code in ("person", "burner", "bowl"):
+            inserted = queries.run(
+                "q005_initialize_internal_resource",
+                row_id=uuid5(identity.user_id, "kitchen:" + resource_code),
+                user_id=identity.user_id,
+                resource_code=resource_code,
+            )
+            if not inserted:
+                raise ServiceUnavailableError("初期の作業資源が登録されていません")
     return identity
 
 

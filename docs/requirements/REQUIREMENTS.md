@@ -2,7 +2,7 @@
 # RecipeWeave 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 7
+- カタログ版: 8
 - Product(JSON): <code>"RecipeWeave"</code>
 - 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -23,7 +23,7 @@
 | <code>"REQ-SVC-SELECT-001"</code> | 2 | 有効 | 機能 | 食材選択画面は、カード全体の押下による食材の選択状態を**選択する**（<code>"select"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-SEARCH-001"</code> | 2 | 有効 | 機能 | 料理検索は、選択した食材を用いる公開対象料理を**選択する**（<code>"select"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-DISCOVERY-001"</code> | 2 | 有効 | 機能 | ホームは、利用条件を満たすランダムな一品を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-SAMPLE-001"</code> | 2 | 有効 | 機能 | Dev公開版は、試用可能と明示した初期料理セットを**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-SAMPLE-001"</code> | 3 | 有効 | 機能 | Dev公開版は、試用可能と明示した初期料理セットを**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-SCALE-001"</code> | 2 | 有効 | 機能 | 料理詳細は、確定分量に対する人数比の材料量を**導出する**（<code>"derive"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-AMOUNT-001"</code> | 2 | 有効 | 機能 | 料理詳細は、利用者が個別調整した材料分量を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-LOCAL-001"</code> | 2 | 有効 | 機能 | Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内データを**維持する**（<code>"maintain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
@@ -48,15 +48,20 @@
 | <code>"REQ-SVC-PRIVACY-001"</code> | 2 | 有効 | データ | レシートデータ管理は、確認のため一時的に保持した画像とOCR全文の保存期間を**制約する**（<code>"constrain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-BOOKMARK-001"</code> | 2 | 有効 | 機能 | 保存機能は、料理IDに対するしおりを**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-GUIDE-001"</code> | 2 | 有効 | 機能 | 技法ガイドは、調理工程で参照した切り方を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-CAPABILITY-001"</code> | 2 | 有効 | 品質 | 提供状態表示は、実際に利用できる機能と未提供機能を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-CAPABILITY-001"</code> | 3 | 有効 | 品質 | 提供状態表示は、実際に利用できる機能と未提供機能を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-PAGES-001"</code> | 2 | 有効 | 運用 | 開発配布工程は、検査対象の変更版と対応したDevプレビューを**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-DEV-ARCH-001"</code> | 2 | 有効 | 制約 | RecipeWeaveの開発基盤は、ADR-0001で採用した構成に従う実装プロファイルを**提供する**（<code>"provide"</code>） | 構成コード・API契約の検査、認証と利用者分離の対象試験、実配備記録の照合 |
-| <code>"REQ-DEV-QUALITY-001"</code> | 3 | 有効 | 運用 | RecipeWeaveの開発工程は、採用した配備とデータ移行に対応する再現可能な検証証跡を**維持する**（<code>"maintain"</code>） | CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー |
+| <code>"REQ-DEV-ARCH-001"</code> | 3 | 有効 | 制約 | RecipeWeaveの開発基盤は、ADR-0002で採用した正規化DBと実APIの実装プロファイルを**提供する**（<code>"provide"</code>） | 構成コード・API契約の検査、認証と利用者分離の対象試験、実配備記録の照合 |
+| <code>"REQ-DEV-QUALITY-001"</code> | 4 | 有効 | 運用 | RecipeWeaveの開発工程は、採用した配備とデータ移行に対応する再現可能な検証証跡を**維持する**（<code>"maintain"</code>） | CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー |
 | <code>"REQ-DEV-DB-DESIGN-001"</code> | 2 | 有効 | 運用 | DB設計生成器は、現行DDLに対応するMarkdownのDB仕様を**生成する**（<code>"generate"</code>） | 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認 |
 | <code>"REQ-DEV-API-DESIGN-001"</code> | 2 | 有効 | 運用 | API設計生成器は、実装に対応するMarkdownのAPI仕様を**生成する**（<code>"generate"</code>） | 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認 |
 | <code>"REQ-DEV-DESIGN-VERIFY-001"</code> | 2 | 有効 | 運用 | 設計生成工程は、実装入力と生成Markdownの対応を**検証する**（<code>"verify"</code>） | 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認 |
 | <code>"REQ-DEV-SQL-001"</code> | 2 | 有効 | 運用 | APIのデータアクセス実装は、API操作ごとのSQL正本と生成呼出し契約を**維持する**（<code>"maintain"</code>） | 実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認 |
 | <code>"REQ-DEV-COMMENTS-001"</code> | 2 | 有効 | 運用 | RecipeWeaveの保守者は、コードコメントと生成される人向け説明を**維持する**（<code>"maintain"</code>） | 手書き説明と生成器の差分レビュー、生成説明と例外範囲の確認 |
+| <code>"REQ-DATA-COMPLETE-001"</code> | 1 | 有効 | 機能 | 保存層は、元正本の全テーブル・カラム・参照と必要な補完を**提供する**（<code>"provide"</code>） | 実装由来の自動検査と実行証跡の照合 |
+| <code>"REQ-API-COMPLETE-001"</code> | 1 | 有効 | 機能 | APIは、型・認可・状態遷移を持つ永続操作を**提供する**（<code>"provide"</code>） | 実装由来の自動検査と実行証跡の照合 |
+| <code>"REQ-DATA-VERSION-001"</code> | 1 | 有効 | 機能 | 献立は、選択した料理版と材料行単位の分量を**維持する**（<code>"preserve"</code>） | 実装由来の自動検査と実行証跡の照合 |
+| <code>"REQ-QA-REAL-EVIDENCE-001"</code> | 1 | 有効 | 品質 | 検証工程は、実行版に対応した単体・DB・PCモバイルE2E結果を**維持する**（<code>"preserve"</code>） | 実装由来の自動検査と実行証跡の照合 |
+| <code>"REQ-DOCS-SEARCH-001"</code> | 1 | 有効 | 品質 | 設計生成工程は、全表・全APIの設計と品質証跡を**提供する**（<code>"provide"</code>） | 実装由来の自動検査と実行証跡の照合 |
 
 ## REQ-DOMAIN-001: semantic food identity
 
@@ -494,8 +499,8 @@ Dev公開版は、試用可能と明示した初期料理セットを**提供す
 根拠: 将来の大量レシピ生成の完了を待たず、料理を探して作る操作を確認できるようにする。
 根拠(JSON): <code>"将来の大量レシピ生成の完了を待たず、料理を探して作る操作を確認できるようにする。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
+項目版: 3 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -510,7 +515,7 @@ Dev公開版は、試用可能と明示した初期料理セットを**提供す
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>["frontend/src/App.svelte","data/samples/recipes.json","data/samples/foods.json","backend/src/app/integrations/catalog/json_provider.py"]</code>
+- 実装: <code>["frontend/src/App.svelte","data/samples/recipes.json","data/samples/foods.json","backend/src/app/integrations/catalog/postgres_provider.py"]</code>
 - テスト: <code>["backend/tests/test_api.py"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
@@ -1348,13 +1353,13 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 仮想レビューや静的画像を実装成功と誤認せず、利用者が試せる範囲を判断できるようにする。
 根拠(JSON): <code>"仮想レビューや静的画像を実装成功と誤認せず、利用者が試せる範囲を判断できるようにする。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `quality`
-変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
+項目版: 3 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
 分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
-- <code>"AC-REQ-SVC-CAPABILITY-001-1"</code> 前提: 初期Devを公開する。条件: 画面とマニュアルの提供表を確認する。期待結果: 8品のサンプル、端末内OCR、同じブラウザの保存範囲、タイマー等の実確認した動作を記載し、AWSによる認証・同期は未提供と明示する。。
-  - criterion(JSON Object): <code>{"given":"初期Devを公開する","id":"AC-REQ-SVC-CAPABILITY-001-1","then":"8品のサンプル、端末内OCR、同じブラウザの保存範囲、タイマー等の実確認した動作を記載し、AWSによる認証・同期は未提供と明示する。","when":"画面とマニュアルの提供表を確認する"}</code>
+- <code>"AC-REQ-SVC-CAPABILITY-001-1"</code> 前提: 初期Devを公開する。条件: 画面とマニュアルの提供表を確認する。期待結果: 8品の未試作料理の利用条件、端末内OCR、本人のDB保存、タイマー等の実確認した動作を記載し、API配備・AWS実環境で未検証の項目を区別する。。
+  - criterion(JSON Object): <code>{"given":"初期Devを公開する","id":"AC-REQ-SVC-CAPABILITY-001-1","then":"8品の未試作料理の利用条件、端末内OCR、本人のDB保存、タイマー等の実確認した動作を記載し、API配備・AWS実環境で未検証の項目を区別する。","when":"画面とマニュアルの提供表を確認する"}</code>
 - <code>"AC-REQ-SVC-CAPABILITY-001-2"</code> 前提: 設計図やエージェントの机上レビューだけがある。条件: 提供済み表示または受入記録を更新する。期待結果: 実装や実利用者テストの成功証拠へ読み替えない。設計対象・実装済み・検証済みを区別し、未提供ボタンで偽の完了を示さない。。
   - criterion(JSON Object): <code>{"given":"設計図やエージェントの机上レビューだけがある","id":"AC-REQ-SVC-CAPABILITY-001-2","then":"実装や実利用者テストの成功証拠へ読み替えない。設計対象・実装済み・検証済みを区別し、未提供ボタンで偽の完了を示さない。","when":"提供済み表示または受入記録を更新する"}</code>
 
@@ -1409,33 +1414,33 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 要件ID(JSON): <code>"REQ-DEV-ARCH-001"</code>
 タイトル(JSON): <code>"採用ADRに従うWeb・API・AWS構成を提供する"</code>
 主体(JSON): <code>"RecipeWeaveの開発基盤"</code>
-対象(JSON): <code>"ADR-0001で採用した構成に従う実装プロファイル"</code>
-RecipeWeaveの開発基盤は、ADR-0001で採用した構成に従う実装プロファイルを**提供する**。
+対象(JSON): <code>"ADR-0002で採用した正規化DBと実APIの実装プロファイル"</code>
+RecipeWeaveの開発基盤は、ADR-0002で採用した正規化DBと実APIの実装プロファイルを**提供する**。
 行為enum: <code>"provide"</code>
 
 根拠: CornellNoteWebの既知の開発方針へおおむね合わせるという依頼を、採用済みADRの構成として検証可能に固定する。未確認の別会話全体への完全準拠は主張しない。
 根拠(JSON): <code>"CornellNoteWebの既知の開発方針へおおむね合わせるという依頼を、採用済みADRの構成として検証可能に固定する。未確認の別会話全体への完全準拠は主張しない。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
+項目版: 3 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
-- <code>"AC-REQ-DEV-ARCH-001-1"</code> 前提: 採用ADRに従うWebとAPIの実装がある。条件: ビルドと構成を確認する。期待結果: フロントエンドはSvelte・TypeScriptによる静的Web、APIはFastAPIを基盤とし、CloudFront/S3からAPI Gateway HTTP API・Lambdaを経由してAurora DSQLへ接続する構成をコードとして提供する。。
-  - criterion(JSON Object): <code>{"given":"採用ADRに従うWebとAPIの実装がある","id":"AC-REQ-DEV-ARCH-001-1","then":"フロントエンドはSvelte・TypeScriptによる静的Web、APIはFastAPIを基盤とし、CloudFront/S3からAPI Gateway HTTP API・Lambdaを経由してAurora DSQLへ接続する構成をコードとして提供する。","when":"ビルドと構成を確認する"}</code>
+- <code>"AC-REQ-DEV-ARCH-001-1"</code> 前提: 採用ADRに従うWebとAPIの実装がある。条件: ビルドと構成を確認する。期待結果: フロントエンドはSvelte・TypeScriptによる静的Web、APIはFastAPIを基盤とし、CloudFront/S3からAPI Gateway HTTP API・Lambdaを経由してAurora PostgreSQLへ接続する構成をコードとして提供する。。
+  - criterion(JSON Object): <code>{"given":"採用ADRに従うWebとAPIの実装がある","id":"AC-REQ-DEV-ARCH-001-1","then":"フロントエンドはSvelte・TypeScriptによる静的Web、APIはFastAPIを基盤とし、CloudFront/S3からAPI Gateway HTTP API・Lambdaを経由してAurora PostgreSQLへ接続する構成をコードとして提供する。","when":"ビルドと構成を確認する"}</code>
 - <code>"AC-REQ-DEV-ARCH-001-2"</code> 前提: AWS向けの利用者状態APIを構成する。条件: 認証設定と利用者を変えて状態の読書きを検証する。期待結果: Cognito access JWTで利用者を特定し、署名・issuer・期限・token_use・client_idを検証する。任意の利用者IDヘッダーを信用せず、別利用者の状態を取得更新できない。認証未設定時は状態APIを閉じ、版競合は無条件上書きしない。。
   - criterion(JSON Object): <code>{"given":"AWS向けの利用者状態APIを構成する","id":"AC-REQ-DEV-ARCH-001-2","then":"Cognito access JWTで利用者を特定し、署名・issuer・期限・token_use・client_idを検証する。任意の利用者IDヘッダーを信用せず、別利用者の状態を取得更新できない。認証未設定時は状態APIを閉じ、版競合は無条件上書きしない。","when":"認証設定と利用者を変えて状態の読書きを検証する"}</code>
-- <code>"AC-REQ-DEV-ARCH-001-3"</code> 前提: PagesのDev版とAWS向けコードが存在する。条件: 利用者への提供状態と配備状態を確認する。期待結果: Pagesはログイン不要・このブラウザの端末保存として提供する。AWS向けのコード・合成・検証の存在を実配備や同期提供の成功へ読み替えず、AWS未配備ならAWS実環境の受入は未完了と記録する。。
-  - criterion(JSON Object): <code>{"given":"PagesのDev版とAWS向けコードが存在する","id":"AC-REQ-DEV-ARCH-001-3","then":"Pagesはログイン不要・このブラウザの端末保存として提供する。AWS向けのコード・合成・検証の存在を実配備や同期提供の成功へ読み替えず、AWS未配備ならAWS実環境の受入は未完了と記録する。","when":"利用者への提供状態と配備状態を確認する"}</code>
+- <code>"AC-REQ-DEV-ARCH-001-3"</code> 前提: PagesのDev版とAWS向けコードが存在する。条件: 利用者への提供状態と配備状態を確認する。期待結果: PagesのWebは配備済みAPIへ接続し、本人のログインでDB保存を利用する。API未配備時は未接続を明示する。AWS向けのコード・合成・検証の存在を実配備や同期提供の成功へ読み替えず、AWS未配備ならAWS実環境の受入は未完了と記録する。。
+  - criterion(JSON Object): <code>{"given":"PagesのDev版とAWS向けコードが存在する","id":"AC-REQ-DEV-ARCH-001-3","then":"PagesのWebは配備済みAPIへ接続し、本人のログインでDB保存を利用する。API未配備時は未接続を明示する。AWS向けのコード・合成・検証の存在を実配備や同期提供の成功へ読み替えず、AWS未配備ならAWS実環境の受入は未完了と記録する。","when":"利用者への提供状態と配備状態を確認する"}</code>
 
-要求源(JSON List): <code>["user:2026-09-05:cornellnoteweb-architecture","docs/design/ADR-0001-service-dev.md","docs/service/overview.md"]</code>
+要求源(JSON List): <code>["user:2026-09-05:cornellnoteweb-architecture","docs/design/ADR-0002-relational-service.md","docs/service/overview.md"]</code>
 検証方法: 構成コード・API契約の検査、認証と利用者分離の対象試験、実配備記録の照合
-検証証跡: 採用済みADR-0001を要求源とする。構成の実装完成・対象試験・AWS実配備の受入証跡はこの要件追加時点では未登録。
-検証(JSON Object): <code>{"evidence":"採用済みADR-0001を要求源とする。構成の実装完成・対象試験・AWS実配備の受入証跡はこの要件追加時点では未登録。","method":"構成コード・API契約の検査、認証と利用者分離の対象試験、実配備記録の照合"}</code>
+検証証跡: 採用済みADR-0002を要求源とする。構成の実装完成・対象試験・AWS実配備の受入証跡はこの要件追加時点では未登録。
+検証(JSON Object): <code>{"evidence":"採用済みADR-0002を要求源とする。構成の実装完成・対象試験・AWS実配備の受入証跡はこの要件追加時点では未登録。","method":"構成コード・API契約の検査、認証と利用者分離の対象試験、実配備記録の照合"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/design/ADR-0001-service-dev.md","docs/service/overview.md"]</code>
-- 実装: <code>["frontend/package.json","frontend/src/App.svelte","backend/src/app/main.py","backend/src/app/core/dependencies.py","backend/src/app/integrations/auth/cognito_provider.py","backend/src/app/integrations/state/memory_provider.py","backend/src/app/integrations/state/dsql_provider.py","infra/lib/data-stack.ts","infra/lib/service-stack.ts"]</code>
-- テスト: <code>["backend/tests/test_api.py","backend/tests/test_auth.py","backend/tests/test_state.py","backend/tests/test_dsql.py","infra/test/core.test.ts","infra/test/stack.test.ts"]</code>
+- 設計: <code>["docs/design/ADR-0002-relational-service.md","docs/service/overview.md"]</code>
+- 実装: <code>["frontend/package.json","frontend/src/App.svelte","backend/src/app/main.py","backend/src/app/core/dependencies.py","backend/src/app/integrations/auth/cognito_provider.py","backend/src/app/core/workspace_service.py","backend/src/app/core/db.py","infra/lib/data-stack.ts","infra/lib/service-stack.ts"]</code>
+- テスト: <code>["backend/tests/test_api.py","backend/tests/test_auth.py","backend/tests/test_state.py","backend/tests/test_entity_api_db.py","infra/test/core.test.ts","infra/test/stack.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1452,28 +1457,28 @@ RecipeWeaveの開発工程は、採用した配備とデータ移行に対応す
 根拠: インフラやDB移行をコードと検査で扱い、実装と設計文書の乖離、およびローカル検査と実環境受入の混同を防ぐ。
 根拠(JSON): <code>"インフラやDB移行をコードと検査で扱い、実装と設計文書の乖離、およびローカル検査と実環境受入の混同を防ぐ。"</code>
 
-項目版: 3 / 状態: `active` / 種別: `operational`
-変更識別子: <code>"trace:2026-09-06:migration-boundary-tests"</code>
+項目版: 4 / 状態: `active` / 種別: `operational`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-REQ-DEV-QUALITY-001-1"</code> 前提: AWS構成を変更する。条件: CDK合成・配備パッケージ・権限を検査する。期待結果: CDKで構成を再現でき、必要な配布物を生成する。アプリ用とマイグレーション用のIAM/DB権限を分離し、用途に必要な権限に限定する。認証情報をコード・生成設計・ログへ埋め込まない。。
   - criterion(JSON Object): <code>{"given":"AWS構成を変更する","id":"AC-REQ-DEV-QUALITY-001-1","then":"CDKで構成を再現でき、必要な配布物を生成する。アプリ用とマイグレーション用のIAM/DB権限を分離し、用途に必要な権限に限定する。認証情報をコード・生成設計・ログへ埋め込まない。","when":"CDK合成・配備パッケージ・権限を検査する"}</code>
-- <code>"AC-REQ-DEV-QUALITY-001-2"</code> 前提: DSQLのスキーマまたは利用する索引を変更する。条件: 版管理したマイグレーションを実行・再実行する。期待結果: 適用済み状態を追跡し、DDLを一文ずつ別トランザクションで扱いDMLと混在させない。非同期の索引作成は完了を確認し、競合の再試行を有界にして同じ業務操作を二重適用しない。。
-  - criterion(JSON Object): <code>{"given":"DSQLのスキーマまたは利用する索引を変更する","id":"AC-REQ-DEV-QUALITY-001-2","then":"適用済み状態を追跡し、DDLを一文ずつ別トランザクションで扱いDMLと混在させない。非同期の索引作成は完了を確認し、競合の再試行を有界にして同じ業務操作を二重適用しない。","when":"版管理したマイグレーションを実行・再実行する"}</code>
+- <code>"AC-REQ-DEV-QUALITY-001-2"</code> 前提: PostgreSQLのスキーマまたは利用する索引を変更する。条件: 版管理したマイグレーションを実行・再実行する。期待結果: 適用済み移行のchecksumを保持し、PostgreSQLの版管理移行をトランザクションで適用する。失敗時のロールバック、再適用の冪等性、外部キー・行権限・遅延制約を実DBで検査する。。
+  - criterion(JSON Object): <code>{"given":"PostgreSQLのスキーマまたは利用する索引を変更する","id":"AC-REQ-DEV-QUALITY-001-2","then":"適用済み移行のchecksumを保持し、PostgreSQLの版管理移行をトランザクションで適用する。失敗時のロールバック、再適用の冪等性、外部キー・行権限・遅延制約を実DBで検査する。","when":"版管理したマイグレーションを実行・再実行する"}</code>
 - <code>"AC-REQ-DEV-QUALITY-001-3"</code> 前提: Web・API・DB・インフラの実装がある。条件: 設計文書の生成と差分検査を実行する。期待結果: 現存するコード・OpenAPI・SQL・CDK合成結果から現在状態の設計を決定的に生成し、同一入力の再生成で差分がなく、実装変更によるdriftを検出する。手編集の生成文書で差分を隠さない。。
   - criterion(JSON Object): <code>{"given":"Web・API・DB・インフラの実装がある","id":"AC-REQ-DEV-QUALITY-001-3","then":"現存するコード・OpenAPI・SQL・CDK合成結果から現在状態の設計を決定的に生成し、同一入力の再生成で差分がなく、実装変更によるdriftを検出する。手編集の生成文書で差分を隠さない。","when":"設計文書の生成と差分検査を実行する"}</code>
 - <code>"AC-REQ-DEV-QUALITY-001-4"</code> 前提: 型検査・ローカル試験・CDK合成・マイグレーション試験または配備を行う。条件: 受入記録を更新する。期待結果: 対象版、検査内容、結果、実行環境を対応させる。コード検査・ローカル代替・AWS実配備・実環境認証同期を区別し、未配備または未実施の実環境項目を合格にしない。。
   - criterion(JSON Object): <code>{"given":"型検査・ローカル試験・CDK合成・マイグレーション試験または配備を行う","id":"AC-REQ-DEV-QUALITY-001-4","then":"対象版、検査内容、結果、実行環境を対応させる。コード検査・ローカル代替・AWS実配備・実環境認証同期を区別し、未配備または未実施の実環境項目を合格にしない。","when":"受入記録を更新する"}</code>
 
-要求源(JSON List): <code>["user:2026-09-05:cornellnoteweb-development","docs/design/ADR-0001-service-dev.md","AGENTS.md"]</code>
+要求源(JSON List): <code>["user:2026-09-05:cornellnoteweb-development","docs/design/ADR-0002-relational-service.md","AGENTS.md"]</code>
 検証方法: CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー
-検証証跡: 採用済みADR-0001と既存AGENTSの三つの開発規約を要求源とする。実装・試験traceは実装完成後に存在と結果を確認して登録する。
-検証(JSON Object): <code>{"evidence":"採用済みADR-0001と既存AGENTSの三つの開発規約を要求源とする。実装・試験traceは実装完成後に存在と結果を確認して登録する。","method":"CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー"}</code>
+検証証跡: 採用済みADR-0002と既存AGENTSの三つの開発規約を要求源とする。実装・試験traceは実装完成後に存在と結果を確認して登録する。
+検証(JSON Object): <code>{"evidence":"採用済みADR-0002と既存AGENTSの三つの開発規約を要求源とする。実装・試験traceは実装完成後に存在と結果を確認して登録する。","method":"CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー"}</code>
 トレース(JSON List、順序保持):
-- 設計: <code>["docs/design/ADR-0001-service-dev.md"]</code>
-- 実装: <code>["infra/lib/data-stack.ts","infra/lib/service-stack.ts","infra/lib/github-deploy-stack.ts","backend/tools/package_lambda.py","database/migrate.py","database/migrations/manifest.manual.json","database/migrations/001_user_state.sql","backend/src/app/integrations/state/dsql_provider.py","backend/src/app/tools/generate.py","tools/generate_service_design.py","tools/check_generated_service.py",".github/workflows/dev.yml"]</code>
-- テスト: <code>["backend/tests/test_generation.py","backend/tests/test_dsql.py","backend/tests/test_migrations.py","infra/test/core.test.ts","infra/test/stack.test.ts"]</code>
+- 設計: <code>["docs/design/ADR-0002-relational-service.md"]</code>
+- 実装: <code>["infra/lib/data-stack.ts","infra/lib/service-stack.ts","infra/lib/github-deploy-stack.ts","backend/tools/package_lambda.py","database/migrate.py","database/migrations/manifest.manual.json","database/migrations/001_user_state.sql","backend/src/app/core/db.py","backend/src/app/tools/generate.py","tools/generate_service_design.py","tools/check_generated_service.py",".github/workflows/dev.yml"]</code>
+- テスト: <code>["backend/tests/test_generation.py","backend/tests/test_entity_api_db.py","backend/tests/test_migrations.py","infra/test/core.test.ts","infra/test/stack.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1616,7 +1621,7 @@ APIのデータアクセス実装は、API操作ごとのSQL正本と生成呼�
 検証(JSON Object): <code>{"evidence":"対象版ごとの実行結果を検証記録へ対応させる。未実行の試験を要件記述だけで合格にしない。","method":"実装からの設計再生成、対象の回帰試験、差分検査と実出力の確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>[".agents/skills/recipeweave-design-contract/references/service-design.md"]</code>
-- 実装: <code>["backend/src/app/tools/generate.py","backend/src/app/tools/sql_lint.py",".sqlfluff","backend/src/app/apis/state/get_state/sql/001_select_state.sql","backend/src/app/apis/state/put_state/sql/001_insert_state.sql","backend/src/app/apis/state/put_state/sql/002_update_state.sql"]</code>
+- 実装: <code>["backend/src/app/tools/generate.py","backend/src/app/tools/sql_lint.py",".sqlfluff","backend/src/app/apis/workspace/get_workspace/sql/q002_lots.sql","backend/src/app/apis/workspace/create_pantry_lot/sql/q002_insert_lot.sql","backend/src/app/apis/workspace/update_pantry_lot/sql/q002_update_lot.sql"]</code>
 - テスト: <code>["backend/tests/test_sql_lint.py","backend/tests/test_generation.py","tests/test_service_design.py"]</code>
 - 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
 廃止理由: <code>""</code>
@@ -1652,6 +1657,166 @@ RecipeWeaveの保守者は、コードコメントと生成される人向け説
 - 設計: <code>[".agents/skills/recipeweave-design-contract/references/service-design.md"]</code>
 - 実装: <code>["AGENTS.md",".agents/skills/recipeweave-design-contract/SKILL.md","tools/generate_service_design.py","backend/src/app/tools/generate.py"]</code>
 - テスト: <code>[]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DATA-COMPLETE-001: 元DB設計の全テーブルを永続化する
+
+要件ID(JSON): <code>"REQ-DATA-COMPLETE-001"</code>
+タイトル(JSON): <code>"元DB設計の全テーブルを永続化する"</code>
+主体(JSON): <code>"保存層"</code>
+対象(JSON): <code>"元正本の全テーブル・カラム・参照と必要な補完"</code>
+保存層は、元正本の全テーブル・カラム・参照と必要な補完を**提供する**。
+行為enum: <code>"provide"</code>
+
+根拠: 2表のJSON保存では料理・材料・工程を正しく検証できない。
+根拠(JSON): <code>"2表のJSON保存では料理・材料・工程を正しく検証できない。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
+分類: scope=<code>"product"</code> / category=<code>"functional"</code>
+
+受入条件:
+- <code>"AC-REQ-DATA-COMPLETE-001-1"</code> 前提: 正本と実装が存在する。条件: 実装と受入検査を実行する。期待結果: 正本の全表・列・外部キーが移行DDLへ対応し、実PostgreSQLへ適用できる。補完と元定義の変更を区別し、食品・料理・材料・工程をDB行から読む。。
+  - criterion(JSON Object): <code>{"given":"正本と実装が存在する","id":"AC-REQ-DATA-COMPLETE-001-1","then":"正本の全表・列・外部キーが移行DDLへ対応し、実PostgreSQLへ適用できる。補完と元定義の変更を区別し、食品・料理・材料・工程をDB行から読む。","when":"実装と受入検査を実行する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06:full-relational-service","docs/design/ADR-0002-relational-service.md"]</code>
+検証方法: 実装由来の自動検査と実行証跡の照合
+検証証跡: 対象commitのCI結果と品質サイト。未実施の配備を合格扱いしない。
+検証(JSON Object): <code>{"evidence":"対象commitのCI結果と品質サイト。未実施の配備を合格扱いしない。","method":"実装由来の自動検査と実行証跡の照合"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>["docs/design/ADR-0002-relational-service.md"]</code>
+- 実装: <code>["database/migrations/002_relational_schema.sql","database/migrations/003_service_operations.sql","database/seed.py"]</code>
+- テスト: <code>["tests/test_relational_schema.py","backend/tests/test_seed_catalog.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-API-COMPLETE-001: 各テーブルの意味に応じたAPIを提供する
+
+要件ID(JSON): <code>"REQ-API-COMPLETE-001"</code>
+タイトル(JSON): <code>"各テーブルの意味に応じたAPIを提供する"</code>
+主体(JSON): <code>"API"</code>
+対象(JSON): <code>"型・認可・状態遷移を持つ永続操作"</code>
+APIは、型・認可・状態遷移を持つ永続操作を**提供する**。
+行為enum: <code>"provide"</code>
+
+根拠: 一律の汎用CRUDで公開版や台帳を壊さず、実運用の変更を行う。
+根拠(JSON): <code>"一律の汎用CRUDで公開版や台帳を壊さず、実運用の変更を行う。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
+分類: scope=<code>"product"</code> / category=<code>"functional"</code>
+
+受入条件:
+- <code>"AC-REQ-API-COMPLETE-001-1"</code> 前提: 正本と実装が存在する。条件: 実装と受入検査を実行する。期待結果: 全業務表に適切な読書きAPIが存在し、必要な状態遷移を実行できる。追記専用・派生・公開版・生成リースの制約を保持し、本人と親参照の所有権、CAS、束縛SQLを検証する。。
+  - criterion(JSON Object): <code>{"given":"正本と実装が存在する","id":"AC-REQ-API-COMPLETE-001-1","then":"全業務表に適切な読書きAPIが存在し、必要な状態遷移を実行できる。追記専用・派生・公開版・生成リースの制約を保持し、本人と親参照の所有権、CAS、束縛SQLを検証する。","when":"実装と受入検査を実行する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06:full-relational-service","docs/design/ADR-0002-relational-service.md"]</code>
+検証方法: 実装由来の自動検査と実行証跡の照合
+検証証跡: 対象commitのCI結果と品質サイト。未実施の配備を合格扱いしない。
+検証(JSON Object): <code>{"evidence":"対象commitのCI結果と品質サイト。未実施の配備を合格扱いしない。","method":"実装由来の自動検査と実行証跡の照合"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>["docs/design/ADR-0002-relational-service.md"]</code>
+- 実装: <code>["tools/generate_entity_apis.py","backend/src/app/core/entity_service.py","backend/src/app/core/workspace_service.py"]</code>
+- テスト: <code>["backend/tests/test_entity_api_db.py","backend/tests/test_entity_api.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DATA-VERSION-001: 献立の料理版と材料行を保持する
+
+要件ID(JSON): <code>"REQ-DATA-VERSION-001"</code>
+タイトル(JSON): <code>"献立の料理版と材料行を保持する"</code>
+主体(JSON): <code>"献立"</code>
+対象(JSON): <code>"選択した料理版と材料行単位の分量"</code>
+献立は、選択した料理版と材料行単位の分量を**維持する**。
+行為enum: <code>"preserve"</code>
+
+根拠: 最新版の変更や同じ食品の複数用途で過去の調理内容を変えない。
+根拠(JSON): <code>"最新版の変更や同じ食品の複数用途で過去の調理内容を変えない。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
+分類: scope=<code>"product"</code> / category=<code>"functional"</code>
+
+受入条件:
+- <code>"AC-REQ-DATA-VERSION-001-1"</code> 前提: 正本と実装が存在する。条件: 実装と受入検査を実行する。期待結果: 献立と調理は料理版IDを固定し、分量は材料行IDをキーとして保存する。同じ食品を複数材料行に使える。履歴の閲覧で非公開の他人のデータを取得できない。。
+  - criterion(JSON Object): <code>{"given":"正本と実装が存在する","id":"AC-REQ-DATA-VERSION-001-1","then":"献立と調理は料理版IDを固定し、分量は材料行IDをキーとして保存する。同じ食品を複数材料行に使える。履歴の閲覧で非公開の他人のデータを取得できない。","when":"実装と受入検査を実行する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06:full-relational-service","docs/design/ADR-0002-relational-service.md"]</code>
+検証方法: 実装由来の自動検査と実行証跡の照合
+検証証跡: 対象commitのCI結果と品質サイト。未実施の配備を合格扱いしない。
+検証(JSON Object): <code>{"evidence":"対象commitのCI結果と品質サイト。未実施の配備を合格扱いしない。","method":"実装由来の自動検査と実行証跡の照合"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>["docs/design/ADR-0002-relational-service.md"]</code>
+- 実装: <code>["backend/src/app/core/workspace_service.py","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["backend/tests/test_catalog_database.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-QA-REAL-EVIDENCE-001: 実DBと画面操作の証跡を保存する
+
+要件ID(JSON): <code>"REQ-QA-REAL-EVIDENCE-001"</code>
+タイトル(JSON): <code>"実DBと画面操作の証跡を保存する"</code>
+主体(JSON): <code>"検証工程"</code>
+対象(JSON): <code>"実行版に対応した単体・DB・PCモバイルE2E結果"</code>
+検証工程は、実行版に対応した単体・DB・PCモバイルE2E結果を**維持する**。
+行為enum: <code>"preserve"</code>
+
+根拠: モックと机上レビューを本番相当の実動作検証へ読み替えない。
+根拠(JSON): <code>"モックと机上レビューを本番相当の実動作検証へ読み替えない。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-REQ-QA-REAL-EVIDENCE-001-1"</code> 前提: 正本と実装が存在する。条件: 実装と受入検査を実行する。期待結果: 非管理者PostgreSQLで制約・所有権・競合・再送を検証し、CIでDBテストのskipを成功としない。PCとモバイルのE2Eで日本語Given/When/Thenごとの実画像と検査結果を保存する。。
+  - criterion(JSON Object): <code>{"given":"正本と実装が存在する","id":"AC-REQ-QA-REAL-EVIDENCE-001-1","then":"非管理者PostgreSQLで制約・所有権・競合・再送を検証し、CIでDBテストのskipを成功としない。PCとモバイルのE2Eで日本語Given/When/Thenごとの実画像と検査結果を保存する。","when":"実装と受入検査を実行する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06:full-relational-service","docs/design/ADR-0002-relational-service.md"]</code>
+検証方法: 実装由来の自動検査と実行証跡の照合
+検証証跡: 対象commitのCI結果と品質サイト。未実施の配備を合格扱いしない。
+検証(JSON Object): <code>{"evidence":"対象commitのCI結果と品質サイト。未実施の配備を合格扱いしない。","method":"実装由来の自動検査と実行証跡の照合"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>["docs/design/ADR-0002-relational-service.md"]</code>
+- 実装: <code>["tools/report.py","tools/require_executed_tests.py","frontend/playwright.config.ts"]</code>
+- テスト: <code>["tests/test_quality_reports.py","tests/test_relational_schema.py"]</code>
+- 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
+廃止理由: <code>""</code>
+後継要件: <code>""</code>
+
+## REQ-DOCS-SEARCH-001: 実装由来設計を検索可能なサイトへ公開する
+
+要件ID(JSON): <code>"REQ-DOCS-SEARCH-001"</code>
+タイトル(JSON): <code>"実装由来設計を検索可能なサイトへ公開する"</code>
+主体(JSON): <code>"設計生成工程"</code>
+対象(JSON): <code>"全表・全APIの設計と品質証跡"</code>
+設計生成工程は、全表・全APIの設計と品質証跡を**提供する**。
+行為enum: <code>"provide"</code>
+
+根拠: 数だけを揃えた一覧でなく、保守に使える具体的な仕様と実行証拠を提供する。
+根拠(JSON): <code>"数だけを揃えた一覧でなく、保守に使える具体的な仕様と実行証拠を提供する。"</code>
+
+項目版: 1 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
+分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
+
+受入条件:
+- <code>"AC-REQ-DOCS-SEARCH-001-1"</code> 前提: 正本と実装が存在する。条件: 実装と受入検査を実行する。期待結果: DDL・OpenAPI・操作SQLから表一覧、各表仕様、ER、CRUD、APIインターフェース、処理、ログ、シーケンス、試験対応を自動生成する。日本語の設計ページを検索でき、品質結果と実画像へ移動できる。。
+  - criterion(JSON Object): <code>{"given":"正本と実装が存在する","id":"AC-REQ-DOCS-SEARCH-001-1","then":"DDL・OpenAPI・操作SQLから表一覧、各表仕様、ER、CRUD、APIインターフェース、処理、ログ、シーケンス、試験対応を自動生成する。日本語の設計ページを検索でき、品質結果と実画像へ移動できる。","when":"実装と受入検査を実行する"}</code>
+
+要求源(JSON List): <code>["user:2026-09-06:full-relational-service","docs/design/ADR-0002-relational-service.md"]</code>
+検証方法: 実装由来の自動検査と実行証跡の照合
+検証証跡: 対象commitのCI結果と品質サイト。未実施の配備を合格扱いしない。
+検証(JSON Object): <code>{"evidence":"対象commitのCI結果と品質サイト。未実施の配備を合格扱いしない。","method":"実装由来の自動検査と実行証跡の照合"}</code>
+トレース(JSON List、順序保持):
+- 設計: <code>["docs/design/ADR-0002-relational-service.md"]</code>
+- 実装: <code>["tools/generate_service_design.py","tools/docs_site.py","tools/report.py"]</code>
+- テスト: <code>["tests/test_service_design.py","tests/test_quality_reports.py"]</code>
 - 参照資料: <code>["DEVSTD-AS-BUILT"]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>

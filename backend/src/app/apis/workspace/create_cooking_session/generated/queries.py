@@ -1,12 +1,13 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 3ecb1969c901585a496defe5b67f67c70e03237431f650171a68f77015341b91
+# SQLのSHA256: 900572c5e9925f075a3b86946e6002ab07f78388c8e7327615334fdee1723ac7
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "q001_current": """-- 本人の進行中セッションを確認する。
+    "q001_current": """\
+-- 本人の進行中セッションを確認する。
 SELECT
     s.id,
     s.menu_id,
@@ -21,7 +22,8 @@ WHERE
     AND s.status IN ('planned', 'cooking', 'paused')
 ORDER BY s.created_at DESC;
 """,
-    "q010_recipe": """-- 公開済み料理、または明示したローカル試用で利用できる料理版を選ぶ。
+    "q010_recipe": """\
+-- 公開済み料理、または明示したローカル試用で利用できる料理版を選ぶ。
 SELECT
     rv.id,
     rv.base_servings
@@ -31,18 +33,21 @@ INNER JOIN
     ON rv.recipe_id = r.id
 WHERE
     r.id = %(recipe_id)s
+    AND (%(requested_version_id)s::UUID IS NULL OR rv.id = %(requested_version_id)s)
     AND (
         (rv.status = 'published' AND rv.validation = 'passed' AND r.status = 'published')
-        OR (%(preview)s AND rv.status = 'draft')
+        OR (%(preview)s AND rv.status = 'draft' AND r.status = 'draft')
     )
 ORDER BY rv.version DESC
 LIMIT 1;
 """,
-    "q011_ingredients": """-- 指定料理の材料ID・単位・基準量を照合する。
+    "q011_ingredients": """\
+-- 指定料理の材料ID・単位・基準量を照合する。
 SELECT
     ri.id,
     fm.food_id,
-    ri.amount, ri.optional,
+    ri.amount,
+    ri.optional,
     ri.unit_id,
     ri.form_id,
     u.code AS unit
@@ -52,11 +57,13 @@ INNER JOIN recipeweave.unit AS u ON ri.unit_id = u.id
 WHERE ri.recipe_version_id = %(version_id)s
 ORDER BY ri.line_no;
 """,
-    "q012_menu": """-- 現在の献立を初回だけ作成し、所有者を固定する。
+    "q012_menu": """\
+-- 現在の献立を初回だけ作成し、所有者を固定する。
 INSERT INTO recipeweave.menu (id, user_id, name, servings, revision)
 VALUES (%(menu_id)s, %(user_id)s, %(name)s, 2, 1) ON CONFLICT (id) DO NOTHING;
 """,
-    "q013_insert_item": """-- 検証した料理版と人数を献立へ登録する。
+    "q013_insert_item": """\
+-- 検証した料理版と人数を献立へ登録する。
 INSERT INTO recipeweave.menu_item (
     id, menu_id, recipe_version_id, servings, role_option_id, position
 )
@@ -69,17 +76,20 @@ VALUES (
 )
 RETURNING id;
 """,
-    "q014_override": """-- 利用者が確認した確定分量だけを元の材料行へ結び付ける。
+    "q014_override": """\
+-- 利用者が確認した確定分量だけを元の材料行へ結び付ける。
 INSERT INTO recipeweave.menu_ingredient_override (
     id, menu_item_id, ingredient_line_id, selected, amount, form_id, product_version_id
 )
 VALUES (%(row_id)s, %(item_id)s, %(ingredient_id)s, %(selected)s, %(amount)s, NULL, NULL);
 """,
-    "q015_advance_menu": """-- 調理計画が参照する献立版を更新する。
+    "q015_advance_menu": """\
+-- 調理計画が参照する献立版を更新する。
 UPDATE recipeweave.menu SET revision = revision + 1
 WHERE id = %(menu_id)s AND user_id = %(user_id)s RETURNING revision;
 """,
-    "q020_steps": """-- 料理版の工程と加熱時間の換算規則を読む。
+    "q020_steps": """\
+-- 料理版の工程と加熱時間の換算規則を読む。
 SELECT
     mi.id AS item_id,
     mi.position,
@@ -101,7 +111,8 @@ INNER JOIN recipeweave.scaling_rule AS sc ON st.scaling_rule_id = sc.id
 WHERE mi.menu_id = %(menu_id)s
 ORDER BY mi.position, st.step_no;
 """,
-    "q021_dependencies": """-- 同一料理版の材料・品質・安全上の先行条件を読む。
+    "q021_dependencies": """\
+-- 同一料理版の材料・品質・安全上の先行条件を読む。
 SELECT
     mi.id AS item_id,
     d.before_step_id,
@@ -115,12 +126,14 @@ INNER JOIN recipeweave.step_dependency AS d ON st.id = d.after_step_id
 WHERE mi.menu_id = %(menu_id)s
 ORDER BY mi.position, d.id;
 """,
-    "q022_requirements": """-- 工程が占有する器具数と最小容量を読む。
+    "q022_requirements": """\
+-- 工程が占有する器具数と最小容量を読む。
 SELECT
     sr.step_id,
     sr.resource_type_id,
     sr.quantity,
     sr.capacity_min,
+    sr.exclusive,
     rt.name,
     rt.code
 FROM recipeweave.step_resource AS sr
@@ -133,7 +146,8 @@ WHERE
     )
 ORDER BY sr.step_id, rt.code;
 """,
-    "q023_resources": """-- 本人が登録した実際の設備数と容量を読む。
+    "q023_resources": """\
+-- 本人が登録した実際の設備数と容量を読む。
 SELECT
     k.id,
     k.resource_type_id,
@@ -146,7 +160,8 @@ INNER JOIN recipeweave.resource_type AS rt ON k.resource_type_id = rt.id
 WHERE k.user_id = %(user_id)s AND k.active
 ORDER BY rt.code, k.id;
 """,
-    "q024_ingredients": """-- 分量を食品名でなく形態・単位・商品版ごとに合計する。
+    "q024_ingredients": """\
+-- 分量を食品名でなく形態・単位・商品版ごとに合計する。
 SELECT
     ri.id AS ingredient_id,
     ri.form_id,
@@ -168,7 +183,8 @@ WHERE
     AND (NOT ri.optional OR ov.selected)
 ORDER BY mi.position, ri.line_no;
 """,
-    "q025_session": """-- 正規化した入力行の識別子・固定量だけを版付き入力契約へ保存する。
+    "q025_session": """\
+-- 正規化した入力行の識別子・固定量だけを版付き入力契約へ保存する。
 INSERT INTO recipeweave.cooking_session
 (id, menu_id, menu_revision, status, target_at, planner_version, input_snapshot, input_hash)
 VALUES (
@@ -182,22 +198,26 @@ VALUES (
     %(hash)s
 );
 """,
-    "q026_task": """-- 計画済み工程を独立したタスク行へ保存する。
+    "q026_task": """\
+-- 計画済み工程を独立したタスク行へ保存する。
 INSERT INTO recipeweave.session_task
 (id, session_id, menu_item_id, step_id, batch_no, planned_start_s, planned_end_s, status)
 VALUES (%(row_id)s, %(session_id)s, %(item_id)s, %(step_id)s, 1, %(start)s, %(end)s, 'pending');
 """,
-    "q027_dependency": """-- 工程の先行条件を具体的なタスク間に移す。
+    "q027_dependency": """\
+-- 工程の先行条件を具体的なタスク間に移す。
 INSERT INTO recipeweave.task_dependency (
     id, before_task_id, after_task_id, min_lag_s, max_lag_s, reason
 )
 VALUES (%(row_id)s, %(before_id)s, %(after_id)s, %(min_lag)s, %(max_lag)s, %(reason)s);
 """,
-    "q028_reservation": """-- 本人の設備を必要な時間と数だけ予約する。
+    "q028_reservation": """\
+-- 本人の設備を必要な時間と数だけ予約する。
 INSERT INTO recipeweave.resource_reservation (id, task_id, resource_id, start_s, end_s, quantity)
 VALUES (%(row_id)s, %(task_id)s, %(resource_id)s, %(start)s, %(end)s, %(quantity)s);
 """,
-    "q029_total": """-- 同じ商品・形態・単位の確定需要を一つに合計する。
+    "q029_total": """\
+-- 同じ商品・形態・単位の確定需要を一つに合計する。
 INSERT INTO recipeweave.ingredient_total
 (
     id,
@@ -220,19 +240,23 @@ VALUES (
     'decimal-v1'
 );
 """,
-    "q030_menu_revision": """-- 計画が参照する専用献立の確定版を読む。
+    "q030_menu_revision": """\
+-- 計画が参照する専用献立の確定版を読む。
 SELECT revision FROM recipeweave.menu
 WHERE id = %(menu_id)s AND user_id = %(user_id)s;
 """,
-    "q900_lock_revision": """-- 本人の集約版を排他ロックして並行操作の順序を確定する。
+    "q900_lock_revision": """\
+-- 本人の集約版を排他ロックして並行操作の順序を確定する。
 SELECT revision FROM recipeweave.workspace_revision
 WHERE user_id = %(user_id)s FOR UPDATE;
 """,
-    "q901_advance_revision": """-- 業務行の更新と同じトランザクションで版を一度だけ進める。
+    "q901_advance_revision": """\
+-- 業務行の更新と同じトランザクションで版を一度だけ進める。
 UPDATE recipeweave.workspace_revision SET revision = revision + 1
 WHERE user_id = %(user_id)s RETURNING revision;
 """,
-    "q902_append_audit": """-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
+    "q902_append_audit": """\
+-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
 INSERT INTO recipeweave.audit_event (
     id, actor_id, action, entity_type, entity_key_hash, reason, occurred_at
 )
@@ -244,7 +268,7 @@ VALUES (
 }
 PARAMETERS: dict[str, tuple[str, ...]] = {
     "q001_current": ("user_id",),
-    "q010_recipe": ("preview", "recipe_id"),
+    "q010_recipe": ("preview", "recipe_id", "requested_version_id"),
     "q011_ingredients": ("version_id",),
     "q012_menu": ("menu_id", "name", "user_id"),
     "q013_insert_item": ("menu_id", "row_id", "servings", "version_id"),

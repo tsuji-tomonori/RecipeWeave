@@ -1,0 +1,141 @@
+{
+  "components": {
+    "schemas": {
+      "ProductAllergenRow": {
+        "additionalProperties": false,
+        "description": "商品表示アレルゲンのDB応答。",
+        "properties": {
+          "allergen_id": {
+            "description": "物質",
+            "format": "uuid",
+            "title": "Allergen Id",
+            "type": "string"
+          },
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "presence": {
+            "description": "表示状態",
+            "enum": [
+              "contains",
+              "may_contain",
+              "absent_verified",
+              "unknown"
+            ],
+            "title": "Presence",
+            "type": "string"
+          },
+          "product_version_id": {
+            "description": "商品仕様版",
+            "format": "uuid",
+            "title": "Product Version Id",
+            "type": "string"
+          },
+          "source_id": {
+            "description": "ラベル等",
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "product_version_id",
+          "allergen_id",
+          "presence",
+          "source_id",
+          "etag"
+        ],
+        "title": "ProductAllergenRow",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/product_allergen/{row_id}": {
+      "get": {
+        "description": "商品表示アレルゲンの取得。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_product_allergen_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductAllergenRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "404": {
+            "description": "対象なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "商品表示アレルゲンの取得",
+        "tags": [
+          "正規化データ: 商品表示アレルゲン"
+        ]
+      }
+    }
+  }
+}

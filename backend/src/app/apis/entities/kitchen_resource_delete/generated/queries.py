@@ -27,6 +27,7 @@ RETURNING
     t.name,
     t.capacity,
     t.quantity,
+    t.active,
     t.xmin::TEXT AS etag;
 """
 

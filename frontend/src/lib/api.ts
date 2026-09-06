@@ -1,5 +1,7 @@
 import type {
   AppState,
+  MealItem,
+  PlannedStep,
   Food,
   Recipe,
   SearchFilters,
@@ -64,6 +66,11 @@ export async function request<T>(
       "サーバーに接続できません。通信状態を確認して、再読み込みしてください。入力中の内容は保持しています。",
     );
   }
+  if (getToken() !== token)
+    throw new ApiError(
+      409,
+      "ログイン状態が変わったため、前の要求の結果は表示しません。",
+    );
   if (!response.ok) {
     if (response.status === 401) {
       clearToken();
@@ -156,22 +163,39 @@ export async function randomRecipe(
   cacheRecipes([recipe]);
   return recipe;
 }
-export async function loadRecipe(id: string): Promise<Recipe> {
+export async function loadRecipe(
+  id: string,
+  versionId?: string,
+): Promise<Recipe> {
+  const params = new URLSearchParams();
+  if (localMode && getToken()) params.set("preview", "true");
+  if (versionId) params.set("versionId", versionId);
   const recipe = await request<Recipe>(
-    `/api/recipes/${encodeURIComponent(id)}${localMode && getToken() ? "?preview=true" : ""}`,
+    `/api/recipes/${encodeURIComponent(id)}?${params}`,
   );
-  cacheRecipes([recipe]);
+  cacheRecipes([recipe], !versionId);
   return recipe;
 }
-/** 献立等が参照する料理を先に読んでから、画面用の集約を検証する。 */
+/** 献立・調理履歴は保存時の料理版で読み、現在版の分量や工程と混同しない。 */
 async function hydrateWorkspace(snapshot: AppState): Promise<AppState> {
-  const recipeIds = new Set([
-    ...snapshot.meal.map((item) => item.recipeId),
-    ...snapshot.saved,
-    ...Object.keys(snapshot.drafts),
-    ...(snapshot.cooking?.mealSnapshot.map((item) => item.recipeId) ?? []),
-  ]);
-  await Promise.all([...recipeIds].map(loadRecipe));
+  const references = [
+    ...snapshot.meal,
+    ...Object.values(snapshot.drafts),
+    ...(snapshot.cooking?.mealSnapshot ?? []),
+  ];
+  const keys = new Map(
+    references.map((item) => [
+      `${item.recipeId}:${item.recipeVersionId ?? ""}`,
+      item,
+    ]),
+  );
+  for (const recipeId of snapshot.saved)
+    keys.set(recipeId, { recipeId, servings: 1, amounts: {}, adjusted: false });
+  await Promise.all(
+    [...keys.values()].map((item) =>
+      loadRecipe(item.recipeId, item.recipeVersionId),
+    ),
+  );
   return validateAppState(snapshot);
 }
 export async function loadState(): Promise<AppState> {
@@ -297,6 +321,12 @@ export async function completeCooking(
         session: {
           ...current.cooking,
           status: "completed",
+          completedStepIds: [
+            ...new Set([
+              ...current.cooking.completedStepIds,
+              current.cooking.plan[current.cooking.index].key,
+            ]),
+          ],
           consumptionResults: consumption.map((item) => ({
             ...item,
             applied: false,
@@ -323,7 +353,13 @@ export async function commitReceipt(
     body: JSON.stringify({
       ...input,
       // OCRの元の行や除外行はサーバーへ送らず、確認済みの食品と数量だけを渡す。
-      candidates: input.candidates.filter((candidate) => candidate.selected).map((candidate) => ({ ...candidate, rawText: "", reason: "利用者確認済み" })),
+      candidates: input.candidates
+        .filter((candidate) => candidate.selected)
+        .map((candidate) => ({
+          ...candidate,
+          rawText: "",
+          reason: "利用者確認済み",
+        })),
       customFoods,
       expectedVersion: current.version,
     }),
@@ -333,4 +369,14 @@ export async function commitReceipt(
     search: current.search,
     drafts: current.drafts,
   };
+}
+
+/** 調理開始と同じ規則で、書き込みを行わず段取りだけを確認する。 */
+export async function previewCookingPlan(
+  items: MealItem[],
+): Promise<{ plan: PlannedStep[] }> {
+  return request("/api/cooking-plan", {
+    method: "POST",
+    body: JSON.stringify({ items }),
+  });
 }

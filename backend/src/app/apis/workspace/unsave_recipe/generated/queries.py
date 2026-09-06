@@ -1,37 +1,42 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 8610d491f4154ced24978f40c9e462fd05a2d532e9667e02ed405d292a36d1ca
+# SQLのSHA256: 622d9b2db5b711467280ed8c04ab7c83baf219273a7f24b12fecee391fe70765
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "q001_recipe": """-- 公開条件を満たす料理版を保存対象として確認する。
+    "q001_recipe": """\
+-- 公開条件を満たす料理版を保存対象として確認する。
 SELECT rv.id
 FROM recipeweave.recipe_version AS rv
 INNER JOIN recipeweave.recipe AS r ON rv.recipe_id = r.id
 WHERE
     r.id = %(recipe_id)s AND (
         (rv.status = 'published' AND r.status = 'published' AND rv.validation = 'passed')
-        OR (%(preview)s AND rv.status = 'draft')
+        OR (%(preview)s AND rv.status = 'draft' AND r.status = 'draft')
     )
 ORDER BY rv.version DESC LIMIT 1;
 """,
-    "q002_event": """-- 保存・解除は本人の追記イベントとして残す。
+    "q002_event": """\
+-- 保存・解除は本人の追記イベントとして残す。
 INSERT INTO recipeweave.user_recipe_event (
     id, user_id, recipe_version_id, kind, occurred_at, request_key
 )
 VALUES (%(row_id)s, %(user_id)s, %(version_id)s, 'disliked', CLOCK_TIMESTAMP(), %(request_key)s);
 """,
-    "q900_lock_revision": """-- 本人の集約版を排他ロックして並行操作の順序を確定する。
+    "q900_lock_revision": """\
+-- 本人の集約版を排他ロックして並行操作の順序を確定する。
 SELECT revision FROM recipeweave.workspace_revision
 WHERE user_id = %(user_id)s FOR UPDATE;
 """,
-    "q901_advance_revision": """-- 業務行の更新と同じトランザクションで版を一度だけ進める。
+    "q901_advance_revision": """\
+-- 業務行の更新と同じトランザクションで版を一度だけ進める。
 UPDATE recipeweave.workspace_revision SET revision = revision + 1
 WHERE user_id = %(user_id)s RETURNING revision;
 """,
-    "q902_append_audit": """-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
+    "q902_append_audit": """\
+-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
 INSERT INTO recipeweave.audit_event (
     id, actor_id, action, entity_type, entity_key_hash, reason, occurred_at
 )

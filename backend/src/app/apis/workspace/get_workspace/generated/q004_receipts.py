@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 画像本文を保存せず、重複検知と取消しに必要な履歴だけを読む。
+    "query": """\
+-- 画像本文を保存せず、重複検知と取消しに必要な履歴だけを読む。
 SELECT
     r.id,
     r.file_sha256,

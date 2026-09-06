@@ -11,10 +11,18 @@ export default defineConfig({
     baseURL: `${(process.env.QUALITY_BASE_URL || "http://127.0.0.1:4174").replace(/\/$/, "")}/`,
     locale: "ja-JP",
     screenshot: "only-on-failure",
-    ...(process.env.PW_CHROMIUM ? { launchOptions: { executablePath: process.env.PW_CHROMIUM } } : {}),
+    ...(process.env.PW_CHROMIUM
+      ? { launchOptions: { executablePath: process.env.PW_CHROMIUM } }
+      : {}),
   },
   projects: [
-    { name: "quality-desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 1000 } } },
+    {
+      name: "quality-desktop",
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1440, height: 1000 },
+      },
+    },
     { name: "quality-mobile", use: { ...devices["Pixel 7"] } },
   ],
 });

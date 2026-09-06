@@ -53,11 +53,11 @@ def database_client(
     get_settings.cache_clear()
 
 
-def preview_headers() -> dict[str, str]:
+def preview_headers(subject: str = "local:alice") -> dict[str, str]:
     now = int(time.time())
     token = jwt.encode(
         {
-            "sub": "local:alice",
+            "sub": subject,
             "iss": "recipeweave-local",
             "aud": "recipeweave-api",
             "role": "user",
@@ -193,3 +193,64 @@ def test_invalid_search_inputs_are_rejected(database_client: HttpTestClient) -> 
     for params in cases:
         assert database_client.get("/api/recipes", params=params).status_code == 422
     assert database_client.get("/api/recipes/not-a-uuid").status_code == 422
+
+
+def test_owned_history_pins_exact_version_and_isolates_withdrawn_content(
+    database_client: HttpTestClient,
+    catalog_database: psycopg.Connection[dict[str, Any]],
+) -> None:
+    """取下げ前の所有履歴だけが同じ版を復元でき、他人・匿名へ漏れない。"""
+    from database.seed import user_id
+
+    recipe_id = stable_id("recipe", "tomato-egg")
+    original_version = stable_id("recipe_version", "tomato-egg/1")
+    next_version = uuid4()
+    catalog_database.execute(
+        """INSERT INTO recipeweave.user_recipe_event
+        (id, user_id, recipe_version_id, kind, occurred_at, request_key)
+        VALUES (%s, %s, %s, 'liked', CURRENT_TIMESTAMP, %s)""",
+        (uuid4(), user_id("local:alice"), original_version, str(uuid4())),
+    )
+    catalog_database.execute(
+        """INSERT INTO recipeweave.recipe_version
+        (id, recipe_id, version, release_id, base_servings, output_amount,
+         output_unit_id, status, validation, content_hash, description)
+        SELECT %s, recipe_id, 2, release_id, base_servings, output_amount,
+            output_unit_id, 'draft', 'needs_review', content_hash, '別の版の説明'
+        FROM recipeweave.recipe_version WHERE id = %s""",
+        (next_version, original_version),
+    )
+    catalog_database.execute(
+        "UPDATE recipeweave.recipe SET status = 'withdrawn', withdrawal_reason = %s WHERE id = %s",
+        ("作り方を再確認しているため", recipe_id),
+    )
+    catalog_database.execute(
+        "UPDATE recipeweave.recipe_version SET status = 'withdrawn' WHERE id = %s",
+        (original_version,),
+    )
+    path = "/api/recipes/" + recipe_id
+    query: dict[str, str | list[str]] = {"versionId": original_version}
+    owner = database_client.get(path, params=query, headers=preview_headers())
+    assert owner.status_code == 200
+    assert owner.json()["versionId"] == original_version
+    assert owner.json()["publicationStatus"] == "withdrawn"
+    assert owner.json()["withdrawalReason"] == "作り方を再確認しているため"
+    assert len(owner.json()["ingredients"]) == 4
+    assert owner.json()["description"] != "別の版の説明"
+    assert database_client.get(path, params=query).status_code == 404
+    assert (
+        database_client.get(path, params=query, headers=preview_headers("local:bob")).status_code
+        == 404
+    )
+    assert (
+        database_client.get(
+            path, params={"versionId": str(next_version)}, headers=preview_headers()
+        ).status_code
+        == 404
+    )
+    assert (
+        database_client.get(
+            path, params={"versionId": str(uuid4())}, headers=preview_headers()
+        ).status_code
+        == 404
+    )

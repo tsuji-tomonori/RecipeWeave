@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 二重消費を防ぐ台帳からロットごとの使用履歴を読む。
+    "query": """\
+-- 二重消費を防ぐ台帳からロットごとの使用履歴を読む。
 SELECT
     c.lot_id,
     c.amount,

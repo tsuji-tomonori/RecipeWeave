@@ -35,6 +35,9 @@ from app.apis.entities.candidate_attempt_update.generated.queries import (
 from app.apis.entities.catalog_release_create.generated.queries import (
     execute as entity_catalog_release_create,
 )
+from app.apis.entities.catalog_release_create.generated.reference_owner_id import (
+    execute as entity_catalog_release_create_reference_owner_id,
+)
 from app.apis.entities.catalog_release_get.generated.queries import (
     execute as entity_catalog_release_get,
 )
@@ -43,6 +46,9 @@ from app.apis.entities.catalog_release_list.generated.queries import (
 )
 from app.apis.entities.catalog_release_update.generated.queries import (
     execute as entity_catalog_release_update,
+)
+from app.apis.entities.catalog_release_update.generated.reference_owner_id import (
+    execute as entity_catalog_release_update_reference_owner_id,
 )
 from app.apis.entities.compatibility_rule_create.generated.queries import (
     execute as entity_compatibility_rule_create,
@@ -304,12 +310,18 @@ from app.apis.entities.menu_item_create.generated.queries import execute as enti
 from app.apis.entities.menu_item_create.generated.reference_menu_id import (
     execute as entity_menu_item_create_reference_menu_id,
 )
+from app.apis.entities.menu_item_create.generated.reference_recipe_version_id import (
+    execute as entity_menu_item_create_reference_recipe_version_id,
+)
 from app.apis.entities.menu_item_delete.generated.queries import execute as entity_menu_item_delete
 from app.apis.entities.menu_item_get.generated.queries import execute as entity_menu_item_get
 from app.apis.entities.menu_item_list.generated.queries import execute as entity_menu_item_list
 from app.apis.entities.menu_item_update.generated.queries import execute as entity_menu_item_update
 from app.apis.entities.menu_item_update.generated.reference_menu_id import (
     execute as entity_menu_item_update_reference_menu_id,
+)
+from app.apis.entities.menu_item_update.generated.reference_recipe_version_id import (
+    execute as entity_menu_item_update_reference_recipe_version_id,
 )
 from app.apis.entities.menu_list.generated.queries import execute as entity_menu_list
 from app.apis.entities.menu_update.generated.queries import execute as entity_menu_update
@@ -830,6 +842,9 @@ from app.apis.entities.user_preference_update.generated.reference_user_id import
 from app.apis.entities.user_recipe_event_create.generated.queries import (
     execute as entity_user_recipe_event_create,
 )
+from app.apis.entities.user_recipe_event_create.generated.reference_recipe_version_id import (
+    execute as entity_user_recipe_event_create_reference_recipe_version_id,
+)
 from app.apis.entities.user_recipe_event_create.generated.reference_user_id import (
     execute as entity_user_recipe_event_create_reference_user_id,
 )
@@ -963,7 +978,7 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
         bigint_columns=(),
         immutable=False,
         query=entity_catalog_release_create,
-        reference_queries=(),
+        reference_queries=(("owner_id", entity_catalog_release_create_reference_owner_id),),
     ),
     "entity_catalog_release_update": OperationSpec(
         operation_id="entity_catalog_release_update",
@@ -975,7 +990,7 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
         bigint_columns=(),
         immutable=False,
         query=entity_catalog_release_update,
-        reference_queries=(),
+        reference_queries=(("owner_id", entity_catalog_release_update_reference_owner_id),),
     ),
     "entity_unit_list": OperationSpec(
         operation_id="entity_unit_list",
@@ -3308,7 +3323,10 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
         bigint_columns=(),
         immutable=False,
         query=entity_user_recipe_event_create,
-        reference_queries=(("user_id", entity_user_recipe_event_create_reference_user_id),),
+        reference_queries=(
+            ("user_id", entity_user_recipe_event_create_reference_user_id),
+            ("recipe_version_id", entity_user_recipe_event_create_reference_recipe_version_id),
+        ),
     ),
     "entity_user_recipe_event_delete": OperationSpec(
         operation_id="entity_user_recipe_event_delete",
@@ -3416,7 +3434,10 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
         bigint_columns=(),
         immutable=False,
         query=entity_menu_item_create,
-        reference_queries=(("menu_id", entity_menu_item_create_reference_menu_id),),
+        reference_queries=(
+            ("menu_id", entity_menu_item_create_reference_menu_id),
+            ("recipe_version_id", entity_menu_item_create_reference_recipe_version_id),
+        ),
     ),
     "entity_menu_item_update": OperationSpec(
         operation_id="entity_menu_item_update",
@@ -3428,7 +3449,10 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
         bigint_columns=(),
         immutable=False,
         query=entity_menu_item_update,
-        reference_queries=(("menu_id", entity_menu_item_update_reference_menu_id),),
+        reference_queries=(
+            ("menu_id", entity_menu_item_update_reference_menu_id),
+            ("recipe_version_id", entity_menu_item_update_reference_recipe_version_id),
+        ),
     ),
     "entity_menu_item_delete": OperationSpec(
         operation_id="entity_menu_item_delete",
@@ -3549,7 +3573,7 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
         table="kitchen_resource",
         action="create",
         owned=True,
-        input_columns=("user_id", "resource_type_id", "name", "capacity", "quantity"),
+        input_columns=("user_id", "resource_type_id", "name", "capacity", "quantity", "active"),
         json_columns=(),
         bigint_columns=(),
         immutable=False,
@@ -3561,7 +3585,7 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
         table="kitchen_resource",
         action="update",
         owned=True,
-        input_columns=("user_id", "resource_type_id", "name", "capacity", "quantity"),
+        input_columns=("user_id", "resource_type_id", "name", "capacity", "quantity", "active"),
         json_columns=(),
         bigint_columns=(),
         immutable=False,
@@ -4602,6 +4626,7 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
             "revision",
             "committed_at",
             "reverted_at",
+            "undo_preserved_count",
         ),
         json_columns=(),
         bigint_columns=("revision",),
@@ -4622,6 +4647,7 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
             "revision",
             "committed_at",
             "reverted_at",
+            "undo_preserved_count",
         ),
         json_columns=(),
         bigint_columns=("revision",),

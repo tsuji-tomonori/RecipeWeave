@@ -194,28 +194,19 @@ def function_sections(
 
 
 def render_sequences(directory: Path, root: Path, operation_id: str) -> tuple[str, str]:
+    from types import SimpleNamespace
+
+    from .details import operation_sources, selected_functions
+
     diagrams = []
     functions = []
-    paths = [directory / filename for filename in ("router.py", "functions.py")]
-    if directory.parent.name == "entities":
-        paths.append(root / "backend/src/app/core/entity_service.py")
-    if directory.parent.name == "workspace":
-        paths.append(root / "backend/src/app/core/workspace_service.py")
-        if "cooking_session" in directory.name:
-            paths.append(root / "backend/src/app/core/cooking_service.py")
-    if directory.parent.name == "generation":
-        paths += [
-            root / "backend/src/app/core/entity_generation.py",
-            root / "backend/src/app/core/entity_service.py",
-        ]
+    op = SimpleNamespace(
+        directory=directory, slug=directory.relative_to(root / "backend/src/app/apis").as_posix()
+    )
+    paths = operation_sources(root, op)
     for path in paths:
         allowed = None
         if path.parent != directory:
-            from types import SimpleNamespace
-
-            from .details import selected_functions
-
-            op = SimpleNamespace(directory=directory)
             allowed = {name.rsplit(".", 1)[-1] for name, _ in selected_functions(root, op, path)}
         found, rows = function_sections(path, root, allowed)
         diagrams += found

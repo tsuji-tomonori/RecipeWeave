@@ -35,11 +35,18 @@ def operation_sources(root: Path, op: Any) -> list[Path]:
         paths += [root / "backend/src/app/core/workspace_service.py"]
         if "cooking_session" in op.slug:
             paths += [root / "backend/src/app/core/cooking_service.py"]
+        if op.slug == "workspace/preview_cooking_plan":
+            paths += [
+                root / "backend/src/app/core/cooking_plan_service.py",
+                root / "backend/src/app/integrations/catalog/postgres_provider.py",
+            ]
     if op.slug.startswith("generation/"):
         paths += [
             root / "backend/src/app/core/entity_generation.py",
             root / "backend/src/app/core/entity_service.py",
         ]
+    if op.slug.startswith(("foods/", "recipes/")):
+        paths += [root / "backend/src/app/integrations/catalog/postgres_provider.py"]
     return paths
 
 
@@ -62,6 +69,10 @@ def selected_functions(
         workspace = root / "backend/src/app/core/workspace_service.py"
         methods = selected_functions(root, op, workspace)
         calls += [node for _, fn in methods for node in ast.walk(fn)]
+    if path.name == "postgres_provider.py" and op.directory.name == "preview_cooking_plan":
+        plan_service = root / "backend/src/app/core/cooking_plan_service.py"
+        methods = selected_functions(root, op, plan_service)
+        calls += [node for _, fn in methods for node in ast.walk(fn)]
     wanted = set()
     for node in calls:
         if not isinstance(node, ast.Call):
@@ -71,7 +82,7 @@ def selected_functions(
         elif (
             isinstance(node.func, ast.Attribute)
             and isinstance(node.func.value, ast.Name)
-            and node.func.value.id == "service"
+            and node.func.value.id in {"service", "catalog"}
             and node.func.attr in by_name
         ):
             wanted.add(node.func.attr)
@@ -103,12 +114,17 @@ def selected_functions(
     return [(name, fn) for name, fn in functions if name.rsplit(".", 1)[-1] in found]
 
 
-def expression_origins(root: Path, op: Any) -> dict[str, str]:
+def expression_origins(root: Path, op: Any, extra: Path | None = None) -> dict[str, str]:
     """辞書値の代入式を残し、パラメーター名から入力元を推測しない。"""
     result = {}
-    for path in operation_sources(root, op):
-        tree = ast.parse(read_source(path, root))
-        for item in ast.walk(tree):
+    paths = [extra] if extra is not None else operation_sources(root, op)
+    for path in paths:
+        functions = (
+            source_functions(path, root)
+            if extra is not None
+            else selected_functions(root, op, path)
+        )
+        for item in (node for _, fn in functions for node in ast.walk(fn)):
             if isinstance(item, ast.Dict):
                 for key, value in zip(item.keys, item.values, strict=True):
                     if isinstance(key, ast.Constant) and isinstance(key.value, str):
@@ -162,6 +178,8 @@ def render_detail(
             ),
         ]
     origins = expression_origins(root, op)
+    identity_path = root / "backend/src/app/core/identity.py"
+    identity_origins = expression_origins(root, op, identity_path) if identity_path.exists() else {}
     sections += ["## データベースの対象と値の流れ"]
     for query in queries:
         statement = parse_one(query.sql, query.source)
@@ -190,10 +208,17 @@ def render_detail(
             + (where.sql(dialect="postgres") if where else "SQL上の絞り込みなし")
             + "`"
         )
+        for lock in statement.find_all(exp.Lock):
+            sections.append("行ロック: `" + lock.sql(dialect="postgres") + "`")
         binds = []
         for parameter in query.parameters:
-            source = origins.get(parameter)
-            if not source and op.slug.startswith("entities/"):
+            query_origins = identity_origins if "/auth/get_me/sql/" in query.source else origins
+            source = query_origins.get(parameter)
+            if (
+                not source
+                and op.slug.startswith("entities/")
+                and "/auth/get_me/sql/" not in query.source
+            ):
                 source = (
                     "検証済みリクエストモデル → payload → values → params。"
                     "共有サービスがJSONB/整数列を変換する。"
@@ -219,7 +244,20 @@ def render_detail(
                 "変更する列とSQL式",
                 table(["書込み列", "値・式（バインド元は上表）"], changed),
             ]
-        elif isinstance(statement, exp.Delete):
+        conflict = statement.args.get("conflict")
+        if conflict is not None:
+            sections.append("競合時の処理: `" + conflict.sql(dialect="postgres") + "`")
+            if conflict.expressions:
+                sections.append(
+                    table(
+                        ["既存行の更新列", "競合時に設定する式"],
+                        [
+                            [assignment.this.name, assignment.expression.sql(dialect="postgres")]
+                            for assignment in conflict.expressions
+                        ],
+                    )
+                )
+        if isinstance(statement, exp.Delete):
             sections.append(
                 "上記の条件に一致する行を削除する。参照先への削除動作はテーブル仕様の外部キー定義に従う。"
             )

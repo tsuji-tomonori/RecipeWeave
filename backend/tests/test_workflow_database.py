@@ -5,7 +5,7 @@ import os
 import secrets
 import time
 from collections.abc import Iterator
-from typing import Any, Protocol, cast
+from typing import TYPE_CHECKING, Any, Protocol, cast
 from uuid import uuid4
 
 import httpx
@@ -18,6 +18,11 @@ from psycopg.rows import dict_row
 
 from app.core.dependencies import get_settings
 from app.main import create_app
+
+if TYPE_CHECKING:
+    from cryptography.hazmat.primitives.asymmetric import rsa
+
+    from app.integrations.auth.cognito_provider import CognitoVerifier
 
 
 class WorkflowClient(Protocol):
@@ -122,14 +127,14 @@ def test_unknown_stock_and_atomic_revision_conflict(workflow_client: WorkflowCli
     initial = workspace(workflow_client)
     food_id = stable_id("food", "food_73e2d88788")
     body = stock_body(initial["version"], food_id, None)
-    created = workflow_client.post("/api/pantry/lots", headers=headers(), json=body)
+    created = workflow_client.post("/api/pantry-lots", headers=headers(), json=body)
     assert created.status_code == 200, created.text
     current = created.json()
     lot = next(row for row in current["lots"] if row["id"] == body["id"])
     assert lot["quantity"] == {"value": None, "unit": "g"}
     assert lot["originalQuantity"]["value"] is None
     stale = stock_body(initial["version"], food_id, 20)
-    conflict = workflow_client.post("/api/pantry/lots", headers=headers(), json=stale)
+    conflict = workflow_client.post("/api/pantry-lots", headers=headers(), json=stale)
     assert conflict.status_code == 409
     latest = workspace(workflow_client)
     assert latest["version"] == current["version"]
@@ -142,17 +147,17 @@ def test_receipt_unknown_amount_duplicate_and_zero_boundary(
     food_id = stable_id("food", "food_73e2d88788")
     original = workspace(workflow_client)
     body = receipt_body(original["version"], food_id, None)
-    created = workflow_client.post("/api/receipts", headers=headers(), json=body)
+    created = workflow_client.post("/api/receipts/commit", headers=headers(), json=body)
     assert created.status_code == 200, created.text
     current = created.json()
     lot = next(row for row in current["lots"] if row["sourceImportId"] == body["id"])
     assert lot["quantity"]["value"] is None
     duplicate = {**body, "expectedVersion": current["version"], "id": str(uuid4())}
-    rejected = workflow_client.post("/api/receipts", headers=headers(), json=duplicate)
+    rejected = workflow_client.post("/api/receipts/commit", headers=headers(), json=duplicate)
     assert rejected.status_code == 409
     assert workspace(workflow_client)["version"] == current["version"]
     zero = receipt_body(current["version"], food_id, 0)
-    rejected_zero = workflow_client.post("/api/receipts", headers=headers(), json=zero)
+    rejected_zero = workflow_client.post("/api/receipts/commit", headers=headers(), json=zero)
     assert rejected_zero.status_code == 422
     assert workspace(workflow_client)["version"] == current["version"]
 
@@ -162,7 +167,7 @@ def test_receipt_partial_undo_preserves_edited_stock(workflow_client: WorkflowCl
     food_id = stable_id("food", "food_73e2d88788")
     body = receipt_body(current["version"], food_id, 100)
     body["candidates"].append({**body["candidates"][0], "id": str(uuid4())})
-    added = workflow_client.post("/api/receipts", headers=headers(), json=body)
+    added = workflow_client.post("/api/receipts/commit", headers=headers(), json=body)
     assert added.status_code == 200, added.text
     state = added.json()
     receipt_lots = [row for row in state["lots"] if row["sourceImportId"] == body["id"]]
@@ -178,7 +183,7 @@ def test_receipt_partial_undo_preserves_edited_stock(workflow_client: WorkflowCl
         "expiresOn": None,
         "restore": False,
     }
-    changed = workflow_client.put("/api/pantry/lots/" + edited_id, headers=headers(), json=update)
+    changed = workflow_client.put("/api/pantry-lots/" + edited_id, headers=headers(), json=update)
     assert changed.status_code == 200, changed.text
     undone = workflow_client.post(
         "/api/receipts/" + body["id"] + "/undo",
@@ -223,23 +228,31 @@ def test_recipe_cooking_is_planned_from_db_and_consumed_once(
     )
     assert recipe_response.status_code == 200, recipe_response.text
     recipe = recipe_response.json()
+    assert recipe["versionId"] == stable_id("recipe_version", "tomato-egg/1")
+    assert all(line["ingredientId"] for line in recipe["ingredients"])
+    assert len({line["ingredientId"] for line in recipe["ingredients"]}) == len(
+        recipe["ingredients"]
+    )
     current = workspace(workflow_client, "bob")
-    created_lots = []
+    created_lots: list[str] = []
     for ingredient in recipe["ingredients"]:
         body = stock_body(current["version"], ingredient["foodId"], ingredient["quantity"]["value"])
         body["quantity"]["unit"] = ingredient["quantity"]["unit"]
-        response = workflow_client.post("/api/pantry/lots", headers=auth, json=body)
+        response = workflow_client.post("/api/pantry-lots", headers=auth, json=body)
         assert response.status_code == 200, response.text
         current = response.json()
         created_lots.append(body["id"])
-    session = {
+    session: dict[str, Any] = {
         "id": str(uuid4()),
         "mealSnapshot": [
             {
                 "id": str(uuid4()),
                 "recipeId": recipe["id"],
+                "recipeVersionId": recipe["versionId"],
                 "servings": recipe["servings"],
-                "amounts": {line["foodId"]: line["quantity"] for line in recipe["ingredients"]},
+                "amounts": {
+                    line["ingredientId"]: line["quantity"] for line in recipe["ingredients"]
+                },
                 "adjusted": False,
             }
         ],
@@ -251,12 +264,16 @@ def test_recipe_cooking_is_planned_from_db_and_consumed_once(
         "consumptionResults": [],
     }
     started = workflow_client.post(
-        "/api/cooking",
+        "/api/cooking-sessions",
         headers=auth,
         json={"expectedVersion": current["version"], "session": session, "deduct": False},
     )
     assert started.status_code == 200, started.text
     cooking = started.json()["cooking"]
+    assert cooking["mealSnapshot"][0]["recipeVersionId"] == recipe["versionId"]
+    assert set(cooking["mealSnapshot"][0]["amounts"]) == {
+        line["ingredientId"] for line in recipe["ingredients"]
+    }
     assert len(cooking["plan"]) == len(recipe["steps"])
     assert {step["id"] for step in cooking["plan"]} == {step["id"] for step in recipe["steps"]}
     finished = copy.deepcopy(cooking)
@@ -264,12 +281,65 @@ def test_recipe_cooking_is_planned_from_db_and_consumed_once(
     finished["index"] = len(cooking["plan"])
     finished["status"] = "completed"
     payload = {"expectedVersion": started.json()["version"], "session": finished, "deduct": True}
-    completed = workflow_client.put("/api/cooking/" + session["id"], headers=auth, json=payload)
+    completed = workflow_client.put(
+        "/api/cooking-sessions/" + session["id"], headers=auth, json=payload
+    )
     assert completed.status_code == 200, completed.text
     state = completed.json()
     assert state["cooking"]["status"] == "completed"
     assert all(row["applied"] for row in state["cooking"]["consumptionResults"])
     assert all(row["quantity"]["value"] == 0 for row in state["lots"] if row["id"] in created_lots)
-    replay = workflow_client.put("/api/cooking/" + session["id"], headers=auth, json=payload)
+    replay = workflow_client.put(
+        "/api/cooking-sessions/" + session["id"], headers=auth, json=payload
+    )
     assert replay.status_code == 409
     assert workspace(workflow_client, "bob")["version"] == state["version"]
+
+
+def test_first_cognito_login_initializes_only_internal_resources_once(
+    workflow_client: WorkflowClient,
+    private_key: "rsa.RSAPrivateKey",
+    verifier: "CognitoVerifier",
+) -> None:
+    """署名を検証した新規利用者へ内部作業枠だけを作り、再ログインで増やさない。"""
+    from app.core import identity
+
+    from .conftest import CLIENT_ID, ISSUER, access_token
+
+    subject = "first-login-" + str(uuid4())
+    auth = {"Authorization": "Bearer " + access_token(private_key, subject)}
+
+    def configured_verifier(issuer: str, client_id: str) -> "CognitoVerifier":
+        assert issuer == ISSUER
+        assert client_id == CLIENT_ID
+        return verifier
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setenv("AUTH_MODE", "cognito")
+        patch.setenv("COGNITO_ISSUER", ISSUER)
+        patch.setenv("COGNITO_CLIENT_ID", CLIENT_ID)
+        patch.setattr(identity, "CognitoVerifier", configured_verifier)
+        get_settings.cache_clear()
+        first = workflow_client.get("/api/workspace", headers=auth)
+        assert first.status_code == 200, first.text
+        assert first.json()["settings"]["equipment"] == []
+        second = workflow_client.get("/api/workspace", headers=auth)
+        assert second.status_code == 200, second.text
+        assert second.json()["version"] == first.json()["version"]
+        with psycopg.Connection[dict[str, Any]].connect(
+            os.environ["TEST_DATABASE_URL"], row_factory=dict_row
+        ) as connection:
+            connection.execute("SELECT set_config('recipeweave.role', 'admin', true)")
+            rows = connection.execute(
+                """SELECT resource.code, kitchen.capacity, kitchen.quantity, kitchen.active
+                FROM recipeweave.kitchen_resource AS kitchen
+                JOIN recipeweave.resource_type AS resource ON kitchen.resource_type_id = resource.id
+                JOIN recipeweave.app_user AS person ON kitchen.user_id = person.id
+                WHERE person.auth_subject = %s ORDER BY resource.code""",
+                (subject,),
+            ).fetchall()
+        assert [row["code"] for row in rows] == ["bowl", "burner", "person"]
+        assert all(
+            row["capacity"] is None and row["quantity"] == 1 and row["active"] for row in rows
+        )
+    get_settings.cache_clear()

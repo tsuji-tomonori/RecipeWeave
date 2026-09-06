@@ -1,0 +1,275 @@
+{
+  "components": {
+    "schemas": {
+      "ReceiptImportRow": {
+        "additionalProperties": false,
+        "description": "レシート読取・在庫登録の処理単位のDB応答。",
+        "properties": {
+          "committed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "在庫へ登録した日時",
+            "title": "Committed At"
+          },
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "file_sha256": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "minLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "画像本文のSHA256。本文はDBに保存しない",
+            "title": "File Sha256"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "idempotency_key": {
+            "description": "本人内で一意の再送防止キー",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "reverted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "登録取消日時",
+            "title": "Reverted At"
+          },
+          "revision": {
+            "description": "楽観ロック版",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Revision",
+            "type": "string"
+          },
+          "status": {
+            "description": "draft/committed/revertedの状態",
+            "enum": [
+              "draft",
+              "committed",
+              "reverted"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "undo_preserved_count": {
+            "description": "レシート取消時に編集・消費済みとして残した在庫件数",
+            "title": "Undo Preserved Count",
+            "type": "integer"
+          },
+          "user_id": {
+            "description": "所有者",
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "user_id",
+          "file_sha256",
+          "idempotency_key",
+          "status",
+          "revision",
+          "committed_at",
+          "reverted_at",
+          "undo_preserved_count",
+          "etag"
+        ],
+        "title": "ReceiptImportRow",
+        "type": "object"
+      },
+      "ReceiptImportWrite": {
+        "additionalProperties": false,
+        "description": "レシート読取・在庫登録の処理単位の編集可能列。未指定NULL列はNULLにする。",
+        "properties": {
+          "committed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "在庫へ登録した日時",
+            "title": "Committed At"
+          },
+          "file_sha256": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "minLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "画像本文のSHA256。本文はDBに保存しない",
+            "title": "File Sha256"
+          },
+          "idempotency_key": {
+            "description": "本人内で一意の再送防止キー",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Idempotency Key",
+            "type": "string"
+          },
+          "reverted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "登録取消日時",
+            "title": "Reverted At"
+          },
+          "revision": {
+            "description": "楽観ロック版",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Revision",
+            "type": "string"
+          },
+          "status": {
+            "description": "draft/committed/revertedの状態",
+            "enum": [
+              "draft",
+              "committed",
+              "reverted"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "undo_preserved_count": {
+            "description": "レシート取消時に編集・消費済みとして残した在庫件数",
+            "title": "Undo Preserved Count",
+            "type": "integer"
+          },
+          "user_id": {
+            "description": "所有者",
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "idempotency_key",
+          "status",
+          "revision",
+          "undo_preserved_count"
+        ],
+        "title": "ReceiptImportWrite",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/receipt_import": {
+      "post": {
+        "description": "レシート読取・在庫登録の処理単位の作成。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_receipt_import_create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReceiptImportWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptImportRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "レシート読取・在庫登録の処理単位の作成",
+        "tags": [
+          "正規化データ: レシート読取・在庫登録の処理単位"
+        ]
+      }
+    }
+  }
+}

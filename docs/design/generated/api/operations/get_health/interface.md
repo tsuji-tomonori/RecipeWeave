@@ -1,5 +1,7 @@
 # インターフェース: get_health
 
+[詳細](detail.md) / [入出力](interface.md) / [ログ](messages.md) / [SQL](queries.md) / [シーケンス](sequence.md) / [要因別試験](tests.md) / [API一覧](../../README.md)
+
 実装から自動生成。手編集禁止。`uv run python tools/generate_service_design.py` で更新。
 
 `GET /api/health` — 稼働状況とサンプル公開範囲
@@ -37,6 +39,8 @@ HealthResponse
 ```python
 SUCCESS = {"status": "ok", "catalog": "sample", "cloudSync": "not-deployed"}
 ```
+
+[Swagger互換のOpenAPI JSON](interface.openapi.json)
 
 [共有モデルの全仕様](../../MODELS.md) / [共通エラー](../../ERRORS.md)
 

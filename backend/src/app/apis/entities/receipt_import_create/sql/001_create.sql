@@ -8,7 +8,8 @@ INSERT INTO recipeweave.receipt_import AS t (
     status,
     revision,
     committed_at,
-    reverted_at
+    reverted_at,
+    undo_preserved_count
 )
 VALUES (
     %(row_id)s,
@@ -18,7 +19,8 @@ VALUES (
     %(status)s,
     %(revision)s,
     %(committed_at)s,
-    %(reverted_at)s
+    %(reverted_at)s,
+    %(undo_preserved_count)s
 )
 RETURNING
     t.id,
@@ -30,4 +32,5 @@ RETURNING
     t.revision,
     t.committed_at,
     t.reverted_at,
+    t.undo_preserved_count,
     t.xmin::TEXT AS etag;

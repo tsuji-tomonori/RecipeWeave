@@ -6,7 +6,8 @@ SET
     resource_type_id = %(resource_type_id)s,
     name = %(name)s,
     capacity = %(capacity)s,
-    quantity = %(quantity)s
+    quantity = %(quantity)s,
+    active = %(active)s
 WHERE
     t.id = %(row_id)s
     AND t.xmin::TEXT = %(expected_etag)s
@@ -19,4 +20,5 @@ RETURNING
     t.name,
     t.capacity,
     t.quantity,
+    t.active,
     t.xmin::TEXT AS etag;

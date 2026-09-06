@@ -28,6 +28,7 @@ if (config.githubOidcProviderArn !== undefined) {
     ...stackProps(),
     existingProviderArn: config.githubOidcProviderArn,
     branch: config.githubBranch,
+    stage: config.stage,
     bootstrapQualifier: config.bootstrapQualifier,
   });
 }

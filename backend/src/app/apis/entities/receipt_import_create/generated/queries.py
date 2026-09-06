@@ -15,6 +15,7 @@ class Parameters(TypedDict):
     revision: int
     row_id: UUID
     status: str
+    undo_preserved_count: int
     user_id: UUID
 
 
@@ -28,7 +29,8 @@ INSERT INTO recipeweave.receipt_import AS t (
     status,
     revision,
     committed_at,
-    reverted_at
+    reverted_at,
+    undo_preserved_count
 )
 VALUES (
     %(row_id)s,
@@ -38,7 +40,8 @@ VALUES (
     %(status)s,
     %(revision)s,
     %(committed_at)s,
-    %(reverted_at)s
+    %(reverted_at)s,
+    %(undo_preserved_count)s
 )
 RETURNING
     t.id,
@@ -50,6 +53,7 @@ RETURNING
     t.revision,
     t.committed_at,
     t.reverted_at,
+    t.undo_preserved_count,
     t.xmin::TEXT AS etag;
 """
 
@@ -66,6 +70,7 @@ def execute(
         "revision": values["revision"],
         "row_id": values["row_id"],
         "status": values["status"],
+        "undo_preserved_count": values["undo_preserved_count"],
         "user_id": values["user_id"],
     }
     return list(connection.execute(SQL, params).fetchall())

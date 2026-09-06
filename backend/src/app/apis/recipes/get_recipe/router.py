@@ -7,6 +7,7 @@ from fastapi.security import HTTPAuthorizationCredentials
 from app.core.catalog import CatalogDependency
 from app.core.db import DatabaseDependency
 from app.core.dependencies import bearer
+from app.core.identity import require_identity
 from app.integrations.catalog.preview import authorize_preview
 
 from . import functions as api_functions
@@ -34,9 +35,14 @@ def get_recipe(
     recipe_id: UUID,
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)],
     preview: Annotated[bool, Query()] = False,
+    version_id: Annotated[UUID | None, Query(alias="versionId")] = None,
 ) -> Recipe:
-    authorize_preview(preview, credentials, database)
-    recipe = api_functions.get_recipe(catalog, recipe_id, preview)
+    identity = authorize_preview(preview, credentials, database)
+    if identity is None and credentials is not None:
+        identity = require_identity(credentials, database)
+    recipe = api_functions.get_recipe(
+        catalog, recipe_id, preview, version_id, identity.user_id if identity else None
+    )
     if recipe is None:
         raise HTTPException(status_code=404, detail="料理が見つかりません")
     return recipe

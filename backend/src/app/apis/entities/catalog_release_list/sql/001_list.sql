@@ -6,6 +6,7 @@ SELECT
     t.version,
     t.manifest_hash,
     t.published_at,
+    t.owner_id,
     t.xmin::TEXT AS etag
 FROM recipeweave.catalog_release AS t
 WHERE

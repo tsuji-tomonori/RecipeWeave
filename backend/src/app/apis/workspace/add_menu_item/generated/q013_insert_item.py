@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 検証した料理版と人数を献立へ登録する。
+    "query": """\
+-- 検証した料理版と人数を献立へ登録する。
 INSERT INTO recipeweave.menu_item (
     id, menu_id, recipe_version_id, servings, role_option_id, position
 )

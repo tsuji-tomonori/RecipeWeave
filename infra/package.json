@@ -13,7 +13,8 @@
     "test": "node --import tsx --test test/*.test.ts",
     "test:core": "node --import tsx --test test/core.test.ts",
     "synth": "cdk synth --strict --quiet",
-    "check": "npm run typecheck && npm run lint && npm test"
+    "check": "npm run typecheck && npm run lint && npm test",
+    "test:evidence": "node --import tsx --test --test-reporter=spec --test-reporter=junit --test-reporter-destination=stdout --test-reporter-destination=../reports/infra-junit.xml test/*.test.ts"
   },
   "dependencies": {
     "aws-cdk-lib": "2.268.0",

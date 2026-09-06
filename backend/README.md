@@ -1,73 +1,99 @@
 # RecipeWeave API
 
-Python 3.12 / FastAPI / Mangum のAPI実装です。GitHub Pages Devはブラウザー内の8品と端末データで動作し、このAPIへの接続やクラウド同期を提供しません。AWSには未デプロイです。
+Python 3.12 / FastAPI / psycopgによる、PostgreSQL 16とpgvectorを使うAPIです。元スプレッドシートの71テーブルをすべて実装し、レシート・私有食材・在庫消費などの追加7テーブルも扱います。食品、料理版、材料、工程、献立、在庫を正規化した行へ保存します。初期JSONはDBへのseed入力専用で、APIは実行時にDBを検索します。
 
-要件正本は `spec/requirements/requirements.qnt`。利用者の操作は `docs/service/manual.md` と `faq.md` を参照してください。
+要件正本は[requirements.qnt](../spec/requirements/requirements.qnt)、DB正本と移行手順は[database/README.md](../database/README.md)です。利用者向けの説明は[マニュアル](../docs/service/manual.md)と[Q&A](../docs/service/faq.md)、現在の配備・検証状況は[Dev検証記録](../docs/verification/service-dev.md)を参照してください。
 
-## API
+## APIの使い分け
 
-| Method | Path | 動作 |
+| 分類 | 主な経路 | 動作 |
 | --- | --- | --- |
-| GET | `/api/health` | サンプルAPIの応答確認 |
-| GET | `/api/foods?q=トマト` | 食材名・別名の検索 |
-| GET | `/api/recipes` | 8品の検索。`selectedFoodIds`、`excludedFoodIds`、`equipment` は同名queryを繰り返す。`match=all/any`、`maxMinutes`、`q` |
-| GET | `/api/recipes/{recipe_id}` | 材料・基準人数・工程 |
-| GET | `/api/state` | JWT本人の保存状態。未保存は `{version:0,snapshot:null}` |
-| PUT | `/api/state` | `{expectedVersion,snapshot}` をCAS更新。競合時409 |
+| 認証 | `/api/auth/local-login`、`/api/me` | 開発用ログイン、検証済み本人情報 |
+| カタログ | `/api/foods`、`/api/recipes`、`/api/recipes/random` | DBに保存した食品・料理の検索、ランダム提案 |
+| 料理詳細 | `/api/recipes/{recipe_id}` | 数量・材料・工程。`versionId`で履歴と同じ料理版を指定 |
+| 利用者の操作 | `/api/workspace`、在庫・献立・保存・設定の個別API | 本人の関係データを取得・変更 |
+| レシート | `/api/receipts/commit`、`/api/receipts/{row_id}/undo` | 確認済み明細の在庫登録、再送検出、取消 |
+| 調理 | `/api/cooking-plan`、`/api/cooking-sessions` | 読取専用の段取り確認、計画確定、進行・タイマー保存 |
+| 正規化データ | `/api/entities/{table}`、`/api/entities/{table}/{row_id}` | 登録済みの固定ルートで、全表に必要な型付き操作を提供 |
+| 生成ワーカー | `/api/generation/shards/claim`ほか | リース取得・延長、フェンストークン付き進捗更新 |
 
-人数・材料量は料理選択後に変更するため検索条件にはありません。買い足し計算は端末の確定在庫を使うdomain機能に置き、公開APIへ個人の在庫を送信しません。
+正確なメソッド、経路、全入力・応答は[生成API一覧](../docs/design/generated/api/README.md)と[OpenAPI](openapi.gen.json)から確認できます。テーブル名や任意SQLを受け取って動的に操作を組み立てるAPIではありません。
 
-stateは端末AppStateをクラウドへ移す第一段階の境界です。外側 `version` はサーバーCAS版、内側 `snapshot.version` は端末の編集版で意味が異なります。既存の料理・食材・工程の正規化モデルを廃止する設計ではありません。
+人数・分量は料理を選んだ後で変更するため検索条件に含めません。通常の料理検索は公開・審査済み版を返します。初期8品は未試作の下書きとしてDBへ投入し、署名済み認証と明示したローカル設定がある場合だけ試用できます。取下げ版は既存の本人履歴から参照でき、新規履歴の後付けで閲覧権限を取得することはできません。
 
-## 実行と検査
+利用者の表は、子行から親へたどる所有権まで確認します。カタログ編集と生成運用は管理者権限が必要です。公開後の内容版、監査、outbox、派生集計には保持規則を適用し、無制約の更新・削除を公開しません。
 
-repo rootから実行します。
+## ローカルで起動する
+
+リポジトリのルートから実行します。
+
+```bash
+docker compose up --build
+```
+
+ComposeはPostgreSQL、管理用移行、非管理者のAPI、フロントエンドを順に起動します。画面は `http://127.0.0.1:5173`、APIは `http://127.0.0.1:8000` です。Compose内の資格情報はこのローカル構成専用です。
+
+Pythonを直接起動する場合は依存を準備し、移行済みの非管理者DB接続と認証設定を環境変数で指定します。
 
 ```bash
 uv sync --locked --all-packages
-uv run --locked --package recipeweave-api app-docs
 uv run --locked --package recipeweave-api uvicorn app.main:app --reload
+```
+
+DBが未設定・接続不能の場合は503を返します。ブラウザ保存やサンプルJSONへ切り替えて成功したように見せる経路はありません。
+
+## 接続と認証
+
+| 設定 | 用途 |
+| --- | --- |
+| `DATABASE_URL` | API専用のPostgreSQL接続。移行所有者・superuser・BYPASSRLSロールを使わない |
+| `MIGRATION_DATABASE_URL` | 起動準備・CIで使う管理用接続。通常のAPIへ配らない |
+| `AUTH_MODE=cognito` | 通常の認証方式。`COGNITO_ISSUER`と`COGNITO_CLIENT_ID`を設定 |
+| `AUTH_MODE=local` | `ENVIRONMENT=local/test`、32文字以上の`LOCAL_AUTH_SECRET`、12文字以上の`LOCAL_AUTH_PASSWORD`があるローカル開発に限定 |
+| `DATABASE_SECRET_ARN`、`DATABASE_HOST`、`DATABASE_NAME` | AWS実行時にDB資格情報を解決する設定。TLSを必須とする |
+| `ALLOWED_ORIGINS` | CORSを許可するoriginの明示的な一覧 |
+| `MAX_REQUEST_BYTES` | 本文上限。既定1MiB、JSON解析前にも検査 |
+
+Cognitoは署名、発行者、期限、用途、クライアント、主体を検証し、管理権限は検証済みのグループから導出します。本人のDB IDは検証済み主体から生成し、本文、`X-User-Id`、余剰のtoken claimで変更できません。要求単位のトランザクションに本人IDとロールを設定し、DBのRLSも同時に適用します。
+
+汎用操作の更新・削除は取得時の `ETag` を `If-Match` に指定します。業務操作は `expectedVersion` で本人のワークスペース版を確認します。不一致は409、汎用操作でヘッダーがなければ428です。認可、正規化行、監査、更新版は同じトランザクションで確定し、失敗時はまとめてロールバックします。
+
+## SQL・設計の生成
+
+DB操作の正本は `src/app/apis/<resource>/<operation>/sql/*.sql` です。ORMを使わず、名前付きパラメータの値をSQL本文とは別に束縛します。共有の監査・outbox・更新版SQLも生成・検査対象です。
+
+```bash
+uv run --locked python database/schema_catalog.py
+uv run --locked python tools/generate_entity_apis.py
+uv run --locked --package recipeweave-api app-docs
+uv run --locked python tools/generate_service_design.py
+```
+
+最初にDDLから列・制約を抽出し、全表のモデルと操作SQLを生成します。`app-docs`は各操作の型付きクエリと実ルートのOpenAPIを生成します。設計生成はDDL・SQL・OpenAPI・Pythonの実装からテーブル仕様、ER図、API仕様、CRUD対応、シーケンス、試験対応を作ります。インフラ設計を含む最終生成には、同じ版のCDK合成結果も必要です。
+
+生成ファイルを手編集せず、入力を修正して再生成してください。`--check`は差分を検出し、ファイルを書き換えません。SQLGlotは構文と単文・明示列を検査し、SQLFluffはAPI別SQLと移行DDLを検査します。
+
+## 検査とエビデンス
+
+```bash
 uv run --locked ruff format --check backend database
 uv run --locked ruff check backend database
 uv run --locked pyright --project backend/pyproject.toml
 uv run --locked mypy --config-file backend/pyproject.toml backend/src backend/tests backend/tools database
 uv run --locked --package recipeweave-api app-archlint
 uv run --locked --package recipeweave-api app-sql-lint
+uv run --locked python tools/generate_entity_apis.py --check
 uv run --locked --package recipeweave-api app-docs --check
-uv run --locked pytest backend/tests --cov=app --cov-branch --cov-report=term-missing
+uv run --locked python tools/generate_service_design.py --check
+uv run --locked pytest backend/tests tests/test_relational_schema.py --cov=app --cov-branch --junitxml=reports/backend-junit.xml
+```
+
+実DB試験には `TEST_DATABASE_URL` と `MIGRATION_DATABASE_URL` を設定します。全表のHTTP読取り、本人隔離、DBのRLS、競合、レシート処理、公開・履歴参照、業務制約を実際のPostgreSQLで確認します。CIは非特権のアプリロールを使用し、未実行・スキップを成功の代用にしません。JUnit、coverage、操作別画像を実行版へ対応付け、品質レポートとPagesの設計サイトへ載せます。
+
+Lambda配布物は次のコマンドで作ります。実装と固定した依存を梱包し、実行時参照用の食品・レシピJSONは含めません。
+
+```bash
 uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64
 ```
 
-契約・署名検証・利用者隔離・同時更新・過大要求・型検証・SQL再現性のテスト成功をgateとし、branch coverageを報告します。未接続AWSの動作はcoverage率で代替しません。SQLGlot未取得の環境ではSQL生成・adapter検査を実施できず、`app-docs --check`が通るまでbackend配布は完了扱いにしません。
-
-生成物: `openapi.gen.json`、各state operationの `generated/queries.py`。`generators.manual.json` が入力と出力を定義します。OpenAPIのみなら `app-docs --openapi-only` で再生成できます。これはSQLの検証を行ったことにはなりません。
-
-## API別SQLと静的解析
-
-DBアクセスにはORMを使わず、操作ごとの `apis/<resource>/<operation>/sql/*.sql` を正本にします。現在DBを利用するのは状態の取得・保存の2操作です。食品・料理のサンプルJSONを読むAPIには、実行しないSQLを置きません。
-
-SQLGlotで1ファイル1文・列のワイルドカード禁止を検査し、`app-docs` が `generated/queries.py` の型付きラッパーを生成します。関数は保存用Protocolを呼び、DSQLプロバイダーが生成ラッパーへ本人識別子と値を渡します。SQL文字列の組立てや値の埋込みは行わず、psycopgの名前付き引数で値を束縛します。
-
-`app-sql-lint` は固定したSQLFluff 4.3.0を用い、全APIのSQLファイルと移行DDLをPostgreSQL方言で検査します。`.sqlfluff` のplaceholder設定で `%(subject)s` などを検査用の値へ置き換えるため、AWS接続や実際の個人データは不要です。構文・テンプレートエラーの無視や `noqa` による検査の回避は許可しません。移行マニフェスト内の検証SQLも構文解析し、既存チェックサムを保つためそのSQLを再整形しません。
-
-根拠: [SQLFluffの設定](https://docs.sqlfluff.com/en/stable/configuration/setting_configuration.html)、[psycopg引数のplaceholder設定](https://docs.sqlfluff.com/en/stable/configuration/templating/placeholder.html)。
-
-## 接続設定
-
-`STATE_BACKEND=disabled` が既定。ローカルmemoryを使う場合も `STATE_BACKEND=memory` と `ALLOW_MEMORY_STATE=true` の両方が必要です。認証省略機能はありません。
-
-AWS設定は `STATE_BACKEND=dsql`、`COGNITO_ISSUER`、`COGNITO_CLIENT_ID`、`DSQL_HOST`、`DSQL_DATABASE_USER=recipeweave_app`。`AWS_REGION` はLambdaの予約環境変数を読み取ります。CORSを有効にする場合のみ `ALLOWED_ORIGINS` に明示したoriginをカンマ区切りで指定します。
-
-Cognito JWTはRS256署名・issuer・expiry・issued-at・token_use=access・client_id・subを検証します。未知の署名鍵はJWKS再取得、鍵取得失敗は503、無効tokenは401です。`X-User-Id`を信頼しません。要求上限は1MiBで、chunked bodyもJSON解析前に検査します。画像・OCR全文・未知fieldは保存型に含めず、型エラーにも入力値を反射しません。
-
-DSQLは各接続でIAM tokenを生成し、verify-full TLS、非admin role、引数束縛SQLを使用します。OCC再試行は最大3回。CAS失敗は再試行で上書きせず409。runtime roleへmigration権限を与えません。
-
-Lambda assetは `backend/.build/lambda`、handlerは `app.handler.handler`。lockからLinux x86_64のPython 3.12依存を取得し、サンプルJSONと実装を梱包します。DockerやAWS接続は不要です。
-
-## 設計と検証の限界
-
-operation単位のrouter→functions→Protocol→provider境界を採用しています。SQLGlotのAST検査とruntime OpenAPIは決定的に生成します。portable CFGが扱えないループ・Protocolの動的dispatchを無理に線形化したsequence図は生成しません。
-
-Starlette 1.xのhttpx/httpx2移行に対してテストは小さなHTTP Protocolを境界に持ちます。SDKの自動stubにないDSQL token生成メソッドもprovider内のProtocolへ閉じ込めています。アプリケーション本体の型検査を緩和していません。
-
-実AWSでのCognito鍵ローテーション、IAM role mapping、Aurora DSQL migration/OCC、CloudFront/API Gateway統合は、AWS Dev接続を復旧した後に確認する必要があります。
+Pagesは静的画面・設計・検証結果の配信です。Cognito、API Gateway、Lambda、PostgreSQLの実配備と接続確認は別の受入事項として、Dev検証記録に残します。

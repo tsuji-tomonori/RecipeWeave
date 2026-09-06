@@ -14,7 +14,7 @@ from psycopg.types.json import Jsonb
 from pydantic_core import to_jsonable_python
 
 from app.core.entity_contracts import OperationSpec, Row
-from app.core.identity import Identity
+from app.core.identity import Identity, local_auth_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +80,12 @@ class EntityService:
                 for column, query in spec.reference_queries:
                     value = values.get(column)
                     if value is not None and not query(
-                        self.connection, {"reference_id": value, "actor_id": self.identity.user_id}
+                        self.connection,
+                        {
+                            "reference_id": value,
+                            "actor_id": self.identity.user_id,
+                            "preview": local_auth_enabled(),
+                        },
                     ):
                         raise HTTPException(status_code=403, detail="参照先を利用できません")
                 rows = spec.query(self.connection, params)

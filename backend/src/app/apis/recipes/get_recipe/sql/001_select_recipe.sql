@@ -1,9 +1,21 @@
 -- 指定したレシピの数量・分類・工程・資源を正規化テーブルから取得する。
-WITH candidate AS (
+WITH owned_versions AS (
+    SELECT menu_item.recipe_version_id AS version_id
+    FROM recipeweave.menu_item AS menu_item
+    INNER JOIN recipeweave.menu AS menu ON menu_item.menu_id = menu.id
+    WHERE menu.user_id = %(owner_id)s::UUID
+    UNION
+    SELECT user_recipe_event.recipe_version_id AS version_id
+    FROM recipeweave.user_recipe_event AS user_recipe_event
+    WHERE user_recipe_event.user_id = %(owner_id)s::UUID
+),
+
+candidate AS (
     SELECT
         recipe.id,
         recipe.title,
         recipe.status AS recipe_status,
+        recipe.withdrawal_reason,
         recipe_view.id AS version_id,
         recipe_view.description,
         recipe_view.base_servings,
@@ -25,14 +37,24 @@ WITH candidate AS (
         FROM recipeweave.recipe_version AS recipe_version
         WHERE
             recipe_version.recipe_id = recipe.id
+            AND (%(version_id)s::UUID IS NULL OR recipe_version.id = %(version_id)s::UUID)
             AND (
                 (recipe_version.status = 'published' AND recipe_version.validation = 'passed')
                 OR (%(preview)s AND recipe_version.status = 'draft')
+                OR EXISTS (
+                    SELECT 1 FROM owned_versions
+                    WHERE owned_versions.version_id = recipe_version.id
+                )
             )
         ORDER BY recipe_version.version DESC
         LIMIT 1
     ) AS recipe_view ON TRUE
-    WHERE recipe.status = 'published' OR (%(preview)s AND recipe.status = 'draft')
+    WHERE
+        recipe.status = 'published' OR (%(preview)s AND recipe.status = 'draft')
+        OR EXISTS (
+            SELECT 1 FROM owned_versions
+            WHERE owned_versions.version_id = recipe_view.id
+        )
 ),
 
 matched AS (
@@ -40,6 +62,7 @@ matched AS (
         candidate.id,
         candidate.title,
         candidate.recipe_status,
+        candidate.withdrawal_reason,
         candidate.version_id,
         candidate.description,
         candidate.base_servings,
@@ -101,6 +124,7 @@ page AS (
         matched.id,
         matched.title,
         matched.recipe_status,
+        matched.withdrawal_reason,
         matched.version_id,
         matched.description,
         matched.base_servings,
@@ -118,6 +142,13 @@ payloads AS (
         page.title,
         JSONB_BUILD_OBJECT(
             'id', page.id::TEXT, 'name', page.title, 'description', page.description,
+            'versionId', page.version_id::TEXT,
+            'publicationStatus', CASE
+                WHEN page.recipe_status = 'withdrawn'
+                    THEN 'withdrawn'
+                ELSE page.version_status
+            END,
+            'withdrawalReason', page.withdrawal_reason,
             'servings', page.base_servings, 'minutes', page.minutes,
             'equipment', COALESCE((
                 SELECT JSONB_AGG(DISTINCT equipment_type.name)
@@ -133,6 +164,9 @@ payloads AS (
             'ingredients', COALESCE((
                 SELECT
                     JSONB_AGG(JSONB_BUILD_OBJECT(
+                        'ingredientId', ingredient.id::TEXT,
+                        'formId', ingredient.form_id::TEXT,
+                        'productVersionId', ingredient.product_version_id::TEXT,
                         'foodId', form.food_id::TEXT,
                         'quantity',
                         JSONB_BUILD_OBJECT('value', ingredient.amount, 'unit', unit.code),

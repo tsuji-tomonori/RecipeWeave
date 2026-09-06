@@ -1,21 +1,22 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: e08c14361eb8db7f62f72fdfd5633effb6e46ab927ace6baa647db75ab02b47e
+# SQLのSHA256: 636c931e95545a37ec3213d8527276399ef3468913e83b5f679b4e7d036d895a
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 独自食材にも標準形態と基準単位を用意する。
+    "query": """\
+-- 独自食材にも標準形態と基準単位を用意する。
 INSERT INTO recipeweave.food_form (id, food_id, name, state, base_unit_id, quantity_basis, status)
 SELECT
-    %(row_id)s,
-    %(food_id)s,
-    '標準',
-    'raw',
-    u.id,
-    'as_purchased',
-    'active'
+    %(row_id)s AS id,
+    %(food_id)s AS food_id,
+    '標準' AS name,
+    'raw' AS state,
+    u.id AS base_unit_id,
+    'as_purchased' AS quantity_basis,
+    'active' AS status
 FROM recipeweave.unit AS u
 WHERE u.code = %(unit)s AND u.status = 'active' RETURNING id;
 """

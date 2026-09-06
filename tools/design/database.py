@@ -1,4 +1,4 @@
-"""SQLGlotのDDL/DML構文木から物理テーブルとCRUDを抽出する。"""
+"""pglastのDDLとSQLGlotのDML構文木から物理テーブルとCRUDを抽出する。"""
 
 import ast
 import json
@@ -263,8 +263,8 @@ def query_projection(text: str, source: str, operation: str, tables: dict[str, T
     if action is None or stmt.find(exp.Star):
         raise DesignError(f"対応する明示列のCRUD文が必要です: {source}")
     conflict = stmt.args.get("conflict")
-    if conflict is not None and conflict.args.get("expressions"):
-        raise DesignError(f"ON CONFLICTによる更新の投影は未対応です: {source}")
+    if conflict is not None and str(conflict.args.get("action")) not in {"DO NOTHING", "DO UPDATE"}:
+        raise DesignError(f"対応しない競合時処理です: {source}")
     if any(
         isinstance(node, exp.Insert | exp.Update | exp.Delete) and node is not stmt
         for node in stmt.walk()
@@ -273,6 +273,24 @@ def query_projection(text: str, source: str, operation: str, tables: dict[str, T
     from sqlglot.optimizer.qualify import qualify
     from sqlglot.optimizer.scope import Scope, traverse_scope
 
+    projection_input = stmt.copy()
+    for lock in list(projection_input.find_all(exp.Lock)):
+        owner = lock.find_ancestor(exp.Select)
+        names = (
+            {
+                ref.alias_or_name
+                for ref in owner.find_all(exp.Table)
+                if ref.find_ancestor(exp.Select) is owner and not isinstance(ref.parent, exp.Lock)
+            }
+            if owner is not None
+            else set()
+        )
+        for ref in lock.expressions:
+            if not isinstance(ref, exp.Table) or ref.name not in names:
+                raise DesignError(f"行ロック対象の別名が存在しません: {source}: {ref.sql()}")
+        # SQLGlotがFOR SHARE OFの別名をFROMの重複表と数えるため、
+        # 実在確認後の列投影では除く。SQL仕様と詳細設計には元のロック句を保持する。
+        lock.pop()
     schema = {}
     for name, item in tables.items():
         namespace, short = name.rsplit(".", 1)
@@ -281,7 +299,7 @@ def query_projection(text: str, source: str, operation: str, tables: dict[str, T
         }
     try:
         resolved = qualify(
-            stmt.copy(),
+            projection_input,
             dialect="postgres",
             schema=schema,
             infer_schema=False,
@@ -304,6 +322,8 @@ def query_projection(text: str, source: str, operation: str, tables: dict[str, T
     target_name = sql_name(target) if isinstance(target, exp.Table) else None
     if action != "R" and target_name:
         actions[target_name] = {action}
+        if conflict is not None and conflict.args.get("expressions"):
+            actions[target_name].add("U")
         if any(
             sql_name(ref) == target_name
             for select in resolved.find_all(exp.Select)
@@ -326,6 +346,9 @@ def query_projection(text: str, source: str, operation: str, tables: dict[str, T
             continue
         if isinstance(selected, exp.Table):
             candidates = [sql_name(selected)]
+        elif column.table == "excluded" and conflict is not None and target_name:
+            # EXCLUDEDは競合したINSERT候補行であり、独立した物理テーブルではない。
+            candidates = [target_name]
         elif column.table:
             if column.table not in aliases:
                 # UNNEST等の表関数の出力。qualifyで宣言名との一致を確認済み。
@@ -409,6 +432,59 @@ def load_queries(root: Path, tables: dict[str, Table], slugs: dict[str, str]) ->
                         read_source(path, root), str(path.relative_to(root)), operation, tables
                     )
                 )
+    # 共通の応答集約やカタログ取得も、実装の呼出しを確認して元SQLへ対応づける。
+    from types import SimpleNamespace
+
+    from .details import operation_sources, selected_functions
+
+    direct_queries = list(result)
+    for slug, operation in sorted(slugs.items()):
+        if not slug.startswith("workspace/"):
+            continue
+        op = SimpleNamespace(slug=slug, directory=root / "backend/src/app/apis" / slug)
+        functions = [
+            fn
+            for path in operation_sources(root, op)
+            for _, fn in selected_functions(root, op, path)
+        ]
+        shared = set()
+        if slug != "workspace/get_workspace" and any(
+            fn.name == "get_workspace" for fn in functions
+        ):
+            shared.add("get_workspace")
+        if any(
+            isinstance(call, ast.Call)
+            and isinstance(call.func, ast.Attribute)
+            and call.func.attr in {"finish", "get_workspace"}
+            and ast.unparse(call.func.value) == "self.workspace"
+            for fn in functions
+            for call in ast.walk(fn)
+        ):
+            shared.add("get_workspace")
+        for fn in functions:
+            for call in ast.walk(fn):
+                if not (
+                    isinstance(call, ast.Call)
+                    and isinstance(call.func, ast.Attribute)
+                    and call.func.attr == "recipes"
+                ):
+                    continue
+                argument = next((kw.value for kw in call.keywords if kw.arg == "operation"), None)
+                if not isinstance(argument, ast.Constant) or not isinstance(argument.value, str):
+                    raise DesignError(f"共有カタログの操作名が固定されていません: {slug}")
+                shared.add(argument.value)
+        for target in sorted(shared):
+            matched = [query for query in direct_queries if query.operation == target]
+            if not matched:
+                raise DesignError(f"共有呼出しのSQLがありません: {slug}: {target}")
+            result.extend(
+                replace(
+                    query,
+                    operation=operation,
+                    condition=f"共有処理 {target} を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。",
+                )
+                for query in matched
+            )
     authentication = [query for query in result if "/auth/get_me/sql/" in query.source]
     for slug, operation in sorted(slugs.items()):
         if slug.startswith(("entities/", "workspace/", "generation/")):
@@ -427,7 +503,13 @@ def load_queries(root: Path, tables: dict[str, Table], slugs: dict[str, str]) ->
                 replace(
                     query,
                     operation=operation,
-                    condition="preview=trueで開発用認証を行う場合のみ。通常の公開検索では実行しない。",
+                    condition=(
+                        "preview=true、または料理詳細でBearer認証を指定した場合。"
+                        "認証なしの公開検索では実行しない。"
+                        if slug == "recipes/get_recipe"
+                        else "preview=trueで開発用認証を行う場合のみ。"
+                        "通常の公開検索では実行しない。"
+                    ),
                 )
                 for query in authentication
             )
@@ -443,7 +525,9 @@ def render_database(tables: dict[str, Table], queries: list[Query]) -> dict[str,
     outputs["database/README.md"] = document(
         "物理テーブル一覧",
         [
-            "実DDLで作られる表だけを掲載する。JSON状態内の配列や将来の正規化テーブルは物理表として数えない。",
+            "全マイグレーションの実DDLと移行台帳のCREATE文で作られる表を掲載する。"
+            "原設計との対応は [原設計との対応](SOURCE-MAPPING.md)、"
+            "トリガー・RLS等は [DB制約と手続き](CONTRACTS.md) から確認できる。",
             table(["テーブル", "意味", "列数", "定義元"], rows),
             "[ER図](ER.md) / [APIとのCRUD](../api/CRUD.md)",
         ],

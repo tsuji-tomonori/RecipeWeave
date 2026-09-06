@@ -21,3 +21,6 @@ frontend/playwright-report/
 frontend/coverage/
 documentation/dist/
 documentation/.astro/
+documentation/src/content/docs/
+
+documentation/public/openapi/

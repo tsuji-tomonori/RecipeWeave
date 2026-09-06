@@ -10,6 +10,7 @@ import type {
   ReceiptCommit,
   Recipe,
   RecipeDraft,
+  RecipeIngredient,
   SearchFilters,
   ShoppingList,
   ShoppingRow,
@@ -26,11 +27,19 @@ export function setCatalog(foods: Food[], recipes: Recipe[]): void {
   FOODS.splice(0, FOODS.length, ...structuredClone(foods));
   RECIPES.splice(0, RECIPES.length, ...structuredClone(recipes));
 }
-export function cacheRecipes(recipes: Recipe[]): void {
+export function cacheRecipes(recipes: Recipe[], makeCurrent = true): void {
   for (const recipe of recipes) {
-    const index = RECIPES.findIndex((existing) => existing.id === recipe.id);
-    if (index < 0) RECIPES.push(structuredClone(recipe));
-    else RECIPES[index] = structuredClone(recipe);
+    const index = RECIPES.findIndex(
+      (existing) =>
+        existing.id === recipe.id && existing.versionId === recipe.versionId,
+    );
+    if (index >= 0 && !makeCurrent) {
+      RECIPES.splice(index, 1, structuredClone(recipe));
+      continue;
+    }
+    if (index >= 0) RECIPES.splice(index, 1);
+    if (makeCurrent) RECIPES.unshift(structuredClone(recipe));
+    else RECIPES.push(structuredClone(recipe));
   }
 }
 export class DomainError extends Error {
@@ -84,14 +93,20 @@ export function createInitialState(): AppState {
     },
   };
 }
-export const allFoods = (state: AppState): Food[] => [...new Map([...FOODS, ...state.customFoods].map((food) => [food.id, food])).values()];
+export const allFoods = (state: AppState): Food[] => [
+  ...new Map(
+    [...FOODS, ...state.customFoods].map((food) => [food.id, food]),
+  ).values(),
+];
 export function getFood(state: AppState, id: string): Food {
   const food = allFoods(state).find((x) => x.id === id);
   if (!food) throw new DomainError("FOOD_NOT_FOUND", "食材が見つかりません。");
   return food;
 }
-export function getRecipe(id: string): Recipe {
-  const recipe = RECIPES.find((x) => x.id === id);
+export function getRecipe(id: string, versionId?: string): Recipe {
+  const recipe = RECIPES.find(
+    (x) => x.id === id && (!versionId || x.versionId === versionId),
+  );
   if (!recipe)
     throw new DomainError("RECIPE_NOT_FOUND", "この料理は公開されていません。");
   return recipe;
@@ -101,14 +116,26 @@ export function quantityText(q: Quantity): string {
     ? "数量不明"
     : `${q.value}${q.unit}${["パック", "袋", "缶", "点"].includes(q.unit) ? "（内容量は確認）" : ""}`;
 }
-export function getDraft(state: AppState, recipeId: string): RecipeDraft {
-  if (state.drafts[recipeId]) return copy(state.drafts[recipeId]);
-  const recipe = getRecipe(recipeId);
+/** 材料行を識別する。同じ食品の下味・仕上げを別々に調整できる。 */
+export const ingredientKey = (ingredient: RecipeIngredient): string =>
+  ingredient.ingredientId ?? ingredient.foodId;
+export function getDraft(
+  state: AppState,
+  recipeId: string,
+  versionId?: string,
+): RecipeDraft {
+  if (
+    state.drafts[recipeId] &&
+    (!versionId || state.drafts[recipeId].recipeVersionId === versionId)
+  )
+    return copy(state.drafts[recipeId]);
+  const recipe = getRecipe(recipeId, versionId);
   return {
     recipeId,
+    ...(recipe.versionId ? { recipeVersionId: recipe.versionId } : {}),
     servings: recipe.servings,
     amounts: Object.fromEntries(
-      recipe.ingredients.map((x) => [x.foodId, copy(x.quantity)]),
+      recipe.ingredients.map((x) => [ingredientKey(x), copy(x.quantity)]),
     ),
     adjusted: false,
   };
@@ -119,15 +146,15 @@ function validateDraft(draft: RecipeDraft): void {
       "INVALID_SERVINGS",
       "人数は0より大きい数にしてください。",
     );
-  const recipe = getRecipe(draft.recipeId);
-  const expected = recipe.ingredients.map((x) => x.foodId).sort();
+  const recipe = getRecipe(draft.recipeId, draft.recipeVersionId);
+  const expected = recipe.ingredients.map(ingredientKey).sort();
   if (
     JSON.stringify(Object.keys(draft.amounts).sort()) !==
     JSON.stringify(expected)
   )
     throw new DomainError("INVALID_DRAFT", "材料の構成が一致しません。");
   for (const ingredient of recipe.ingredients) {
-    const q = draft.amounts[ingredient.foodId];
+    const q = draft.amounts[ingredientKey(ingredient)];
     validateQuantity(q);
     if (q.value === null || q.unit !== ingredient.quantity.unit)
       throw new DomainError(
@@ -419,7 +446,14 @@ export function undoImport(state: AppState, id: string): AppState {
   const preview = previewUndoImport(state, id);
   if (preview.alreadyUndone)
     throw new DomainError("ALREADY_UNDONE", "この登録は取消済みです。");
-  const ids = new Set(preview.lots.filter((lot) => lot.status === "active" && !lot.edited && lot.consumed.length === 0).map((lot) => lot.id));
+  const ids = new Set(
+    preview.lots
+      .filter(
+        (lot) =>
+          lot.status === "active" && !lot.edited && lot.consumed.length === 0,
+      )
+      .map((lot) => lot.id),
+  );
   const now = timestamp();
   return {
     ...state,
@@ -437,8 +471,9 @@ export function requiredQuantities(items: RecipeDraft[]): ConsumptionRequest[] {
   const totals = new Map<string, ConsumptionRequest>();
   for (const item of items) {
     validateDraft(item);
-    for (const ingredient of getRecipe(item.recipeId).ingredients) {
-      const quantity = item.amounts[ingredient.foodId];
+    for (const ingredient of getRecipe(item.recipeId, item.recipeVersionId)
+      .ingredients) {
+      const quantity = item.amounts[ingredientKey(ingredient)];
       if (quantity.value === 0) continue;
       const key = quantityKey(
         ingredient.foodId,
@@ -627,7 +662,7 @@ export function randomRecipe(
 }
 export function arrangements(state: AppState, recipeId: string): Recipe[] {
   return getRecipe(recipeId)
-    .arrangementIds.map(getRecipe)
+    .arrangementIds.map((id) => getRecipe(id))
     .filter((x) => allowedRecipe(state, x));
 }
 /** リストスケジューリング。同時に行う手作業は1つとし、待ち時間の工程も器具を占有する。 */
@@ -637,7 +672,7 @@ export function buildCookingPlan(
 ): PlannedStep[] {
   const recipes = items.map((item) => {
     validateDraft(item);
-    return getRecipe(item.recipeId);
+    return getRecipe(item.recipeId, item.recipeVersionId);
   });
   if (
     equipment &&

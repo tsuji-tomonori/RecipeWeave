@@ -1,12 +1,13 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 2f95ac857209e9b0769b3824db1ae0673e1f7c7ed2994673e93a7cae6a1dce02
+# SQLのSHA256: 8528c1829f25064d89f9dbe2bc6684bed3678504a9c06afb4d5f876fa101417e
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 使用量の結果は合計表と消費台帳から導出する。
+    "query": """\
+-- 使用量の結果は合計表と消費台帳から導出する。
 SELECT
     total.id,
     fm.food_id,
@@ -20,7 +21,10 @@ SELECT
 FROM recipeweave.ingredient_total AS total
 INNER JOIN recipeweave.food_form AS fm ON total.form_id = fm.id
 INNER JOIN recipeweave.unit AS u ON total.unit_id = u.id
-LEFT JOIN recipeweave.pantry_lot AS p ON total.form_id = p.form_id AND total.unit_id = p.unit_id
+LEFT JOIN recipeweave.pantry_lot AS p
+    ON
+        total.form_id = p.form_id AND total.unit_id = p.unit_id
+        AND total.product_version_id IS NOT DISTINCT FROM p.product_version_id
 LEFT JOIN recipeweave.pantry_consumption AS c ON p.id = c.lot_id AND total.session_id = c.session_id
 WHERE total.session_id = %(session_id)s
 GROUP BY total.id, fm.food_id, fm.name, u.code

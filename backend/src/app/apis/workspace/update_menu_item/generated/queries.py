@@ -1,12 +1,13 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 99df2fa8ff031f4ad977ddc39916e2435c6352d09b1f44752b5956752b468a4e
+# SQLのSHA256: 7470e11c7de088dd7b177f913eab660e7906ee03249faacc6b0f83c5ece02f16
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "q001_delete_item": """-- 本人の現在の献立の料理を外す。調理中の入力は専用の献立版へ保存する。
+    "q001_delete_item": """\
+-- 本人の現在の献立の料理を外す。調理中の入力は専用の献立版へ保存する。
 DELETE FROM recipeweave.menu_item
 WHERE
     id = %(row_id)s AND menu_id = %(menu_id)s
@@ -16,7 +17,8 @@ WHERE
     )
 RETURNING id;
 """,
-    "q010_recipe": """-- 公開済み料理、または明示したローカル試用で利用できる料理版を選ぶ。
+    "q010_recipe": """\
+-- 公開済み料理、または明示したローカル試用で利用できる料理版を選ぶ。
 SELECT
     rv.id,
     rv.base_servings
@@ -26,18 +28,21 @@ INNER JOIN
     ON rv.recipe_id = r.id
 WHERE
     r.id = %(recipe_id)s
+    AND (%(requested_version_id)s::UUID IS NULL OR rv.id = %(requested_version_id)s)
     AND (
         (rv.status = 'published' AND rv.validation = 'passed' AND r.status = 'published')
-        OR (%(preview)s AND rv.status = 'draft')
+        OR (%(preview)s AND rv.status = 'draft' AND r.status = 'draft')
     )
 ORDER BY rv.version DESC
 LIMIT 1;
 """,
-    "q011_ingredients": """-- 指定料理の材料ID・単位・基準量を照合する。
+    "q011_ingredients": """\
+-- 指定料理の材料ID・単位・基準量を照合する。
 SELECT
     ri.id,
     fm.food_id,
-    ri.amount, ri.optional,
+    ri.amount,
+    ri.optional,
     ri.unit_id,
     ri.form_id,
     u.code AS unit
@@ -47,11 +52,13 @@ INNER JOIN recipeweave.unit AS u ON ri.unit_id = u.id
 WHERE ri.recipe_version_id = %(version_id)s
 ORDER BY ri.line_no;
 """,
-    "q012_menu": """-- 現在の献立を初回だけ作成し、所有者を固定する。
+    "q012_menu": """\
+-- 現在の献立を初回だけ作成し、所有者を固定する。
 INSERT INTO recipeweave.menu (id, user_id, name, servings, revision)
 VALUES (%(menu_id)s, %(user_id)s, %(name)s, 2, 1) ON CONFLICT (id) DO NOTHING;
 """,
-    "q013_insert_item": """-- 検証した料理版と人数を献立へ登録する。
+    "q013_insert_item": """\
+-- 検証した料理版と人数を献立へ登録する。
 INSERT INTO recipeweave.menu_item (
     id, menu_id, recipe_version_id, servings, role_option_id, position
 )
@@ -64,25 +71,30 @@ VALUES (
 )
 RETURNING id;
 """,
-    "q014_override": """-- 利用者が確認した確定分量だけを元の材料行へ結び付ける。
+    "q014_override": """\
+-- 利用者が確認した確定分量だけを元の材料行へ結び付ける。
 INSERT INTO recipeweave.menu_ingredient_override (
     id, menu_item_id, ingredient_line_id, selected, amount, form_id, product_version_id
 )
 VALUES (%(row_id)s, %(item_id)s, %(ingredient_id)s, %(selected)s, %(amount)s, NULL, NULL);
 """,
-    "q015_advance_menu": """-- 調理計画が参照する献立版を更新する。
+    "q015_advance_menu": """\
+-- 調理計画が参照する献立版を更新する。
 UPDATE recipeweave.menu SET revision = revision + 1
 WHERE id = %(menu_id)s AND user_id = %(user_id)s RETURNING revision;
 """,
-    "q900_lock_revision": """-- 本人の集約版を排他ロックして並行操作の順序を確定する。
+    "q900_lock_revision": """\
+-- 本人の集約版を排他ロックして並行操作の順序を確定する。
 SELECT revision FROM recipeweave.workspace_revision
 WHERE user_id = %(user_id)s FOR UPDATE;
 """,
-    "q901_advance_revision": """-- 業務行の更新と同じトランザクションで版を一度だけ進める。
+    "q901_advance_revision": """\
+-- 業務行の更新と同じトランザクションで版を一度だけ進める。
 UPDATE recipeweave.workspace_revision SET revision = revision + 1
 WHERE user_id = %(user_id)s RETURNING revision;
 """,
-    "q902_append_audit": """-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
+    "q902_append_audit": """\
+-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
 INSERT INTO recipeweave.audit_event (
     id, actor_id, action, entity_type, entity_key_hash, reason, occurred_at
 )
@@ -94,7 +106,7 @@ VALUES (
 }
 PARAMETERS: dict[str, tuple[str, ...]] = {
     "q001_delete_item": ("menu_id", "row_id", "user_id"),
-    "q010_recipe": ("preview", "recipe_id"),
+    "q010_recipe": ("preview", "recipe_id", "requested_version_id"),
     "q011_ingredients": ("version_id",),
     "q012_menu": ("menu_id", "name", "user_id"),
     "q013_insert_item": ("menu_id", "row_id", "servings", "version_id"),

@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 利用者が確認した確定分量だけを元の材料行へ結び付ける。
+    "query": """\
+-- 利用者が確認した確定分量だけを元の材料行へ結び付ける。
 INSERT INTO recipeweave.menu_ingredient_override (
     id, menu_item_id, ingredient_line_id, selected, amount, form_id, product_version_id
 )

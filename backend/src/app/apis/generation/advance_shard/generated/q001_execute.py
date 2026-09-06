@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 現ワーカーのフェンスを確認し、範囲内の単調な進捗だけを確定する。
+    "query": """\
+-- 現ワーカーのフェンスを確認し、範囲内の単調な進捗だけを確定する。
 UPDATE recipeweave.generation_shard AS s
 SET next_ordinal = %(next_ordinal)s, state = %(state)s
 WHERE

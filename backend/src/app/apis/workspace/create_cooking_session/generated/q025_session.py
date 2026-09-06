@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 正規化した入力行の識別子・固定量だけを版付き入力契約へ保存する。
+    "query": """\
+-- 正規化した入力行の識別子・固定量だけを版付き入力契約へ保存する。
 INSERT INTO recipeweave.cooking_session
 (id, menu_id, menu_revision, status, target_at, planner_version, input_snapshot, input_hash)
 VALUES (

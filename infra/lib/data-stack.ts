@@ -1,5 +1,6 @@
 import {
   CfnOutput,
+  CfnParameter,
   Duration,
   RemovalPolicy,
   Stack,
@@ -36,7 +37,8 @@ export class DataStack extends Stack {
     });
     this.clientSecurityGroup = new ec2.SecurityGroup(this, "DatabaseClients", {
       vpc: this.vpc,
-      description: "APIと移行関数のDB接続元",
+      // SecurityGroupの説明はCloudFormationのASCII制約に合わせる。
+      description: "RecipeWeave API and migration database clients",
       allowAllOutbound: true,
     });
     this.cluster = new rds.DatabaseCluster(this, "RelationalCluster", {
@@ -96,13 +98,32 @@ export class DataStack extends Stack {
       deletionProtection: true,
       removalPolicy: RemovalPolicy.RETAIN,
     });
-    // SRPで発行するアクセストークンにはaws.cognito.signin.user.adminが付く。
-    // ホスト型ログイン画面とOAuthのコールバック設定は、今後のクラウド認証画面で導入する。
+    const callback = new CfnParameter(this, "WebCallbackUrl", {
+      type: "String",
+      description:
+        "HTTPS callback URL for the deployed RecipeWeave web application",
+      allowedPattern: "^https://[^/]+/[^?#]*$",
+    });
+    const domain = this.userPool.addDomain("HostedLogin", {
+      cognitoDomain: {
+        domainPrefix: `${this.stackName.toLowerCase()}-${this.account}-${this.region}`,
+      },
+    });
     this.userPoolClient = this.userPool.addClient("WebClient", {
       generateSecret: false,
       authFlows: { userSrp: true },
       preventUserExistenceErrors: true,
       enableTokenRevocation: true,
+      oAuth: {
+        flows: { authorizationCodeGrant: true },
+        scopes: [
+          cognito.OAuthScope.OPENID,
+          cognito.OAuthScope.EMAIL,
+          cognito.OAuthScope.PROFILE,
+        ],
+        callbackUrls: [callback.valueAsString],
+        logoutUrls: [callback.valueAsString],
+      },
       accessTokenValidity: Duration.minutes(15),
       idTokenValidity: Duration.minutes(15),
       refreshTokenValidity: Duration.days(7),
@@ -117,6 +138,9 @@ export class DataStack extends Stack {
     });
     new CfnOutput(this, "ApplicationDatabaseSecretArn", {
       value: this.applicationSecret.secretArn,
+    });
+    new CfnOutput(this, "CognitoDomain", {
+      value: domain.baseUrl().replace("https://", ""),
     });
     new CfnOutput(this, "UserPoolId", { value: this.userPool.userPoolId });
     new CfnOutput(this, "CognitoClientId", {

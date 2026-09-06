@@ -1,12 +1,14 @@
 # インターフェース: list_foods
 
+[詳細](detail.md) / [入出力](interface.md) / [ログ](messages.md) / [SQL](queries.md) / [シーケンス](sequence.md) / [要因別試験](tests.md) / [API一覧](../../README.md)
+
 実装から自動生成。手編集禁止。`uv run python tools/generate_service_design.py` で更新。
 
 `GET /api/foods` — 食材候補を検索する
 
 ## 認証
 
-[]
+[{"HTTPBearer": []}, {}, {"HTTPBearer": []}]
 
 宣言: public
 
@@ -33,6 +35,10 @@ FoodsResponse
 | items | array&lt;Food&gt; | 必須 | 追加制約なし | Items |
 | total | integer | 必須 | 追加制約なし | Total |
 
+### HTTP 401: 指定された認証情報が無効
+
+OpenAPIに本文schemaなし。共通エラー実装の定義はエラー仕様を参照。
+
 ### HTTP 422: Validation Error
 
 Content-Type: `application/json`
@@ -43,11 +49,17 @@ HTTPValidationError
 |---|---|---|---|---|
 | detail | array&lt;ValidationError&gt; | 任意 | 追加制約なし | Detail |
 
+### HTTP 503: DB接続が利用できない
+
+OpenAPIに本文schemaなし。共通エラー実装の定義はエラー仕様を参照。
+
 ## 操作のサンプル
 
 ```python
 SUCCESS: dict[str, object] = {"items": [], "total": 0}
 ```
+
+[Swagger互換のOpenAPI JSON](interface.openapi.json)
 
 [共有モデルの全仕様](../../MODELS.md) / [共通エラー](../../ERRORS.md)
 
@@ -80,6 +92,9 @@ SUCCESS: dict[str, object] = {"items": [], "total": 0}
       },
       "description": "Successful Response"
     },
+    "401": {
+      "description": "指定された認証情報が無効"
+    },
     "422": {
       "content": {
         "application/json": {
@@ -89,8 +104,20 @@ SUCCESS: dict[str, object] = {"items": [], "total": 0}
         }
       },
       "description": "Validation Error"
+    },
+    "503": {
+      "description": "DB接続が利用できない"
     }
   },
+  "security": [
+    {
+      "HTTPBearer": []
+    },
+    {},
+    {
+      "HTTPBearer": []
+    }
+  ],
   "summary": "食材候補を検索する"
 }
 ```

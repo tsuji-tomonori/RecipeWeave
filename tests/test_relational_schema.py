@@ -34,6 +34,11 @@ def test_all_source_columns_and_foreign_keys_are_implemented() -> None:
         assert actual["type"] == datatype
         if f"{table}.{name}" not in catalog["column_evolutions"]:
             assert actual["nullable"] == (nullable == "可")
+    for table, _, name, _, _, rule, *_ in source["02_カラム辞書"][1:]:
+        if rule.startswith("CHECK IN ("):
+            expected_values = set(rule.removeprefix("CHECK IN (").removesuffix(")").split(","))
+            actual = next(c for c in tables[table]["columns"] if c["name"] == name)
+            assert expected_values <= set(actual["enum"]), (table, name)
     for child, column, parent, target, _, delete, *_ in source["04_外部キー"][1:]:
         assert any(
             fk["columns"] == [column]
@@ -363,6 +368,10 @@ def test_published_recipe_content_cannot_change(
     connection: psycopg.Connection[Any], recipe: dict[str, UUID]
 ) -> None:
     connection.execute(
+        "UPDATE recipeweave.catalog_release SET published_at=NOW() WHERE id=%s",
+        (recipe["release"],),
+    )
+    connection.execute(
         "UPDATE recipeweave.recipe_version SET status='published', "
         "validation='passed', published_at=now() WHERE id=%s",
         (recipe["version"],),
@@ -618,7 +627,8 @@ def test_receipt_undo_preserves_only_edited_or_consumed_lots(
         pantry_lot_id=lot,
     )
     connection.execute(
-        "UPDATE recipeweave.receipt_import SET status='committed', revision=2, committed_at=NOW() WHERE id=%s",
+        "UPDATE recipeweave.receipt_import SET status='committed', "
+        "revision=2, committed_at=NOW() WHERE id=%s",
         (receipt,),
     )
     if preserve_kind == "consumed":
@@ -646,7 +656,8 @@ def test_receipt_undo_preserves_only_edited_or_consumed_lots(
     if preserve_kind == "none":
         connection.execute("UPDATE recipeweave.pantry_lot SET status='undone' WHERE id=%s", (lot,))
     connection.execute(
-        "UPDATE recipeweave.receipt_import SET status='reverted', revision=3, reverted_at=NOW() WHERE id=%s",
+        "UPDATE recipeweave.receipt_import SET status='reverted', "
+        "revision=3, reverted_at=NOW() WHERE id=%s",
         (receipt,),
     )
     connection.execute("SET CONSTRAINTS ALL IMMEDIATE")
@@ -693,12 +704,105 @@ def test_receipt_undo_cannot_leave_untouched_inventory(
         pantry_lot_id=lot,
     )
     connection.execute(
-        "UPDATE recipeweave.receipt_import SET status='committed', revision=2, committed_at=NOW() WHERE id=%s",
+        "UPDATE recipeweave.receipt_import SET status='committed', "
+        "revision=2, committed_at=NOW() WHERE id=%s",
         (receipt,),
     )
     connection.execute(
-        "UPDATE recipeweave.receipt_import SET status='reverted', revision=3, reverted_at=NOW() WHERE id=%s",
+        "UPDATE recipeweave.receipt_import SET status='reverted', "
+        "revision=3, reverted_at=NOW() WHERE id=%s",
         (receipt,),
     )
     with pytest.raises(psycopg.errors.CheckViolation):
         connection.execute("SET CONSTRAINTS ALL IMMEDIATE")
+
+
+def test_live_column_types_nullability_defaults_match_catalog(
+    connection: psycopg.Connection[Any],
+) -> None:
+    rows = connection.execute(
+        "SELECT c.relname, a.attname, format_type(a.atttypid,a.atttypmod), "
+        "a.attnotnull, pg_get_expr(d.adbin,d.adrelid) "
+        "FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace "
+        "JOIN pg_attribute a ON a.attrelid=c.oid "
+        "LEFT JOIN pg_attrdef d ON d.adrelid=c.oid AND d.adnum=a.attnum "
+        "WHERE n.nspname='recipeweave' AND c.relkind='r' AND a.attnum>0 AND NOT a.attisdropped"
+    )
+    actual = {(row[0], row[1]): row[2:] for row in rows}
+    for table in extract()["tables"]:
+        for column in table["columns"]:
+            datatype, nonnull, default = actual[(table["name"], column["name"])]
+            datatype = datatype.replace("character(", "char(").replace(
+                "timestamp with time zone", "timestamptz"
+            )
+            assert datatype == column["type"]
+            assert nonnull is not column["nullable"]
+            expected_default = column["default"]
+            if expected_default is None:
+                assert default is None
+            else:
+                assert default.lower().replace("::text", "") == expected_default.lower()
+
+
+@pytest.mark.parametrize(
+    ("table", "column", "limit"),
+    [
+        ("food", "name", 100),
+        ("food_alias", "alias", 500),
+        ("food_form", "name", 500),
+        ("recipe", "title", 500),
+        ("recipe_version", "description", 5000),
+        ("recipe_step", "title", 500),
+        ("recipe_step", "instruction", 5000),
+        ("recipe_ingredient", "note", 500),
+        ("resource_type", "name", 500),
+        ("axis_option", "label", 500),
+    ],
+)
+def test_catalog_display_text_limits_preserve_boundary_and_reject_overflow(
+    connection: psycopg.Connection[Any],
+    recipe: dict[str, UUID],
+    table: str,
+    column: str,
+    limit: int,
+) -> None:
+    identifiers = {
+        "food": recipe["food"],
+        "food_form": recipe["form"],
+        "recipe": recipe["recipe"],
+        "recipe_version": recipe["version"],
+        "recipe_step": recipe["step"],
+        "recipe_ingredient": recipe["ingredient"],
+    }
+    if table == "food_alias":
+        identity = insert(
+            connection, table, food_id=recipe["food"], alias="試験別名", locale="ja-JP"
+        )
+    elif table == "resource_type":
+        identity = insert(connection, table, code=str(uuid4()), name="試験道具", status="active")
+    elif table == "axis_option":
+        row = connection.execute(
+            "SELECT family_option_id FROM recipeweave.recipe WHERE id=%s", (recipe["recipe"],)
+        ).fetchone()
+        assert row is not None
+        identity = row[0]
+    else:
+        identity = identifiers[table]
+    statement = sql.SQL("UPDATE recipeweave.{} SET {}=%s WHERE id=%s").format(
+        sql.Identifier(table), sql.Identifier(column)
+    )
+    boundary = "あ" * limit
+    connection.execute(statement, (boundary, identity))
+    actual = connection.execute(
+        sql.SQL("SELECT {} FROM recipeweave.{} WHERE id=%s").format(
+            sql.Identifier(column), sql.Identifier(table)
+        ),
+        (identity,),
+    ).fetchone()
+    assert actual == (boundary,)
+    metadata = next(item for item in extract()["tables"] if item["name"] == table)
+    assert (
+        next(item for item in metadata["columns"] if item["name"] == column)["max_length"] == limit
+    )
+    with pytest.raises(psycopg.errors.CheckViolation):
+        connection.execute(statement, (boundary + "い", identity))

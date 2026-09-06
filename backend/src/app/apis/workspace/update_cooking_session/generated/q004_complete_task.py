@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 確認した工程を完了にし、最初の開始・完了時刻を保持する。
+    "query": """\
+-- 確認した工程を完了にし、最初の開始・完了時刻を保持する。
 UPDATE recipeweave.session_task SET
     status = 'completed',
     actual_start_at = COALESCE(actual_start_at, CURRENT_TIMESTAMP),

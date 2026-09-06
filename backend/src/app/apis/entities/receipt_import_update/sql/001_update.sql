@@ -8,7 +8,8 @@ SET
     status = %(status)s,
     revision = %(revision)s,
     committed_at = %(committed_at)s,
-    reverted_at = %(reverted_at)s
+    reverted_at = %(reverted_at)s,
+    undo_preserved_count = %(undo_preserved_count)s
 WHERE
     t.id = %(row_id)s
     AND t.xmin::TEXT = %(expected_etag)s
@@ -23,4 +24,5 @@ RETURNING
     t.revision,
     t.committed_at,
     t.reverted_at,
+    t.undo_preserved_count,
     t.xmin::TEXT AS etag;

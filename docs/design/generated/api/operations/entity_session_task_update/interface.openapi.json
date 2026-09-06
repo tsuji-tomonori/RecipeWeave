@@ -1,0 +1,356 @@
+{
+  "components": {
+    "schemas": {
+      "SessionTaskRow": {
+        "additionalProperties": false,
+        "description": "展開済み工程のDB応答。",
+        "properties": {
+          "actual_end_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "実完了",
+            "title": "Actual End At"
+          },
+          "actual_start_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "実開始",
+            "title": "Actual Start At"
+          },
+          "batch_no": {
+            "description": "容量分割した回",
+            "exclusiveMinimum": 0.0,
+            "title": "Batch No",
+            "type": "integer"
+          },
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "menu_item_id": {
+            "description": "料理",
+            "format": "uuid",
+            "title": "Menu Item Id",
+            "type": "string"
+          },
+          "planned_end_s": {
+            "description": "終了相対秒",
+            "title": "Planned End S",
+            "type": "integer"
+          },
+          "planned_start_s": {
+            "description": "開始相対秒",
+            "minimum": 0.0,
+            "title": "Planned Start S",
+            "type": "integer"
+          },
+          "session_id": {
+            "description": "実行",
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "status": {
+            "description": "進捗",
+            "enum": [
+              "pending",
+              "running",
+              "completed",
+              "skipped"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "step_id": {
+            "description": "元工程",
+            "format": "uuid",
+            "title": "Step Id",
+            "type": "string"
+          },
+          "timer_duration_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "利用者が設定したタイマー秒数",
+            "title": "Timer Duration S"
+          },
+          "timer_started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "稼働中タイマーの開始日時",
+            "title": "Timer Started At"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "session_id",
+          "menu_item_id",
+          "step_id",
+          "batch_no",
+          "planned_start_s",
+          "planned_end_s",
+          "status",
+          "actual_start_at",
+          "actual_end_at",
+          "timer_started_at",
+          "timer_duration_s",
+          "etag"
+        ],
+        "title": "SessionTaskRow",
+        "type": "object"
+      },
+      "SessionTaskWrite": {
+        "additionalProperties": false,
+        "description": "展開済み工程の編集可能列。未指定NULL列はNULLにする。",
+        "properties": {
+          "actual_end_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "実完了",
+            "title": "Actual End At"
+          },
+          "actual_start_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "実開始",
+            "title": "Actual Start At"
+          },
+          "batch_no": {
+            "description": "容量分割した回",
+            "exclusiveMinimum": 0.0,
+            "title": "Batch No",
+            "type": "integer"
+          },
+          "menu_item_id": {
+            "description": "料理",
+            "format": "uuid",
+            "title": "Menu Item Id",
+            "type": "string"
+          },
+          "planned_end_s": {
+            "description": "終了相対秒",
+            "title": "Planned End S",
+            "type": "integer"
+          },
+          "planned_start_s": {
+            "description": "開始相対秒",
+            "minimum": 0.0,
+            "title": "Planned Start S",
+            "type": "integer"
+          },
+          "session_id": {
+            "description": "実行",
+            "format": "uuid",
+            "title": "Session Id",
+            "type": "string"
+          },
+          "status": {
+            "description": "進捗",
+            "enum": [
+              "pending",
+              "running",
+              "completed",
+              "skipped"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "step_id": {
+            "description": "元工程",
+            "format": "uuid",
+            "title": "Step Id",
+            "type": "string"
+          },
+          "timer_duration_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "利用者が設定したタイマー秒数",
+            "title": "Timer Duration S"
+          },
+          "timer_started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "稼働中タイマーの開始日時",
+            "title": "Timer Started At"
+          }
+        },
+        "required": [
+          "session_id",
+          "menu_item_id",
+          "step_id",
+          "batch_no",
+          "planned_start_s",
+          "planned_end_s",
+          "status"
+        ],
+        "title": "SessionTaskWrite",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/session_task/{row_id}": {
+      "put": {
+        "description": "展開済み工程の更新。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_session_task_update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionTaskWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionTaskRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "428": {
+            "description": "If-Matchが必要"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "展開済み工程の更新",
+        "tags": [
+          "正規化データ: 展開済み工程"
+        ]
+      }
+    }
+  }
+}

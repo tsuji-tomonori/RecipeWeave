@@ -1,17 +1,19 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: c14c25b03bc2b7536163cee280eaf558db834629397ec087671fdeedf13e618f
+# SQLのSHA256: 9ffcd4fa296263a0fd7d5e2ef11a1ad34693ddc5589fbbdb9d152ad48cd16fd8
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 工程が占有する器具数と最小容量を読む。
+    "query": """\
+-- 工程が占有する器具数と最小容量を読む。
 SELECT
     sr.step_id,
     sr.resource_type_id,
     sr.quantity,
     sr.capacity_min,
+    sr.exclusive,
     rt.name,
     rt.code
 FROM recipeweave.step_resource AS sr

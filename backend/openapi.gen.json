@@ -428,7 +428,7 @@
           },
           "label": {
             "description": "候補名",
-            "maxLength": 20000,
+            "maxLength": 500,
             "minLength": 1,
             "title": "Label",
             "type": "string"
@@ -496,7 +496,7 @@
           },
           "label": {
             "description": "候補名",
-            "maxLength": 20000,
+            "maxLength": 500,
             "minLength": 1,
             "title": "Label",
             "type": "string"
@@ -1058,6 +1058,19 @@
             "title": "Manifest Hash",
             "type": "string"
           },
+          "owner_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "私有カタログの所有者。NULLは共通カタログ",
+            "title": "Owner Id"
+          },
           "published_at": {
             "anyOf": [
               {
@@ -1085,6 +1098,7 @@
           "version",
           "manifest_hash",
           "published_at",
+          "owner_id",
           "etag"
         ],
         "title": "CatalogReleaseRow",
@@ -1752,7 +1766,6 @@
           },
           "current_task_index": {
             "description": "調理画面の現在の工程位置(0始まり)",
-            "minimum": 0.0,
             "title": "Current Task Index",
             "type": "integer"
           },
@@ -1803,7 +1816,6 @@
             "enum": [
               "planned",
               "cooking",
-              "paused",
               "completed",
               "cancelled"
             ],
@@ -1846,7 +1858,6 @@
         "properties": {
           "current_task_index": {
             "description": "調理画面の現在の工程位置(0始まり)",
-            "minimum": 0.0,
             "title": "Current Task Index",
             "type": "integer"
           },
@@ -1885,7 +1896,6 @@
             "enum": [
               "planned",
               "cooking",
-              "paused",
               "completed",
               "cancelled"
             ],
@@ -2138,7 +2148,7 @@
         "properties": {
           "alias": {
             "description": "別名・かな",
-            "maxLength": 20000,
+            "maxLength": 500,
             "minLength": 1,
             "title": "Alias",
             "type": "string"
@@ -2192,7 +2202,7 @@
         "properties": {
           "alias": {
             "description": "別名・かな",
-            "maxLength": 20000,
+            "maxLength": 500,
             "minLength": 1,
             "title": "Alias",
             "type": "string"
@@ -2431,7 +2441,7 @@
           },
           "name": {
             "description": "生皮付き・冷凍刻み等",
-            "maxLength": 20000,
+            "maxLength": 500,
             "minLength": 1,
             "title": "Name",
             "type": "string"
@@ -2504,7 +2514,7 @@
           },
           "name": {
             "description": "生皮付き・冷凍刻み等",
-            "maxLength": 20000,
+            "maxLength": 500,
             "minLength": 1,
             "title": "Name",
             "type": "string"
@@ -2789,7 +2799,7 @@
           },
           "name": {
             "description": "食材名・加工品種別",
-            "maxLength": 20000,
+            "maxLength": 100,
             "minLength": 1,
             "title": "Name",
             "type": "string"
@@ -2876,7 +2886,7 @@
           },
           "name": {
             "description": "食材名・加工品種別",
-            "maxLength": 20000,
+            "maxLength": 100,
             "minLength": 1,
             "title": "Name",
             "type": "string"
@@ -4597,6 +4607,7 @@
                     "format": "uuid",
                     "type": "string"
                   },
+                  "maxItems": 3,
                   "type": "array"
                 },
                 "maxItems": 10000,
@@ -4885,13 +4896,8 @@
           },
           "consumption_outcome": {
             "description": "未要求・反映済み・在庫不足・数量不明・単位不一致の結果",
-            "enum": [
-              "not_requested",
-              "applied",
-              "insufficient",
-              "unknown",
-              "incompatible"
-            ],
+            "maxLength": 20000,
+            "minLength": 1,
             "title": "Consumption Outcome",
             "type": "string"
           },
@@ -4984,6 +4990,11 @@
         "additionalProperties": false,
         "description": "キッチンの実資源のDB応答。",
         "properties": {
+          "active": {
+            "description": "新規の調理計画で利用する資源か",
+            "title": "Active",
+            "type": "boolean"
+          },
           "capacity": {
             "anyOf": [
               {
@@ -5049,6 +5060,7 @@
           "name",
           "capacity",
           "quantity",
+          "active",
           "etag"
         ],
         "title": "KitchenResourceRow",
@@ -5058,6 +5070,11 @@
         "additionalProperties": false,
         "description": "キッチンの実資源の編集可能列。未指定NULL列はNULLにする。",
         "properties": {
+          "active": {
+            "description": "新規の調理計画で利用する資源か",
+            "title": "Active",
+            "type": "boolean"
+          },
           "capacity": {
             "anyOf": [
               {
@@ -5104,7 +5121,8 @@
           "user_id",
           "resource_type_id",
           "name",
-          "quantity"
+          "quantity",
+          "active"
         ],
         "title": "KitchenResourceWrite",
         "type": "object"
@@ -5389,6 +5407,19 @@
             "minLength": 1,
             "title": "Recipeid",
             "type": "string"
+          },
+          "recipeVersionId": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipeversionid"
           },
           "servings": {
             "exclusiveMinimum": 0.0,
@@ -6976,11 +7007,8 @@
           },
           "location": {
             "description": "冷蔵・冷凍・常温の保管場所",
-            "enum": [
-              "fridge",
-              "freezer",
-              "pantry"
-            ],
+            "maxLength": 20000,
+            "minLength": 1,
             "title": "Location",
             "type": "string"
           },
@@ -7038,10 +7066,8 @@
           },
           "priority": {
             "description": "先に使う優先指定",
-            "enum": [
-              "normal",
-              "use_first"
-            ],
+            "maxLength": 20000,
+            "minLength": 1,
             "title": "Priority",
             "type": "string"
           },
@@ -7080,11 +7106,8 @@
           },
           "status": {
             "description": "在庫の有効・削除・レシート取消状態",
-            "enum": [
-              "active",
-              "deleted",
-              "undone"
-            ],
+            "maxLength": 20000,
+            "minLength": 1,
             "title": "Status",
             "type": "string"
           },
@@ -7179,11 +7202,8 @@
           },
           "location": {
             "description": "冷蔵・冷凍・常温の保管場所",
-            "enum": [
-              "fridge",
-              "freezer",
-              "pantry"
-            ],
+            "maxLength": 20000,
+            "minLength": 1,
             "title": "Location",
             "type": "string"
           },
@@ -7244,10 +7264,8 @@
           },
           "priority": {
             "description": "先に使う優先指定",
-            "enum": [
-              "normal",
-              "use_first"
-            ],
+            "maxLength": 20000,
+            "minLength": 1,
             "title": "Priority",
             "type": "string"
           },
@@ -7286,11 +7304,8 @@
           },
           "status": {
             "description": "在庫の有効・削除・レシート取消状態",
-            "enum": [
-              "active",
-              "deleted",
-              "undone"
-            ],
+            "maxLength": 20000,
+            "minLength": 1,
             "title": "Status",
             "type": "string"
           },
@@ -7325,6 +7340,44 @@
           "edited"
         ],
         "title": "PantryLotWrite",
+        "type": "object"
+      },
+      "PlanRequest": {
+        "additionalProperties": false,
+        "description": "未保存の分量調整も、明示した料理版の材料行だけへ適用する。",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MealItem"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "PlanRequest",
+        "type": "object"
+      },
+      "PlanResponse": {
+        "additionalProperties": false,
+        "description": "保存済みの調理タスクと共通の表示形式。",
+        "properties": {
+          "plan": {
+            "items": {
+              "$ref": "#/components/schemas/PlannedStep"
+            },
+            "title": "Plan",
+            "type": "array"
+          }
+        },
+        "required": [
+          "plan"
+        ],
+        "title": "PlanResponse",
         "type": "object"
       },
       "PlannedStep": {
@@ -8870,6 +8923,11 @@
             "title": "Status",
             "type": "string"
           },
+          "undo_preserved_count": {
+            "description": "レシート取消時に編集・消費済みとして残した在庫件数",
+            "title": "Undo Preserved Count",
+            "type": "integer"
+          },
           "user_id": {
             "description": "所有者",
             "format": "uuid",
@@ -8887,6 +8945,7 @@
           "revision",
           "committed_at",
           "reverted_at",
+          "undo_preserved_count",
           "etag"
         ],
         "title": "ReceiptImportRow",
@@ -8959,6 +9018,11 @@
             "title": "Status",
             "type": "string"
           },
+          "undo_preserved_count": {
+            "description": "レシート取消時に編集・消費済みとして残した在庫件数",
+            "title": "Undo Preserved Count",
+            "type": "integer"
+          },
           "user_id": {
             "description": "所有者",
             "format": "uuid",
@@ -8970,7 +9034,8 @@
           "user_id",
           "idempotency_key",
           "status",
-          "revision"
+          "revision",
+          "undo_preserved_count"
         ],
         "title": "ReceiptImportWrite",
         "type": "object"
@@ -9342,6 +9407,16 @@
             "title": "Name",
             "type": "string"
           },
+          "publicationStatus": {
+            "default": "draft",
+            "enum": [
+              "draft",
+              "published",
+              "withdrawn"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
           "sample": {
             "title": "Sample",
             "type": "boolean"
@@ -9368,6 +9443,31 @@
             "maxItems": 100,
             "title": "Tags",
             "type": "array"
+          },
+          "versionId": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Versionid"
+          },
+          "withdrawalReason": {
+            "anyOf": [
+              {
+                "maxLength": 20000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Withdrawalreason"
           }
         },
         "required": [
@@ -9409,6 +9509,19 @@
             "minLength": 1,
             "title": "Recipeid",
             "type": "string"
+          },
+          "recipeVersionId": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipeversionid"
           },
           "servings": {
             "exclusiveMinimum": 0.0,
@@ -9565,10 +9678,49 @@
             "title": "Form",
             "type": "string"
           },
+          "formId": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formid"
+          },
+          "ingredientId": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ingredientid"
+          },
           "note": {
             "maxLength": 500,
             "title": "Note",
             "type": "string"
+          },
+          "productVersionId": {
+            "anyOf": [
+              {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Productversionid"
           },
           "quantity": {
             "$ref": "#/components/schemas/Quantity"
@@ -9718,7 +9870,7 @@
           "note": {
             "anyOf": [
               {
-                "maxLength": 20000,
+                "maxLength": 500,
                 "minLength": 1,
                 "type": "string"
               },
@@ -9931,7 +10083,7 @@
           "note": {
             "anyOf": [
               {
-                "maxLength": 20000,
+                "maxLength": 500,
                 "minLength": 1,
                 "type": "string"
               },
@@ -10116,7 +10268,7 @@
           },
           "title": {
             "description": "代表名",
-            "maxLength": 20000,
+            "maxLength": 500,
             "minLength": 1,
             "title": "Title",
             "type": "string"
@@ -10615,7 +10767,7 @@
           },
           "instruction": {
             "description": "個別補足",
-            "maxLength": 20000,
+            "maxLength": 5000,
             "minLength": 1,
             "title": "Instruction",
             "type": "string"
@@ -10647,7 +10799,7 @@
           "title": {
             "anyOf": [
               {
-                "maxLength": 20000,
+                "maxLength": 500,
                 "minLength": 1,
                 "type": "string"
               },
@@ -10711,7 +10863,7 @@
           },
           "instruction": {
             "description": "個別補足",
-            "maxLength": 20000,
+            "maxLength": 5000,
             "minLength": 1,
             "title": "Instruction",
             "type": "string"
@@ -10743,7 +10895,7 @@
           "title": {
             "anyOf": [
               {
-                "maxLength": 20000,
+                "maxLength": 500,
                 "minLength": 1,
                 "type": "string"
               },
@@ -10795,7 +10947,7 @@
           "description": {
             "anyOf": [
               {
-                "maxLength": 20000,
+                "maxLength": 5000,
                 "minLength": 1,
                 "type": "string"
               },
@@ -10930,7 +11082,7 @@
           "description": {
             "anyOf": [
               {
-                "maxLength": 20000,
+                "maxLength": 5000,
                 "minLength": 1,
                 "type": "string"
               },
@@ -11050,7 +11202,7 @@
           },
           "title": {
             "description": "代表名",
-            "maxLength": 20000,
+            "maxLength": 500,
             "minLength": 1,
             "title": "Title",
             "type": "string"
@@ -11263,7 +11415,7 @@
           },
           "name": {
             "description": "道具名",
-            "maxLength": 20000,
+            "maxLength": 500,
             "minLength": 1,
             "title": "Name",
             "type": "string"
@@ -11316,7 +11468,7 @@
           },
           "name": {
             "description": "道具名",
-            "maxLength": 20000,
+            "maxLength": 500,
             "minLength": 1,
             "title": "Name",
             "type": "string"
@@ -14771,6 +14923,58 @@
         "summary": "開発環境へログインする",
         "tags": [
           "認証"
+        ]
+      }
+    },
+    "/api/cooking-plan": {
+      "post": {
+        "description": "実際の調理開始と同じ規則で、表示する段取りを計算する。",
+        "operationId": "preview_cooking_plan",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証・版・分量・設備・工程の検証失敗"
+          },
+          "403": {
+            "description": "認証・版・分量・設備・工程の検証失敗"
+          },
+          "404": {
+            "description": "認証・版・分量・設備・工程の検証失敗"
+          },
+          "422": {
+            "description": "認証・版・分量・設備・工程の検証失敗"
+          },
+          "503": {
+            "description": "認証・版・分量・設備・工程の検証失敗"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "保存せずに調理の段取りを確認する",
+        "tags": [
+          "利用者の操作"
         ]
       }
     },
@@ -35425,6 +35629,23 @@
               "default": false,
               "title": "Preview",
               "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "versionId",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Versionid"
             }
           }
         ],

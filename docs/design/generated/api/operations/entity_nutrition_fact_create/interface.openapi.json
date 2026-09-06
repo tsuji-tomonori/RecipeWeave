@@ -1,0 +1,254 @@
+{
+  "components": {
+    "schemas": {
+      "NutritionFactRow": {
+        "additionalProperties": false,
+        "description": "形態・商品別栄養値のDB応答。",
+        "properties": {
+          "amount": {
+            "description": "基準量あたり成分量",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+            "title": "Amount",
+            "type": "string"
+          },
+          "basis_amount": {
+            "description": "基準量",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+            "title": "Basis Amount",
+            "type": "string"
+          },
+          "basis_unit_id": {
+            "description": "基準単位",
+            "format": "uuid",
+            "title": "Basis Unit Id",
+            "type": "string"
+          },
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "form_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "汎用形態",
+            "title": "Form Id"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "nutrient_id": {
+            "description": "栄養成分",
+            "format": "uuid",
+            "title": "Nutrient Id",
+            "type": "string"
+          },
+          "product_version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "商品仕様",
+            "title": "Product Version Id"
+          },
+          "source_id": {
+            "description": "出典",
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "form_id",
+          "product_version_id",
+          "nutrient_id",
+          "amount",
+          "basis_amount",
+          "basis_unit_id",
+          "source_id",
+          "etag"
+        ],
+        "title": "NutritionFactRow",
+        "type": "object"
+      },
+      "NutritionFactWrite": {
+        "additionalProperties": false,
+        "description": "形態・商品別栄養値の編集可能列。未指定NULL列はNULLにする。",
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+                "type": "string"
+              }
+            ],
+            "description": "基準量あたり成分量",
+            "title": "Amount"
+          },
+          "basis_amount": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+                "type": "string"
+              }
+            ],
+            "description": "基準量",
+            "title": "Basis Amount"
+          },
+          "basis_unit_id": {
+            "description": "基準単位",
+            "format": "uuid",
+            "title": "Basis Unit Id",
+            "type": "string"
+          },
+          "form_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "汎用形態",
+            "title": "Form Id"
+          },
+          "nutrient_id": {
+            "description": "栄養成分",
+            "format": "uuid",
+            "title": "Nutrient Id",
+            "type": "string"
+          },
+          "product_version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "商品仕様",
+            "title": "Product Version Id"
+          },
+          "source_id": {
+            "description": "出典",
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "nutrient_id",
+          "amount",
+          "basis_amount",
+          "basis_unit_id",
+          "source_id"
+        ],
+        "title": "NutritionFactWrite",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/nutrition_fact": {
+      "post": {
+        "description": "形態・商品別栄養値の作成。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_nutrition_fact_create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NutritionFactWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NutritionFactRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "形態・商品別栄養値の作成",
+        "tags": [
+          "正規化データ: 形態・商品別栄養値"
+        ]
+      }
+    }
+  }
+}

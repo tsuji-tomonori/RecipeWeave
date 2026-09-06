@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 再送キーと登録時刻を一度だけ確定する。画像本文は保持しない。
+    "query": """\
+-- 再送キーと登録時刻を一度だけ確定する。画像本文は保持しない。
 INSERT INTO recipeweave.receipt_import (
     id, user_id, file_sha256, idempotency_key, status, committed_at
 )

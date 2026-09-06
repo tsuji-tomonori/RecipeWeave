@@ -1,16 +1,18 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: ee4943809526a9e373c7a5ea9b82972d10a9d72ba4355711324ea164e422e513
+# SQLのSHA256: d070a791fb8b735b33e7837f9be4c78e35547d7c5d44934f6771fc6b79d0feae
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 指定料理の材料ID・単位・基準量を照合する。
+    "query": """\
+-- 指定料理の材料ID・単位・基準量を照合する。
 SELECT
     ri.id,
     fm.food_id,
-    ri.amount, ri.optional,
+    ri.amount,
+    ri.optional,
     ri.unit_id,
     ri.form_id,
     u.code AS unit

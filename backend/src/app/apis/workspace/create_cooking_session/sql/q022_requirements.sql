@@ -4,6 +4,7 @@ SELECT
     sr.resource_type_id,
     sr.quantity,
     sr.capacity_min,
+    sr.exclusive,
     rt.name,
     rt.code
 FROM recipeweave.step_resource AS sr

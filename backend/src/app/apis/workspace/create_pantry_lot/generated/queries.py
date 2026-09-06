@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "q001_resolve_form": """-- 食材形態と単位をDBから検証し、他人の独自食材は参照させない。
+    "q001_resolve_form": """\
+-- 食材形態と単位をDBから検証し、他人の独自食材は参照させない。
 SELECT
     fm.id AS form_id,
     u.id AS unit_id
@@ -28,7 +29,8 @@ WHERE
     )
 ORDER BY fm.id LIMIT 1;
 """,
-    "q002_insert_lot": """-- 登録時の値と現在値を一緒に記録する。不明数量はNULLのまま保持する。
+    "q002_insert_lot": """\
+-- 登録時の値と現在値を一緒に記録する。不明数量はNULLのまま保持する。
 INSERT INTO recipeweave.pantry_lot
 (
     id, user_id, form_id, amount, unit_id, expires_on, location, priority, source_import_id,
@@ -40,15 +42,18 @@ VALUES (
 )
 RETURNING id;
 """,
-    "q900_lock_revision": """-- 本人の集約版を排他ロックして並行操作の順序を確定する。
+    "q900_lock_revision": """\
+-- 本人の集約版を排他ロックして並行操作の順序を確定する。
 SELECT revision FROM recipeweave.workspace_revision
 WHERE user_id = %(user_id)s FOR UPDATE;
 """,
-    "q901_advance_revision": """-- 業務行の更新と同じトランザクションで版を一度だけ進める。
+    "q901_advance_revision": """\
+-- 業務行の更新と同じトランザクションで版を一度だけ進める。
 UPDATE recipeweave.workspace_revision SET revision = revision + 1
 WHERE user_id = %(user_id)s RETURNING revision;
 """,
-    "q902_append_audit": """-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
+    "q902_append_audit": """\
+-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
 INSERT INTO recipeweave.audit_event (
     id, actor_id, action, entity_type, entity_key_hash, reason, occurred_at
 )

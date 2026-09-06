@@ -6,7 +6,8 @@ INSERT INTO recipeweave.kitchen_resource AS t (
     resource_type_id,
     name,
     capacity,
-    quantity
+    quantity,
+    active
 )
 VALUES (
     %(row_id)s,
@@ -14,7 +15,8 @@ VALUES (
     %(resource_type_id)s,
     %(name)s,
     %(capacity)s,
-    %(quantity)s
+    %(quantity)s,
+    %(active)s
 )
 RETURNING
     t.id,
@@ -24,4 +26,5 @@ RETURNING
     t.name,
     t.capacity,
     t.quantity,
+    t.active,
     t.xmin::TEXT AS etag;

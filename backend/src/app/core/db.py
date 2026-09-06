@@ -20,14 +20,25 @@ def get_database() -> Iterator[psycopg.Connection[dict[str, Any]]]:
     if not settings.database_url:
         from app.integrations.database.aws_provider import connection_kwargs
 
-        kwargs = connection_kwargs(settings)
+        options = connection_kwargs(settings)
+        kwargs = {
+            "host": options["host"],
+            "dbname": options["dbname"],
+            "user": options["user"],
+            "password": options["password"],
+            "sslmode": options["sslmode"],
+        }
     try:
         with psycopg.Connection[dict[str, Any]].connect(
             settings.database_url,
             row_factory=dict_row,
             connect_timeout=5,
             options="-c search_path=recipeweave,public -c statement_timeout=15000",
-            **kwargs,
+            host=kwargs.get("host"),
+            dbname=kwargs.get("dbname"),
+            user=kwargs.get("user"),
+            password=kwargs.get("password"),
+            sslmode=kwargs.get("sslmode"),
         ) as connection:
             yield connection
     except psycopg.OperationalError as exc:

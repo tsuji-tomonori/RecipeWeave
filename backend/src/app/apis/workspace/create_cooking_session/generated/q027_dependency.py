@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 工程の先行条件を具体的なタスク間に移す。
+    "query": """\
+-- 工程の先行条件を具体的なタスク間に移す。
 INSERT INTO recipeweave.task_dependency (
     id, before_task_id, after_task_id, min_lag_s, max_lag_s, reason
 )

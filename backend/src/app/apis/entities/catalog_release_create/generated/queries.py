@@ -34,6 +34,7 @@ RETURNING
     t.version,
     t.manifest_hash,
     t.published_at,
+    t.owner_id,
     t.xmin::TEXT AS etag;
 """
 

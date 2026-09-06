@@ -34,7 +34,7 @@ def read_query(path: Path) -> str:
 def query_module(queries: dict[str, str]) -> str:
     """操作ごとの固定SQL集合を生成し、名前とパラメータの完全一致を実行時にも検査する。"""
     digest = hashlib.sha256("".join(queries.values()).encode()).hexdigest()
-    literals = ",\n".join(f'    {name!r}: """{sql}"""' for name, sql in queries.items())
+    literals = ",\n".join(f'    {name!r}: """\\\n{sql}"""' for name, sql in queries.items())
     parameters = {
         name: tuple(sorted(set(re.findall(r"%\((\w+)\)s", sql)))) for name, sql in queries.items()
     }

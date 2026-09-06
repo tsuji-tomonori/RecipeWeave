@@ -8,6 +8,7 @@ import json
 import os
 import re
 from collections import defaultdict
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -768,7 +769,8 @@ def normalize_db(value: Any) -> Any:
     if isinstance(value, datetime):
         return value.astimezone(UTC).isoformat()
     if isinstance(value, list):
-        return [normalize_db(v) for v in cast(list[Any], value)]
+        items = cast(Sequence[Any], value)
+        return [normalize_db(v) for v in items]
     if isinstance(value, dict):
         return {k: normalize_db(v) for k, v in cast(dict[str, Any], value).items()}
     return value

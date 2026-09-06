@@ -39,6 +39,7 @@ jobs:
       LOCAL_AUTH_SECRET: recipeweave-ci-only-secret-32-characters-minimum
       LOCAL_AUTH_PASSWORD: recipeweave-local
       DOCS_BASE: /RecipeWeave/quality/design
+      SQLFLUFF_OUTPUT: reports/sqlfluff.json
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -73,8 +74,13 @@ jobs:
         env:
           VITE_API_BASE_URL: ${{ vars.DEV_API_BASE_URL }}
           VITE_AUTH_MODE: cognito
+          VITE_COGNITO_DOMAIN: ${{ vars.DEV_COGNITO_DOMAIN }}
+          VITE_COGNITO_CLIENT_ID: ${{ vars.DEV_COGNITO_CLIENT_ID }}
+          AWS_DEPLOY_CONFIGURED: ${{ vars.AWS_DEPLOY_ROLE_ARN != '' }}
+          PRODUCTION_CALLBACK_CONFIGURED: ${{ vars.PRODUCTION_WEB_CALLBACK_URL != '' }}
         run: |
           mkdir -p reports
+          uv run --locked python tools/deployment_readiness.py
           uv run --locked --package recipeweave-api app-docs
           npm run build --prefix frontend
           uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64
@@ -87,7 +93,8 @@ jobs:
         run: uv run --locked python tools/quality.py
       - name: 本物のAPIと画面を起動する
         run: |
-          uv run --locked --package recipeweave-api uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000 > reports/api.log 2>&1 &
+          uv run --locked python tools/prepare_e2e_database.py
+          DATABASE_URL=postgresql://recipeweave_app:recipeweave-local@127.0.0.1:5432/recipeweave_e2e uv run --locked --package recipeweave-api uvicorn app.main:create_app --factory --host 127.0.0.1 --port 8000 > reports/api.log 2>&1 &
           VITE_AUTH_MODE=local npm --prefix frontend run dev -- --host 127.0.0.1 > reports/frontend.log 2>&1 &
           uv run --locked python tools/wait_services.py
       - name: Given When Then と画面証跡
@@ -104,6 +111,20 @@ jobs:
         if: always()
         continue-on-error: true
         run: uv run --locked python tools/docs_site.py
+      - name: 品質サイトの表示・検索・図・画像拡大を確認する
+        id: report_ui
+        if: always()
+        continue-on-error: true
+        env:
+          QUALITY_BASE_URL: http://127.0.0.1:4174/RecipeWeave/quality
+        run: |
+          mkdir -p build/report-preview/RecipeWeave/quality
+          cp -R reports/. build/report-preview/RecipeWeave/quality/
+          python -m http.server 4174 --bind 127.0.0.1 --directory build/report-preview > reports/report-server.log 2>&1 &
+          npm --prefix frontend run test:quality
+      - name: 品質サイトの検証結果をレポートへ反映する
+        if: always()
+        run: uv run --locked python tools/report.py
       - name: 成果物と品質証跡を保存する
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -124,7 +145,8 @@ jobs:
           E2E: ${{ steps.e2e.outcome }}
           REPORT: ${{ steps.report.outcome }}
           DOCUMENTATION: ${{ steps.documentation.outcome }}
-        run: test "$QUALITY" = success && test "$E2E" = success && test "$REPORT" = success && test "$DOCUMENTATION" = success
+          REPORT_UI: ${{ steps.report_ui.outcome }}
+        run: test "$QUALITY" = success && test "$E2E" = success && test "$REPORT" = success && test "$DOCUMENTATION" = success && test "$REPORT_UI" = success
       - name: 検証したコミットとツリーを記録する
         if: github.ref == 'refs/heads/dev' && github.event_name != 'pull_request'
         env:

@@ -1,4 +1,10 @@
-import { DomainError, FOODS, RECIPES, createInitialState } from "./domain";
+import {
+  DomainError,
+  FOODS,
+  RECIPES,
+  createInitialState,
+  ingredientKey,
+} from "./domain";
 import { UNITS } from "./types";
 import type { AppState } from "./types";
 
@@ -234,7 +240,10 @@ export function validateAppState(value: unknown): AppState {
       const lot = record(lots.find((x) => record(x).id === id));
       if (
         lot.sourceImportId !== entry.id ||
-        (entry.state === "undone" && lot.status === "active" && !lot.edited && array(lot.consumed).length === 0) ||
+        (entry.state === "undone" &&
+          lot.status === "active" &&
+          !lot.edited &&
+          array(lot.consumed).length === 0) ||
         (entry.state === "registered" && lot.status === "undone")
       )
         fail();
@@ -246,6 +255,9 @@ export function validateAppState(value: unknown): AppState {
   function draft(value: unknown, meal = false): void {
     const d = obj(value, [
       "recipeId",
+      ...(record(value).recipeVersionId !== undefined
+        ? ["recipeVersionId"]
+        : []),
       "servings",
       "amounts",
       "adjusted",
@@ -255,14 +267,16 @@ export function validateAppState(value: unknown): AppState {
     const recipeId = recipeRef(d.recipeId);
     if (num(d.servings) <= 0) fail();
     bool(d.adjusted);
-    const recipe = RECIPES.find((x) => x.id === recipeId)!;
-    const amounts = obj(
-      d.amounts,
-      recipe.ingredients.map((x) => x.foodId),
+    const versionId =
+      d.recipeVersionId === undefined ? undefined : str(d.recipeVersionId);
+    const recipe = RECIPES.find(
+      (x) => x.id === recipeId && (!versionId || x.versionId === versionId),
     );
+    if (!recipe) return fail();
+    const amounts = obj(d.amounts, recipe.ingredients.map(ingredientKey));
     for (const ingredient of recipe.ingredients) {
-      quantity(amounts[ingredient.foodId]);
-      const q = record(amounts[ingredient.foodId]);
+      quantity(amounts[ingredientKey(ingredient)]);
+      const q = record(amounts[ingredientKey(ingredient)]);
       if (q.value === null || q.unit !== ingredient.quantity.unit) fail();
     }
   }
@@ -341,9 +355,12 @@ export function validateAppState(value: unknown): AppState {
     // ブラウザの簡易計画で上書きせず、参照・重複・時間の整合性だけを検証する。
     const expectedKeys = new Set(
       (snapshot as AppState["meal"]).flatMap((item) =>
-        RECIPES.find((recipe) => recipe.id === item.recipeId)!.steps.map(
-          (step) => `${item.id}:${step.id}`,
-        ),
+        RECIPES.find(
+          (recipe) =>
+            recipe.id === item.recipeId &&
+            (!item.recipeVersionId ||
+              recipe.versionId === item.recipeVersionId),
+        )!.steps.map((step) => `${item.id}:${step.id}`),
       ),
     );
     const plan = array(cooking.plan);
@@ -399,7 +416,8 @@ export function validateAppState(value: unknown): AppState {
     }
     if (
       stepKeys.size !== expectedKeys.size ||
-      integer(cooking.index) >= plan.length
+      integer(cooking.index) > plan.length ||
+      (cooking.status !== "completed" && integer(cooking.index) === plan.length)
     )
       fail();
     oneOf(cooking.status, ["active", "paused", "completed"]);

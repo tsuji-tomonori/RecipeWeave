@@ -8,21 +8,37 @@
 
 ```python
 async def authentication_error(_request: Request, _exc: Exception) -> JSONResponse:
-    return JSONResponse({'detail': 'access token required or invalid'}, status_code=401, headers={'WWW-Authenticate': 'Bearer'})
+    return JSONResponse({'detail': 'ログインが必要か、アクセストークンが無効です'}, status_code=401, headers={'WWW-Authenticate': 'Bearer'})
 ```
 
 ## service_error
 
 ```python
 async def service_error(_request: Request, _exc: Exception) -> JSONResponse:
-    return JSONResponse({'detail': 'service unavailable'}, status_code=503)
+    return JSONResponse({'detail': 'サービスへ接続できません。時間をおいて再試行してください'}, status_code=503)
 ```
 
 ## conflict_error
 
 ```python
 async def conflict_error(_request: Request, _exc: Exception) -> JSONResponse:
-    return JSONResponse({'detail': 'state version conflict'}, status_code=409)
+    return JSONResponse({'detail': '他の画面で更新されています。最新の内容を読み込んでください'}, status_code=409)
+```
+
+## database_constraint_error
+
+```python
+async def database_constraint_error(_request: Request, _exc: Exception) -> JSONResponse:
+    """制約名・SQL・個人データを外部へ返さず、処理の不成立を伝える。"""
+    return JSONResponse({'detail': '参照・数量・更新状態の制約により保存できません'}, status_code=409)
+```
+
+## database_permission_error
+
+```python
+async def database_permission_error(_request: Request, _exc: Exception) -> JSONResponse:
+    """DBの行権限違反を、情報を追加せず拒否する。"""
+    return JSONResponse({'detail': 'このデータを操作する権限がありません'}, status_code=403)
 ```
 
 ## validation_error

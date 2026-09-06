@@ -252,14 +252,26 @@ def extract(root: Path = ROOT) -> dict[str, Any]:
                 {"name": name, "unique": bool(unique), "definition": expression, "sql": statement}
             )
     for item in tables.values():
+        table_checks: list[str] = item["checks"]
         for column in item["columns"]:
-            column["checks"] = [
+            column_name: str = column["name"]
+            column_checks: list[str] = [
                 check
-                for check in item["checks"]
-                if re.search(r"\b" + re.escape(column["name"]) + r"\b", check)
+                for check in table_checks
+                if re.search(r"\b" + re.escape(column_name) + r"\b", check)
             ]
-            for check in column["checks"]:
-                enum = re.fullmatch(re.escape(column["name"]) + r" IN \((.*)\)", check)
+            column["checks"] = column_checks
+            for check in column_checks:
+                length_limit = re.fullmatch(
+                    r"CHAR_LENGTH\(" + re.escape(column_name) + r"\) <= ([0-9]+)",
+                    check,
+                    re.IGNORECASE,
+                )
+                if length_limit:
+                    column["max_length"] = min(
+                        column.get("max_length", int(length_limit[1])), int(length_limit[1])
+                    )
+                enum = re.fullmatch(re.escape(column_name) + r" IN \((.*)\)", check)
                 if enum:
                     column["enum"] = [unquote(x.strip()) for x in split_sql(enum.group(1), ",")]
         for foreign in item["foreign_keys"]:

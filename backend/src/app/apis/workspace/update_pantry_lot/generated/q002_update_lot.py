@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 本人の編集可能なロットだけを更新し、取消済みレシートの在庫は復元しない。
+    "query": """\
+-- 本人の編集可能なロットだけを更新し、取消済みレシートの在庫は復元しない。
 UPDATE recipeweave.pantry_lot AS p SET
     form_id = %(form_id)s, amount = %(amount)s,
     unit_id = %(unit_id)s, expires_on = %(expires_on)s, location = %(location)s,

@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 調理工程とタイマーを正規化されたタスクから読む。
+    "query": """\
+-- 調理工程とタイマーを正規化されたタスクから読む。
 SELECT
     t.id,
     t.menu_item_id,

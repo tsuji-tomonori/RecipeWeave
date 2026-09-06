@@ -179,7 +179,9 @@ class GenerationTemplateContract(ContractModel):
     schema_version: Literal[2] = 2
     primary_identity_ids: list[UUID] = Field(max_length=10000)
     support_identity_ids: list[UUID] = Field(max_length=10000)
-    support_identity_sets: list[list[UUID]] | None = Field(default=None, max_length=10000)
+    support_identity_sets: list[Annotated[list[UUID], Field(max_length=3)]] | None = Field(
+        default=None, max_length=10000
+    )
     support_k: list[Literal[0, 1, 2, 3]] = Field(max_length=4)
     flavor_codes: list[str] = Field(max_length=1000)
     route_codes: list[str] = Field(max_length=1000)
@@ -197,4 +199,18 @@ class GenerationTemplateContract(ContractModel):
         ):
             if values != sorted(set(values)):
                 raise ValueError("候補集合は重複を除いて昇順にしてください")
+        if self.support_identity_sets is not None:
+            allowed = set(self.support_identity_ids)
+            groups: set[tuple[UUID, ...]] = set()
+            for group in self.support_identity_sets:
+                if group != sorted(set(group)):
+                    raise ValueError("副材の組は重複を除いて昇順にしてください")
+                if not set(group) <= allowed:
+                    raise ValueError("副材の組には許可した副材IDだけを指定してください")
+                if len(group) not in self.support_k:
+                    raise ValueError("副材の組の要素数はsupport_kに含めてください")
+                key = tuple(group)
+                if key in groups:
+                    raise ValueError("同じ副材の組を複数回指定できません")
+                groups.add(key)
         return self

@@ -1,14 +1,17 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 0ca7030c91b78a00f7ddda30af2b16264af1a22311794bf5098077bc3db51e9f
+# SQLのSHA256: 80c1fc3305db0143b0db3f6585240eecf8e16f116bb6a443c2f352236fea576b
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 私有カタログへ本人の独自食材を登録する。
+    "query": """\
+-- 私有カタログへ本人の独自食材を登録する。
 INSERT INTO recipeweave.food (id, code, name, kind, parent_id, release_id, status, owner_id)
-VALUES (%(food_id)s, %(code)s, %(name)s, 'basic', NULL, %(release_id)s, 'active', %(user_id)s) RETURNING id;
+VALUES (
+    %(food_id)s, %(code)s, %(name)s, 'basic', NULL, %(release_id)s, 'active', %(user_id)s
+) RETURNING id;
 """
 }
 PARAMETERS: dict[str, tuple[str, ...]] = {

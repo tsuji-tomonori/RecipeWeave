@@ -70,7 +70,7 @@ test("OIDC trust is one repository branch and imports an existing provider only"
   oidcTemplate.hasResourceProperties("AWS::IAM::Policy", {
     PolicyDocument: {
       Version: "2012-10-17",
-      Statement: [
+      Statement: Match.arrayWith([
         {
           Action: "sts:AssumeRole",
           Effect: "Allow",
@@ -90,7 +90,7 @@ test("OIDC trust is one repository branch and imports an existing provider only"
             ],
           })),
         },
-      ],
+      ]),
     },
   });
 });

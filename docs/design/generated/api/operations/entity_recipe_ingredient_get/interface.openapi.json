@@ -1,0 +1,299 @@
+{
+  "components": {
+    "schemas": {
+      "RecipeIngredientRow": {
+        "additionalProperties": false,
+        "description": "レシピ材料明細のDB応答。",
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "確定値または範囲下限",
+            "title": "Amount"
+          },
+          "amount_max": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "範囲上限",
+            "title": "Amount Max"
+          },
+          "amount_mode": {
+            "description": "確定/範囲/適量",
+            "enum": [
+              "exact",
+              "range",
+              "to_taste"
+            ],
+            "title": "Amount Mode",
+            "type": "string"
+          },
+          "canonical_amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "登録版の基準量",
+            "title": "Canonical Amount"
+          },
+          "component_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "セット内構成品を使う場合",
+            "title": "Component Id"
+          },
+          "conversion_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "非基準単位の換算根拠",
+            "title": "Conversion Id"
+          },
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "demand_kind": {
+            "description": "購入対象区分",
+            "enum": [
+              "purchase",
+              "utility",
+              "kit_component"
+            ],
+            "title": "Demand Kind",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "form_id": {
+            "description": "使用形態",
+            "format": "uuid",
+            "title": "Form Id",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kit_parent_line_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "購入対象となるセットの親行",
+            "title": "Kit Parent Line Id"
+          },
+          "line_no": {
+            "description": "表示順",
+            "exclusiveMinimum": 0.0,
+            "title": "Line No",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "材料の補足",
+            "title": "Note"
+          },
+          "optional": {
+            "description": "任意追加材料",
+            "title": "Optional",
+            "type": "boolean"
+          },
+          "product_version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "商品指定時の仕様版",
+            "title": "Product Version Id"
+          },
+          "recipe_version_id": {
+            "description": "親版",
+            "format": "uuid",
+            "title": "Recipe Version Id",
+            "type": "string"
+          },
+          "role": {
+            "description": "料理での役割",
+            "enum": [
+              "main",
+              "support",
+              "seasoning",
+              "aroma",
+              "texture",
+              "garnish",
+              "medium"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "scaling_rule_id": {
+            "description": "人数変換規則",
+            "format": "uuid",
+            "title": "Scaling Rule Id",
+            "type": "string"
+          },
+          "unit_id": {
+            "description": "登録単位",
+            "format": "uuid",
+            "title": "Unit Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "recipe_version_id",
+          "line_no",
+          "form_id",
+          "product_version_id",
+          "component_id",
+          "kit_parent_line_id",
+          "role",
+          "demand_kind",
+          "amount_mode",
+          "amount",
+          "amount_max",
+          "unit_id",
+          "canonical_amount",
+          "conversion_id",
+          "scaling_rule_id",
+          "optional",
+          "note",
+          "etag"
+        ],
+        "title": "RecipeIngredientRow",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/recipe_ingredient/{row_id}": {
+      "get": {
+        "description": "レシピ材料明細の取得。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_recipe_ingredient_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeIngredientRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "404": {
+            "description": "対象なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "レシピ材料明細の取得",
+        "tags": [
+          "正規化データ: レシピ材料明細"
+        ]
+      }
+    }
+  }
+}

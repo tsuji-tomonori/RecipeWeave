@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 登録時の値と現在値を一緒に記録する。不明数量はNULLのまま保持する。
+    "query": """\
+-- 登録時の値と現在値を一緒に記録する。不明数量はNULLのまま保持する。
 INSERT INTO recipeweave.pantry_lot
 (
     id, user_id, form_id, amount, unit_id, expires_on, location, priority, source_import_id,

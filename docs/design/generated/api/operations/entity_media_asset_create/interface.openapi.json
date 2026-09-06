@@ -1,0 +1,410 @@
+{
+  "components": {
+    "schemas": {
+      "MediaAssetRow": {
+        "additionalProperties": false,
+        "description": "教育用動画等の版のDB応答。",
+        "properties": {
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "locale": {
+            "description": "字幕言語",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Locale",
+            "type": "string"
+          },
+          "media_type": {
+            "description": "動画/アニメ/画像",
+            "enum": [
+              "video",
+              "animation",
+              "image"
+            ],
+            "title": "Media Type",
+            "type": "string"
+          },
+          "operation_id": {
+            "description": "説明する標準動作",
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "parameter_contract": {
+            "$ref": "#/components/schemas/MediaParameters-Output",
+            "description": "対応厚み・食材形状・視点"
+          },
+          "sha256": {
+            "description": "資産ハッシュ",
+            "maxLength": 64,
+            "minLength": 64,
+            "title": "Sha256",
+            "type": "string"
+          },
+          "source_id": {
+            "description": "権利・作成根拠",
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "uri": {
+            "description": "オブジェクト格納先",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Uri",
+            "type": "string"
+          },
+          "validation": {
+            "description": "内容検証",
+            "enum": [
+              "pending",
+              "passed",
+              "failed",
+              "needs_review"
+            ],
+            "title": "Validation",
+            "type": "string"
+          },
+          "version": {
+            "description": "媒体版",
+            "exclusiveMinimum": 0.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "operation_id",
+          "media_type",
+          "uri",
+          "sha256",
+          "locale",
+          "version",
+          "parameter_contract",
+          "source_id",
+          "validation",
+          "etag"
+        ],
+        "title": "MediaAssetRow",
+        "type": "object"
+      },
+      "MediaAssetWrite": {
+        "additionalProperties": false,
+        "description": "教育用動画等の版の編集可能列。未指定NULL列はNULLにする。",
+        "properties": {
+          "locale": {
+            "description": "字幕言語",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Locale",
+            "type": "string"
+          },
+          "media_type": {
+            "description": "動画/アニメ/画像",
+            "enum": [
+              "video",
+              "animation",
+              "image"
+            ],
+            "title": "Media Type",
+            "type": "string"
+          },
+          "operation_id": {
+            "description": "説明する標準動作",
+            "format": "uuid",
+            "title": "Operation Id",
+            "type": "string"
+          },
+          "parameter_contract": {
+            "$ref": "#/components/schemas/MediaParameters-Input",
+            "description": "対応厚み・食材形状・視点"
+          },
+          "sha256": {
+            "description": "資産ハッシュ",
+            "maxLength": 64,
+            "minLength": 64,
+            "title": "Sha256",
+            "type": "string"
+          },
+          "source_id": {
+            "description": "権利・作成根拠",
+            "format": "uuid",
+            "title": "Source Id",
+            "type": "string"
+          },
+          "uri": {
+            "description": "オブジェクト格納先",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Uri",
+            "type": "string"
+          },
+          "validation": {
+            "description": "内容検証",
+            "enum": [
+              "pending",
+              "passed",
+              "failed",
+              "needs_review"
+            ],
+            "title": "Validation",
+            "type": "string"
+          },
+          "version": {
+            "description": "媒体版",
+            "exclusiveMinimum": 0.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "operation_id",
+          "media_type",
+          "uri",
+          "sha256",
+          "locale",
+          "version",
+          "parameter_contract",
+          "source_id",
+          "validation"
+        ],
+        "title": "MediaAssetWrite",
+        "type": "object"
+      },
+      "MediaParameters-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "shape": {
+            "enum": [
+              "cylinder",
+              "leaf",
+              "block",
+              "irregular"
+            ],
+            "title": "Shape",
+            "type": "string"
+          },
+          "thickness_mm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeValue-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "view": {
+            "enum": [
+              "overhead",
+              "side",
+              "close_up"
+            ],
+            "title": "View",
+            "type": "string"
+          }
+        },
+        "required": [
+          "shape",
+          "view"
+        ],
+        "title": "MediaParameters",
+        "type": "object"
+      },
+      "MediaParameters-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "shape": {
+            "enum": [
+              "cylinder",
+              "leaf",
+              "block",
+              "irregular"
+            ],
+            "title": "Shape",
+            "type": "string"
+          },
+          "thickness_mm": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeValue-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "view": {
+            "enum": [
+              "overhead",
+              "side",
+              "close_up"
+            ],
+            "title": "View",
+            "type": "string"
+          }
+        },
+        "required": [
+          "shape",
+          "view"
+        ],
+        "title": "MediaParameters",
+        "type": "object"
+      },
+      "RangeValue-Input": {
+        "additionalProperties": false,
+        "properties": {
+          "max": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Max"
+          },
+          "min": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "title": "Min"
+          }
+        },
+        "required": [
+          "min",
+          "max"
+        ],
+        "title": "RangeValue",
+        "type": "object"
+      },
+      "RangeValue-Output": {
+        "additionalProperties": false,
+        "properties": {
+          "max": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Max",
+            "type": "string"
+          },
+          "min": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Min",
+            "type": "string"
+          }
+        },
+        "required": [
+          "min",
+          "max"
+        ],
+        "title": "RangeValue",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/media_asset": {
+      "post": {
+        "description": "教育用動画等の版の作成。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_media_asset_create",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MediaAssetWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaAssetRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "教育用動画等の版の作成",
+        "tags": [
+          "正規化データ: 教育用動画等の版"
+        ]
+      }
+    }
+  }
+}

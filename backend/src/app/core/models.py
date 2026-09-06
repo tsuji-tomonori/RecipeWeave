@@ -42,6 +42,9 @@ class Food(WireModel):
 
 
 class RecipeIngredient(WireModel):
+    ingredient_id: Identifier | None = None
+    form_id: Identifier | None = None
+    product_version_id: Identifier | None = None
     food_id: Identifier
     quantity: Quantity
     form: ShortText
@@ -71,10 +74,14 @@ class Recipe(WireModel):
     tags: Annotated[list[ShortText], Field(max_length=100)]
     sample: bool
     image_url: ShortText | None = None
+    version_id: Identifier | None = None
+    publication_status: Literal["draft", "published", "withdrawn"] = "draft"
+    withdrawal_reason: Annotated[str, Field(max_length=20000)] | None = None
 
 
 class RecipeDraft(WireModel):
     recipe_id: Identifier
+    recipe_version_id: Identifier | None = None
     servings: Servings
     amounts: dict[Identifier, Quantity]
     adjusted: bool

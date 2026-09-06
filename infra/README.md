@@ -1,112 +1,81 @@
-# RecipeWeave AWS 基盤
+# RecipeWeaveの実DB基盤と検証・公開
 
-CloudFront / 非公開 S3 → API Gateway HTTP API → Lambda 上の FastAPI → Aurora DSQL と、Cognito の認証基盤を定義します。今回の検査対象は、AWS に配備しない型・構造検査と CloudFormation 合成です。**AWS は再認証が必要なため、実配備・実 DB 接続・認証を含む統合動作は未受入です。**
+通常のアプリは PostgreSQL に保存した食品・レシピ・材料・工程・利用者データをAPIから操作します。ブラウザの固定レシピを検索結果として返す配布形態は終了しました。ローカルとCIで同じ実DBを使い、単体試験・DB統合・ブラウザE2Eの証跡を公開します。
 
-GitHub Pages の Dev は、8 品のサンプル・端末内 OCR・同じブラウザへの保存で動く別の配布先です。AWS 基盤を合成できても、Dev のログインやクラウド同期が利用可能になるわけではありません。現在のフロントエンドを AWS に配信しても、ログイン・同期 UI はまだ提供しません。
-
-## 構成
-
-| Stack                          | 内容                                                                                | ライフサイクル                                                             |
-| ------------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `RecipeWeave-dev-Data`         | Aurora DSQL、Cognito User Pool / Client                                             | Stack の termination protection、DSQL / User Pool の削除保護と Retain      |
-| `RecipeWeave-dev-Service`      | private S3、CloudFront OAC、HTTP API、Lambda、専用 migration role、静的ファイル配布 | S3 は暗号化・公開禁止・バージョニング・Retain                              |
-| `RecipeWeave-dev-GitHubDeploy` | 既存 GitHub OIDC Provider を参照する deploy role                                    | `githubOidcProviderArn` 指定時だけ生成。Provider や bootstrap は作成しない |
-
-DSQL / Cognito はサービスコードと分けます。再生成できる静的配布物の S3 は、OAC の Distribution ARN 制約と同じ Service stack に置き、相互参照の循環を避けます。S3 読み出しは、この CloudFront Distribution のサービス主体だけに許可します。
-
-`@aws-cdk/core:defaultCrossStackReferences` は `strong` に明示します。同一リージョンの Service → Data 参照を CloudFormation Export / Import で結び、利用中の Data stack が単独で削除されることを防ぎます。これは Data stack の termination protection、各データ資源の削除保護・Retain と併用します。参照を外す場合は consumer を先に更新し、export の利用がなくなったことを確認します。[CDK ReferenceStrength](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.ReferenceStrength.html)
-
-AWS CDK v2 ライブラリ `2.268.0`、CLI `2.1140.0` と関連ツールを `package.json` / `package-lock.json` に固定しています。TypeScript `strict` を有効にし、明示的 `any` を禁止します。CDK 自身の任意プロパティ型と互換性がない `exactOptionalPropertyTypes` は使用しません。
-
-## API と認証
-
-| Route                   | 認証               | CloudFront cache                                         |
-| ----------------------- | ------------------ | -------------------------------------------------------- |
-| `GET /api/health`       | 公開               | 無効                                                     |
-| `GET /api/foods`        | 公開               | 既定 30 秒、最大 60 秒。query string を cache key に含む |
-| `GET /api/recipes`      | 公開               | 同上                                                     |
-| `GET /api/recipes/{id}` | 公開               | 同上                                                     |
-| `GET /api/state`        | Cognito access JWT | 無効。`Authorization` を origin に転送                   |
-| `PUT /api/state`        | Cognito access JWT | 無効。`Authorization` を origin に転送                   |
-
-User Pool Client は secret を持たず、SRP 認証と refresh token を許可します。Gateway は issuer / client audience と `aws.cognito.signin.user.admin` scope を検証します。この scope は Cognito の SRP で得られる access token の scope です。バックエンドも署名・issuer・client・`token_use=access`・利用者の `sub` を検証します。ID token を API の代用にしません。Hosted login の callback / OAuth UI は、今後のクラウド認証画面と合わせて設定します。
-
-state は `{ version, snapshot }` を返し、更新は `{ expectedVersion, snapshot }` を送ります。版が競合した場合は `409` を返します。利用者 ID は認証 token の `sub` から決まり、リクエストが指定した任意の ID を使いません。
-
-CloudFront は API の viewer `Host` を origin host に置き換えます。private state は共有 cache に保存しません。エラー応答の独立した最小 TTL も 0 秒にし、元の status を保ちます。SPA は hash route を使い、認証エラーの `403` を HTML `200` に置き換える全体的な error fallback は設けません。同じ CloudFront origin からの API 利用を前提とし、CORS wildcard はありません。
-
-現構成は CloudFront が発行する `*.cloudfront.net` のドメインと既定証明書を使います。この証明書では viewer 向け security policy が `TLSv1` に固定され、`minimumProtocolVersion` を指定しても有効になりません。そのため無効な指定は置かず、TLS 1.2 を最低版として強制しているとは扱いません。viewer の HTTPS 利用制御と origin の HTTPS 接続は維持します。TLS 最低版を明示的に引き上げる場合は、独自ドメイン、対応する `us-east-1` の ACM 証明書、Distribution の `domainNames` / `certificate` / `minimumProtocolVersion` を揃えて配備し、実接続を検証します。今回、ドメイン・証明書の取得や AWS 実配備は行っていません。[CloudFront ViewerCertificate の仕様](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-properties-cloudfront-distribution-viewercertificate.html)
-
-## 検査と実アセット
-
-Node.js 24 以上と、ルートの uv 環境が必要です。リポジトリルートで実行します。
+## ローカル実行
 
 ```bash
-uv sync --locked
-npm --prefix frontend ci --no-audit --no-fund
-npm --prefix frontend run build
-uv run --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64
-npm --prefix infra ci --no-audit --no-fund
-npm --prefix infra run check
-npm --prefix infra run synth
+docker compose up --build -d --wait
 ```
 
-Lambda は `backend/.build/lambda` の **依存を含む実ビルド**をアセットにし、Python 3.12 / x86_64 / `app.handler.handler` で起動します。静的配布は `frontend/dist` を使います。成果物がなければ失敗し、placeholder には置き換えません。構造テストもこの実アセットを使います。
+画面は `http://127.0.0.1:5173`、APIは `http://127.0.0.1:8000` です。移行コンテナは管理者接続でスキーマを適用し、`recipeweave_app` を `NOSUPERUSER NOBYPASSRLS` で作成してから初期データを投入します。APIコンテナに管理者接続は渡しません。DBボリュームは通常停止後も保持します。
 
-合成テンプレートは `infra/cdk.out/RecipeWeave-dev-Data.template.json` と `RecipeWeave-dev-Service.template.json`、OIDC 指定時だけ `RecipeWeave-dev-GitHubDeploy.template.json` です。コードから再生成するため Git 管理しません。実装由来の設計生成はこの JSON を入力にします。`cdk.context.json` に lookup 値はなく、合成のために AWS へ問い合わせません。
+ローカル専用利用者は `alice`・`bob`・`admin`、公開パスワードは `recipeweave-local` です。これらと `LOCAL_AUTH_SECRET` はローカル・CIだけの固定値です。本番はCognito認証を使い、local-loginを拒否します。レシート画像のOCRは端末内で処理し、確認した食品と数量をAPIへ登録します。
 
-実アセットがまだない開発中は、`npm --prefix infra run test:core` で Data / OIDC / 設定の 3 検査だけを先行できます。これは Service stack を含む全構造検査や合成の成功には読み替えません。配布前の `check` / `synth` では実アセットが必須です。
-
-## AWS 配備手順（今回未実行）
-
-1. 対象アカウントへ認証し、`aws sts get-caller-identity` で配備先を確認します。DSQL 対応リージョンと既存 CDK bootstrap 状態を確認します。未設定での合成リージョンは `us-east-1` です。
-2. `CDKToolkit` と qualifier を確認します。未導入なら、組織が承認した CloudFormation 実行 policy / permissions boundary で管理者が bootstrap します。本アプリは IAM / OIDC Provider の自動探索・自動作成や bootstrap 変更を行いません。
-3. 実アセットと検査を完了し、`infra` で `npx cdk diff` を確認します。Data stack の replacement、削除保護、IAM 変更を確認します。
-4. migration 実行を許可する既存 IAM role ARN を `MigrationOperatorArn` に明示して配備します。
-5. Outputs の DSQL endpoint と IAM role ARN を使って migration を実行し、その後に認証・所有権・競合の統合検査を行います。
-
-以下は手動配備例です。`MIGRATION_OPERATOR_ARN` は実在し、配備先で承認済みの role ARN に設定します。user / root / wildcard は受け付けません。
+Dockerを使わず検査する場合は、PostgreSQL 16 + pgvector を準備したうえで次を実行します。
 
 ```bash
-cd infra
-npx cdk diff
-npx cdk deploy RecipeWeave-dev-Data RecipeWeave-dev-Service \
-  --parameters RecipeWeave-dev-Service:MigrationOperatorArn="$MIGRATION_OPERATOR_ARN" \
-  --outputs-file cdk.out/deployed-outputs.json
+uv sync --locked --all-packages
+npm ci
+npm ci --prefix frontend
+npm ci --prefix infra
+npm ci --prefix documentation
+uv run --locked python tools/start_database.py
+uv run --locked --package recipeweave-api app-docs
+npm run build --prefix frontend
+uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64
+npm run synth --prefix infra
+uv run --locked python -m recipeweave_generator.design
+uv run --locked python tools/generate_service_design.py
+uv run --locked python tools/quality.py
 ```
 
-`stage` を変える場合は全操作で同じ `-c stage=...` を指定し、環境ごとに独立した stack を作ります。利用者データを持つ stack の logical ID は気軽に変更しません。
+事前に `MIGRATION_DATABASE_URL` を管理者、`DATABASE_URL` と `TEST_DATABASE_URL` をアプリロール、`ENVIRONMENT=test` に設定します。公開ローカル資格情報の設定例は [compose.yaml](../compose.yaml) にあります。実DB試験で接続設定がなければ必須CIは失敗します。単体試験を成功させて実DB未実行を受入済みとは扱いません。
 
-### DSQL migration
+## CIとGitHub Pages
 
-Lambda の app role には、この cluster ARN に対する `dsql:DbConnect` だけを付与します。`dsql:DbConnectAdmin` は migration role のみです。migration role の trust は `MigrationOperatorArn` の role だけを対象とし、API runtime からは引き受けられません。DSQL 側の `recipeweave_app` への IAM 対応付けと schema 作成は migration が担当します。
+[dev.yml](../.github/workflows/dev.yml) は dev と既存featureのpush、dev/main向けPRで、固定依存・実PostgreSQL移行・初期投入・静的解析・厳密な型検査・単体/実DB統合・実画面E2E・品質サイトE2Eを実行します。失敗時も取得できた証跡をartifactへ残します。検査がすべて成功したpushだけを既存の `github-pages` 環境へ公開します。環境保護や配備対象ブランチの許可は変更しません。
 
-| 実行設定                 | Output                                           |
-| ------------------------ | ------------------------------------------------ |
-| `DSQL_HOST`              | Data stack `DsqlHost`（DSQL の `Endpoint` 属性） |
-| `AWS_REGION`             | 配備したリージョン                               |
-| `DSQL_MIGRATION_IAM_ARN` | Service stack `DsqlMigrationIamArn`              |
-| `DSQL_APP_IAM_ARN`       | Service stack `DsqlAppIamArn`                    |
+| 公開パス                       | 内容                                                         |
+| ------------------------------ | ------------------------------------------------------------ |
+| `/RecipeWeave/`                | 実APIへ接続するアプリ                                        |
+| `/RecipeWeave/quality/`        | 日本語の品質結果・単体/DB統合・E2E画面・静的解析・カバレッジ |
+| `/RecipeWeave/quality/design/` | 検索可能な実装由来設計、ER・API・SQL・シーケンス・Swagger    |
 
-migration role を assume したセッションで、ルートから `uv run --package recipeweave-api python database/migrate.py --apply` を実行します。資格情報や DSQL 認証 token をログや Git に残しません。正確なオプションと事前検査は [database/README.md](../database/README.md) を参照してください。migration 前の state API は使用可能として扱いません。
+Pagesは静的ホストなので、PostgreSQLやFastAPI自体は実行できません。アプリのAPI接続先はGitHub変数 `DEV_API_BASE_URL` を `VITE_API_BASE_URL` に渡してビルドします。認証は `DEV_COGNITO_DOMAIN` と `DEV_COGNITO_CLIENT_ID` をビルド時に渡します。接続先未配備時は接続不能を表示し、固定サンプルを本物のDB結果に見せません。CIのE2Eでは同じrevisionのFastAPIとPostgreSQLへ接続します。単体・DB統合試験でcommitしたデータがブラウザE2Eへ混ざらないよう、E2E専用の新規DBへ同じ移行と初期データを適用します。
 
-### GitHub OIDC 配備
+`reports/deployment-readiness.json` は公開接続の設定有無だけを保存し、実APIへの到達やAWS配備成功とは区別します。
 
-既存 GitHub OIDC Provider ARN を確認してから `-c githubOidcProviderArn=...` を指定します。provider は参照し、新規作成しません。既定の trust は audience `sts.amazonaws.com`、subject `repo:tsuji-tomonori/RecipeWeave:ref:refs/heads/dev` だけです。
+`reports/quality.json` は各ゲートのコマンド・終了コード・実出力、JUnitは個別試験結果、Playwright JSONとPNGは Given/When/Then と画面証跡、coverage JSON/HTMLは実測値です。レポートの不足・未実行・スキップは区別します。生成設計は正本・実装から再生成し、手修正をしません。
 
-必要な場合だけ `-c githubBranch=実在するブランチ名` で一つの branch を指定します。wildcard は受け付けません。GitHub Environment を付けると token の subject 形式が変わるため、この branch 形式の role をそのまま使えません。環境を追加する際は branch と environment の保護条件も合わせて設計します。
+## AWS本番構成
 
-GitHub role の権限は、同じ account / region / qualifier の既存 bootstrap `deploy` / `file-publishing` / `image-publishing` / `lookup` role の assume に限定します。bootstrap 側にもこの role を許可する trust と、承認した CloudFormation 実行権限が必要です。アプリの IAM 管理権限を GitHub role に直接 wildcard 付与しません。初回の OIDC role 配備は既存管理者の資格情報で行います。継続配備用 Actions では静的 AWS key を置かず、`id-token: write` による OIDC を使います。
+| Stack                              | 主なリソース                                                                                 |
+| ---------------------------------- | -------------------------------------------------------------------------------------------- |
+| `RecipeWeave-{stage}-Data`         | 2AZ VPC、Aurora PostgreSQL 16.6、Serverless v2 writer/reader、管理者/アプリ別secret、Cognito |
+| `RecipeWeave-{stage}-Service`      | 非公開S3/OAC/CloudFront、HTTP API、FastAPI Lambda、移行専用Lambda                            |
+| `RecipeWeave-{stage}-GitHubDeploy` | 明示された既存OIDC Providerと完全一致ブランチに限定した配備ロール                            |
 
-## ログと負荷
+今回のDDLはPL/pgSQLトリガーで公開後の変更禁止や工程DAG等を守ります。このためAurora PostgreSQLを採用しています。DSQLについて古い「外部キー非対応」を採用理由には使いません。[DSQLの移行ガイド](https://docs.aws.amazon.com/aurora-dsql/latest/userguide/working-with-postgresql-compatibility-migration-guide.html) はトリガーをアプリ層へ移す方針とPL/pgSQLの相違を説明しています。
 
-API は 10 request/秒・burst 30、Lambda は同時実行 10・timeout 25 秒です。アクセスログは request ID、route key、status、応答サイズ、処理時間に限定し、token、query、画像、OCR 全文、リクエスト本文、IP を含めません。CloudWatch Logs は 30 日保持です。Dev OCR は端末内処理のため、レシート画像を受け取るクラウド endpoint 自体を設けていません。
+Auroraは暗号化・削除保護・Retain・14日バックアップ、DBは隔離サブネット、API/移行は非公開サブネット、DBポートは専用セキュリティグループからだけ許可します。Cognito署名・認証・役割と利用者所有権はFastAPIで一元検査します。全APIはCloudFrontキャッシュを無効にし、Authorizationをoriginへ渡します。
+
+APIはアプリ用secretだけを実行時に解決します。移行Lambdaだけに管理者secretを許可し、移行後にアプリロールの最小DML権限を設定します。secret値は出力・ソース・配備テンプレートへ埋めません。移行Lambdaはサンプルや利用者を自動生成しません。
+
+旧DSQLのDataリソースを配備済みの場合は、既存データ移行・バックアップ・切替・Retainされた資源の扱いを明示した作業が必要です。CDKの変更を実データ移行の完了に読み替えません。新しいAWS資源の実配備は、この作業環境では実施していません。
+
+Serverless writer/readerの最小容量、NAT Gateway、DB保存領域・バックアップ等には継続料金が発生します。資格情報がない状態で実AWS作成は実行しません。配備先のAurora対応バージョン、pgvector拡張、権限、バックアップ復元はAWS実環境の受入項目です。
+
+## 検証済みdevからmainへの配備
+
+[deploy.yml](../.github/workflows/deploy.yml) は main と現在devのツリーが一致し、成功済みdev pushの `verified-revision` artifactが source/commit/tree の3値を証明した場合だけ配備を進めます。未検証commit、別tree、古い証跡を拒否します。devの生成物もgitへ反映されたクリーンな状態で証跡を作ります。
+
+`AWS_DEPLOY_ROLE_ARN` または `PRODUCTION_WEB_CALLBACK_URL` が未設定ならAWS配備jobは起動しません。後者は利用者向け画面の正確なHTTPS戻り先URLで、Cognito Authorization Code + PKCEのcallback/logout URLに使います。設定時は既存のGitHub OIDC Providerとmainの完全一致subjectを使うroleを用意し、CDK bootstrap roleへのassumeに限定します。既存GitHub環境を追加する場合、OIDC subject形式が変わるのでbranch trustを勝手に広げず、明示した環境保護と合わせて設定します。
+
+配備は実アセット構築、`cdk synth --strict`、`cdk diff`、Data/Serviceの配備、専用移行Lambdaの実行、status確認、Cognitoの配備結果を設定した画面の再ビルド・Service再配備の順です。CloudFrontの既定ドメインを使用し、独自ACM証明書のTLS最低版を設定したと偽りません。
 
 ## 一次資料
 
-- [AWS CDK: DSQL CfnCluster と Endpoint 属性](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_dsql.CfnCluster.html)
-- [DSQL: IAM と DB role の認証・認可](https://docs.aws.amazon.com/aurora-dsql/latest/userguide/authentication-authorization.html)
-- [HTTP API: JWT の検証](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-jwt-authorizer.html)
-- [Cognito access token](https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-the-access-token.html)
-- [CDK: S3BucketOrigin と OAC](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_cloudfront_origins.S3BucketOrigin.html)
-- [CloudFront: エラー応答の独立した最小 TTL](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/custom-error-pages-expiration.html)
+- [pgvector公式リポジトリ](https://github.com/pgvector/pgvector)
+- [Aurora PostgreSQLのpgvector](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraPostgreSQL.VectorDB.html)
+- [CDK DatabaseCluster](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_rds.DatabaseCluster.html)

@@ -1,0 +1,182 @@
+{
+  "components": {
+    "schemas": {
+      "OutboxEventRow": {
+        "additionalProperties": false,
+        "description": "検索・キャッシュ更新配信のDB応答。",
+        "properties": {
+          "aggregate_id": {
+            "description": "対象ID(配信対象でありFKでない)",
+            "format": "uuid",
+            "title": "Aggregate Id",
+            "type": "string"
+          },
+          "attempt_count": {
+            "description": "再試行数",
+            "minimum": 0.0,
+            "title": "Attempt Count",
+            "type": "integer"
+          },
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "delivered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "配送完了",
+            "title": "Delivered At"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "event_type": {
+            "description": "recipe_published/withdrawn/user_erased等",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Event Type",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "payload": {
+            "$ref": "#/components/schemas/OutboxPayload",
+            "description": "schema_version付き最小通知"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "event_type",
+          "aggregate_id",
+          "payload",
+          "delivered_at",
+          "attempt_count",
+          "etag"
+        ],
+        "title": "OutboxEventRow",
+        "type": "object"
+      },
+      "OutboxPayload": {
+        "additionalProperties": false,
+        "properties": {
+          "aggregate_id": {
+            "format": "uuid",
+            "title": "Aggregate Id",
+            "type": "string"
+          },
+          "event_id": {
+            "format": "uuid",
+            "title": "Event Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "version": {
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "event_id",
+          "aggregate_id",
+          "version"
+        ],
+        "title": "OutboxPayload",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/outbox_event/{row_id}": {
+      "get": {
+        "description": "検索・キャッシュ更新配信の取得。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_outbox_event_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboxEventRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "404": {
+            "description": "対象なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "検索・キャッシュ更新配信の取得",
+        "tags": [
+          "正規化データ: 検索・キャッシュ更新配信"
+        ]
+      }
+    }
+  }
+}

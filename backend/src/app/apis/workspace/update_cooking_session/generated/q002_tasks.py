@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 進捗更新の対象は本人のセッションに属する既存工程だけにする。
+    "query": """\
+-- 進捗更新の対象は本人のセッションに属する既存工程だけにする。
 SELECT
     t.id,
     t.menu_item_id,

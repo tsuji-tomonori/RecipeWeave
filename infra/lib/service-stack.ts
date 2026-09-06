@@ -85,6 +85,7 @@ export class ServiceStack extends Stack {
       environment: {
         ENVIRONMENT: "production",
         AUTH_MODE: "cognito",
+        ALLOWED_ORIGINS: "https://tsuji-tomonori.github.io",
         DATABASE_HOST: data.cluster.clusterEndpoint.hostname,
         DATABASE_NAME: "recipeweave",
         DATABASE_SSLMODE: "require",
@@ -98,6 +99,7 @@ export class ServiceStack extends Stack {
     if (migrationSecret === undefined)
       throw new Error("DB管理用secretがありません");
     this.migrationFunction = new lambda.Function(this, "DatabaseMigration", {
+      functionName: `${this.stackName}-Migration`,
       runtime: lambda.Runtime.PYTHON_3_12,
       architecture: lambda.Architecture.X86_64,
       handler: "app.integrations.database.migration_handler.handler",

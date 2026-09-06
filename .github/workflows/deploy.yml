@@ -1,0 +1,80 @@
+name: Deploy main after verified dev
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+concurrency:
+  group: recipeweave-aws-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main' && vars.AWS_DEPLOY_ROLE_ARN != '' && vars.PRODUCTION_WEB_CALLBACK_URL != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: 成功済みdevのコミット・ツリーと照合する
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/verified_revision.py
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24'
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ap-northeast-1
+      - name: 検証済みの実アセットを構築する
+        run: |
+          uv sync --locked --all-packages
+          npm ci --prefix frontend
+          npm ci --prefix infra
+          npm run build --prefix frontend
+          uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64
+      - name: インフラを合成・差分確認・配備する
+        working-directory: infra
+        env:
+          WEB_CALLBACK_URL: ${{ vars.PRODUCTION_WEB_CALLBACK_URL }}
+        run: |
+          npx cdk synth --strict -c stage=production
+          npx cdk diff -c stage=production
+          npx cdk deploy RecipeWeave-production-Data RecipeWeave-production-Service -c stage=production --require-approval never --parameters "RecipeWeave-production-Data:WebCallbackUrl=$WEB_CALLBACK_URL" --outputs-file cdk.out/deployed-outputs.json
+      - name: 専用LambdaでDB移行を実行する
+        run: |
+          mkdir -p build
+          MIGRATION=$(jq -r '."RecipeWeave-production-Service".MigrationFunctionName' infra/cdk.out/deployed-outputs.json)
+          aws lambda invoke --function-name "$MIGRATION" --payload '{}' build/migration-result.json > build/migration-invoke.json
+          test "$(jq -r '.FunctionError // empty' build/migration-invoke.json)" = ""
+          test "$(jq -r '.status' build/migration-result.json)" = migrated
+      - name: 認証設定を反映して画面を公開する
+        run: |
+          export VITE_AUTH_MODE=cognito
+          export VITE_COGNITO_DOMAIN=$(jq -r '."RecipeWeave-production-Data".CognitoDomain' infra/cdk.out/deployed-outputs.json)
+          export VITE_COGNITO_CLIENT_ID=$(jq -r '."RecipeWeave-production-Data".CognitoClientId' infra/cdk.out/deployed-outputs.json)
+          npm --prefix frontend run build
+          cd infra
+          npx cdk deploy RecipeWeave-production-Service -c stage=production --require-approval never
+      - name: 配備結果を保持する
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: production-deployment-evidence
+          path: |
+            infra/cdk.out/*.template.json
+            infra/cdk.out/deployed-outputs.json
+            build/migration-result.json
+            build/migration-invoke.json

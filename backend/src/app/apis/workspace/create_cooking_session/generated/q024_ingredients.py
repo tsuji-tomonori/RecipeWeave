@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 分量を食品名でなく形態・単位・商品版ごとに合計する。
+    "query": """\
+-- 分量を食品名でなく形態・単位・商品版ごとに合計する。
 SELECT
     ri.id AS ingredient_id,
     ri.form_id,

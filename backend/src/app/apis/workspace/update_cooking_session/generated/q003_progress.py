@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 完了済み工程の巻戻しをせず進行位置と状態を更新する。
+    "query": """\
+-- 完了済み工程の巻戻しをせず進行位置と状態を更新する。
 UPDATE recipeweave.cooking_session SET status = %(status)s, current_task_index = %(index)s
 WHERE
     id = %(session_id)s AND status IN ('cooking', 'paused')

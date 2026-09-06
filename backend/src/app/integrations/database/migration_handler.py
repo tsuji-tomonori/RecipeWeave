@@ -16,7 +16,15 @@ def handler(event: dict[str, object], context: object) -> dict[str, str]:
     if event:
         raise ValueError("移行関数は空の要求だけを受け付けます")
     settings = AppSettings()
-    with psycopg.connect(**connection_kwargs(settings), autocommit=True) as connection:
+    parameters = connection_kwargs(settings)
+    with psycopg.connect(
+        host=parameters["host"],
+        dbname=parameters["dbname"],
+        user=parameters["user"],
+        password=parameters["password"],
+        sslmode=parameters["sslmode"],
+        autocommit=True,
+    ) as connection:
         connection.execute("SELECT pg_advisory_lock(782345611)")
         try:
             apply_migrations(connection, load_migrations())

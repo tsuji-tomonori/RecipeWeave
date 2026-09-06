@@ -496,7 +496,7 @@ def generate(root=ROOT):
         )
     shutil.copytree(ROOT / "tools/report_assets", reports / "assets", dirs_exist_ok=True)
     (reports / ".nojekyll").touch()
-    print(f"Report: {len(cases)} cases, {count} GWT screenshots, dashboard + hierarchical E2E")
+    print(f"品質レポート: {len(cases)} ケース、GWT画像 {count} 枚、集計と階層別E2Eを生成")
     return not any(c["status"] == "missing" for c in cases)
 
 

@@ -3,7 +3,7 @@
 import hashlib
 from collections import defaultdict
 from decimal import Decimal
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 from uuid import UUID, uuid4, uuid5
 
 from fastapi import HTTPException
@@ -84,7 +84,9 @@ class CookingService:
                         "quantity": quantity(total["actual_amount"], total["unit"]),
                         "applied": outcome == "applied",
                         "reason": outcomes[outcome],
-                        "lotIds": [str(value) for value in (total["lot_ids"] or [])],
+                        "lotIds": [
+                            str(value) for value in cast(list[UUID], total["lot_ids"] or [])
+                        ],
                     }
                 )
         return {
@@ -131,7 +133,9 @@ class CookingService:
             raise HTTPException(422, "調理前に材料の量を確定してください")
         identities: dict[tuple[UUID, UUID], set[UUID | None]] = defaultdict(set)
         for ingredient in ingredients:
-            identities[(ingredient["form_id"], ingredient["unit_id"])].add(ingredient["product_version_id"])
+            identities[(ingredient["form_id"], ingredient["unit_id"])].add(
+                ingredient["product_version_id"]
+            )
         if any(len(values) > 1 for values in identities.values()):
             raise HTTPException(422, "同じ食材の複数商品は、商品版ごとの調理APIで指定してください")
         revision = q.run("q030_menu_revision", menu_id=menu_id, user_id=self.user_id)[0]["revision"]
@@ -271,11 +275,20 @@ class CookingService:
 
     def _consume(self, q: Any, request: CookingRequest, session_id: UUID) -> None:
         totals = q.run("q006_totals", session_id=session_id)
+        request_keys = [
+            (r.food_id, r.form, r.quantity.unit) for r in request.session.consumption_results
+        ]
+        total_keys = [(str(r["food_id"]), r["form"], r["unit"]) for r in totals]
+        # 商品版を省略する画面で複数商品へ同じ使用量を適用しない。
+        if len(set(total_keys)) != len(total_keys):
+            raise HTTPException(422, "同じ食材の複数商品・形態は個別の調理APIで指定してください")
+        if len(set(request_keys)) != len(request_keys):
+            raise HTTPException(422, "同じ食材の使用量を重複して指定できません")
         requested = {
             (r.food_id, r.form, r.quantity.unit): r.quantity.value
             for r in request.session.consumption_results
         }
-        allowed = {(str(r["food_id"]), r["form"], r["unit"]) for r in totals}
+        allowed = set(total_keys)
         if set(requested) - allowed:
             raise HTTPException(422, "料理に含まれない食材や単位は使用量に指定できません")
         # 同一ロットを複数需要が使う場合は、一度の台帳行へ集約する。

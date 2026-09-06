@@ -10,5 +10,5 @@ CONTRACT = OperationContract(
     errors=(401, 403, 404, 422, 503),
     idempotency="読取専用",
     transaction="要求単位の読取トランザクション",
-    effects="正規化されたレシピ・材料・工程・分類の参照",
+    effects="正規化レシピの材料・工程を参照。指定版が非公開の場合は本人の献立・利用履歴に固定された版のみ復元",
 )

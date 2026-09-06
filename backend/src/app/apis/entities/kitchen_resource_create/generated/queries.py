@@ -8,6 +8,7 @@ from psycopg import Connection
 
 
 class Parameters(TypedDict):
+    active: bool
     capacity: Decimal | None
     name: str
     quantity: int
@@ -24,7 +25,8 @@ INSERT INTO recipeweave.kitchen_resource AS t (
     resource_type_id,
     name,
     capacity,
-    quantity
+    quantity,
+    active
 )
 VALUES (
     %(row_id)s,
@@ -32,7 +34,8 @@ VALUES (
     %(resource_type_id)s,
     %(name)s,
     %(capacity)s,
-    %(quantity)s
+    %(quantity)s,
+    %(active)s
 )
 RETURNING
     t.id,
@@ -42,6 +45,7 @@ RETURNING
     t.name,
     t.capacity,
     t.quantity,
+    t.active,
     t.xmin::TEXT AS etag;
 """
 
@@ -51,6 +55,7 @@ def execute(
 ) -> list[dict[str, Any]]:
     """宣言済みパラメータだけをSQLへ束縛して明示列を返す。"""
     params: Parameters = {
+        "active": values["active"],
         "capacity": values["capacity"],
         "name": values["name"],
         "quantity": values["quantity"],

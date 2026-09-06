@@ -3,6 +3,7 @@
 import os
 import time
 from collections.abc import Iterator
+from datetime import UTC, datetime
 from typing import Any, cast
 from uuid import NAMESPACE_URL, UUID, uuid4, uuid5
 
@@ -13,6 +14,7 @@ from fastapi.testclient import TestClient
 from psycopg.rows import dict_row
 
 from app.core.dependencies import get_settings
+from app.entities.models import RecipeVersionWrite
 from app.entities.registry import SPECIFICATIONS
 from app.main import create_app
 
@@ -96,6 +98,13 @@ def test_real_owned_crud_isolation_and_cas(database_client: HttpTestClient) -> N
     path = "/api/entities/menu/" + row["id"]
     first_etag = create.headers["ETag"]
     assert database_client.get(path, headers=headers("bob")).status_code == 404
+    assert database_client.get(path, headers=headers("admin")).status_code == 404
+    admin_takeover = database_client.put(
+        path,
+        headers={**headers("admin"), "If-Match": first_etag},
+        json=dict(user_id=str(user_id("admin")), name="管理者からの所有者偽装", servings="2"),
+    )
+    assert admin_takeover.status_code == 409
     assert (
         database_client.put(
             path,
@@ -223,3 +232,88 @@ def test_real_child_reference_cannot_use_other_users_menu(database_client: HttpT
         headers={**headers("bob"), "If-Match": created.headers["ETag"]},
     )
     assert deleted.status_code == 200
+
+
+@pytest.mark.parametrize("table", ["menu_item", "user_recipe_event"])
+def test_history_cannot_be_created_to_gain_unpublished_recipe_access(
+    database_client: HttpTestClient, monkeypatch: pytest.MonkeyPatch, table: str
+) -> None:
+    """Given他人には未公開の版 When履歴を後付け Then拒否し既存本人履歴だけ継続可能。"""
+    versions = database_client.get("/api/entities/recipe_version", headers=headers("admin"))
+    assert versions.status_code == 200 and versions.json(), versions.text
+    original = versions.json()[0]
+    family = database_client.get(
+        "/api/entities/recipe/" + original["recipe_id"], headers=headers("admin")
+    )
+    assert family.status_code == 200, family.text
+    recipe_body = dict(
+        title="公開境界試験-" + str(uuid4()),
+        family_option_id=family.json()["family_option_id"],
+        status="draft",
+    )
+    recipe = database_client.post(
+        "/api/entities/recipe", headers=headers("admin"), json=recipe_body
+    )
+    assert recipe.status_code == 201, recipe.text
+    version_body = {name: original[name] for name in RecipeVersionWrite.model_fields}
+    version_body.update(
+        recipe_id=recipe.json()["id"],
+        version=1,
+        status="draft",
+        validation="needs_review",
+        published_at=None,
+    )
+    version = database_client.post(
+        "/api/entities/recipe_version", headers=headers("admin"), json=version_body
+    )
+    assert version.status_code == 201, version.text
+    menus: dict[str, str] = {}
+    for user in ("alice", "bob"):
+        menu = database_client.post(
+            "/api/entities/menu",
+            headers=headers(user),
+            json=dict(user_id=str(user_id(user)), name="履歴参照試験", servings="2"),
+        )
+        assert menu.status_code == 201, menu.text
+        menus[user] = menu.json()["id"]
+
+    def history_body(user: str, position: int) -> dict[str, Any]:
+        if table == "menu_item":
+            return dict(
+                menu_id=menus[user],
+                recipe_version_id=version.json()["id"],
+                servings="2",
+                role_option_id=recipe_body["family_option_id"],
+                position=position,
+            )
+        return dict(
+            user_id=str(user_id(user)),
+            recipe_version_id=version.json()["id"],
+            kind="liked",
+            occurred_at=datetime.now(UTC).isoformat(),
+            request_key=str(uuid4()),
+        )
+
+    path = "/api/entities/" + table
+    monkeypatch.setattr("app.core.entity_service.local_auth_enabled", lambda: False)
+    rejected = database_client.post(path, headers=headers("alice"), json=history_body("alice", 1))
+    assert rejected.status_code == 403, rejected.text
+    detail = "/api/recipes/" + recipe.json()["id"]
+    assert database_client.get(detail, headers=headers("alice")).status_code == 404
+
+    monkeypatch.setattr("app.core.entity_service.local_auth_enabled", lambda: True)
+    accepted = database_client.post(path, headers=headers("alice"), json=history_body("alice", 1))
+    assert accepted.status_code == 201, accepted.text
+    withdrawal = database_client.put(
+        "/api/entities/recipe/" + recipe.json()["id"],
+        headers={**headers("admin"), "If-Match": recipe.headers["ETag"]},
+        json={**recipe_body, "status": "withdrawn", "withdrawal_reason": "再確認のため"},
+    )
+    assert withdrawal.status_code == 200, withdrawal.text
+    new_owner = database_client.post(path, headers=headers("bob"), json=history_body("bob", 1))
+    assert new_owner.status_code == 403, new_owner.text
+    monkeypatch.setattr("app.core.entity_service.local_auth_enabled", lambda: False)
+    retained = database_client.post(path, headers=headers("alice"), json=history_body("alice", 2))
+    assert retained.status_code == 201, retained.text
+    assert database_client.get(detail, headers=headers("alice")).status_code == 200
+    assert database_client.get(detail, headers=headers("bob")).status_code == 404

@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 正規化した食品・形態・分類・別名から検索用の食品一覧を取得する。
+    "query": """\
+-- 正規化した食品・形態・分類・別名から検索用の食品一覧を取得する。
 WITH available AS (
     SELECT
         food.id,

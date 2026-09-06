@@ -1,13 +1,19 @@
 # RecipeWeave
 
 食材から料理を選び、分量・献立・調理を組み立てるWebアプリと、レシピ候補の列挙基盤です。
-Devアプリは8品・35食品のサンプルで、レシートOCR、手持ち食材の検索、人数と材料量の変更、買い物集計、調理ガイドを扱います。
-Devの個人データは利用中のブラウザに保存します。クラウド同期は提供していません。
+食材・レシピ・材料・工程・在庫・献立はPostgreSQLの各テーブルからAPIで読み書きします。
+レシートOCR、手持ち食材の検索、人数と材料量の変更、買い物集計、設備と工程依存を考慮する調理ガイドを扱います。
+個人データは認証した利用者に関連づけてDBへ保存し、更新版によって同時編集の上書きを防ぎます。
 
-- [Dev試用版を開く](https://tsuji-tomonori.github.io/RecipeWeave/)
+原設計の71表に業務上の補完7表を実装し、旧移行互換表と移行台帳を含む物理表は80表です。
+初期データ生成器の出力は食品1,018件、軸72件、軸候補995件、料理8品です。
+8品は未試作の開発用下書きとしてDBへ投入し、明示的なローカル認証で閲覧します。一般公開済みの品質を意味しません。
+
+- [Pagesのフロント画面](https://tsuji-tomonori.github.io/RecipeWeave/)
+- [品質レポート](https://tsuji-tomonori.github.io/RecipeWeave/quality/) / [検索できる生成設計書](https://tsuji-tomonori.github.io/RecipeWeave/quality/design/)
 - [サービス概要](docs/service/overview.md) / [図付き利用者マニュアル](docs/service/manual.md) / [Q&A](docs/service/faq.md)
 - [画面と動線](docs/service/screens-and-flows.md) / [要件定義](docs/requirements/REQUIREMENTS.md)
-- [採用構成と判断](docs/design/ADR-0001-service-dev.md) / [実装由来の設計一覧](docs/design/generated/README.md)
+- [現行構成と判断](docs/design/ADR-0002-relational-service.md) / [実装由来の設計一覧](docs/design/generated/README.md)
 - [Dev検証・公開状況](docs/verification/service-dev.md)
 
 Svelte 5 / TypeScript / Vite、Python 3.12 / FastAPI、AWS CDKを使用します。
@@ -35,11 +41,12 @@ Python依存はuv workspace、プロジェクトとタスクはmoonrepoで管理
 | `data/catalog` | 組み合わせ元と適合規則、旧版・現行版定義 |
 | `data/exports` | 全量出力と辞書・チェックサム |
 | `experiments` | 開発用標本・独立確認標本・評価結果・再現情報 |
-| `frontend` | 操作中心のWeb UI、日本語OCR、端末保存、数量計算 |
-| `backend` | FastAPIの公開カタログAPIと認証付き状態API |
-| `database` | DSQLの版付きマイグレーションと運用手順 |
-| `infra` | CloudFront/S3、API Gateway/Lambda、DSQL、CognitoのCDK定義 |
-| `data/samples` | Dev用8品・35食品。候補の全量出力とは別データ |
+| `frontend` | 操作中心のWeb UI、日本語OCR、認証付きAPI接続、数量計算 |
+| `backend` | FastAPIのカタログ・各表・在庫・献立・レシート・調理API |
+| `database` | PostgreSQLの全表DDL、RLS、制約、版付き移行、正規化した初期データ |
+| `infra` | Aurora PostgreSQL、API Gateway/Lambda、Cognito、移行専用LambdaのCDK定義 |
+| `data/samples` | 初期料理の元データ。DB投入時に元カタログへ対応づけ、公開APIはこのJSONを直接読まない |
+| `documentation` | CornellNoteWebv2に合わせたStarlight・全文検索付き設計サイト |
 | `batch`, `scripts` | 将来のバッチ運用、補助スクリプトの配置先 |
 | `spec`, `docs`, `tools` | 要件正本、生成設計書、dev-standardの管理ツール |
 
@@ -47,18 +54,28 @@ Python依存はuv workspace、プロジェクトとタスクはmoonrepoで管理
 
 リポジトリのルートで実行します。
 
-Webアプリだけを試す場合は Node.js 24 で次を実行します。
-レシートの認識データは初回ビルド時にnpmの固定依存から同梱し、画像をOCRサーバーへ送信しません。
+ローカルでDB・API・画面をまとめて起動します。Docker Composeが必要です。
 
 ```bash
-npm ci --prefix frontend
-npm run build --prefix frontend
-npm run preview --prefix frontend
+docker compose up --build
 ```
 
-表示されたlocalhost URLを開きます。ZIP内のHTMLを直接開く方法ではOCRや端末保存は動作しません。
-API・DSQL・AWSの起動と配備は [backend](backend/README.md)、[database](database/README.md)、[infra](infra/README.md) の手順を参照してください。
-GitHub Actionsは型・テスト・生成差分・CDK合成を確認後にPagesへ配置します。AWSへは自動配備しません。
+画面は `http://localhost:5173`、APIは `http://localhost:8000` です。
+ComposeはDBの起動確認後、移行・初期データ投入を完了させてからAPIと画面を起動します。
+ローカルではユーザー名 `alice`、共通パスワード `recipeweave-local` を入力してログインします。
+Composeに固定した接続情報はローカル開発専用です。本番認証はCognitoの設定に従います。
+
+レシートの認識データは固定npm依存から同梱し、画像はブラウザ内で認識します。
+確認して登録した食材・数量等をAPIへ送り、元画像やOCR全文は保存しません。
+初期データの再現件数は `uv run python database/seed.py --dry-run` で確認できます。
+
+Pagesはフロント画面と品質・設計レポートを配信します。APIやDBは別の実行環境です。
+API接続先・認証の設定と実配備が完了するまでは、Pagesの表示だけでサービス全体の利用開始を意味しません。
+接続失敗時は画面にエラーを示し、ブラウザ内のサンプルへ切り替えて成功したようには表示しません。
+
+詳しい実行・接続設定は [backend](backend/README.md)、[database](database/README.md)、[infra](infra/README.md) を参照してください。
+GitHub Actionsは型検査・実DBテスト・E2E証跡・生成差分・CDK合成を検査し、成功した成果物をPagesへ公開します。
+AWSへの実配備とCognito実ログインの受入結果は別途確認が必要です。合成成功を実配備成功として扱いません。
 
 ```bash
 uv sync --locked --all-packages

@@ -15,4 +15,5 @@ RETURNING
     t.revision,
     t.committed_at,
     t.reverted_at,
+    t.undo_preserved_count,
     t.xmin::TEXT AS etag;

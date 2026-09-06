@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 画像と購入品構成の重複を本人の履歴だけで検出する。
+    "query": """\
+-- 画像と購入品構成の重複を本人の履歴だけで検出する。
 SELECT
     id,
     status

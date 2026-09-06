@@ -1,0 +1,761 @@
+# 詳細設計: commit_receipt
+
+[詳細](detail.md) / [入出力](interface.md) / [ログ](messages.md) / [SQL](queries.md) / [シーケンス](sequence.md) / [要因別試験](tests.md) / [API一覧](../../README.md)
+
+実装から自動生成。手編集禁止。`uv run python tools/generate_service_design.py` で更新。
+
+`POST /api/receipts/commit` — 確認したレシートを在庫へ登録する
+
+## 入力と処理前提
+
+| 項目 | 仕様 |
+|---|---|
+| authentication | 検証済みBearerトークンと本人所有権 |
+| idempotency | 要求のexpectedVersionで再送・同時更新を検出する |
+| transaction | 本人のworkspace_revisionをロックし、各正規化行・監査・版を原子的に確定する |
+| effects | 正規化された本人の業務データを更新する |
+
+| 入力場所 | 名前 | 型 | 必須 |
+|---|---|---|---|
+
+### 本文: application/json
+
+| 入力 | 型 | 必須 | 制約 | 意味 |
+|---|---|---|---|---|
+| allowDuplicate | boolean | 任意 | default=false | Allowduplicate |
+| candidates | array&lt;ReceiptCandidate&gt; | 必須 | minItems=1; maxItems=200 | Candidates |
+| customFoods | array&lt;Food&gt; | 任意 | maxItems=200 | Customfoods |
+| expectedVersion | integer | 必須 | minimum=0.0; maximum=9007199254740990.0 | Expectedversion |
+| id | string | 必須 | minLength=1; maxLength=128 | Id |
+| imageHash | string | 必須 | pattern="^[a-f0-9]{64}$" | Imagehash |
+| purchaseSignature | string | 必須 | pattern="^[a-f0-9]{64}$" | Purchasesignature |
+
+## データベースの対象と値の流れ
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q001_resolve_form.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.food | R | id: 不変の行識別子 |
+| recipeweave.food_form | R | id: 不変の行識別子; food_id: 対応食材; name: 生皮付き・冷凍刻み等; status: 利用状態 |
+| recipeweave.unit | R | id: 不変の行識別子; code: 単位コード; status: 利用状態 |
+| recipeweave.user_food | R | user_id: 所有者; food_id: 独自食材 |
+
+対象条件: `WHERE fm.food_id = %(food_id)s AND fm.name = %(form)s AND fm.status = 'active' AND u.code = %(unit)s AND u.status = 'active' AND (NOT EXISTS(SELECT 1 FROM recipeweave.user_food AS own WHERE own.food_id = f.id) OR EXISTS(SELECT 1 FROM recipeweave.user_food AS own WHERE own.food_id = f.id AND own.user_id = %(user_id)s))`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| food_id | identifier(value.food_id) (backend/src/app/core/workspace_service.py:209) / food_id (backend/src/app/core/workspace_service.py:398) / food_id (backend/src/app/core/workspace_service.py:406) / food_id (backend/src/app/core/workspace_service.py:407) / str(candidate.food_id) (backend/src/app/core/workspace_service.py:459) |
+| form | r['form'] (backend/src/app/core/workspace_service.py:92) / value.form (backend/src/app/core/workspace_service.py:209) |
+| unit | unit (backend/src/app/core/workspace_service.py:42) / value.quantity.unit (backend/src/app/core/workspace_service.py:209) / food.default_unit (backend/src/app/core/workspace_service.py:407) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `fm.id AS form_id; u.id AS unit_id`
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q002_insert_lot.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.pantry_lot | C | id: 不変の行識別子; user_id: 所有者; form_id: 食材形態; amount: 残量; unit_id: 単位; expires_on: 表示期限; location: 冷蔵・冷凍・常温の保管場所; priority: 先に使う優先指定; source_import_id: 登録元レシート; quantity_quality: 数量の確定・不明; original_form_id: 登録時の食材形態; original_amount: 登録時数量。不明はNULL; original_unit_id: 登録時単位 |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| amount | Decimal(str(value.quantity.value)) if value.quantity.value is not None else None (backend/src/app/core/workspace_service.py:225) / resolved['amount'] (backend/src/app/core/workspace_service.py:463) |
+| expires_on | expires (backend/src/app/core/workspace_service.py:229) |
+| form_id | resolved['form_id'] (backend/src/app/core/workspace_service.py:463) |
+| import_id | import_id (backend/src/app/core/workspace_service.py:425) / import_id (backend/src/app/core/workspace_service.py:451) / import_id (backend/src/app/core/workspace_service.py:462) / import_id (backend/src/app/core/workspace_service.py:463) |
+| location | DISPLAY_LOCATIONS[r['location']] (backend/src/app/core/workspace_service.py:93) / '冷蔵' (backend/src/app/core/workspace_service.py:141) / LOCATIONS[value.location] (backend/src/app/core/workspace_service.py:230) |
+| priority | r['priority'] == 'use_first' (backend/src/app/core/workspace_service.py:94) / 'use_first' if value.priority else 'normal' (backend/src/app/core/workspace_service.py:231) |
+| quality | 'unknown' if value.quantity.value is None else 'known' (backend/src/app/core/workspace_service.py:228) |
+| row_id | uuid4() (backend/src/app/core/workspace_service.py:71) / uuid4() (backend/src/app/core/workspace_service.py:406) / uuid5(food_id, 'standard') (backend/src/app/core/workspace_service.py:407) / lot_id (backend/src/app/core/workspace_service.py:462) / uuid5(import_id, f'receipt-line:{number}') (backend/src/app/core/workspace_service.py:463) |
+| unit_id | resolved['unit_id'] (backend/src/app/core/workspace_service.py:463) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+変更する列とSQL式
+
+| 書込み列 | 値・式（バインド元は上表） |
+|---|---|
+| id | %(row_id)s |
+| user_id | %(user_id)s |
+| form_id | %(form_id)s |
+| amount | %(amount)s |
+| unit_id | %(unit_id)s |
+| expires_on | %(expires_on)s |
+| location | %(location)s |
+| priority | %(priority)s |
+| source_import_id | %(import_id)s |
+| quantity_quality | %(quality)s |
+| original_form_id | %(form_id)s |
+| original_amount | %(amount)s |
+| original_unit_id | %(unit_id)s |
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q003_duplicate.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.receipt_import | R | id: 不変の行識別子; created_at: 作成日時（UTC）; user_id: 所有者; file_sha256: 画像本文のSHA256。本文はDBに保存しない; idempotency_key: 本人内で一意の再送防止キー; status: draft/committed/revertedの状態 |
+
+対象条件: `WHERE user_id = %(user_id)s AND (id = %(import_id)s OR file_sha256 = %(hash)s OR idempotency_key LIKE %(signature)s)`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| hash | request.image_hash (backend/src/app/core/workspace_service.py:425) / request.image_hash (backend/src/app/core/workspace_service.py:451) |
+| import_id | import_id (backend/src/app/core/workspace_service.py:425) / import_id (backend/src/app/core/workspace_service.py:451) / import_id (backend/src/app/core/workspace_service.py:462) / import_id (backend/src/app/core/workspace_service.py:463) |
+| signature | r['signature'] (backend/src/app/core/workspace_service.py:152) / request.purchase_signature + '%' (backend/src/app/core/workspace_service.py:425) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `id; status`
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q004_import.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.receipt_import | C | id: 不変の行識別子; user_id: 所有者; file_sha256: 画像本文のSHA256。本文はDBに保存しない; idempotency_key: 本人内で一意の再送防止キー; status: draft/committed/revertedの状態; committed_at: 在庫へ登録した日時 |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| hash | request.image_hash (backend/src/app/core/workspace_service.py:425) / request.image_hash (backend/src/app/core/workspace_service.py:451) |
+| import_id | import_id (backend/src/app/core/workspace_service.py:425) / import_id (backend/src/app/core/workspace_service.py:451) / import_id (backend/src/app/core/workspace_service.py:462) / import_id (backend/src/app/core/workspace_service.py:463) |
+| key | r['client_key'] (backend/src/app/core/workspace_service.py:151) / f'{request.purchase_signature}:{import_id}' (backend/src/app/core/workspace_service.py:451) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+変更する列とSQL式
+
+| 書込み列 | 値・式（バインド元は上表） |
+|---|---|
+| id | %(import_id)s |
+| user_id | %(user_id)s |
+| file_sha256 | %(hash)s |
+| idempotency_key | %(key)s |
+| status | 'committed' |
+| committed_at | CURRENT_TIMESTAMP |
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q005_line.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.receipt_line | C | id: 不変の行識別子; import_id: レシート処理; line_no: レシート内の表示順; raw_name: 利用者が確認できる商品原表記; form_id: 確定した食材形態; amount: 数量。不明はNULL; unit_id: 確定数量の単位; decision: accepted/skipped/unresolved; pantry_lot_id: 登録したロット |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| amount | Decimal(str(value.quantity.value)) if value.quantity.value is not None else None (backend/src/app/core/workspace_service.py:225) / resolved['amount'] (backend/src/app/core/workspace_service.py:463) |
+| form_id | resolved['form_id'] (backend/src/app/core/workspace_service.py:463) |
+| import_id | import_id (backend/src/app/core/workspace_service.py:425) / import_id (backend/src/app/core/workspace_service.py:451) / import_id (backend/src/app/core/workspace_service.py:462) / import_id (backend/src/app/core/workspace_service.py:463) |
+| line_no | number (backend/src/app/core/workspace_service.py:463) |
+| lot_id | lot_id (backend/src/app/core/workspace_service.py:463) |
+| name | r['name'] (backend/src/app/core/workspace_service.py:137) / food.name.strip() (backend/src/app/core/workspace_service.py:398) / candidate.raw_text (backend/src/app/core/workspace_service.py:463) |
+| row_id | uuid4() (backend/src/app/core/workspace_service.py:71) / uuid4() (backend/src/app/core/workspace_service.py:406) / uuid5(food_id, 'standard') (backend/src/app/core/workspace_service.py:407) / lot_id (backend/src/app/core/workspace_service.py:462) / uuid5(import_id, f'receipt-line:{number}') (backend/src/app/core/workspace_service.py:463) |
+| unit_id | resolved['unit_id'] (backend/src/app/core/workspace_service.py:463) |
+
+変更する列とSQL式
+
+| 書込み列 | 値・式（バインド元は上表） |
+|---|---|
+| id | %(row_id)s |
+| import_id | %(import_id)s |
+| line_no | %(line_no)s |
+| raw_name | %(name)s |
+| form_id | %(form_id)s |
+| amount | %(amount)s |
+| unit_id | %(unit_id)s |
+| decision | 'accepted' |
+| pantry_lot_id | %(lot_id)s |
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q019_private_release.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.catalog_release | C | id: 不変の行識別子; version: カタログ版番号; manifest_hash: 採用したID・内容のハッシュ; published_at: 公開日時; owner_id: 私有カタログの所有者。NULLは共通カタログ |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| manifest | hashlib.sha256(b'private-catalog-v1').hexdigest() (backend/src/app/core/workspace_service.py:391) |
+| release_id | release_id (backend/src/app/core/workspace_service.py:391) / release_id (backend/src/app/core/workspace_service.py:398) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+| version | int(revision[0]['revision']) if revision else 0 (backend/src/app/core/workspace_service.py:166) / f'private:{self.user_id}' (backend/src/app/core/workspace_service.py:391) |
+
+変更する列とSQL式
+
+| 書込み列 | 値・式（バインド元は上表） |
+|---|---|
+| id | %(release_id)s |
+| version | %(version)s |
+| manifest_hash | %(manifest)s |
+| published_at | NULL |
+| owner_id | %(user_id)s |
+
+競合時の処理: `ON CONFLICT(id) DO NOTHING`
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q020_custom_food.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.food | C | id: 不変の行識別子; code: 固定食材コード; name: 食材名・加工品種別; kind: 基本食材か加工食品か; parent_id: カテゴリ親; release_id: 所属公開版; status: 新規使用可否; owner_id: 私有食材の所有者。NULLは共通カタログ食材 |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| code | f'USER-{food_id}' (backend/src/app/core/workspace_service.py:398) |
+| food_id | identifier(value.food_id) (backend/src/app/core/workspace_service.py:209) / food_id (backend/src/app/core/workspace_service.py:398) / food_id (backend/src/app/core/workspace_service.py:406) / food_id (backend/src/app/core/workspace_service.py:407) / str(candidate.food_id) (backend/src/app/core/workspace_service.py:459) |
+| name | r['name'] (backend/src/app/core/workspace_service.py:137) / food.name.strip() (backend/src/app/core/workspace_service.py:398) / candidate.raw_text (backend/src/app/core/workspace_service.py:463) |
+| release_id | release_id (backend/src/app/core/workspace_service.py:391) / release_id (backend/src/app/core/workspace_service.py:398) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+変更する列とSQL式
+
+| 書込み列 | 値・式（バインド元は上表） |
+|---|---|
+| id | %(food_id)s |
+| code | %(code)s |
+| name | %(name)s |
+| kind | 'basic' |
+| parent_id | NULL |
+| release_id | %(release_id)s |
+| status | 'active' |
+| owner_id | %(user_id)s |
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q021_custom_owner.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.user_food | C | id: 不変の行識別子; user_id: 所有者; food_id: 独自食材 |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| food_id | identifier(value.food_id) (backend/src/app/core/workspace_service.py:209) / food_id (backend/src/app/core/workspace_service.py:398) / food_id (backend/src/app/core/workspace_service.py:406) / food_id (backend/src/app/core/workspace_service.py:407) / str(candidate.food_id) (backend/src/app/core/workspace_service.py:459) |
+| row_id | uuid4() (backend/src/app/core/workspace_service.py:71) / uuid4() (backend/src/app/core/workspace_service.py:406) / uuid5(food_id, 'standard') (backend/src/app/core/workspace_service.py:407) / lot_id (backend/src/app/core/workspace_service.py:462) / uuid5(import_id, f'receipt-line:{number}') (backend/src/app/core/workspace_service.py:463) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+変更する列とSQL式
+
+| 書込み列 | 値・式（バインド元は上表） |
+|---|---|
+| id | %(row_id)s |
+| user_id | %(user_id)s |
+| food_id | %(food_id)s |
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q022_custom_form.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.food_form | C | id: 不変の行識別子; food_id: 対応食材; name: 生皮付き・冷凍刻み等; state: 処理状態; base_unit_id: 計算基準単位; quantity_basis: 数量の対象部分; status: 利用状態 |
+| recipeweave.unit | R | id: 不変の行識別子; code: 単位コード; status: 利用状態 |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| food_id | identifier(value.food_id) (backend/src/app/core/workspace_service.py:209) / food_id (backend/src/app/core/workspace_service.py:398) / food_id (backend/src/app/core/workspace_service.py:406) / food_id (backend/src/app/core/workspace_service.py:407) / str(candidate.food_id) (backend/src/app/core/workspace_service.py:459) |
+| row_id | uuid4() (backend/src/app/core/workspace_service.py:71) / uuid4() (backend/src/app/core/workspace_service.py:406) / uuid5(food_id, 'standard') (backend/src/app/core/workspace_service.py:407) / lot_id (backend/src/app/core/workspace_service.py:462) / uuid5(import_id, f'receipt-line:{number}') (backend/src/app/core/workspace_service.py:463) |
+| unit | unit (backend/src/app/core/workspace_service.py:42) / value.quantity.unit (backend/src/app/core/workspace_service.py:209) / food.default_unit (backend/src/app/core/workspace_service.py:407) |
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q900_lock_revision.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.workspace_revision | R | user_id: 所有者; revision: 全体のCAS版 |
+
+対象条件: `WHERE user_id = %(user_id)s`
+
+行ロック: `FOR UPDATE`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `revision`
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q901_advance_revision.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.workspace_revision | U | user_id: 所有者; revision: 全体のCAS版 |
+
+対象条件: `WHERE user_id = %(user_id)s`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+変更する列とSQL式
+
+| 書込み列 | 値・式（バインド元は上表） |
+|---|---|
+| revision | revision + 1 |
+
+代入・選択式: `revision = revision + 1`
+
+### `backend/src/app/apis/workspace/commit_receipt/sql/q902_append_audit.sql`
+
+実行条件: このSQLの呼出し経路で実行
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.audit_event | C | id: 不変の行識別子; actor_id: 実行者（削除時匿名化）; action: publish/withdraw/erase等; entity_type: 対象テーブルの許可リスト; entity_key_hash: 対象識別子のハッシュ; reason: 理由（個人情報を含めない）; occurred_at: 時刻 |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| action | queries.operation (backend/src/app/core/workspace_service.py:71) |
+| key_hash | hashlib.sha256(str(self.user_id).encode()).hexdigest() (backend/src/app/core/workspace_service.py:71) |
+| row_id | uuid4() (backend/src/app/core/workspace_service.py:71) / uuid4() (backend/src/app/core/workspace_service.py:406) / uuid5(food_id, 'standard') (backend/src/app/core/workspace_service.py:407) / lot_id (backend/src/app/core/workspace_service.py:462) / uuid5(import_id, f'receipt-line:{number}') (backend/src/app/core/workspace_service.py:463) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+変更する列とSQL式
+
+| 書込み列 | 値・式（バインド元は上表） |
+|---|---|
+| id | %(row_id)s |
+| actor_id | %(user_id)s |
+| action | %(action)s |
+| entity_type | 'workspace' |
+| entity_key_hash | %(key_hash)s |
+| reason | '本人の業務操作' |
+| occurred_at | CURRENT_TIMESTAMP |
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q001_revision.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.workspace_revision | R | user_id: 所有者; revision: 全体のCAS版 |
+
+対象条件: `WHERE user_id = %(user_id)s`
+
+行ロック: `FOR SHARE`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `revision`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q002_lots.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.food_form | R | id: 不変の行識別子; food_id: 対応食材; name: 生皮付き・冷凍刻み等 |
+| recipeweave.pantry_lot | R | id: 不変の行識別子; created_at: 作成日時（UTC）; user_id: 所有者; form_id: 食材形態; amount: 残量; unit_id: 単位; expires_on: 表示期限; location: 冷蔵・冷凍・常温の保管場所; priority: 先に使う優先指定; status: 在庫の有効・削除・レシート取消状態; source_import_id: 登録元レシート; original_form_id: 登録時の食材形態; original_amount: 登録時数量。不明はNULL; original_unit_id: 登録時単位; updated_at: 最終編集日時; edited: 登録後の編集有無 |
+| recipeweave.unit | R | id: 不変の行識別子; code: 単位コード |
+
+対象条件: `WHERE p.user_id = %(user_id)s`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `p.id; f.food_id; f.name AS form; p.amount; u.code AS unit; p.original_amount; p.location; p.priority; p.expires_on; p.created_at; p.updated_at; p.source_import_id; p.status; p.edited; COALESCE(ofm.food_id, f.food_id) AS original_food_id; COALESCE(ou.code, u.code) AS original_unit`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q003_consumption.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.pantry_consumption | R | id: 不変の行識別子; created_at: 作成日時（UTC）; user_id: 所有者; session_id: 消費した調理セッション; lot_id: 消費元ロット; amount: 消費数量; unit_id: 消費数量の単位 |
+| recipeweave.unit | R | id: 不変の行識別子; code: 単位コード |
+
+対象条件: `WHERE c.user_id = %(user_id)s`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `c.lot_id; c.amount; u.code AS unit; c.session_id`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q004_receipts.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.receipt_import | R | id: 不変の行識別子; created_at: 作成日時（UTC）; user_id: 所有者; file_sha256: 画像本文のSHA256。本文はDBに保存しない; idempotency_key: 本人内で一意の再送防止キー; status: draft/committed/revertedの状態; reverted_at: 登録取消日時 |
+
+対象条件: `WHERE r.user_id = %(user_id)s AND r.status IN ('committed', 'reverted')`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `r.id; r.file_sha256; r.idempotency_key; r.created_at; r.status; r.reverted_at`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q005_menu.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.menu | R | id: 不変の行識別子; user_id: 所有者; revision: 楽観ロック版 |
+| recipeweave.menu_item | R | id: 不変の行識別子; menu_id: 献立; recipe_version_id: 固定レシピ版; servings: その料理を作る人数; position: 表示順 |
+| recipeweave.recipe_version | R | id: 不変の行識別子; recipe_id: 所属レシピ |
+
+対象条件: `WHERE m.id = %(menu_id)s AND m.user_id = %(user_id)s`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| menu_id | menu_id (backend/src/app/core/workspace_service.py:187) / menu_id (backend/src/app/core/workspace_service.py:205) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `mi.id; rv.recipe_id; mi.servings; mi.recipe_version_id; m.revision`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.food_form | R | id: 不変の行識別子; food_id: 対応食材; name: 生皮付き・冷凍刻み等 |
+| recipeweave.menu | R | id: 不変の行識別子; user_id: 所有者 |
+| recipeweave.menu_ingredient_override | R | id: 不変の行識別子; menu_item_id: 対象料理; ingredient_line_id: 元材料行; selected: 任意材料を使うか; amount: 適量等の確定基準量 |
+| recipeweave.menu_item | R | id: 不変の行識別子; menu_id: 献立; recipe_version_id: 固定レシピ版; servings: その料理を作る人数; position: 表示順 |
+| recipeweave.recipe_ingredient | R | id: 不変の行識別子; recipe_version_id: 親版; line_no: 表示順; form_id: 使用形態; amount: 確定値または範囲下限; unit_id: 登録単位 |
+| recipeweave.recipe_version | R | id: 不変の行識別子; base_servings: 登録分量が何人前か |
+| recipeweave.unit | R | id: 不変の行識別子; code: 単位コード |
+
+対象条件: `WHERE m.id = %(menu_id)s AND m.user_id = %(user_id)s`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| menu_id | menu_id (backend/src/app/core/workspace_service.py:187) / menu_id (backend/src/app/core/workspace_service.py:205) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `mi.id AS menu_item_id; f.food_id; f.name AS form; ri.id AS ingredient_id; u.code AS unit; ov.id AS override_id; CASE WHEN ov.selected = FALSE THEN 0 ELSE ov.amount END AS override_amount; ri.amount * mi.servings / rv.base_servings AS scaled_amount`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q007_saved.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.recipe_version | R | id: 不変の行識別子; recipe_id: 所属レシピ |
+| recipeweave.user_recipe_event | R | id: 不変の行識別子; created_at: 作成日時（UTC）; user_id: 利用者; recipe_version_id: 提案版; kind: 提示/調理/評価; occurred_at: 発生時刻 |
+
+対象条件: `WHERE ranked.rank = 1 AND ranked.kind = 'liked'`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `ranked.recipe_id`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.kitchen_resource | R | user_id: 所有者; resource_type_id: コンロ・鍋・人等; active: 新規の調理計画で利用する資源か |
+| recipeweave.resource_type | R | id: 不変の行識別子; code: burner/pan/person等; name: 道具名 |
+| recipeweave.user_exclusion | R | user_id: 利用者; food_id: 食材 |
+| recipeweave.user_pantry_food | R | user_id: 所有者; food_id: 常備食材 |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.food | R | id: 不変の行識別子; name: 食材名・加工品種別 |
+| recipeweave.food_form | R | food_id: 対応食材; base_unit_id: 計算基準単位 |
+| recipeweave.unit | R | id: 不変の行識別子; code: 単位コード |
+| recipeweave.user_food | R | user_id: 所有者; food_id: 独自食材 |
+
+対象条件: `WHERE uf.user_id = %(user_id)s`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `f.id; f.name; u.code AS unit`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q010_shopping.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.unit | R | id: 不変の行識別子; code: 単位コード |
+| recipeweave.user_shopping_check | R | id: 不変の行識別子; user_id: 所有者; key: 買い物対象の安定キー; signature: 数量・商品条件の一致確認用署名; food_id: 対象食材; amount: 必要数量。不明はNULL; unit_id: 数量単位; checked_at: 購入確認日時; archived: 保管済みか |
+
+対象条件: `WHERE c.user_id = %(user_id)s`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `c.key AS client_key; c.signature; c.food_id; c.amount; u.code AS unit; c.checked_at; c.archived`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q011_session.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.cooking_session | R | id: 不変の行識別子; created_at: 作成日時（UTC）; menu_id: 対象献立; status: 実行状態; input_snapshot: 材料・資源・人数の固定入力; current_task_index: 調理画面の現在の工程位置（0始まり） |
+| recipeweave.menu | R | id: 不変の行識別子; user_id: 所有者 |
+
+対象条件: `WHERE m.user_id = %(user_id)s AND s.status <> 'cancelled'`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:209) / self.user_id (backend/src/app/core/workspace_service.py:224) / self.user_id (backend/src/app/core/workspace_service.py:391) / self.user_id (backend/src/app/core/workspace_service.py:398) / self.user_id (backend/src/app/core/workspace_service.py:406) / self.user_id (backend/src/app/core/workspace_service.py:425) / self.user_id (backend/src/app/core/workspace_service.py:451) |
+
+代入・選択式: `s.id; s.menu_id; s.status; s.current_task_index; s.input_snapshot`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.menu_item | R | id: 不変の行識別子; recipe_version_id: 固定レシピ版; position: 表示順 |
+| recipeweave.recipe | R | id: 不変の行識別子; title: 代表名 |
+| recipeweave.recipe_step | R | id: 不変の行識別子; step_no: 表示順（依存順とは別）; instruction: 個別補足; attention: 作業者拘束; duration_max_s: 所要秒上限; title: 工程の短い見出し |
+| recipeweave.recipe_version | R | id: 不変の行識別子; recipe_id: 所属レシピ |
+| recipeweave.session_task | R | id: 不変の行識別子; session_id: 実行; menu_item_id: 料理; step_id: 元工程; planned_start_s: 開始相対秒; planned_end_s: 終了相対秒; status: 進捗; timer_started_at: 稼働中タイマーの開始日時; timer_duration_s: 利用者が設定したタイマー秒数 |
+
+対象条件: `WHERE t.session_id = %(session_id)s`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| session_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
+
+代入・選択式: `t.id; t.menu_item_id; t.step_id; t.planned_start_s; t.planned_end_s; t.status; t.timer_started_at; t.timer_duration_s; rv.recipe_id; r.title AS recipe_name; st.title; st.instruction; st.attention; st.duration_max_s`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.resource_type | R | id: 不変の行識別子; code: burner/pan/person等; name: 道具名 |
+| recipeweave.session_task | R | id: 不変の行識別子; session_id: 実行; step_id: 元工程 |
+| recipeweave.step_resource | R | step_id: 対象工程; resource_type_id: 要求種別 |
+
+対象条件: `WHERE t.session_id = %(session_id)s AND r.code <> 'person'`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| session_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
+
+代入・選択式: `t.id AS task_id; r.name`
+
+### `backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql`
+
+実行条件: 共有処理 get_workspace を呼ぶ経路。分岐・反復は詳細設計の実関数を参照。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.food_form | R | id: 不変の行識別子; food_id: 対応食材; name: 生皮付き・冷凍刻み等 |
+| recipeweave.ingredient_total | R | id: 不変の行識別子; session_id: 固定計算対象; form_id: 合算可能な形態; product_version_id: 商品固定; unit_id: 基準単位; required_amount: 必要量; actual_amount: 利用者が確定した実使用量。不明はNULL; consumption_outcome: 未要求・反映済み・在庫不足・数量不明・単位不一致の結果 |
+| recipeweave.pantry_consumption | R | id: 不変の行識別子; session_id: 消費した調理セッション; lot_id: 消費元ロット; amount: 消費数量 |
+| recipeweave.pantry_lot | R | id: 不変の行識別子; form_id: 食材形態; product_version_id: 商品版; unit_id: 単位 |
+| recipeweave.unit | R | id: 不変の行識別子; code: 単位コード |
+
+対象条件: `WHERE total.session_id = %(session_id)s`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| session_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
+
+代入・選択式: `total.id; fm.food_id; fm.name AS form; total.required_amount; total.actual_amount; total.consumption_outcome; u.code AS unit; COALESCE(SUM(c.amount), 0) AS consumed_amount; ARRAY_AGG(c.lot_id) FILTER(WHERE c.id IS NOT NULL) AS lot_ids`
+
+### `backend/src/app/apis/auth/get_me/sql/q001_set_identity.sql`
+
+実行条件: 認証依存の初期化時。同一主体の初回INSERTのみ作成し、既存行はDO NOTHING。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| role | identity.role (backend/src/app/core/identity.py:82) |
+| user_id | str(identity.user_id) (backend/src/app/core/identity.py:82) / identity.user_id (backend/src/app/core/identity.py:83) / identity.user_id (backend/src/app/core/identity.py:86) / identity.user_id (backend/src/app/core/identity.py:89) / identity.user_id (backend/src/app/core/identity.py:96) |
+
+代入・選択式: `SET_CONFIG('recipeweave.user_id', %(user_id)s, TRUE) AS user_setting; SET_CONFIG('recipeweave.role', %(role)s, TRUE) AS role_setting`
+
+### `backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql`
+
+実行条件: 認証依存の初期化時。同一主体の初回INSERTのみ作成し、既存行はDO NOTHING。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.app_user | C | id: 不変の行識別子; auth_subject: 認証基盤の不透明識別子; state: 利用/削除処理; locale: 表示言語; timezone: IANAタイムゾーン |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| subject | identity.subject (backend/src/app/core/identity.py:83) / identity.subject (backend/src/app/core/identity.py:86) |
+| user_id | str(identity.user_id) (backend/src/app/core/identity.py:82) / identity.user_id (backend/src/app/core/identity.py:83) / identity.user_id (backend/src/app/core/identity.py:86) / identity.user_id (backend/src/app/core/identity.py:89) / identity.user_id (backend/src/app/core/identity.py:96) |
+
+変更する列とSQL式
+
+| 書込み列 | 値・式（バインド元は上表） |
+|---|---|
+| id | %(user_id)s |
+| auth_subject | %(subject)s |
+| state | 'active' |
+| locale | 'ja' |
+| timezone | 'Asia/Tokyo' |
+
+競合時の処理: `ON CONFLICT(auth_subject) DO NOTHING`
+
+### `backend/src/app/apis/auth/get_me/sql/q003_select_user.sql`
+
+実行条件: 認証依存の初期化時。同一主体の初回INSERTのみ作成し、既存行はDO NOTHING。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.app_user | R | id: 不変の行識別子; auth_subject: 認証基盤の不透明識別子; state: 利用/削除処理 |
+
+対象条件: `WHERE id = %(user_id)s AND auth_subject = %(subject)s`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| subject | identity.subject (backend/src/app/core/identity.py:83) / identity.subject (backend/src/app/core/identity.py:86) |
+| user_id | str(identity.user_id) (backend/src/app/core/identity.py:82) / identity.user_id (backend/src/app/core/identity.py:83) / identity.user_id (backend/src/app/core/identity.py:86) / identity.user_id (backend/src/app/core/identity.py:89) / identity.user_id (backend/src/app/core/identity.py:96) |
+
+代入・選択式: `id; state`
+
+### `backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql`
+
+実行条件: 認証依存の初期化時。同一主体の初回INSERTのみ作成し、既存行はDO NOTHING。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.workspace_revision | C | id: 不変の行識別子; user_id: 所有者; revision: 全体のCAS版 |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| row_id | uuid5(identity.user_id, 'workspace') (backend/src/app/core/identity.py:89) / uuid5(identity.user_id, 'kitchen:' + resource_code) (backend/src/app/core/identity.py:96) |
+| user_id | str(identity.user_id) (backend/src/app/core/identity.py:82) / identity.user_id (backend/src/app/core/identity.py:83) / identity.user_id (backend/src/app/core/identity.py:86) / identity.user_id (backend/src/app/core/identity.py:89) / identity.user_id (backend/src/app/core/identity.py:96) |
+
+変更する列とSQL式
+
+| 書込み列 | 値・式（バインド元は上表） |
+|---|---|
+| id | %(row_id)s |
+| user_id | %(user_id)s |
+| revision | 0 |
+
+競合時の処理: `ON CONFLICT(user_id) DO NOTHING`
+
+### `backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql`
+
+実行条件: 認証依存の初期化時。同一主体の初回INSERTのみ作成し、既存行はDO NOTHING。
+
+| 物理テーブル | 操作 | 対象列と意味 |
+|---|---|---|
+| recipeweave.kitchen_resource | CR | id: 不変の行識別子; user_id: 所有者; resource_type_id: コンロ・鍋・人等; name: 左コンロ・26cmフライパン等; capacity: 容量; quantity: 同等資源数; active: 新規の調理計画で利用する資源か |
+| recipeweave.resource_type | R | id: 不変の行識別子; code: burner/pan/person等; name: 道具名; status: 使用状態 |
+
+対象条件: `SQL上の絞り込みなし`
+
+| SQLバインド | 実装上の値の出所 |
+|---|---|
+| resource_code | resource_code (backend/src/app/core/identity.py:96) |
+| row_id | uuid5(identity.user_id, 'workspace') (backend/src/app/core/identity.py:89) / uuid5(identity.user_id, 'kitchen:' + resource_code) (backend/src/app/core/identity.py:96) |
+| user_id | str(identity.user_id) (backend/src/app/core/identity.py:82) / identity.user_id (backend/src/app/core/identity.py:83) / identity.user_id (backend/src/app/core/identity.py:86) / identity.user_id (backend/src/app/core/identity.py:89) / identity.user_id (backend/src/app/core/identity.py:96) |
+
+競合時の処理: `ON CONFLICT(id) DO NOTHING`
+
+## 分岐・拒否条件
+
+| 判定条件 | 例外・応答 | 定義元 |
+|---|---|---|
+| not rows or int(rows[0]['revision']) != request.expected_version | HTTPException(409, '他の画面で更新されています。最新の内容を読み込んでください') | backend/src/app/core/workspace_service.py:62 |
+| not form | HTTPException(422, '食材・形態・単位の組合せが見つかりません') | backend/src/app/core/workspace_service.py:208 |
+| food.components_known or food.component_food_ids or food.aliases | HTTPException(422, '独自食材の構成や別名はこの操作では確定できません') | backend/src/app/core/workspace_service.py:386 |
+| not q.run('q022_custom_form', row_id=uuid5(food_id, 'standard'), food_id=food_id, unit=food.default_unit) | HTTPException(422, '食材の単位が見つかりません') | backend/src/app/core/workspace_service.py:386 |
+| any((r['id'] == import_id for r in duplicate)) or (duplicate and (not request.allow_duplicate)) | HTTPException(409, 'このレシートは登録済みです。重複を確認してください') | backend/src/app/core/workspace_service.py:421 |
+| any((c.selected and (not c.food_id or c.status == 'excluded') for c in request.candidates)) | HTTPException(422, '選択した行の食材を確認してください') | backend/src/app/core/workspace_service.py:421 |
+| any((c.quantity.value == 0 for c in selected)) | HTTPException(422, 'レシートの数量は0より大きい数か数量不明にしてください') | backend/src/app/core/workspace_service.py:421 |
+| not selected | HTTPException(422, '在庫に入れる食材を一つ以上選んでください') | backend/src/app/core/workspace_service.py:421 |
+| food.id not in {c.food_id for c in selected} | HTTPException(422, '選択されていない独自食材は登録できません') | backend/src/app/core/workspace_service.py:421 |
+
+## 出力
+
+| 関数 | 返却式 | 定義元 |
+|---|---|---|
+| handle | execute(WorkspaceService(database, identity), request) | backend/src/app/apis/workspace/commit_receipt/router.py:22 |
+| execute | service.commit_receipt(request) | backend/src/app/apis/workspace/commit_receipt/functions.py:6 |
+| identifier | UUID(value) | backend/src/app/core/workspace_service.py:32 |
+| quantity | {'value': None if value is None else float(value), 'unit': unit} | backend/src/app/core/workspace_service.py:40 |
+| iso | value.isoformat() if isinstance(value, date &#124; datetime) else None | backend/src/app/core/workspace_service.py:45 |
+| WorkspaceService.queries | OperationQueries(self.connection, 'workspace/' + name) | backend/src/app/core/workspace_service.py:59 |
+| WorkspaceService.begin | queries | backend/src/app/core/workspace_service.py:62 |
+| WorkspaceService.finish | self.get_workspace() | backend/src/app/core/workspace_service.py:69 |
+| WorkspaceService.get_workspace | AppSnapshot.model_validate({'schemaVersion': 1, 'version': int(revision[0]['revision']) if revision else 0, 'lots': lots, 'imports': imports, 'drafts': {}, 'meal': meal, 'saved': [str(r['recipe_id']) for r in q.run('q007_saved', user_id=self.user_id)], 'shoppingChecks': checks, 'cooking': cooking, 'settings': settings, 'customFoods': customs, 'search': {'selectedFoodIds': [], 'match': 'all', 'maxMinutes': None, 'noShopping': False, 'equipment': []}}) | backend/src/app/core/workspace_service.py:80 |
+| WorkspaceService.read_meal | [{'id': str(r['id']), 'recipeId': str(r['recipe_id']), 'recipeVersionId': str(r['recipe_version_id']), 'servings': float(r['servings']), 'adjusted': any((a['override_id'] is not None for a in amounts if a['menu_item_id'] == r['id'])), 'amounts': {str(a['ingredient_id']): quantity(a['override_amount'] if a['override_id'] else a['scaled_amount'], a['unit']) for a in amounts if a['menu_item_id'] == r['id']}} for r in q.run('q005_menu', menu_id=menu_id, user_id=self.user_id)] | backend/src/app/core/workspace_service.py:186 |
+| WorkspaceService._stock | {**form[0], 'user_id': self.user_id, 'amount': Decimal(str(value.quantity.value)) if value.quantity.value is not None else None, 'quality': 'unknown' if value.quantity.value is None else 'known', 'expires_on': expires, 'location': LOCATIONS[value.location], 'priority': 'use_first' if value.priority else 'normal'} | backend/src/app/core/workspace_service.py:208 |
+| WorkspaceService.commit_receipt | self.finish(q) | backend/src/app/core/workspace_service.py:421 |
+
+APIとして返す型・status・headerは [インターフェース](interface.md) の実OpenAPIを参照。
+
+## 責務
+
+| 関数 | 処理 | 定義元 |
+|---|---|---|
+| handle | 確認したレシートを在庫へ登録する。呼出元が送った利用者IDは使用しない。 | backend/src/app/apis/workspace/commit_receipt/router.py:22 |
+| execute | 確認したレシートを在庫へ登録する。永続値は業務サービスが検証し、同一トランザクションで扱う。 | backend/src/app/apis/workspace/commit_receipt/functions.py:6 |
+| identifier | 画面から来る識別子はUUIDとして検証する。 | backend/src/app/core/workspace_service.py:32 |
+| quantity | 未知の数量をNULLのまま通信し、DBの十進値を表示用の数へ変換する。 | backend/src/app/core/workspace_service.py:40 |
+| iso | 日時はISO形式にそろえる。 | backend/src/app/core/workspace_service.py:45 |
+| WorkspaceService.queries | 個別説明なし | backend/src/app/core/workspace_service.py:59 |
+| WorkspaceService.begin | 個別説明なし | backend/src/app/core/workspace_service.py:62 |
+| WorkspaceService.finish | 個別説明なし | backend/src/app/core/workspace_service.py:69 |
+| WorkspaceService.get_workspace | 在庫・献立・設定・履歴を各テーブルから集約し、一貫した版を返す。 | backend/src/app/core/workspace_service.py:80 |
+| WorkspaceService.read_meal | 個別説明なし | backend/src/app/core/workspace_service.py:186 |
+| WorkspaceService._stock | 個別説明なし | backend/src/app/core/workspace_service.py:208 |
+| WorkspaceService._custom_food | 個別説明なし | backend/src/app/core/workspace_service.py:386 |
+| WorkspaceService.commit_receipt | 確認済み商品だけを在庫へ登録し、同じ要求の二重反映を防ぐ。 | backend/src/app/core/workspace_service.py:421 |
+
+[SQL](queries.md) / [シーケンス](sequence.md) / [ログ](messages.md) / [要因別テスト](tests.md)

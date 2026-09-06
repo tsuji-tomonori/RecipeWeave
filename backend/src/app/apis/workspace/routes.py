@@ -19,6 +19,7 @@ OPERATIONS = [
     "create_custom_food",
     "commit_receipt",
     "undo_receipt",
+    "preview_cooking_plan",
     "create_cooking_session",
     "update_cooking_session",
 ]

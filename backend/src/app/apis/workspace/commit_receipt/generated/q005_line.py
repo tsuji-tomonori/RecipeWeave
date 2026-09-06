@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 利用者が選択した商品だけを、登録ロットと対応付けて残す。
+    "query": """\
+-- 利用者が選択した商品だけを、登録ロットと対応付けて残す。
 INSERT INTO recipeweave.receipt_line (
     id, import_id, line_no, raw_name, form_id, amount, unit_id, decision, pantry_lot_id
 )

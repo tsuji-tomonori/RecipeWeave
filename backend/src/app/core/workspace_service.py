@@ -130,7 +130,7 @@ class WorkspaceService:
             "equipment": "equipment",
         }
         for r in q.run("q008_settings", user_id=self.user_id):
-            settings[setting_keys[r["kind"]]].append(r["value"])
+            settings[setting_keys[r["kind"]]].append(r["setting_value"])
         customs: list[dict[str, Any]] = [
             {
                 "id": str(r["id"]),
@@ -189,12 +189,13 @@ class WorkspaceService:
             {
                 "id": str(r["id"]),
                 "recipeId": str(r["recipe_id"]),
+                "recipeVersionId": str(r["recipe_version_id"]),
                 "servings": float(r["servings"]),
                 "adjusted": any(
                     a["override_id"] is not None for a in amounts if a["menu_item_id"] == r["id"]
                 ),
                 "amounts": {
-                    str(a["food_id"]): quantity(
+                    str(a["ingredient_id"]): quantity(
                         a["override_amount"] if a["override_id"] else a["scaled_amount"], a["unit"]
                     )
                     for a in amounts
@@ -260,16 +261,18 @@ class WorkspaceService:
 
     def add_item(self, q: OperationQueries, item: MealItem, menu_id: UUID, name: str) -> None:
         version = q.run(
-            "q010_recipe", recipe_id=identifier(item.recipe_id), preview=local_auth_enabled()
+            "q010_recipe",
+            recipe_id=identifier(item.recipe_id),
+            preview=local_auth_enabled(),
+            requested_version_id=identifier(item.recipe_version_id)
+            if item.recipe_version_id
+            else None,
         )
         if not version:
             raise HTTPException(404, "料理が公開されていません")
         ingredients = q.run("q011_ingredients", version_id=version[0]["id"])
-        if set(item.amounts) != {str(r["food_id"]) for r in ingredients}:
+        if set(item.amounts) != {str(r["id"]) for r in ingredients}:
             raise HTTPException(422, "材料の構成が料理版と一致しません")
-        # 同じ食品が複数材料行に分かれる料理は、曖昧なfood_id単位上書きを拒否する。
-        if len({r["food_id"] for r in ingredients}) != len(ingredients):
-            raise HTTPException(422, "この料理は材料行ごとの分量指定APIを利用してください")
         q.run("q012_menu", menu_id=menu_id, user_id=self.user_id, name=name)
         q.run(
             "q013_insert_item",
@@ -279,7 +282,7 @@ class WorkspaceService:
             servings=Decimal(str(item.servings)),
         )
         for ingredient in ingredients:
-            amount = item.amounts[str(ingredient["food_id"])]
+            amount = item.amounts[str(ingredient["id"])]
             if amount.value is None or amount.unit != ingredient["unit"]:
                 raise HTTPException(422, "確定した分量と料理の単位を指定してください")
             if amount.value == 0 and not ingredient["optional"]:
@@ -349,7 +352,10 @@ class WorkspaceService:
         for food in set(request.settings.pantry_food_ids):
             q.run("q005_pantry", row_id=uuid4(), user_id=self.user_id, food_id=identifier(food))
         for equipment in set(request.settings.equipment):
-            if not q.run("q006_equipment", row_id=uuid4(), user_id=self.user_id, name=equipment):
+            existing = q.run("q006_equipment", user_id=self.user_id, name=equipment)
+            if not existing and not q.run(
+                "q007_add_equipment", row_id=uuid4(), user_id=self.user_id, name=equipment
+            ):
                 raise HTTPException(422, "未登録の器具が含まれています")
         return self.finish(q)
 
@@ -382,8 +388,13 @@ class WorkspaceService:
         if food.components_known or food.component_food_ids or food.aliases:
             raise HTTPException(422, "独自食材の構成や別名はこの操作では確定できません")
         release_id = uuid5(self.user_id, "private-catalog")
-        q.run("q019_private_release", release_id=release_id, user_id=self.user_id,
-              version=f"private:{self.user_id}", manifest=hashlib.sha256(b"private-catalog-v1").hexdigest())
+        q.run(
+            "q019_private_release",
+            release_id=release_id,
+            user_id=self.user_id,
+            version=f"private:{self.user_id}",
+            manifest=hashlib.sha256(b"private-catalog-v1").hexdigest(),
+        )
         q.run(
             "q020_custom_food",
             food_id=food_id,
@@ -425,7 +436,9 @@ class WorkspaceService:
         selected = [
             c for c in request.candidates if c.selected and c.food_id and c.status != "excluded"
         ]
-        if any(c.selected and (not c.food_id or c.status == "excluded") for c in request.candidates):
+        if any(
+            c.selected and (not c.food_id or c.status == "excluded") for c in request.candidates
+        ):
             raise HTTPException(422, "選択した行の食材を確認してください")
         if any(c.quantity.value == 0 for c in selected):
             raise HTTPException(422, "レシートの数量は0より大きい数か数量不明にしてください")

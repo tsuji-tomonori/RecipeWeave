@@ -8,6 +8,7 @@ from psycopg import Connection
 
 
 class Parameters(TypedDict):
+    active: bool
     actor_id: UUID
     capacity: Decimal | None
     expected_etag: str
@@ -26,7 +27,8 @@ SET
     resource_type_id = %(resource_type_id)s,
     name = %(name)s,
     capacity = %(capacity)s,
-    quantity = %(quantity)s
+    quantity = %(quantity)s,
+    active = %(active)s
 WHERE
     t.id = %(row_id)s
     AND t.xmin::TEXT = %(expected_etag)s
@@ -39,6 +41,7 @@ RETURNING
     t.name,
     t.capacity,
     t.quantity,
+    t.active,
     t.xmin::TEXT AS etag;
 """
 
@@ -48,6 +51,7 @@ def execute(
 ) -> list[dict[str, Any]]:
     """宣言済みパラメータだけをSQLへ束縛して明示列を返す。"""
     params: Parameters = {
+        "active": values["active"],
         "actor_id": values["actor_id"],
         "capacity": values["capacity"],
         "expected_etag": values["expected_etag"],

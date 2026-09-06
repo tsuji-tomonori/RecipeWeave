@@ -1,15 +1,18 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 6853dafe5568b3bcc255c8b3534a5b621e903cfb08823cea481c3d549523a64e
+# SQLのSHA256: ce8cc60afee119b914a2e4b05998686aa6c7a737106d72e01728a7da8cad0dd1
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 予約履歴が参照する設備IDを保持し、画面で選択する器具だけを無効にする。
+    "query": """\
+-- 予約履歴が参照する設備IDを保持し、画面で選択する器具だけを無効にする。
 UPDATE recipeweave.kitchen_resource AS k SET active = FALSE
-WHERE k.user_id = %(user_id)s AND EXISTS (SELECT 1 FROM recipeweave.resource_type AS r
-WHERE r.id = k.resource_type_id AND r.code NOT IN ('person', 'burner', 'bowl'));
+WHERE k.user_id = %(user_id)s AND EXISTS (
+    SELECT 1 FROM recipeweave.resource_type AS r
+    WHERE r.id = k.resource_type_id AND r.code NOT IN ('person', 'burner', 'bowl')
+);
 """
 }
 PARAMETERS: dict[str, tuple[str, ...]] = {"query": ("user_id",)}

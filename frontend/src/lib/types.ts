@@ -29,6 +29,9 @@ export interface Food {
   componentFoodIds: string[];
 }
 export interface RecipeIngredient {
+  ingredientId?: string;
+  formId?: string;
+  productVersionId?: string | null;
   foodId: string;
   quantity: Quantity;
   form: string;
@@ -45,6 +48,7 @@ export interface RecipeStep {
 }
 export interface Recipe {
   id: string;
+  versionId?: string;
   name: string;
   description: string;
   servings: number;
@@ -56,9 +60,12 @@ export interface Recipe {
   tags: string[];
   sample: boolean;
   imageUrl?: string | null;
+  publicationStatus?: "draft" | "published" | "withdrawn";
+  withdrawalReason?: string | null;
 }
 export interface RecipeDraft {
   recipeId: string;
+  recipeVersionId?: string;
   servings: number;
   amounts: Record<string, Quantity>;
   adjusted: boolean;

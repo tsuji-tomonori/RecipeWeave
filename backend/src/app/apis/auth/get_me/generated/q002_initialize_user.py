@@ -1,15 +1,17 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 2f7b14b91fe3a0cf39e307a33263982f178ed00d611119ce1ad02bb99cfb4a74
+# SQLのSHA256: d2fa642225748bf955a9a8dc26c111286aa9fa1747ded61275070e6cd10ee4bc
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 認証主体から決定的に採番した本人行を初回だけ作る。
+    "query": """\
+-- 認証主体から決定的に採番した本人行を初回だけ作る。
 INSERT INTO recipeweave.app_user (id, auth_subject, state, locale, timezone)
 VALUES (%(user_id)s, %(subject)s, 'active', 'ja', 'Asia/Tokyo')
-ON CONFLICT (auth_subject) DO NOTHING;
+ON CONFLICT (auth_subject) DO NOTHING
+RETURNING id;
 """
 }
 PARAMETERS: dict[str, tuple[str, ...]] = {"query": ("subject", "user_id")}

@@ -1,7 +1,8 @@
 -- 消費する量の正本はクライアントの適用結果でなくDBの需要行とする。
 SELECT
     t.id,
-    t.form_id, t.product_version_id,
+    t.form_id,
+    t.product_version_id,
     t.unit_id,
     t.required_amount,
     fm.food_id,

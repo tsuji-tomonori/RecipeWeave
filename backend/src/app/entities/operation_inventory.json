@@ -99,7 +99,12 @@
       "key": "catalog_release_create",
       "operation_id": "entity_catalog_release_create",
       "owned": false,
-      "references": [],
+      "references": [
+        [
+          "owner_id",
+          "reference_owner_id"
+        ]
+      ],
       "table": "catalog_release"
     },
     {
@@ -115,7 +120,12 @@
       "key": "catalog_release_update",
       "operation_id": "entity_catalog_release_update",
       "owned": false,
-      "references": [],
+      "references": [
+        [
+          "owner_id",
+          "reference_owner_id"
+        ]
+      ],
       "table": "catalog_release"
     },
     {
@@ -2794,6 +2804,10 @@
         [
           "user_id",
           "reference_user_id"
+        ],
+        [
+          "recipe_version_id",
+          "reference_recipe_version_id"
         ]
       ],
       "table": "user_recipe_event"
@@ -2931,6 +2945,10 @@
         [
           "menu_id",
           "reference_menu_id"
+        ],
+        [
+          "recipe_version_id",
+          "reference_recipe_version_id"
         ]
       ],
       "table": "menu_item"
@@ -2954,6 +2972,10 @@
         [
           "menu_id",
           "reference_menu_id"
+        ],
+        [
+          "recipe_version_id",
+          "reference_recipe_version_id"
         ]
       ],
       "table": "menu_item"
@@ -3087,7 +3109,8 @@
         "resource_type_id",
         "name",
         "capacity",
-        "quantity"
+        "quantity",
+        "active"
       ],
       "json_columns": [],
       "key": "kitchen_resource_create",
@@ -3110,7 +3133,8 @@
         "resource_type_id",
         "name",
         "capacity",
-        "quantity"
+        "quantity",
+        "active"
       ],
       "json_columns": [],
       "key": "kitchen_resource_update",
@@ -4320,7 +4344,8 @@
         "status",
         "revision",
         "committed_at",
-        "reverted_at"
+        "reverted_at",
+        "undo_preserved_count"
       ],
       "json_columns": [],
       "key": "receipt_import_create",
@@ -4347,7 +4372,8 @@
         "status",
         "revision",
         "committed_at",
-        "reverted_at"
+        "reverted_at",
+        "undo_preserved_count"
       ],
       "json_columns": [],
       "key": "receipt_import_update",

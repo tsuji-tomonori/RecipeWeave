@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 現在の買い物確認を本人の範囲で置き換える。
+    "query": """\
+-- 現在の買い物確認を本人の範囲で置き換える。
 DELETE FROM recipeweave.user_shopping_check
 WHERE user_id = %(user_id)s;
 """

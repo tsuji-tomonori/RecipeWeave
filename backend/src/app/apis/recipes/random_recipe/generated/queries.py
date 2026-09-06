@@ -1,17 +1,19 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 58906a163ebf0d75ebcd11f5c2e40b329c907d1e5d3a53c0dcbd1c63114b2ef4
+# SQLのSHA256: 35f000bab482c9f33c3b4dbcd972ba25e843f7efc7cb1746faf8cd0c5d674eb5
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "001_random_recipe": """-- 除外条件を適用したレシピから一品を選び、正規化テーブルから取得する。
+    "001_random_recipe": """\
+-- 除外条件を適用したレシピから一品を選び、正規化テーブルから取得する。
 WITH candidate AS (
     SELECT
         recipe.id,
         recipe.title,
         recipe.status AS recipe_status,
+        recipe.withdrawal_reason,
         recipe_view.id AS version_id,
         recipe_view.description,
         recipe_view.base_servings,
@@ -48,6 +50,7 @@ matched AS (
         candidate.id,
         candidate.title,
         candidate.recipe_status,
+        candidate.withdrawal_reason,
         candidate.version_id,
         candidate.description,
         candidate.base_servings,
@@ -109,6 +112,7 @@ page AS (
         matched.id,
         matched.title,
         matched.recipe_status,
+        matched.withdrawal_reason,
         matched.version_id,
         matched.description,
         matched.base_servings,
@@ -126,6 +130,13 @@ payloads AS (
         page.title,
         JSONB_BUILD_OBJECT(
             'id', page.id::TEXT, 'name', page.title, 'description', page.description,
+            'versionId', page.version_id::TEXT,
+            'publicationStatus', CASE
+                WHEN page.recipe_status = 'withdrawn'
+                    THEN 'withdrawn'
+                ELSE page.version_status
+            END,
+            'withdrawalReason', page.withdrawal_reason,
             'servings', page.base_servings, 'minutes', page.minutes,
             'equipment', COALESCE((
                 SELECT JSONB_AGG(DISTINCT equipment_type.name)
@@ -141,6 +152,9 @@ payloads AS (
             'ingredients', COALESCE((
                 SELECT
                     JSONB_AGG(JSONB_BUILD_OBJECT(
+                        'ingredientId', ingredient.id::TEXT,
+                        'formId', ingredient.form_id::TEXT,
+                        'productVersionId', ingredient.product_version_id::TEXT,
                         'foodId', form.food_id::TEXT,
                         'quantity',
                         JSONB_BUILD_OBJECT('value', ingredient.amount, 'unit', unit.code),

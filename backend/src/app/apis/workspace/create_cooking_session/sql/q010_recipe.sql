@@ -8,9 +8,10 @@ INNER JOIN
     ON rv.recipe_id = r.id
 WHERE
     r.id = %(recipe_id)s
+    AND (%(requested_version_id)s::UUID IS NULL OR rv.id = %(requested_version_id)s)
     AND (
         (rv.status = 'published' AND rv.validation = 'passed' AND r.status = 'published')
-        OR (%(preview)s AND rv.status = 'draft')
+        OR (%(preview)s AND rv.status = 'draft' AND r.status = 'draft')
     )
 ORDER BY rv.version DESC
 LIMIT 1;

@@ -55,7 +55,7 @@ jobs:
       - name: 実PostgreSQLの参照・制約・所有権・CRUD
         run: |
           mkdir -p reports
-          uv run --locked pytest tests/test_relational_schema.py backend/tests/test_catalog_database.py backend/tests/test_seed_catalog.py backend/tests/test_entity_api_db.py --junitxml=reports/relational-junit.xml -q
+          uv run --locked pytest tests/test_relational_schema.py backend/tests/test_catalog_database.py backend/tests/test_seed_catalog.py backend/tests/test_entity_api_db.py backend/tests/test_workflow_database.py backend/tests/test_cooking_plan_api.py --junitxml=reports/relational-junit.xml -q
           uv run --locked python tools/require_executed_tests.py reports/relational-junit.xml
       - name: 実DB試験の証跡
         if: always()

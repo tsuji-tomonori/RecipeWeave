@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 開始済みタイマーを再送でリセットしない。
+    "query": """\
+-- 開始済みタイマーを再送でリセットしない。
 UPDATE recipeweave.session_task SET
     timer_started_at = CURRENT_TIMESTAMP,
     timer_duration_s = planned_end_s - planned_start_s

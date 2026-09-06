@@ -71,7 +71,9 @@ class ReceiptRequest(RevisionRequest):
     purchase_signature: Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]
     candidates: Annotated[list[ReceiptCandidate], Field(min_length=1, max_length=200)]
     allow_duplicate: bool = False
-    custom_foods: Annotated[list[Food], Field(max_length=200)] = Field(default_factory=list)
+    custom_foods: Annotated[list[Food], Field(max_length=200)] = Field(
+        default_factory=lambda: list[Food]()
+    )
 
 
 class CookingRequest(RevisionRequest):

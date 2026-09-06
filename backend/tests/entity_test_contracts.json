@@ -474,6 +474,56 @@
       "given": "有効な所有者・フェンスに一致する行なし",
       "when": "リース操作を要求",
       "then": "409を返し変更なし"
+    },
+    {
+      "test_node": "backend/tests/test_entity_api.py::test_recipe_history_reference_is_verified_before_write",
+      "operation_ids": [
+        "entity_menu_item_create",
+        "entity_menu_item_update",
+        "entity_user_recipe_event_create"
+      ],
+      "factor": "料理版参照の事前認可",
+      "given": "未公開版への既存本人履歴がなくローカル試用条件もない",
+      "when": "献立明細・提案履歴を書き込む",
+      "then": "書込みSQLより前に403を返し履歴の後付けによる権限取得を防ぐ"
+    },
+    {
+      "test_node": "backend/tests/test_entity_api.py::test_server_owned_columns_are_not_editable",
+      "operation_ids": [
+        "entity_catalog_release_create",
+        "entity_catalog_release_update",
+        "entity_food_create",
+        "entity_food_update",
+        "entity_app_user_create",
+        "entity_app_user_update",
+        "entity_menu_create",
+        "entity_menu_update"
+      ],
+      "factor": "サーバー管理列",
+      "given": "所有者・認証主体・献立版の直接入力",
+      "when": "型付き入力を検証",
+      "then": "外部指定を許可しない"
+    },
+    {
+      "test_node": "backend/tests/test_entity_api.py::test_template_rejects_unsupported_or_duplicate_groups",
+      "operation_ids": [
+        "entity_generation_template_create"
+      ],
+      "factor": "生成候補集合の成立性",
+      "given": "未許可ID・重複・組の要素数とkの不一致",
+      "when": "副材の組を検証",
+      "then": "保存前に拒否して候補件数の水増しを防ぐ"
+    },
+    {
+      "test_node": "backend/tests/test_entity_api_db.py::test_history_cannot_be_created_to_gain_unpublished_recipe_access",
+      "operation_ids": [
+        "entity_menu_item_create",
+        "entity_user_recipe_event_create"
+      ],
+      "factor": "実DBの履歴認可境界",
+      "given": "署名済みの2利用者と未公開・取下げの料理版",
+      "when": "履歴の追加・取下げ後の再参照を要求",
+      "then": "新規の権限取得は拒否し既存本人履歴だけを復元できる"
     }
   ]
 }

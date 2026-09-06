@@ -1,13 +1,21 @@
 """API別SQLと移行定義を、実行せずにSQLFluffで静的解析する。"""
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter
 
 ROOT = Path(__file__).resolve().parents[4]
+
+
+class SqlDiagnostic(BaseModel):
+    """SQL本文や実行値を含めず、ファイルと静的な違反位置を保存する。"""
+
+    filepath: str
+    violations: list[dict[str, object]]
 
 
 class VerificationSource(BaseModel):
@@ -46,7 +54,7 @@ def run_sqlfluff(
     )
 
 
-def inspect_sql(root: Path = ROOT) -> list[str]:
+def inspect_sql(root: Path = ROOT, *, evidence: Path | None = None) -> list[str]:
     """全APIのSQLファイルと移行SQLを検査し、既存移行のバイト列は変更しない。"""
     api_root = root / "backend/src/app/apis"
     migration_root = root / "database/migrations"
@@ -67,12 +75,30 @@ def inspect_sql(root: Path = ROOT) -> list[str]:
             "--processes",
             "4",
             "--disable-progress-bar",
+            "--format",
+            "json",
             *[str(path) for path in [*api_sql, *shared_sql, *migration_sql]],
         ],
         root=root,
     )
+    diagnostics = TypeAdapter(list[SqlDiagnostic]).validate_json(result.stdout)
+    if evidence is not None:
+        if not evidence.resolve().is_relative_to((root / "reports").resolve()):
+            raise ValueError("SQLFluffの証跡はreports配下だけに保存できます")
+        evidence.parent.mkdir(parents=True, exist_ok=True)
+        evidence.write_text(
+            json.dumps([item.model_dump() for item in diagnostics], ensure_ascii=False, indent=2)
+            + "\n"
+        )
     if result.returncode:
-        errors.append(result.stdout + result.stderr)
+        for item in diagnostics:
+            for violation in item.violations:
+                errors.append(
+                    f"{item.filepath}:{violation.get('start_line_no', '?')}: "
+                    f"{violation.get('code', '?')} {violation.get('description', '')}"
+                )
+        if result.stderr:
+            errors.append(result.stderr[-2000:])
 
     manifest = VerificationManifest.model_validate_json(
         (migration_root / "manifest.manual.json").read_text()
@@ -91,7 +117,8 @@ def inspect_sql(root: Path = ROOT) -> list[str]:
 
 
 def main() -> int:
-    errors = inspect_sql()
+    output = os.environ.get("SQLFLUFF_OUTPUT")
+    errors = inspect_sql(evidence=ROOT / output if output else None)
     if errors:
         print("\n".join(errors))
         return 1

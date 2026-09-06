@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- タスクに必要な器具の表示名を読む。
+    "query": """\
+-- タスクに必要な器具の表示名を読む。
 SELECT
     t.id AS task_id,
     r.name

@@ -1,19 +1,24 @@
 """生成した全操作に対する権限、条件付き更新、列契約の要因別試験。"""
 
 import json
+import secrets
+import time
 from dataclasses import replace
 from pathlib import Path
 from typing import Any, cast
 from unittest.mock import MagicMock
-from uuid import UUID, uuid4
+from uuid import NAMESPACE_URL, UUID, uuid4, uuid5
 
+import jwt
 import pytest
 from fastapi import HTTPException
 from pydantic import ValidationError
 
+from app.core.dependencies import get_settings
 from app.core.entity_contracts import OperationSpec
 from app.core.entity_service import EntityService, parse_etag
-from app.core.identity import Identity
+from app.core.errors import AuthenticationError
+from app.core.identity import Identity, verified_identity
 from app.entities.models import MenuWrite, UnitWrite
 from app.entities.registry import SPECIFICATIONS
 
@@ -81,9 +86,10 @@ def test_etag_rejects_ambiguous_preconditions(value: str) -> None:
     assert raised.value.status_code == 422
 
 
-def test_cross_user_payload_is_rejected() -> None:
+@pytest.mark.parametrize("role", ["user", "admin"])
+def test_cross_user_payload_is_rejected(role: str) -> None:
     """Given別人user_id When献立作成 Then参照SQLより前に403。"""
-    target = service("user")
+    target = service(role)
     spec = SPECIFICATIONS["entity_menu_create"]
     values = dict(user_id=str(UUID(int=2)), name="別人", servings="2")
     with pytest.raises(HTTPException) as raised:
@@ -172,3 +178,105 @@ def test_retention_does_not_expose_destructive_operations() -> None:
             assert spec.action not in {"update", "delete"}
         if spec.action == "delete":
             assert spec.owned
+
+
+def test_server_owned_columns_are_not_editable() -> None:
+    """Given所有者・認証主体・献立版 When入力契約を検査 Then外部指定を許さない。"""
+    from app.entities.models import AppUserWrite, CatalogReleaseWrite, FoodWrite
+
+    for model in (CatalogReleaseWrite, FoodWrite):
+        assert "owner_id" not in model.model_fields
+    assert not {"auth_subject", "state"} & AppUserWrite.model_fields.keys()
+    assert "revision" not in MenuWrite.model_fields
+    with pytest.raises(ValidationError):
+        CatalogReleaseWrite.model_validate(
+            dict(version="private-test", manifest_hash="0" * 64, owner_id=uuid4())
+        )
+
+
+def test_signed_token_cannot_supply_database_owner_or_escalate_role(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Given署名済みの余剰user_idと偽装ロール When主体確定 Thensubだけから本人を導出。"""
+    secret = secrets.token_urlsafe(32)
+    monkeypatch.setenv("AUTH_MODE", "local")
+    monkeypatch.setenv("ENVIRONMENT", "test")
+    monkeypatch.setenv("LOCAL_AUTH_SECRET", secret)
+    monkeypatch.setenv("LOCAL_AUTH_PASSWORD", "test-only-local-password")
+    monkeypatch.delenv("AWS_LAMBDA_FUNCTION_NAME", raising=False)
+    get_settings.cache_clear()
+    now = int(time.time())
+    payload = dict(
+        sub="local:alice",
+        user_id=str(UUID(int=2)),
+        role="user",
+        iss="recipeweave-local",
+        aud="recipeweave-api",
+        iat=now,
+        exp=now + 300,
+    )
+    try:
+        identity = verified_identity(jwt.encode(payload, secret, algorithm="HS256"))
+        assert identity.user_id == uuid5(NAMESPACE_URL, "recipeweave:user:local:alice")
+        assert identity.role == "user"
+        with pytest.raises(AuthenticationError):
+            verified_identity(jwt.encode({**payload, "role": "admin"}, secret, algorithm="HS256"))
+    finally:
+        get_settings.cache_clear()
+
+
+@pytest.mark.parametrize(
+    "operation_id",
+    ["entity_menu_item_create", "entity_menu_item_update", "entity_user_recipe_event_create"],
+)
+def test_recipe_history_reference_is_verified_before_write(
+    operation_id: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given未公開版への参照権なし When履歴を書込 Then新規履歴で認可を作れない。"""
+    monkeypatch.setattr("app.core.entity_service.local_auth_enabled", lambda: False)
+    target = service("user")
+    reference = MagicMock(return_value=[])
+    query = MagicMock()
+    original = SPECIFICATIONS[operation_id]
+    assert "recipe_version_id" in dict(original.reference_queries)
+    isolated = replace(
+        original,
+        input_columns=("recipe_version_id",),
+        reference_queries=(("recipe_version_id", reference),),
+        query=query,
+    )
+    with pytest.raises(HTTPException) as raised:
+        target.execute(isolated, payload={"recipe_version_id": uuid4()}, if_match='"1"')
+    assert raised.value.status_code == 403
+    query.assert_not_called()
+    assert reference.call_args.args[1]["actor_id"] == target.identity.user_id
+    assert reference.call_args.args[1]["preview"] is False
+
+
+@pytest.mark.parametrize(
+    "groups",
+    [
+        [[1, 1]],
+        [[2, 1]],
+        [[1], [1]],
+        [[3]],
+        [[1, 2]],
+        [[1, 2, 3, 4]],
+    ],
+)
+def test_template_rejects_unsupported_or_duplicate_groups(groups: list[list[int]]) -> None:
+    """Given重複・未許可ID・要素数違い When生成契約を検証 Then候補件数の水増しを拒否。"""
+    from app.entities.json_contracts import GenerationTemplateContract
+
+    with pytest.raises(ValidationError):
+        GenerationTemplateContract.model_validate(
+            dict(
+                primary_identity_ids=[UUID(int=10)],
+                support_identity_ids=[UUID(int=1), UUID(int=2)],
+                support_k=[1],
+                support_identity_sets=[[UUID(int=item) for item in group] for group in groups],
+                flavor_codes=["soy"],
+                route_codes=["stir_fry"],
+                normalizer_version="v2",
+            )
+        )

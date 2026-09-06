@@ -1,0 +1,168 @@
+{
+  "components": {
+    "schemas": {
+      "FoodFormRow": {
+        "additionalProperties": false,
+        "description": "食材形態のDB応答。",
+        "properties": {
+          "base_unit_id": {
+            "description": "計算基準単位",
+            "format": "uuid",
+            "title": "Base Unit Id",
+            "type": "string"
+          },
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "food_id": {
+            "description": "対応食材",
+            "format": "uuid",
+            "title": "Food Id",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "description": "生皮付き・冷凍刻み等",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "quantity_basis": {
+            "description": "数量の対象部分",
+            "enum": [
+              "edible",
+              "as_purchased",
+              "drained",
+              "prepared"
+            ],
+            "title": "Quantity Basis",
+            "type": "string"
+          },
+          "state": {
+            "description": "処理状態",
+            "enum": [
+              "raw",
+              "dry",
+              "frozen",
+              "cooked",
+              "rehydrated",
+              "drained",
+              "peeled",
+              "ready"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "status": {
+            "description": "利用状態",
+            "enum": [
+              "active",
+              "retired"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "food_id",
+          "name",
+          "state",
+          "base_unit_id",
+          "quantity_basis",
+          "status",
+          "etag"
+        ],
+        "title": "FoodFormRow",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/food_form/{row_id}": {
+      "get": {
+        "description": "食材形態の取得。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_food_form_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FoodFormRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "404": {
+            "description": "対象なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "食材形態の取得",
+        "tags": [
+          "正規化データ: 食材形態"
+        ]
+      }
+    }
+  }
+}

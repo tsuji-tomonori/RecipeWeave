@@ -38,6 +38,8 @@ def test_actual_inventory_and_all_operation_documents(openapi: dict) -> None:
     assert "recipeweave.recipe" in outputs["api/CRUD.md"]
     assert "SQL" in outputs["api/operations/get_recipe/queries.md"]
     assert "ログメッセージ" in outputs["api/operations/get_health/messages.md"]
+    assert "workspace/get_workspace/sql/" in outputs["api/operations/create_pantry_lot/queries.md"]
+    assert "recipes/get_recipe/sql/" in outputs["api/operations/preview_cooking_plan/queries.md"]
 
 
 def test_ddl_change_requires_column_meaning(tmp_path: Path) -> None:
@@ -267,8 +269,6 @@ def test_inline_foreign_key_requires_explicit_supported_projection() -> None:
     [
         "WITH changed AS (DELETE FROM recipeweave.user_state RETURNING subject) "
         "SELECT subject FROM changed;",
-        "INSERT INTO recipeweave.user_state (subject) VALUES ('a') "
-        "ON CONFLICT (subject) DO UPDATE SET revision = 1;",
     ],
 )
 def test_unsupported_combined_sql_cannot_hide_extra_side_effects(text: str) -> None:
@@ -326,6 +326,47 @@ def test_read_only_ctes_preserve_physical_table_lineage() -> None:
     )
     assert query.actions == {"recipeweave.user_state": {"R"}}
     assert query.columns == {"recipeweave.user_state": ["subject"]}
+
+
+def test_upsert_preserves_create_update_and_conflicting_column_lineage() -> None:
+    query = query_projection(
+        "INSERT INTO recipeweave.user_state AS current_state (subject, revision) "
+        "VALUES (%(subject)s, 1) ON CONFLICT (subject) DO UPDATE SET "
+        "revision = current_state.revision + EXCLUDED.revision RETURNING revision;",
+        "fixture",
+        "test",
+        load_tables(ROOT),
+    )
+    assert query.actions == {"recipeweave.user_state": {"C", "U"}}
+    assert query.columns == {"recipeweave.user_state": ["revision", "subject"]}
+    with pytest.raises(DesignError, match="列"):
+        query_projection(
+            "INSERT INTO recipeweave.user_state (subject) VALUES ('x') "
+            "ON CONFLICT (subject) DO UPDATE SET revision = EXCLUDED.unknown;",
+            "fixture",
+            "test",
+            load_tables(ROOT),
+        )
+
+
+def test_lock_alias_is_validated_without_becoming_a_physical_table() -> None:
+    tables = load_tables(ROOT)
+    query = query_projection(
+        "SELECT current_state.subject FROM recipeweave.user_state AS current_state "
+        "FOR SHARE OF current_state;",
+        "fixture",
+        "test",
+        tables,
+    )
+    assert query.actions == {"recipeweave.user_state": {"R"}}
+    assert "FOR SHARE OF current_state" in query.sql
+    with pytest.raises(DesignError, match="行ロック"):
+        query_projection(
+            "SELECT subject FROM recipeweave.user_state FOR UPDATE OF missing;",
+            "fixture",
+            "test",
+            tables,
+        )
 
 
 def test_openapi_json_is_managed_without_deleting_unrelated_json(tmp_path: Path) -> None:

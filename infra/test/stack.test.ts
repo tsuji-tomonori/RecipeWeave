@@ -73,6 +73,11 @@ test("全APIをFastAPIの認証・所有権判定へ転送し本番local認証�
   dataTemplate.hasResourceProperties("AWS::Cognito::UserPoolClient", {
     GenerateSecret: false,
     EnableTokenRevocation: true,
+    AllowedOAuthFlows: ["code"],
+    AllowedOAuthFlowsUserPoolClient: true,
+    AllowedOAuthScopes: ["openid", "email", "profile"],
+    CallbackURLs: Match.anyValue(),
+    LogoutURLs: Match.anyValue(),
   });
 });
 

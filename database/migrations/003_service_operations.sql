@@ -434,11 +434,11 @@ ALTER TABLE recipeweave.user_food FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.user_food
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 CREATE TRIGGER immutable_id BEFORE UPDATE ON recipeweave.user_pantry_food
@@ -450,11 +450,11 @@ ALTER TABLE recipeweave.user_pantry_food FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.user_pantry_food
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 CREATE TRIGGER immutable_id BEFORE UPDATE ON recipeweave.pantry_consumption
@@ -466,11 +466,11 @@ ALTER TABLE recipeweave.pantry_consumption FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.pantry_consumption
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 ) WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 CREATE TABLE recipeweave.user_shopping_check (
@@ -483,12 +483,12 @@ CREATE TABLE recipeweave.user_shopping_check (
     amount NUMERIC(20, 6),
     unit_id UUID,
     checked_at TIMESTAMPTZ,
-    archived BOOLEAN NOT NULL DEFAULT false,
+    archived BOOLEAN NOT NULL DEFAULT FALSE,
     UNIQUE (user_id, key),
     CHECK (
-        amount IS null OR (amount >= 0 AND amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))
+        amount IS NULL OR (amount >= 0 AND amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))
     ),
-    CHECK (amount IS null OR unit_id IS NOT null)
+    CHECK (amount IS NULL OR unit_id IS NOT NULL)
 );
 
 COMMENT ON TABLE recipeweave.user_shopping_check IS '調理前の買い物確認';
@@ -540,12 +540,12 @@ ALTER TABLE recipeweave.user_shopping_check FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY owned_access ON recipeweave.user_shopping_check
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 )
 WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 CREATE FUNCTION recipeweave.check_receipt_reference() RETURNS TRIGGER
@@ -663,18 +663,18 @@ ALTER TABLE recipeweave.food FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY food_read ON recipeweave.food FOR SELECT
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR owner_id IS null
-    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR owner_id IS NULL
+    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 CREATE POLICY food_write ON recipeweave.food FOR ALL
 USING (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 )
 WITH CHECK (
-    CURRENT_SETTING('recipeweave.role', true) = 'admin'
-    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
 );
 
 CREATE FUNCTION recipeweave.food_visible(food_id UUID) RETURNS BOOLEAN
@@ -1012,7 +1012,8 @@ ALTER TABLE recipeweave.ingredient_total ADD COLUMN actual_amount NUMERIC(20, 6)
 
 COMMENT ON COLUMN recipeweave.ingredient_total.actual_amount IS '利用者が確定した実使用量。不明はNULL';
 
-ALTER TABLE recipeweave.ingredient_total ADD COLUMN consumption_outcome TEXT NOT NULL DEFAULT 'not_requested';
+ALTER TABLE recipeweave.ingredient_total
+ADD COLUMN consumption_outcome TEXT NOT NULL DEFAULT 'not_requested';
 
 COMMENT ON COLUMN recipeweave.ingredient_total.consumption_outcome IS '未要求・反映済み・在庫不足・数量不明・単位不一致の結果';
 
@@ -1025,33 +1026,51 @@ ALTER TABLE recipeweave.ingredient_total ADD CONSTRAINT consumption_outcome_valu
     consumption_outcome IN ('not_requested', 'applied', 'insufficient', 'unknown', 'incompatible')
 );
 
--- 資源の過去予約を維持したまま、新規計画で使わない状態を表す。
 ALTER TABLE recipeweave.kitchen_resource ADD COLUMN active BOOLEAN NOT NULL DEFAULT TRUE;
+
 COMMENT ON COLUMN recipeweave.kitchen_resource.active IS '新規の調理計画で利用する資源か';
 
--- 取消しで残した編集済み・消費済みロットの件数を利用者へ説明する。
 ALTER TABLE recipeweave.receipt_import ADD COLUMN undo_preserved_count INTEGER NOT NULL DEFAULT 0;
-COMMENT ON COLUMN recipeweave.receipt_import.undo_preserved_count IS 'レシート取消時に編集・消費済みとして残した在庫件数';
-ALTER TABLE recipeweave.receipt_import ADD CONSTRAINT undo_preserved_count_nonnegative CHECK (undo_preserved_count >= 0);
 
--- 私有食材の追加用カタログを共通カタログの公開ライフサイクルから分離する。
+COMMENT ON COLUMN recipeweave.receipt_import.undo_preserved_count IS 'レシート取消時に編集・消費済みとして残した在庫件数';
+
+ALTER TABLE recipeweave.receipt_import ADD CONSTRAINT undo_preserved_count_nonnegative CHECK (
+    undo_preserved_count >= 0
+);
+
 ALTER TABLE recipeweave.catalog_release ADD COLUMN owner_id UUID;
+
 COMMENT ON COLUMN recipeweave.catalog_release.owner_id IS '私有カタログの所有者。NULLは共通カタログ';
+
 ALTER TABLE recipeweave.catalog_release ADD CONSTRAINT fk_catalog_release_owner_id
 FOREIGN KEY (owner_id) REFERENCES recipeweave.app_user (id)
 ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED;
+
 CREATE INDEX ix_catalog_release_owner_id ON recipeweave.catalog_release (owner_id);
-ALTER TABLE recipeweave.catalog_release ADD CONSTRAINT private_catalog_unpublished CHECK (owner_id IS NULL OR published_at IS NULL);
+
+ALTER TABLE recipeweave.catalog_release ADD CONSTRAINT private_catalog_unpublished CHECK (
+    owner_id IS NULL OR published_at IS NULL
+);
+
 ALTER TABLE recipeweave.catalog_release ENABLE ROW LEVEL SECURITY;
+
 ALTER TABLE recipeweave.catalog_release FORCE ROW LEVEL SECURITY;
+
 CREATE POLICY catalog_read ON recipeweave.catalog_release FOR SELECT
-USING (CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR owner_id IS NULL
-    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID);
+USING (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR owner_id IS NULL
+    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
+);
+
 CREATE POLICY catalog_write ON recipeweave.catalog_release FOR ALL
-USING (CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
-    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID)
-WITH CHECK (CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
-    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID);
+USING (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
+)
+WITH CHECK (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
+);
 
 CREATE FUNCTION recipeweave.guard_private_owner() RETURNS TRIGGER
 LANGUAGE plpgsql AS $$
@@ -1062,8 +1081,10 @@ BEGIN
     RETURN NEW;
 END;
 $$;
+
 CREATE TRIGGER private_owner_immutable BEFORE UPDATE ON recipeweave.food
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_private_owner();
+
 CREATE TRIGGER private_owner_immutable BEFORE UPDATE ON recipeweave.catalog_release
 FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_private_owner();
 
@@ -1079,5 +1100,37 @@ BEGIN
     RETURN NULL;
 END;
 $$;
+
 CREATE CONSTRAINT TRIGGER food_release_owner AFTER INSERT OR UPDATE ON recipeweave.food
 DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_food_release_owner();
+
+-- 表示APIの文字数契約を保存時に保証し、読取り時の切詰めを避ける。
+ALTER TABLE recipeweave.food
+ADD CONSTRAINT food_name_wire_length CHECK (CHAR_LENGTH(name) <= 100);
+
+ALTER TABLE recipeweave.food_alias
+ADD CONSTRAINT food_alias_alias_wire_length CHECK (CHAR_LENGTH(alias) <= 500);
+
+ALTER TABLE recipeweave.food_form
+ADD CONSTRAINT food_form_name_wire_length CHECK (CHAR_LENGTH(name) <= 500);
+
+ALTER TABLE recipeweave.recipe
+ADD CONSTRAINT recipe_title_wire_length CHECK (CHAR_LENGTH(title) <= 500);
+
+ALTER TABLE recipeweave.recipe_version
+ADD CONSTRAINT recipe_version_description_wire_length CHECK (CHAR_LENGTH(description) <= 5000);
+
+ALTER TABLE recipeweave.recipe_step
+ADD CONSTRAINT recipe_step_title_wire_length CHECK (CHAR_LENGTH(title) <= 500);
+
+ALTER TABLE recipeweave.recipe_step
+ADD CONSTRAINT recipe_step_instruction_wire_length CHECK (CHAR_LENGTH(instruction) <= 5000);
+
+ALTER TABLE recipeweave.recipe_ingredient
+ADD CONSTRAINT recipe_ingredient_note_wire_length CHECK (CHAR_LENGTH(note) <= 500);
+
+ALTER TABLE recipeweave.resource_type
+ADD CONSTRAINT resource_type_name_wire_length CHECK (CHAR_LENGTH(name) <= 500);
+
+ALTER TABLE recipeweave.axis_option
+ADD CONSTRAINT axis_option_label_wire_length CHECK (CHAR_LENGTH(label) <= 500);

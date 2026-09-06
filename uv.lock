@@ -10,7 +10,7 @@ members = [
 
 [manifest.dependency-groups]
 dev = [
-    { name = "boto3-stubs", extras = ["dsql"], specifier = ">=1.40,<2" },
+    { name = "boto3-stubs", extras = ["dsql", "secretsmanager"], specifier = ">=1.40,<2" },
     { name = "httpx", specifier = ">=0.28,<1" },
     { name = "mypy", specifier = ">=1.15,<2" },
     { name = "pglast", specifier = ">=7,<9" },
@@ -84,6 +84,9 @@ wheels = [
 [package.optional-dependencies]
 dsql = [
     { name = "mypy-boto3-dsql" },
+]
+secretsmanager = [
+    { name = "mypy-boto3-secretsmanager" },
 ]
 
 [[package]]
@@ -467,6 +470,15 @@ wheels = [
 ]
 
 [[package]]
+name = "mypy-boto3-secretsmanager"
+version = "1.43.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c6/e0/3b9f954dcce063407224e6601ed5af2d684185387b0572901c5f984fc8f6/mypy_boto3_secretsmanager-1.43.0.tar.gz", hash = "sha256:265ee2fddf9d3e42ae39685625fb7861a539110d8e324372847c0e1cbd666b20", size = 19967, upload-time = "2026-04-29T23:05:45.139Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4f/93/ae939d61eed240972553395b5e31f780825685b99f0ab4ebe5767430f103/mypy_boto3_secretsmanager-1.43.0-py3-none-any.whl", hash = "sha256:38415cdecb73dd20e485707a7cf456f6dde54ff4b155e7fb255eb001eb47d5bc", size = 27335, upload-time = "2026-04-29T23:05:43.152Z" },
+]
+
+[[package]]
 name = "mypy-extensions"
 version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -782,9 +794,11 @@ dependencies = [
     { name = "certifi" },
     { name = "fastapi" },
     { name = "mangum" },
+    { name = "pglast" },
     { name = "psycopg", extra = ["binary"] },
     { name = "pydantic-settings" },
     { name = "pyjwt", extra = ["crypto"] },
+    { name = "sqlglot" },
     { name = "uvicorn" },
 ]
 
@@ -794,9 +808,11 @@ requires-dist = [
     { name = "certifi", specifier = ">=2025.1" },
     { name = "fastapi", specifier = ">=0.115,<1" },
     { name = "mangum", specifier = ">=0.19,<1" },
+    { name = "pglast", specifier = ">=7,<9" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2,<4" },
     { name = "pydantic-settings", specifier = ">=2.8,<3" },
     { name = "pyjwt", extras = ["crypto"], specifier = ">=2.10,<3" },
+    { name = "sqlglot", specifier = ">=27,<31" },
     { name = "uvicorn", specifier = ">=0.34,<1" },
 ]
 

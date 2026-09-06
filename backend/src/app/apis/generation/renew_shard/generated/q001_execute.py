@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 本人・フェンス・有効期限が一致する現ワーカーだけがリースを延長する。
+    "query": """\
+-- 本人・フェンス・有効期限が一致する現ワーカーだけがリースを延長する。
 UPDATE recipeweave.generation_shard AS s
 SET lease_expires_at = NOW() + MAKE_INTERVAL(secs => %(lease_seconds)s)
 WHERE

@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 本人の直近の調理を読む。入力の料理はセッション専用献立に固定済み。
+    "query": """\
+-- 本人の直近の調理を読む。入力の料理はセッション専用献立に固定済み。
 SELECT
     s.id,
     s.menu_id,

@@ -1,12 +1,13 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 80d213a3e7de91b4f7c38ccc111e86dfebdfc7d45f41243297315377fd015ad7
+# SQLのSHA256: 8f1ee1cc2cbff0ec4917f68c36caf3c4bd250128dd33d1f136255c5555b40022
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "q001_resolve_form": """-- 食材形態と単位をDBから検証し、他人の独自食材は参照させない。
+    "q001_resolve_form": """\
+-- 食材形態と単位をDBから検証し、他人の独自食材は参照させない。
 SELECT
     fm.id AS form_id,
     u.id AS unit_id
@@ -28,7 +29,8 @@ WHERE
     )
 ORDER BY fm.id LIMIT 1;
 """,
-    "q002_insert_lot": """-- 登録時の値と現在値を一緒に記録する。不明数量はNULLのまま保持する。
+    "q002_insert_lot": """\
+-- 登録時の値と現在値を一緒に記録する。不明数量はNULLのまま保持する。
 INSERT INTO recipeweave.pantry_lot
 (
     id, user_id, form_id, amount, unit_id, expires_on, location, priority, source_import_id,
@@ -40,7 +42,8 @@ VALUES (
 )
 RETURNING id;
 """,
-    "q003_duplicate": """-- 画像と購入品構成の重複を本人の履歴だけで検出する。
+    "q003_duplicate": """\
+-- 画像と購入品構成の重複を本人の履歴だけで検出する。
 SELECT
     id,
     status
@@ -50,13 +53,15 @@ WHERE
     AND (id = %(import_id)s OR file_sha256 = %(hash)s OR idempotency_key LIKE %(signature)s)
 ORDER BY created_at;
 """,
-    "q004_import": """-- 再送キーと登録時刻を一度だけ確定する。画像本文は保持しない。
+    "q004_import": """\
+-- 再送キーと登録時刻を一度だけ確定する。画像本文は保持しない。
 INSERT INTO recipeweave.receipt_import (
     id, user_id, file_sha256, idempotency_key, status, committed_at
 )
 VALUES (%(import_id)s, %(user_id)s, %(hash)s, %(key)s, 'committed', CURRENT_TIMESTAMP);
 """,
-    "q005_line": """-- 利用者が選択した商品だけを、登録ロットと対応付けて残す。
+    "q005_line": """\
+-- 利用者が選択した商品だけを、登録ロットと対応付けて残す。
 INSERT INTO recipeweave.receipt_line (
     id, import_id, line_no, raw_name, form_id, amount, unit_id, decision, pantry_lot_id
 )
@@ -72,41 +77,50 @@ VALUES (
     %(lot_id)s
 );
 """,
-    "q019_private_release": """-- 共通の公開版と分離し、本人が編集する私有カタログを初回だけ用意する。
+    "q019_private_release": """\
+-- 共通の公開版と分離し、本人が編集する私有カタログを初回だけ用意する。
 INSERT INTO recipeweave.catalog_release (id, version, manifest_hash, published_at, owner_id)
 VALUES (%(release_id)s, %(version)s, %(manifest)s, NULL, %(user_id)s) ON CONFLICT (id) DO NOTHING;
 """,
-    "q020_custom_food": """-- 私有カタログへ本人の独自食材を登録する。
+    "q020_custom_food": """\
+-- 私有カタログへ本人の独自食材を登録する。
 INSERT INTO recipeweave.food (id, code, name, kind, parent_id, release_id, status, owner_id)
-VALUES (%(food_id)s, %(code)s, %(name)s, 'basic', NULL, %(release_id)s, 'active', %(user_id)s) RETURNING id;
+VALUES (
+    %(food_id)s, %(code)s, %(name)s, 'basic', NULL, %(release_id)s, 'active', %(user_id)s
+) RETURNING id;
 """,
-    "q021_custom_owner": """-- 独自食材の所有者を認証主体へ固定する。
+    "q021_custom_owner": """\
+-- 独自食材の所有者を認証主体へ固定する。
 INSERT INTO recipeweave.user_food (id, user_id, food_id) VALUES (
     %(row_id)s, %(user_id)s, %(food_id)s
 );
 """,
-    "q022_custom_form": """-- 独自食材にも標準形態と基準単位を用意する。
+    "q022_custom_form": """\
+-- 独自食材にも標準形態と基準単位を用意する。
 INSERT INTO recipeweave.food_form (id, food_id, name, state, base_unit_id, quantity_basis, status)
 SELECT
-    %(row_id)s,
-    %(food_id)s,
-    '標準',
-    'raw',
-    u.id,
-    'as_purchased',
-    'active'
+    %(row_id)s AS id,
+    %(food_id)s AS food_id,
+    '標準' AS name,
+    'raw' AS state,
+    u.id AS base_unit_id,
+    'as_purchased' AS quantity_basis,
+    'active' AS status
 FROM recipeweave.unit AS u
 WHERE u.code = %(unit)s AND u.status = 'active' RETURNING id;
 """,
-    "q900_lock_revision": """-- 本人の集約版を排他ロックして並行操作の順序を確定する。
+    "q900_lock_revision": """\
+-- 本人の集約版を排他ロックして並行操作の順序を確定する。
 SELECT revision FROM recipeweave.workspace_revision
 WHERE user_id = %(user_id)s FOR UPDATE;
 """,
-    "q901_advance_revision": """-- 業務行の更新と同じトランザクションで版を一度だけ進める。
+    "q901_advance_revision": """\
+-- 業務行の更新と同じトランザクションで版を一度だけ進める。
 UPDATE recipeweave.workspace_revision SET revision = revision + 1
 WHERE user_id = %(user_id)s RETURNING revision;
 """,
-    "q902_append_audit": """-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
+    "q902_append_audit": """\
+-- 個人データ本文を複製せず操作と対象キーのハッシュを記録する。
 INSERT INTO recipeweave.audit_event (
     id, actor_id, action, entity_type, entity_key_hash, reason, occurred_at
 )

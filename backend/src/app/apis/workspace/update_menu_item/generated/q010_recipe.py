@@ -1,12 +1,13 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 5e3d5f9177ec31c134115a2b424c5fe5ab9749f5a956351dfa7c6f3f92ca70e9
+# SQLのSHA256: 894fd27b91abcb09c82cf27f83fd87da02533d77172912c24cca4755b5430cc0
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 公開済み料理、または明示したローカル試用で利用できる料理版を選ぶ。
+    "query": """\
+-- 公開済み料理、または明示したローカル試用で利用できる料理版を選ぶ。
 SELECT
     rv.id,
     rv.base_servings
@@ -16,15 +17,16 @@ INNER JOIN
     ON rv.recipe_id = r.id
 WHERE
     r.id = %(recipe_id)s
+    AND (%(requested_version_id)s::UUID IS NULL OR rv.id = %(requested_version_id)s)
     AND (
         (rv.status = 'published' AND rv.validation = 'passed' AND r.status = 'published')
-        OR (%(preview)s AND rv.status = 'draft')
+        OR (%(preview)s AND rv.status = 'draft' AND r.status = 'draft')
     )
 ORDER BY rv.version DESC
 LIMIT 1;
 """
 }
-PARAMETERS: dict[str, tuple[str, ...]] = {"query": ("preview", "recipe_id")}
+PARAMETERS: dict[str, tuple[str, ...]] = {"query": ("preview", "recipe_id", "requested_version_id")}
 
 
 def _execute(

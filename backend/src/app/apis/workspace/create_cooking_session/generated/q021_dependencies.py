@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 同一料理版の材料・品質・安全上の先行条件を読む。
+    "query": """\
+-- 同一料理版の材料・品質・安全上の先行条件を読む。
 SELECT
     mi.id AS item_id,
     d.before_step_id,

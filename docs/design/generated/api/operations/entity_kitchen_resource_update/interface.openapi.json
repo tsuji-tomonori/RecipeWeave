@@ -1,0 +1,244 @@
+{
+  "components": {
+    "schemas": {
+      "KitchenResourceRow": {
+        "additionalProperties": false,
+        "description": "キッチンの実資源のDB応答。",
+        "properties": {
+          "active": {
+            "description": "新規の調理計画で利用する資源か",
+            "title": "Active",
+            "type": "boolean"
+          },
+          "capacity": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "容量",
+            "title": "Capacity"
+          },
+          "created_at": {
+            "description": "作成日時(UTC)",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変の行識別子",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "description": "左コンロ・26cmフライパン等",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "quantity": {
+            "description": "同等資源数",
+            "exclusiveMinimum": 0.0,
+            "title": "Quantity",
+            "type": "integer"
+          },
+          "resource_type_id": {
+            "description": "コンロ・鍋・人等",
+            "format": "uuid",
+            "title": "Resource Type Id",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "所有者",
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "user_id",
+          "resource_type_id",
+          "name",
+          "capacity",
+          "quantity",
+          "active",
+          "etag"
+        ],
+        "title": "KitchenResourceRow",
+        "type": "object"
+      },
+      "KitchenResourceWrite": {
+        "additionalProperties": false,
+        "description": "キッチンの実資源の編集可能列。未指定NULL列はNULLにする。",
+        "properties": {
+          "active": {
+            "description": "新規の調理計画で利用する資源か",
+            "title": "Active",
+            "type": "boolean"
+          },
+          "capacity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "容量",
+            "title": "Capacity"
+          },
+          "name": {
+            "description": "左コンロ・26cmフライパン等",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "quantity": {
+            "description": "同等資源数",
+            "exclusiveMinimum": 0.0,
+            "title": "Quantity",
+            "type": "integer"
+          },
+          "resource_type_id": {
+            "description": "コンロ・鍋・人等",
+            "format": "uuid",
+            "title": "Resource Type Id",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "所有者",
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "resource_type_id",
+          "name",
+          "quantity",
+          "active"
+        ],
+        "title": "KitchenResourceWrite",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/kitchen_resource/{row_id}": {
+      "put": {
+        "description": "キッチンの実資源の更新。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_kitchen_resource_update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KitchenResourceWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KitchenResourceRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "428": {
+            "description": "If-Matchが必要"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "キッチンの実資源の更新",
+        "tags": [
+          "正規化データ: キッチンの実資源"
+        ]
+      }
+    }
+  }
+}

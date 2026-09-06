@@ -16,11 +16,11 @@
     },
     {
       "path": "database/migrations/002_relational_schema.sql",
-      "sha256": "5dc441f00674ac0b10ba25162a1cbefcfa76be357561ca402d2f4e82af8b5f93"
+      "sha256": "200d0fafcf31fd09850298d735df4af06b6556b3f6df4c5ba2c8636a8d39cb90"
     },
     {
       "path": "database/migrations/003_service_operations.sql",
-      "sha256": "e3b7f2aa45fbe2457827d169442bcb9380500875bc2db1700cbb7cfc6f6ef48d"
+      "sha256": "4797f6c116c7872f52f96a5f05ecab70a5386b10603c662877d1988bc947015a"
     }
   ],
   "tables": [
@@ -259,7 +259,7 @@
           "description": "公開日時",
           "enum": [],
           "checks": [
-            "owner_id IS NULL OR published_at IS NULL"
+            " owner_id IS NULL OR published_at IS NULL "
           ]
         },
         {
@@ -271,7 +271,7 @@
           "description": "私有カタログの所有者。NULLは共通カタログ",
           "enum": [],
           "checks": [
-            "owner_id IS NULL OR published_at IS NULL"
+            " owner_id IS NULL OR published_at IS NULL "
           ],
           "source_origin": "service-extension"
         }
@@ -308,7 +308,7 @@
       "checks": [
         "LENGTH(BTRIM(version)) BETWEEN 1 AND 20000",
         "manifest_hash IS NULL OR manifest_hash ~ '^[0-9a-f]{64}$'",
-        "owner_id IS NULL OR published_at IS NULL"
+        " owner_id IS NULL OR published_at IS NULL "
       ],
       "indexes": [
         {
@@ -521,8 +521,10 @@
           "description": "食材名・加工品種別",
           "enum": [],
           "checks": [
-            "LENGTH(BTRIM(name)) BETWEEN 1 AND 20000"
-          ]
+            "LENGTH(BTRIM(name)) BETWEEN 1 AND 20000",
+            "CHAR_LENGTH(name) <= 100"
+          ],
+          "max_length": 100
         },
         {
           "name": "kind",
@@ -657,7 +659,8 @@
         "LENGTH(BTRIM(kind)) BETWEEN 1 AND 20000",
         "kind IN ('basic', 'processed', 'ready_meal', 'kit', 'utility')",
         "LENGTH(BTRIM(status)) BETWEEN 1 AND 20000",
-        "status IN ('active', 'retired')"
+        "status IN ('active', 'retired')",
+        "CHAR_LENGTH(name) <= 100"
       ],
       "indexes": [
         {
@@ -733,8 +736,10 @@
           "description": "別名・かな",
           "enum": [],
           "checks": [
-            "LENGTH(BTRIM(alias)) BETWEEN 1 AND 20000"
-          ]
+            "LENGTH(BTRIM(alias)) BETWEEN 1 AND 20000",
+            "CHAR_LENGTH(alias) <= 500"
+          ],
+          "max_length": 500
         },
         {
           "name": "locale",
@@ -782,7 +787,8 @@
       ],
       "checks": [
         "LENGTH(BTRIM(alias)) BETWEEN 1 AND 20000",
-        "LENGTH(BTRIM(locale)) BETWEEN 1 AND 20000"
+        "LENGTH(BTRIM(locale)) BETWEEN 1 AND 20000",
+        "CHAR_LENGTH(alias) <= 500"
       ],
       "indexes": [
         {
@@ -852,8 +858,10 @@
           "description": "生皮付き・冷凍刻み等",
           "enum": [],
           "checks": [
-            "LENGTH(BTRIM(name)) BETWEEN 1 AND 20000"
-          ]
+            "LENGTH(BTRIM(name)) BETWEEN 1 AND 20000",
+            "CHAR_LENGTH(name) <= 500"
+          ],
+          "max_length": 500
         },
         {
           "name": "state",
@@ -974,7 +982,8 @@
         "LENGTH(BTRIM(quantity_basis)) BETWEEN 1 AND 20000",
         "quantity_basis IN ('edible', 'as_purchased', 'drained', 'prepared')",
         "LENGTH(BTRIM(status)) BETWEEN 1 AND 20000",
-        "status IN ('active', 'retired')"
+        "status IN ('active', 'retired')",
+        "CHAR_LENGTH(name) <= 500"
       ],
       "indexes": [
         {
@@ -3055,8 +3064,10 @@
           "description": "候補名",
           "enum": [],
           "checks": [
-            "LENGTH(BTRIM(label)) BETWEEN 1 AND 20000"
-          ]
+            "LENGTH(BTRIM(label)) BETWEEN 1 AND 20000",
+            "CHAR_LENGTH(label) <= 500"
+          ],
+          "max_length": 500
         },
         {
           "name": "definition",
@@ -3147,7 +3158,8 @@
         "LENGTH(BTRIM(label)) BETWEEN 1 AND 20000",
         "LENGTH(BTRIM(definition)) BETWEEN 1 AND 20000",
         "LENGTH(BTRIM(status)) BETWEEN 1 AND 20000",
-        "status IN ('active', 'retired')"
+        "status IN ('active', 'retired')",
+        "CHAR_LENGTH(label) <= 500"
       ],
       "indexes": [
         {
@@ -3323,8 +3335,10 @@
           "description": "代表名",
           "enum": [],
           "checks": [
-            "LENGTH(BTRIM(title)) BETWEEN 1 AND 20000"
-          ]
+            "LENGTH(BTRIM(title)) BETWEEN 1 AND 20000",
+            "CHAR_LENGTH(title) <= 500"
+          ],
+          "max_length": 500
         },
         {
           "name": "family_option_id",
@@ -3392,7 +3406,8 @@
         "status <> 'withdrawn' OR NULLIF(BTRIM(withdrawal_reason), '') IS NOT NULL",
         "LENGTH(BTRIM(title)) BETWEEN 1 AND 20000",
         "LENGTH(BTRIM(status)) BETWEEN 1 AND 20000",
-        "status IN ('draft', 'published', 'withdrawn')"
+        "status IN ('draft', 'published', 'withdrawn')",
+        "CHAR_LENGTH(title) <= 500"
       ],
       "indexes": [
         {
@@ -3574,8 +3589,11 @@
           "primary_key": false,
           "description": "料理の紹介文",
           "enum": [],
-          "checks": [],
-          "source_origin": "service-extension"
+          "checks": [
+            "CHAR_LENGTH(description) <= 5000"
+          ],
+          "source_origin": "service-extension",
+          "max_length": 5000
         }
       ],
       "primary_key": [
@@ -3649,7 +3667,8 @@
         "status IN ('draft', 'published', 'withdrawn')",
         "LENGTH(BTRIM(validation)) BETWEEN 1 AND 20000",
         "validation IN ('pending', 'passed', 'failed', 'needs_review')",
-        "content_hash IS NULL OR content_hash ~ '^[0-9a-f]{64}$'"
+        "content_hash IS NULL OR content_hash ~ '^[0-9a-f]{64}$'",
+        "CHAR_LENGTH(description) <= 5000"
       ],
       "indexes": [
         {
@@ -4360,8 +4379,11 @@
           "primary_key": false,
           "description": "材料の補足",
           "enum": [],
-          "checks": [],
-          "source_origin": "service-extension"
+          "checks": [
+            "CHAR_LENGTH(note) <= 500"
+          ],
+          "source_origin": "service-extension",
+          "max_length": 500
         }
       ],
       "primary_key": [
@@ -4515,7 +4537,8 @@
         "amount_mode IN ('exact', 'range', 'to_taste')",
         "amount IS NULL OR amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity')",
         "amount_max IS NULL OR amount_max::TEXT NOT IN ('NaN', 'Infinity', '-Infinity')",
-        "canonical_amount IS NULL OR canonical_amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity')"
+        "canonical_amount IS NULL OR canonical_amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity')",
+        "CHAR_LENGTH(note) <= 500"
       ],
       "indexes": [
         {
@@ -5003,8 +5026,10 @@
           "description": "個別補足",
           "enum": [],
           "checks": [
-            "LENGTH(BTRIM(instruction)) BETWEEN 1 AND 20000"
-          ]
+            "LENGTH(BTRIM(instruction)) BETWEEN 1 AND 20000",
+            "CHAR_LENGTH(instruction) <= 5000"
+          ],
+          "max_length": 5000
         },
         {
           "name": "attention",
@@ -5078,8 +5103,11 @@
           "primary_key": false,
           "description": "工程の短い見出し",
           "enum": [],
-          "checks": [],
-          "source_origin": "service-extension"
+          "checks": [
+            "CHAR_LENGTH(title) <= 500"
+          ],
+          "source_origin": "service-extension",
+          "max_length": 500
         }
       ],
       "primary_key": [
@@ -5149,7 +5177,9 @@
         "LENGTH(BTRIM(instruction)) BETWEEN 1 AND 20000",
         "LENGTH(BTRIM(attention)) BETWEEN 1 AND 20000",
         "attention IN ('active', 'monitored', 'passive')",
-        "LENGTH(BTRIM(completion_cue)) BETWEEN 1 AND 20000"
+        "LENGTH(BTRIM(completion_cue)) BETWEEN 1 AND 20000",
+        "CHAR_LENGTH(title) <= 500",
+        "CHAR_LENGTH(instruction) <= 5000"
       ],
       "indexes": [
         {
@@ -5919,8 +5949,10 @@
           "description": "道具名",
           "enum": [],
           "checks": [
-            "LENGTH(BTRIM(name)) BETWEEN 1 AND 20000"
-          ]
+            "LENGTH(BTRIM(name)) BETWEEN 1 AND 20000",
+            "CHAR_LENGTH(name) <= 500"
+          ],
+          "max_length": 500
         },
         {
           "name": "capacity_unit_id",
@@ -5982,7 +6014,8 @@
         "LENGTH(BTRIM(code)) BETWEEN 1 AND 20000",
         "LENGTH(BTRIM(name)) BETWEEN 1 AND 20000",
         "LENGTH(BTRIM(status)) BETWEEN 1 AND 20000",
-        "status IN ('active', 'retired')"
+        "status IN ('active', 'retired')",
+        "CHAR_LENGTH(name) <= 500"
       ],
       "indexes": [
         {
@@ -12810,7 +12843,7 @@
           "description": "レシート取消時に編集・消費済みとして残した在庫件数",
           "enum": [],
           "checks": [
-            "undo_preserved_count >= 0"
+            " undo_preserved_count >= 0 "
           ],
           "source_origin": "service-extension"
         }
@@ -12850,7 +12883,7 @@
         "revision >= 1",
         "status <> 'committed' OR committed_at IS NOT NULL",
         "status <> 'reverted' OR (committed_at IS NOT NULL AND reverted_at IS NOT NULL)",
-        "undo_preserved_count >= 0"
+        " undo_preserved_count >= 0 "
       ],
       "indexes": [
         {
@@ -13694,8 +13727,8 @@
       "source": {
         "file": "database/migrations/003_service_operations.sql",
         "number": 152,
-        "sha256": "78ce2d458eabf33c1288138dd39a258ab06f90be160158411f40e0c830e773d8",
-        "sql": "CREATE TABLE recipeweave.user_shopping_check (\n    id UUID NOT NULL PRIMARY KEY,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n    user_id UUID NOT NULL,\n    key TEXT NOT NULL,\n    signature TEXT NOT NULL,\n    food_id UUID,\n    amount NUMERIC(20, 6),\n    unit_id UUID,\n    checked_at TIMESTAMPTZ,\n    archived BOOLEAN NOT NULL DEFAULT false,\n    UNIQUE (user_id, key),\n    CHECK (\n        amount IS null OR (amount >= 0 AND amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))\n    ),\n    CHECK (amount IS null OR unit_id IS NOT null)\n)"
+        "sha256": "aa67c94d723d0b41143d0a4a2ec3916bab68e4339a39f9a1d3fa5bec4d5f49fa",
+        "sql": "CREATE TABLE recipeweave.user_shopping_check (\n    id UUID NOT NULL PRIMARY KEY,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n    user_id UUID NOT NULL,\n    key TEXT NOT NULL,\n    signature TEXT NOT NULL,\n    food_id UUID,\n    amount NUMERIC(20, 6),\n    unit_id UUID,\n    checked_at TIMESTAMPTZ,\n    archived BOOLEAN NOT NULL DEFAULT FALSE,\n    UNIQUE (user_id, key),\n    CHECK (\n        amount IS NULL OR (amount >= 0 AND amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))\n    ),\n    CHECK (amount IS NULL OR unit_id IS NOT NULL)\n)"
       },
       "columns": [
         {
@@ -13767,8 +13800,8 @@
           "description": "必要数量。不明はNULL",
           "enum": [],
           "checks": [
-            "amount IS null OR (amount >= 0 AND amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))",
-            "amount IS null OR unit_id IS NOT null"
+            "amount IS NULL OR (amount >= 0 AND amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))",
+            "amount IS NULL OR unit_id IS NOT NULL"
           ]
         },
         {
@@ -13780,7 +13813,7 @@
           "description": "数量単位",
           "enum": [],
           "checks": [
-            "amount IS null OR unit_id IS NOT null"
+            "amount IS NULL OR unit_id IS NOT NULL"
           ]
         },
         {
@@ -13797,7 +13830,7 @@
           "name": "archived",
           "type": "boolean",
           "nullable": false,
-          "default": "false",
+          "default": "FALSE",
           "primary_key": false,
           "description": "保管済みか",
           "enum": [],
@@ -13865,8 +13898,8 @@
         }
       ],
       "checks": [
-        "amount IS null OR (amount >= 0 AND amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))",
-        "amount IS null OR unit_id IS NOT null"
+        "amount IS NULL OR (amount >= 0 AND amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))",
+        "amount IS NULL OR unit_id IS NOT NULL"
       ],
       "indexes": [
         {
@@ -18089,8 +18122,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 698,
-      "sha256": "e528b75e7ea3a55476696c89dc9d1b241f11a9587417fbb9c7a4f2e3b9ee302b",
-      "sql": "COMMENT ON COLUMN recipeweave.generation_stratum_metric.stratum_key IS '層の安定キー（料理構造×食品カテゴリ×入手性）。集計定義はテンプレート版に固定'"
+      "sha256": "c93a684954c8db62d908b96a0c27ed584202d422995e725e47f0a8380d1754aa",
+      "sql": "COMMENT ON COLUMN recipeweave.generation_stratum_metric.stratum_key\nIS '層の安定キー（料理構造×食品カテゴリ×入手性）。集計定義はテンプレート版に固定'"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -19319,8 +19352,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 903,
-      "sha256": "01a459e6f7cd3f3f69a42e5cd53af86178ff7c30223a326380a4b038663c6616",
-      "sql": "ALTER TABLE recipeweave.menu_ingredient_override ADD CONSTRAINT fk_menu_ingredient_override_menu_item_id\nFOREIGN KEY (menu_item_id) REFERENCES recipeweave.menu_item (id)\nON DELETE CASCADE ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+      "sha256": "5dfecabf163e1359afcd4c6011edc677ecabc3a86e81cb2339c594029784f5da",
+      "sql": "ALTER TABLE recipeweave.menu_ingredient_override\nADD CONSTRAINT fk_menu_ingredient_override_menu_item_id\nFOREIGN KEY (menu_item_id) REFERENCES recipeweave.menu_item (id)\nON DELETE CASCADE ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -19331,14 +19364,14 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 905,
-      "sha256": "2777078b3fd672b468338b5185dbee0ac3251d25669f864645a0cdea541cd612",
-      "sql": "ALTER TABLE recipeweave.menu_ingredient_override ADD CONSTRAINT fk_menu_ingredient_override_ingredient_line_id\nFOREIGN KEY (ingredient_line_id) REFERENCES recipeweave.recipe_ingredient (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+      "sha256": "3a640a8baef52a1bc4df276eb6e1a1cdb1eff2d8ede0a7e0034fb2c676a0558a",
+      "sql": "ALTER TABLE recipeweave.menu_ingredient_override\nADD CONSTRAINT fk_menu_ingredient_override_ingredient_line_id\nFOREIGN KEY (ingredient_line_id) REFERENCES recipeweave.recipe_ingredient (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 906,
-      "sha256": "639e45c09858901f6a665008c0fc69ab83d3cafa4f0a7a516f4b442136f47da0",
-      "sql": "CREATE INDEX ix_menu_ingredient_override_ingredient_line_id ON recipeweave.menu_ingredient_override (\n    ingredient_line_id\n)"
+      "sha256": "5f7b80451ddc9484292f8df0abab8c61c7c48b5d8967d423e2d51363bd8ae40a",
+      "sql": "CREATE INDEX ix_menu_ingredient_override_ingredient_line_id\nON recipeweave.menu_ingredient_override (\n    ingredient_line_id\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -19355,14 +19388,14 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 909,
-      "sha256": "c574082334155d56dd90da401eca8edcc22f77dedca3677062f7f55dd776196b",
-      "sql": "ALTER TABLE recipeweave.menu_ingredient_override ADD CONSTRAINT fk_menu_ingredient_override_product_version_id\nFOREIGN KEY (product_version_id) REFERENCES recipeweave.product_version (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+      "sha256": "b17109247be14858981f26a0f75c64db5474c21c1733de3b090ab728c60e818d",
+      "sql": "ALTER TABLE recipeweave.menu_ingredient_override\nADD CONSTRAINT fk_menu_ingredient_override_product_version_id\nFOREIGN KEY (product_version_id) REFERENCES recipeweave.product_version (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 910,
-      "sha256": "d5414d6052d1af7dce5eb332723155c482bd01461b38b66974b70ac043d3a267",
-      "sql": "CREATE INDEX ix_menu_ingredient_override_product_version_id ON recipeweave.menu_ingredient_override (\n    product_version_id\n)"
+      "sha256": "3cd8b6437d0846c7747b2ae4996ada3e07533fb6da023dea470fe386c64b2fcd",
+      "sql": "CREATE INDEX ix_menu_ingredient_override_product_version_id\nON recipeweave.menu_ingredient_override (\n    product_version_id\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -19631,20 +19664,20 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 955,
-      "sha256": "78aed50be8c46f33cd15200695cddb71e9388d2e0f9caaa46cebd23bd8138e89",
-      "sql": "ALTER TABLE recipeweave.product_preparation_rule ADD CONSTRAINT fk_product_preparation_rule_product_version_id\nFOREIGN KEY (product_version_id) REFERENCES recipeweave.product_version (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+      "sha256": "2279a32e36155dce53ac745336ae31b174c3de5fc3edfa5c0d680e5fc87a9c26",
+      "sql": "ALTER TABLE recipeweave.product_preparation_rule\nADD CONSTRAINT fk_product_preparation_rule_product_version_id\nFOREIGN KEY (product_version_id) REFERENCES recipeweave.product_version (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 956,
-      "sha256": "72c1f70f8d15aeabe68ae4596952e627ca993c5f08ef6967eb7640d8dad3119b",
-      "sql": "CREATE INDEX ix_product_preparation_rule_product_version_id ON recipeweave.product_preparation_rule (\n    product_version_id\n)"
+      "sha256": "14b853fe00dd9f943cfcf70a87228ab801d80ac48af19092a2c823c3bfadb7ba",
+      "sql": "CREATE INDEX ix_product_preparation_rule_product_version_id\nON recipeweave.product_preparation_rule (\n    product_version_id\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 957,
-      "sha256": "325a027120fc49b0622db8f1770c9733b9e3f088169aa3c462f341aa9dca6f38",
-      "sql": "ALTER TABLE recipeweave.product_preparation_rule ADD CONSTRAINT fk_product_preparation_rule_operation_id\nFOREIGN KEY (operation_id) REFERENCES recipeweave.operation (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+      "sha256": "07ee22cf45137f35359488ebd2c180ea46746a5efffde5b2d9c00888d5ffc7c4",
+      "sql": "ALTER TABLE recipeweave.product_preparation_rule\nADD CONSTRAINT fk_product_preparation_rule_operation_id\nFOREIGN KEY (operation_id) REFERENCES recipeweave.operation (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -19655,8 +19688,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 959,
-      "sha256": "20ba3df1b16cfc171c8eea83cb691b5c3b17c20659cf98793ec58ce52c3dfc58",
-      "sql": "ALTER TABLE recipeweave.product_preparation_rule ADD CONSTRAINT fk_product_preparation_rule_source_id\nFOREIGN KEY (source_id) REFERENCES recipeweave.source_record (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+      "sha256": "905cb42026cb782d4d5ee5e254186a99178351ed9ee7417df000438fb1946574",
+      "sql": "ALTER TABLE recipeweave.product_preparation_rule\nADD CONSTRAINT fk_product_preparation_rule_source_id\nFOREIGN KEY (source_id) REFERENCES recipeweave.source_record (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -19763,8 +19796,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 977,
-      "sha256": "0499f81d44e18939cabca5632471dcdf6f604d6fc7ca7cfdf2ad504b5316e375",
-      "sql": "ALTER TABLE recipeweave.recipe_search_document ADD CONSTRAINT fk_recipe_search_document_published_version_id\nFOREIGN KEY (published_version_id) REFERENCES recipeweave.recipe_version (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+      "sha256": "8d8f65dc0b04e74d3041dac44365c58fc29c61431db16e343f54821d41440f87",
+      "sql": "ALTER TABLE recipeweave.recipe_search_document\nADD CONSTRAINT fk_recipe_search_document_published_version_id\nFOREIGN KEY (published_version_id) REFERENCES recipeweave.recipe_version (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -19787,8 +19820,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 981,
-      "sha256": "6d1ca9f5abf90b54daa967762eba4ac4c1c6b4dec298f3a1e5059bc3867f6f37",
-      "sql": "ALTER TABLE recipeweave.generation_stratum_metric ADD CONSTRAINT fk_generation_stratum_metric_template_id\nFOREIGN KEY (template_id) REFERENCES recipeweave.generation_template (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+      "sha256": "2f85eb070d12ac0eddf346862fe63b1e7ece36fb411e752d103b9be064aeb2c8",
+      "sql": "ALTER TABLE recipeweave.generation_stratum_metric\nADD CONSTRAINT fk_generation_stratum_metric_template_id\nFOREIGN KEY (template_id) REFERENCES recipeweave.generation_template (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -19931,8 +19964,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1005,
-      "sha256": "9d48aba35e3d9c755d47053d9294f946b540aac535820a6bddbdef42f3c95a3b",
-      "sql": "CREATE FUNCTION recipeweave.validate_recipe_version(version_id UUID) RETURNS VOID\nLANGUAGE plpgsql AS $$\nDECLARE\n    current_version recipeweave.recipe_version%ROWTYPE;\nBEGIN\n    SELECT * INTO current_version FROM recipeweave.recipe_version WHERE id = version_id FOR UPDATE;\n    IF NOT FOUND THEN RETURN; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i\n        LEFT JOIN recipeweave.recipe_ingredient parent ON parent.id = i.kit_parent_line_id\n        LEFT JOIN recipeweave.product_component component ON component.id = i.component_id\n        LEFT JOIN recipeweave.product_version product ON product.id = i.product_version_id\n        WHERE i.recipe_version_id = version_id AND (\n            (i.product_version_id IS NOT NULL AND product.form_id <> i.form_id)\n            OR (i.demand_kind = 'kit_component' AND (\n                parent.recipe_version_id <> version_id OR parent.demand_kind <> 'purchase'\n                OR parent.product_version_id IS NULL\n                OR component.product_version_id <> parent.product_version_id\n                OR component.form_id <> i.form_id\n            ))\n        )\n    ) THEN RAISE EXCEPTION '商品・形態・セット親の所属が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i\n        JOIN recipeweave.food_form form ON form.id = i.form_id\n        JOIN recipeweave.unit input_unit ON input_unit.id = i.unit_id\n        JOIN recipeweave.unit base_unit ON base_unit.id = form.base_unit_id\n        LEFT JOIN recipeweave.conversion c ON c.id = i.conversion_id\n        WHERE i.recipe_version_id = version_id AND (\n            (i.conversion_id IS NOT NULL AND (c.form_id <> i.form_id OR c.from_unit_id <> i.unit_id\n                OR c.to_unit_id <> form.base_unit_id OR c.release_id <> current_version.release_id))\n            OR (i.amount_mode = 'exact' AND (\n                (i.conversion_id IS NULL AND input_unit.dimension <> base_unit.dimension)\n                OR i.canonical_amount <> round(CASE WHEN c.id IS NOT NULL THEN i.amount * c.factor\n                    ELSE (i.amount * input_unit.factor + input_unit.offset - base_unit.offset) / base_unit.factor END, 6)\n            ))\n        )\n    ) THEN RAISE EXCEPTION '形態専用換算と登録基準量が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.material_node n\n        LEFT JOIN recipeweave.recipe_ingredient i ON i.id = n.ingredient_line_id\n        LEFT JOIN recipeweave.recipe_step s ON s.id = n.producer_step_id\n        WHERE n.recipe_version_id = version_id\n          AND (i.recipe_version_id <> version_id OR s.recipe_version_id <> version_id)\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.step_input input\n        JOIN recipeweave.recipe_step s ON s.id = input.step_id\n        JOIN recipeweave.material_node n ON n.id = input.material_id\n        WHERE (s.recipe_version_id = version_id OR n.recipe_version_id = version_id)\n          AND s.recipe_version_id <> n.recipe_version_id\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.step_dependency d\n        JOIN recipeweave.recipe_step b ON b.id = d.before_step_id\n        JOIN recipeweave.recipe_step a ON a.id = d.after_step_id\n        WHERE (b.recipe_version_id = version_id OR a.recipe_version_id = version_id)\n          AND b.recipe_version_id <> a.recipe_version_id\n    ) THEN RAISE EXCEPTION '材料と工程を別のレシピ版へ接続できません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_input i JOIN recipeweave.material_node n ON n.id = i.material_id\n        WHERE n.recipe_version_id = version_id GROUP BY n.id HAVING sum(i.fraction) > 1\n    ) THEN RAISE EXCEPTION '材料の使用割合が全量を超えています' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        WITH RECURSIVE edges AS (\n            SELECT d.before_step_id AS before_id, d.after_step_id AS after_id\n            FROM recipeweave.step_dependency d JOIN recipeweave.recipe_step s ON s.id = d.before_step_id\n            WHERE s.recipe_version_id = version_id\n            UNION\n            SELECT n.producer_step_id, i.step_id FROM recipeweave.material_node n\n            JOIN recipeweave.step_input i ON i.material_id = n.id\n            WHERE n.recipe_version_id = version_id AND n.producer_step_id IS NOT NULL\n        ), reach(before_id, after_id) AS (\n            SELECT before_id, after_id FROM edges\n            UNION\n            SELECT r.before_id, e.after_id FROM reach r JOIN edges e ON e.before_id = r.after_id\n        ) SELECT 1 FROM reach WHERE before_id = after_id\n    ) THEN RAISE EXCEPTION '工程・材料の依存に循環があります' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_parameter value\n        JOIN recipeweave.recipe_step step ON step.id = value.step_id\n        JOIN recipeweave.operation_parameter parameter ON parameter.id = value.parameter_id\n        WHERE step.recipe_version_id = version_id AND (\n            step.operation_id <> parameter.operation_id\n            OR (parameter.value_type IN ('decimal', 'integer') AND (value.number_value IS NULL\n                OR value.number_value < parameter.min_value OR value.number_value > parameter.max_value))\n            OR (parameter.value_type = 'integer' AND value.number_value <> trunc(value.number_value))\n            OR (parameter.value_type = 'boolean' AND value.bool_value IS NULL)\n            OR (parameter.value_type IN ('text', 'option') AND value.text_value IS NULL)\n            OR (parameter.value_type = 'option' AND NOT parameter.allowed_values ? value.text_value)\n        )\n    ) THEN RAISE EXCEPTION '工程パラメータの動作・型・範囲が不一致です' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_media mapping\n        JOIN recipeweave.recipe_step step ON step.id = mapping.step_id\n        JOIN recipeweave.media_asset media ON media.id = mapping.media_id\n        WHERE step.recipe_version_id = version_id AND step.operation_id <> media.operation_id\n    ) THEN RAISE EXCEPTION '工程と媒体の標準動作が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_option ro\n        JOIN recipeweave.axis_option ao ON ao.id = ro.option_id JOIN recipeweave.axis axis ON axis.id = ao.axis_id\n        WHERE ro.recipe_version_id = version_id AND axis.release_id <> current_version.release_id\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i JOIN recipeweave.food_form form ON form.id = i.form_id\n        JOIN recipeweave.food food ON food.id = form.food_id\n        WHERE i.recipe_version_id = version_id AND food.release_id <> current_version.release_id\n    ) THEN RAISE EXCEPTION '食材・分類と採用カタログ版が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_option ro JOIN recipeweave.axis_option ao ON ao.id = ro.option_id\n        JOIN recipeweave.axis axis ON axis.id = ao.axis_id\n        WHERE ro.recipe_version_id = version_id AND axis.selection = 'single'\n        GROUP BY axis.id HAVING count(*) > 1\n    ) THEN RAISE EXCEPTION '単一選択軸に複数値を設定できません' USING ERRCODE = '23514'; END IF;\n    IF current_version.status = 'published' THEN\n        IF EXISTS (SELECT 1 FROM recipeweave.recipe_ingredient ingredient\n            JOIN recipeweave.food_form form ON form.id = ingredient.form_id\n            JOIN recipeweave.food food ON food.id = form.food_id\n            WHERE ingredient.recipe_version_id = version_id AND food.owner_id IS NOT NULL) THEN\n            RAISE EXCEPTION '私有食材を含むレシピは公開できません' USING ERRCODE = '23514';\n        END IF;\n        IF NOT EXISTS (SELECT 1 FROM recipeweave.recipe_ingredient WHERE recipe_version_id = version_id)\n           OR NOT EXISTS (SELECT 1 FROM recipeweave.recipe_step WHERE recipe_version_id = version_id) THEN\n            RAISE EXCEPTION '材料または工程のないレシピは公開できません' USING ERRCODE = '23514';\n        END IF;\n        IF EXISTS (\n            SELECT 1 FROM recipeweave.recipe_step s JOIN recipeweave.operation_parameter p ON p.operation_id = s.operation_id\n            WHERE s.recipe_version_id = version_id AND p.required\n            AND NOT EXISTS (SELECT 1 FROM recipeweave.step_parameter v WHERE v.step_id = s.id AND v.parameter_id = p.id)\n        ) THEN RAISE EXCEPTION '必須の工程パラメータがありません' USING ERRCODE = '23514'; END IF;\n        IF EXISTS (\n            SELECT 1 FROM recipeweave.material_node n JOIN recipeweave.step_input i ON i.material_id = n.id\n            WHERE n.recipe_version_id = version_id AND n.producer_step_id IS NOT NULL\n              AND NOT EXISTS (SELECT 1 FROM recipeweave.step_dependency d WHERE d.before_step_id = n.producer_step_id\n                  AND d.after_step_id = i.step_id AND d.kind = 'material')\n        ) THEN RAISE EXCEPTION '生成材料の受渡しに材料依存辺がありません' USING ERRCODE = '23514'; END IF;\n    END IF;\nEND;\n$$"
+      "sha256": "16f9eda8d6d39ebbbdb19c72eb57056cbae12dccbf7433dd5bc5c0a597def36a",
+      "sql": "CREATE FUNCTION recipeweave.validate_recipe_version(version_id UUID) RETURNS VOID\nLANGUAGE plpgsql AS $$\nDECLARE\n    current_version recipeweave.recipe_version%ROWTYPE;\nBEGIN\n    SELECT * INTO current_version FROM recipeweave.recipe_version WHERE id = version_id FOR UPDATE;\n    IF NOT FOUND THEN RETURN; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i\n        LEFT JOIN recipeweave.recipe_ingredient parent ON parent.id = i.kit_parent_line_id\n        LEFT JOIN recipeweave.product_component component ON component.id = i.component_id\n        LEFT JOIN recipeweave.product_version product ON product.id = i.product_version_id\n        WHERE i.recipe_version_id = version_id AND (\n            (i.product_version_id IS NOT NULL AND product.form_id <> i.form_id)\n            OR (i.demand_kind = 'kit_component' AND (\n                parent.recipe_version_id <> version_id OR parent.demand_kind <> 'purchase'\n                OR parent.product_version_id IS NULL\n                OR component.product_version_id <> parent.product_version_id\n                OR component.form_id <> i.form_id\n            ))\n        )\n    ) THEN RAISE EXCEPTION '商品・形態・セット親の所属が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i\n        JOIN recipeweave.food_form form ON form.id = i.form_id\n        JOIN recipeweave.unit input_unit ON input_unit.id = i.unit_id\n        JOIN recipeweave.unit base_unit ON base_unit.id = form.base_unit_id\n        LEFT JOIN recipeweave.conversion c ON c.id = i.conversion_id\n        WHERE i.recipe_version_id = version_id AND (\n            (i.conversion_id IS NOT NULL AND (c.form_id <> i.form_id OR c.from_unit_id <> i.unit_id\n                OR c.to_unit_id <> form.base_unit_id OR c.release_id <> current_version.release_id))\n            OR (i.amount_mode = 'exact' AND (\n                (i.conversion_id IS NULL AND input_unit.dimension <> base_unit.dimension)\n                OR i.canonical_amount <> round(CASE WHEN c.id IS NOT NULL THEN i.amount * c.factor\n                    ELSE (i.amount * input_unit.factor + input_unit.offset - base_unit.offset) / base_unit.factor END, 6)\n            ))\n        )\n    ) THEN RAISE EXCEPTION '形態専用換算と登録基準量が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.material_node n\n        LEFT JOIN recipeweave.recipe_ingredient i ON i.id = n.ingredient_line_id\n        LEFT JOIN recipeweave.recipe_step s ON s.id = n.producer_step_id\n        WHERE n.recipe_version_id = version_id\n          AND (i.recipe_version_id <> version_id OR s.recipe_version_id <> version_id)\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.step_input input\n        JOIN recipeweave.recipe_step s ON s.id = input.step_id\n        JOIN recipeweave.material_node n ON n.id = input.material_id\n        WHERE (s.recipe_version_id = version_id OR n.recipe_version_id = version_id)\n          AND s.recipe_version_id <> n.recipe_version_id\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.step_dependency d\n        JOIN recipeweave.recipe_step b ON b.id = d.before_step_id\n        JOIN recipeweave.recipe_step a ON a.id = d.after_step_id\n        WHERE (b.recipe_version_id = version_id OR a.recipe_version_id = version_id)\n          AND b.recipe_version_id <> a.recipe_version_id\n    ) THEN RAISE EXCEPTION '材料と工程を別のレシピ版へ接続できません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_input i JOIN recipeweave.material_node n ON n.id = i.material_id\n        WHERE n.recipe_version_id = version_id GROUP BY n.id HAVING sum(i.fraction) > 1\n    ) THEN RAISE EXCEPTION '材料の使用割合が全量を超えています' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        WITH RECURSIVE edges AS (\n            SELECT d.before_step_id AS before_id, d.after_step_id AS after_id\n            FROM recipeweave.step_dependency d JOIN recipeweave.recipe_step s ON s.id = d.before_step_id\n            WHERE s.recipe_version_id = version_id\n            UNION\n            SELECT n.producer_step_id, i.step_id FROM recipeweave.material_node n\n            JOIN recipeweave.step_input i ON i.material_id = n.id\n            WHERE n.recipe_version_id = version_id AND n.producer_step_id IS NOT NULL\n        ), reach(before_id, after_id) AS (\n            SELECT before_id, after_id FROM edges\n            UNION\n            SELECT r.before_id, e.after_id FROM reach r JOIN edges e ON e.before_id = r.after_id\n        ) SELECT 1 FROM reach WHERE before_id = after_id\n    ) THEN RAISE EXCEPTION '工程・材料の依存に循環があります' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_parameter value\n        JOIN recipeweave.recipe_step step ON step.id = value.step_id\n        JOIN recipeweave.operation_parameter parameter ON parameter.id = value.parameter_id\n        WHERE step.recipe_version_id = version_id AND (\n            step.operation_id <> parameter.operation_id\n            OR (parameter.value_type IN ('decimal', 'integer') AND (value.number_value IS NULL\n                OR value.number_value < parameter.min_value OR value.number_value > parameter.max_value))\n            OR (parameter.value_type = 'integer' AND value.number_value <> trunc(value.number_value))\n            OR (parameter.value_type = 'boolean' AND value.bool_value IS NULL)\n            OR (parameter.value_type IN ('text', 'option') AND value.text_value IS NULL)\n            OR (parameter.value_type = 'option' AND NOT parameter.allowed_values ? value.text_value)\n        )\n    ) THEN RAISE EXCEPTION '工程パラメータの動作・型・範囲が不一致です' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_media mapping\n        JOIN recipeweave.recipe_step step ON step.id = mapping.step_id\n        JOIN recipeweave.media_asset media ON media.id = mapping.media_id\n        WHERE step.recipe_version_id = version_id AND step.operation_id <> media.operation_id\n    ) THEN RAISE EXCEPTION '工程と媒体の標準動作が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_option ro\n        JOIN recipeweave.axis_option ao ON ao.id = ro.option_id JOIN recipeweave.axis axis ON axis.id = ao.axis_id\n        WHERE ro.recipe_version_id = version_id AND axis.release_id <> current_version.release_id\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i JOIN recipeweave.food_form form ON form.id = i.form_id\n        JOIN recipeweave.food food ON food.id = form.food_id\n        WHERE i.recipe_version_id = version_id AND food.release_id <> current_version.release_id\n    ) THEN RAISE EXCEPTION '食材・分類と採用カタログ版が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_option ro JOIN recipeweave.axis_option ao ON ao.id = ro.option_id\n        JOIN recipeweave.axis axis ON axis.id = ao.axis_id\n        WHERE ro.recipe_version_id = version_id AND axis.selection = 'single'\n        GROUP BY axis.id HAVING count(*) > 1\n    ) THEN RAISE EXCEPTION '単一選択軸に複数値を設定できません' USING ERRCODE = '23514'; END IF;\n    IF current_version.status = 'published' THEN\n        IF NOT EXISTS (SELECT 1 FROM recipeweave.catalog_release\n            WHERE id = current_version.release_id AND published_at IS NOT NULL) THEN\n            RAISE EXCEPTION '公開版は公開済みカタログを参照する必要があります' USING ERRCODE = '23514';\n        END IF;\n        IF EXISTS (SELECT 1 FROM recipeweave.recipe_ingredient ingredient\n            JOIN recipeweave.food_form form ON form.id = ingredient.form_id\n            JOIN recipeweave.food food ON food.id = form.food_id\n            WHERE ingredient.recipe_version_id = version_id AND food.owner_id IS NOT NULL) THEN\n            RAISE EXCEPTION '私有食材を含むレシピは公開できません' USING ERRCODE = '23514';\n        END IF;\n        IF NOT EXISTS (SELECT 1 FROM recipeweave.recipe_ingredient WHERE recipe_version_id = version_id)\n           OR NOT EXISTS (SELECT 1 FROM recipeweave.recipe_step WHERE recipe_version_id = version_id) THEN\n            RAISE EXCEPTION '材料または工程のないレシピは公開できません' USING ERRCODE = '23514';\n        END IF;\n        IF EXISTS (\n            SELECT 1 FROM recipeweave.recipe_step s JOIN recipeweave.operation_parameter p ON p.operation_id = s.operation_id\n            WHERE s.recipe_version_id = version_id AND p.required\n            AND NOT EXISTS (SELECT 1 FROM recipeweave.step_parameter v WHERE v.step_id = s.id AND v.parameter_id = p.id)\n        ) THEN RAISE EXCEPTION '必須の工程パラメータがありません' USING ERRCODE = '23514'; END IF;\n        IF EXISTS (\n            SELECT 1 FROM recipeweave.material_node n JOIN recipeweave.step_input i ON i.material_id = n.id\n            WHERE n.recipe_version_id = version_id AND n.producer_step_id IS NOT NULL\n              AND NOT EXISTS (SELECT 1 FROM recipeweave.step_dependency d WHERE d.before_step_id = n.producer_step_id\n                  AND d.after_step_id = i.step_id AND d.kind = 'material')\n        ) THEN RAISE EXCEPTION '生成材料の受渡しに材料依存辺がありません' USING ERRCODE = '23514'; END IF;\n    END IF;\nEND;\n$$"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20429,8 +20462,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1088,
-      "sha256": "85eb740767faeb6d3056f75a12cb665829b4b8bb2892d662c965365b474f3ade",
-      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_version\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
+      "sha256": "3264eda744858429a911c715aeebf5ebac31ce5ce0fae3417f1e12f72568ab7c",
+      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_version\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20441,8 +20474,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1090,
-      "sha256": "24a6439719fce4ad78de3d7f937f3f1d62c57cd95d0ef0455d0ab401efa087f4",
-      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_ingredient\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
+      "sha256": "9b28832419d58a63606e8cd07a0cead32fc435992629ed62841a815ae854e4be",
+      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_ingredient\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20453,8 +20486,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1092,
-      "sha256": "694c38e7adf0279d5e01e513c957fc12d410fc907f45226b98c30376c2f6fc55",
-      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_option\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
+      "sha256": "ffd5d66eba2c7fce075b091a3861071d0046a62bbd39d78bb43a90c9e59a430a",
+      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_option\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20465,8 +20498,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1094,
-      "sha256": "a736545478ff4780d1d1a48bf2a1aee3c09c3ced0d2de1e708ac08547268f6d5",
-      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_step\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
+      "sha256": "e9cd3e0a595803d9005f410429c1ce51f40ee9e2e1e4c0770a99c8c252ca8c0a",
+      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_step\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20477,8 +20510,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1096,
-      "sha256": "d47721fde2c7614a321b1717b0029aeb278d8c1a4211b37e2226e5c83efb32b9",
-      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_parameter\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
+      "sha256": "07f24662877d03a588b9d018f046ddb5136bc84d8e07ba449fd89664e548a9d6",
+      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_parameter\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20489,8 +20522,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1098,
-      "sha256": "4c3e24521c136932a11da357e826df18277c4a6a875a8366667562ee20da0640",
-      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.material_node\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
+      "sha256": "5477c32205d744576a222b49032ea92f47e8bbd00c4c410db5ccc894909de783",
+      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.material_node\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20501,8 +20534,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1100,
-      "sha256": "f00995580e9400c20268b3fe475fdbd8f73519b682d2a1234e6e14f6204be0fa",
-      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_input\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
+      "sha256": "2dd97b997e41e678e016294405b6bb3e7325f5dd667a45ba86d4301561756f4d",
+      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_input\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20513,8 +20546,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1102,
-      "sha256": "70c6a0396b8fdb8b913554b439d4b05f1fd231cb5dbb068fb77128b9eea78e10",
-      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_dependency\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
+      "sha256": "d677d1e304537e5f8be94552b3aa56a480b3172818d50c4aafca5958160d8e1f",
+      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_dependency\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20525,8 +20558,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1104,
-      "sha256": "2d964fdeb890596bc0ad9cfbe73a1e154548e915538ec9761383cc9ce455e630",
-      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_resource\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
+      "sha256": "9d7183b5131b1b7a31aee38d1838ac7f3a76c1f7159775dd95d6abcbcf057045",
+      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_resource\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20537,8 +20570,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1106,
-      "sha256": "8ebe15a4e8f14c3ff4052d98a584e1eb4d8bfb3efaf8061f09e80843b49dd8a9",
-      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_media\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
+      "sha256": "2118ec15c199264907efbc10ef1224a5a93984d407ad4e5ceadbc4c22879d0cf",
+      "sql": "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_media\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20603,8 +20636,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1117,
-      "sha256": "58630bc2b461862979b757902f9bc38b0961e92ff9ad1dca52a1949d91ba830e",
-      "sql": "CREATE CONSTRAINT TRIGGER cross_reference AFTER INSERT OR UPDATE ON recipeweave.recipe_search_document\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cross_reference()"
+      "sha256": "5e8be3248447f3eee855f95675b4fc149915b199fff72743924fe0810f150d87",
+      "sql": "CREATE CONSTRAINT TRIGGER cross_reference\nAFTER INSERT OR UPDATE ON recipeweave.recipe_search_document\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cross_reference()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20693,8 +20726,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1132,
-      "sha256": "3456dd73fc791ec58487023cd21e6cd31d539a67bb88cafc4258e9387f9a85b6",
-      "sql": "CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.product_preparation_rule\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()"
+      "sha256": "84a8c4ff0262103499b952edd5f1b6dfe628eab0fd2a31a13046617e6cf79940",
+      "sql": "CREATE TRIGGER protect_catalog\nBEFORE INSERT OR UPDATE OR DELETE ON recipeweave.product_preparation_rule\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20717,8 +20750,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1136,
-      "sha256": "2c89376f5cd53d502449c8c401e7362e6683dd52d59fc710aaa8f988f4765998",
-      "sql": "CREATE CONSTRAINT TRIGGER owned_integrity AFTER INSERT OR UPDATE ON recipeweave.menu_ingredient_override\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_owned_reference()"
+      "sha256": "bd047c1658d800646d91b223d540eb44a9277f57ea3c558e633f89e241b795d5",
+      "sql": "CREATE CONSTRAINT TRIGGER owned_integrity\nAFTER INSERT OR UPDATE ON recipeweave.menu_ingredient_override\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_owned_reference()"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20807,8 +20840,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1151,
-      "sha256": "ffa849fe3e8ea11d6d349fa82cdb1eb17421110306294d3f36b11e97d7cc1a37",
-      "sql": "CREATE POLICY owned_access ON recipeweave.app_user\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "546540272a203377c4e6ac7f86ec23d09e813e25c3cc510213d7163326ec0c36",
+      "sql": "CREATE POLICY owned_access ON recipeweave.app_user\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20825,8 +20858,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1154,
-      "sha256": "ab05852b141d38832544f47f850a2c1e712afdaeb9d468526a775fdbc80fefdc",
-      "sql": "CREATE POLICY owned_access ON recipeweave.user_preference\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "9dc383886216cde83494ee6e49e6b1ad8fe1cc166da67d83d74bcb29aae3b55d",
+      "sql": "CREATE POLICY owned_access ON recipeweave.user_preference\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20843,8 +20876,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1157,
-      "sha256": "b89534836889c37f76a1dfa877681d6ec8d190552d4b83a2a2e54e4219412d20",
-      "sql": "CREATE POLICY owned_access ON recipeweave.user_exclusion\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "33b77d8e1aa4a73cc15c1484ccfea65292dbd2557121d4571d4603262d714fc6",
+      "sql": "CREATE POLICY owned_access ON recipeweave.user_exclusion\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20861,8 +20894,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1160,
-      "sha256": "c98c58c9ba01487a2d8babd14f899acb52882a7c350f38ff017c69ae04465644",
-      "sql": "CREATE POLICY owned_access ON recipeweave.user_recipe_event\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "e14b58087e3867b7866cedfc20be2314f6ed864969d55c8750b41c7a90599c1e",
+      "sql": "CREATE POLICY owned_access ON recipeweave.user_recipe_event\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20879,8 +20912,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1163,
-      "sha256": "8f955f154dbbc7f19802151f9c9e46ad2cb4feaa6187e9f625ef8c89db197f23",
-      "sql": "CREATE POLICY owned_access ON recipeweave.menu\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "41419e62c241302c1b9fa1fe0d7c34a4b299e649f71d349cd816075505450146",
+      "sql": "CREATE POLICY owned_access ON recipeweave.menu\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20897,8 +20930,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1166,
-      "sha256": "4198b324e2ea06eeadb75468046505617f74de7ebfc1fb5d9a136ca207b59ab3",
-      "sql": "CREATE POLICY owned_access ON recipeweave.menu_item\nUSING (\n    CURRENT_SETTING(\n        'recipeweave.role', true) = 'admin' OR (\n        SELECT r0.user_id FROM recipeweave.menu AS r0\n        WHERE r0.id = menu_item.menu_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''\n    )::UUID\n) WITH CHECK (CURRENT_SETTING(\n    'recipeweave.role', true) = 'admin' OR (\n    SELECT r0.user_id FROM recipeweave.menu AS r0\n    WHERE r0.id = menu_item.menu_id\n) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''\n)::UUID)"
+      "sha256": "10c96614f4ab908f1450c4b678fa13ac6819ffb38705044349d45ed669aad631",
+      "sql": "CREATE POLICY owned_access ON recipeweave.menu_item\nUSING (\n    CURRENT_SETTING(\n        'recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r0.user_id FROM recipeweave.menu AS r0\n        WHERE r0.id = menu_item.menu_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''\n    )::UUID\n) WITH CHECK (CURRENT_SETTING(\n    'recipeweave.role', TRUE) = 'admin' OR (\n    SELECT r0.user_id FROM recipeweave.menu AS r0\n    WHERE r0.id = menu_item.menu_id\n) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''\n)::UUID)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20915,8 +20948,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1169,
-      "sha256": "44b91fa202cca22ebe37f421d894722cab3e73916f00a4fd4ec4f98c63901a5f",
-      "sql": "CREATE POLICY owned_access ON recipeweave.menu_ingredient_override\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.menu_item AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = menu_ingredient_override.menu_item_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.menu_item AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = menu_ingredient_override.menu_item_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "a0dab58ff9ff80572876c791c5b04fbe27f9cf77994a8d738cfeec4f1aa5f2bf",
+      "sql": "CREATE POLICY owned_access ON recipeweave.menu_ingredient_override\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.menu_item AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = menu_ingredient_override.menu_item_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.menu_item AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = menu_ingredient_override.menu_item_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20933,8 +20966,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1172,
-      "sha256": "1decf1269aef118a237edd45289e354f6972fb364cecdafc8806f7f377a2cf45",
-      "sql": "CREATE POLICY owned_access ON recipeweave.kitchen_resource\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "6935e786d7e4fcb9a7aedd3d26b6c48556b526a630dc62365a83bd9c34be19f5",
+      "sql": "CREATE POLICY owned_access ON recipeweave.kitchen_resource\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20951,8 +20984,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1175,
-      "sha256": "ba22cebcbbdefe139018cdbc3c5da0e3b5c1d81109600ac2c1a0f4e02bcabf27",
-      "sql": "CREATE POLICY owned_access ON recipeweave.cooking_session\nUSING (\n    CURRENT_SETTING(\n        'recipeweave.role', true) = 'admin' OR (\n        SELECT r0.user_id FROM recipeweave.menu AS r0\n        WHERE r0.id = cooking_session.menu_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''\n    )::UUID\n) WITH CHECK (CURRENT_SETTING(\n    'recipeweave.role', true) = 'admin' OR (\n    SELECT r0.user_id FROM recipeweave.menu AS r0\n    WHERE r0.id = cooking_session.menu_id\n) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''\n)::UUID)"
+      "sha256": "459cac357629ebeb425d9a9da773c392e4a9818993a76d2183741e4f40cbb713",
+      "sql": "CREATE POLICY owned_access ON recipeweave.cooking_session\nUSING (\n    CURRENT_SETTING(\n        'recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r0.user_id FROM recipeweave.menu AS r0\n        WHERE r0.id = cooking_session.menu_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''\n    )::UUID\n) WITH CHECK (CURRENT_SETTING(\n    'recipeweave.role', TRUE) = 'admin' OR (\n    SELECT r0.user_id FROM recipeweave.menu AS r0\n    WHERE r0.id = cooking_session.menu_id\n) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''\n)::UUID)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20969,8 +21002,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1178,
-      "sha256": "a98654507945e46bcf816c41bf5cf0e3dfa70e2770199287781893a5ff329135",
-      "sql": "CREATE POLICY owned_access ON recipeweave.session_task\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = session_task.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = session_task.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "f8c6a605d1718d239472553c5c27b66ef8b110f42344c7ff07a5016c1712b1e9",
+      "sql": "CREATE POLICY owned_access ON recipeweave.session_task\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = session_task.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = session_task.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -20987,8 +21020,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1181,
-      "sha256": "b9c2ce9df3ea291a4ab19f868a00709a8899c47f0005b1f13e652d71ff46b0d8",
-      "sql": "CREATE POLICY owned_access ON recipeweave.task_dependency\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = task_dependency.before_task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = task_dependency.before_task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "9af91ec942c8a2b4722071dd0fa7b772370c7d374e8c4dbbf14a4bca9010b0d8",
+      "sql": "CREATE POLICY owned_access ON recipeweave.task_dependency\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = task_dependency.before_task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = task_dependency.before_task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -21005,8 +21038,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1184,
-      "sha256": "e146f020cfcb2bbb3aae35a8c8e69a712513dd1235054c07569f5d705db6b0f1",
-      "sql": "CREATE POLICY owned_access ON recipeweave.resource_reservation\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = resource_reservation.task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = resource_reservation.task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "e9aa036cc78b1d2a4c81f3b27f91ee0287b04021f9b451e2c119902edb472d01",
+      "sql": "CREATE POLICY owned_access ON recipeweave.resource_reservation\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = resource_reservation.task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = resource_reservation.task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -21023,8 +21056,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1187,
-      "sha256": "f69ffc2922eaad60cc8fd80ec1811dcae5fd6fb72223b1eb0f6362f008cb2722",
-      "sql": "CREATE POLICY owned_access ON recipeweave.ingredient_total\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = ingredient_total.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = ingredient_total.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "910ced7bbdd2ad82657868fed74bb796d8d463c652fac328803eafc959d1673a",
+      "sql": "CREATE POLICY owned_access ON recipeweave.ingredient_total\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = ingredient_total.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = ingredient_total.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -21041,8 +21074,8 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1190,
-      "sha256": "8590c6956e1a66bb143b1e9eb733b7621654506ca9e570d5b91cf7ca7c32503d",
-      "sql": "CREATE POLICY owned_access ON recipeweave.pantry_lot\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "a8e7e69ae6a44f0ebe5ef7028e55de13ccc14687c514b2cafa9f62862e90a253",
+      "sql": "CREATE POLICY owned_access ON recipeweave.pantry_lot\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -21059,14 +21092,14 @@
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1193,
-      "sha256": "ffcb92588ee85e51226cb741034bb7aefa6ef2e873f583748669b06be4afdea4",
-      "sql": "CREATE POLICY owned_access ON recipeweave.shopping_item\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = shopping_item.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = shopping_item.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "bfc19d597f21e8ea4a6efe54d571b68252878b7737cbf09c45f2ae36c20b2dab",
+      "sql": "CREATE POLICY owned_access ON recipeweave.shopping_item\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = shopping_item.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = shopping_item.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
       "number": 1194,
-      "sha256": "c5590a57f0c9af3f6049b2ca5a35ec77375a2582111162ab2d520cd4be85f3b1",
-      "sql": "CREATE FUNCTION recipeweave.guard_adopted_definition() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    reference record;\n    referenced boolean;\nBEGIN\n    FOR reference IN\n        SELECT namespace.nspname AS schema_name, child.relname AS table_name, attribute.attname AS column_name\n        FROM pg_constraint constraint_def\n        JOIN pg_class child ON child.oid = constraint_def.conrelid\n        JOIN pg_namespace namespace ON namespace.oid = child.relnamespace\n        JOIN pg_attribute attribute ON attribute.attrelid = child.oid AND attribute.attnum = constraint_def.conkey[1]\n        WHERE constraint_def.contype = 'f' AND constraint_def.confrelid = TG_RELID\n          AND namespace.nspname = 'recipeweave' AND cardinality(constraint_def.conkey) = 1\n    LOOP\n        EXECUTE format('SELECT EXISTS (SELECT 1 FROM %I.%I WHERE %I = $1)',\n            reference.schema_name, reference.table_name, reference.column_name) INTO referenced USING OLD.id;\n        IF referenced THEN\n            RAISE EXCEPTION '採用済みの定義版は変更・削除できません。新IDを作成してください' USING ERRCODE = '23514';\n        END IF;\n    END LOOP;\n    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;\nEND;\n$$"
+      "sha256": "b9cde9f32a095142226a4a28a180ad020a2bc1d89bba729b18cca28bd4b92ca4",
+      "sql": "CREATE FUNCTION recipeweave.guard_adopted_definition() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    reference record;\n    referenced boolean;\nBEGIN\n    IF TG_OP = 'UPDATE' AND to_jsonb(OLD) ? 'status'\n       AND (to_jsonb(NEW) - 'status') = (to_jsonb(OLD) - 'status') THEN RETURN NEW; END IF;\n    FOR reference IN\n        SELECT namespace.nspname AS schema_name, child.relname AS table_name, attribute.attname AS column_name\n        FROM pg_constraint constraint_def\n        JOIN pg_class child ON child.oid = constraint_def.conrelid\n        JOIN pg_namespace namespace ON namespace.oid = child.relnamespace\n        JOIN pg_attribute attribute ON attribute.attrelid = child.oid AND attribute.attnum = constraint_def.conkey[1]\n        WHERE constraint_def.contype = 'f' AND constraint_def.confrelid = TG_RELID\n          AND namespace.nspname = 'recipeweave' AND cardinality(constraint_def.conkey) = 1\n    LOOP\n        EXECUTE format('SELECT EXISTS (SELECT 1 FROM %I.%I WHERE %I = $1)',\n            reference.schema_name, reference.table_name, reference.column_name) INTO referenced USING OLD.id;\n        IF referenced THEN\n            RAISE EXCEPTION '採用済みの定義版は変更・削除できません。新IDを作成してください' USING ERRCODE = '23514';\n        END IF;\n    END LOOP;\n    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;\nEND;\n$$"
     },
     {
       "file": "database/migrations/002_relational_schema.sql",
@@ -21121,6 +21154,18 @@
       "number": 1203,
       "sha256": "9181c2342d68bdc53bd8de1372fe4a270399dae19c9cd50562aeb923f4497d31",
       "sql": "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.operation_parameter\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()"
+    },
+    {
+      "file": "database/migrations/002_relational_schema.sql",
+      "number": 1204,
+      "sha256": "936b3dcc8df66a7ad138e6823a754976b4761763d12388701884b25c8c5e5d2b",
+      "sql": "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.unit\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()"
+    },
+    {
+      "file": "database/migrations/002_relational_schema.sql",
+      "number": 1205,
+      "sha256": "4bc044e1255efeb1bb9af75370595c5625c249524815f9ec18583b31ddcb1910",
+      "sql": "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.operation\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
@@ -21977,8 +22022,8 @@
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 143,
-      "sha256": "6c348f64d583dd9f5c452eb556b2387ce09025e8109d05ebd77d3e468a9ce526",
-      "sql": "CREATE POLICY owned_access ON recipeweave.user_food\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "276c01edb7f92c4992d76b74d9c3c9e195f1545aacbaff8df80fb67993492e8c",
+      "sql": "CREATE POLICY owned_access ON recipeweave.user_food\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
@@ -22001,8 +22046,8 @@
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 147,
-      "sha256": "66f864853976449c64660790fa7afee2ca74a5ebec49cd2f323f9c78ce99fe0f",
-      "sql": "CREATE POLICY owned_access ON recipeweave.user_pantry_food\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "56aad75f9ac1f5db59306db53cdc2218e03e01f84c1622aa3c297de1c3e6a1f1",
+      "sql": "CREATE POLICY owned_access ON recipeweave.user_pantry_food\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
@@ -22025,14 +22070,14 @@
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 151,
-      "sha256": "406e7c3dd33434832b097bc5da9881d40bc524a774bc852fe6a3f59392539faf",
-      "sql": "CREATE POLICY owned_access ON recipeweave.pantry_consumption\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "05a1f56292242856f494636afea116246f140d09686e71814fe73eb7bd473076",
+      "sql": "CREATE POLICY owned_access ON recipeweave.pantry_consumption\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 152,
-      "sha256": "78ce2d458eabf33c1288138dd39a258ab06f90be160158411f40e0c830e773d8",
-      "sql": "CREATE TABLE recipeweave.user_shopping_check (\n    id UUID NOT NULL PRIMARY KEY,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n    user_id UUID NOT NULL,\n    key TEXT NOT NULL,\n    signature TEXT NOT NULL,\n    food_id UUID,\n    amount NUMERIC(20, 6),\n    unit_id UUID,\n    checked_at TIMESTAMPTZ,\n    archived BOOLEAN NOT NULL DEFAULT false,\n    UNIQUE (user_id, key),\n    CHECK (\n        amount IS null OR (amount >= 0 AND amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))\n    ),\n    CHECK (amount IS null OR unit_id IS NOT null)\n)"
+      "sha256": "aa67c94d723d0b41143d0a4a2ec3916bab68e4339a39f9a1d3fa5bec4d5f49fa",
+      "sql": "CREATE TABLE recipeweave.user_shopping_check (\n    id UUID NOT NULL PRIMARY KEY,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n    user_id UUID NOT NULL,\n    key TEXT NOT NULL,\n    signature TEXT NOT NULL,\n    food_id UUID,\n    amount NUMERIC(20, 6),\n    unit_id UUID,\n    checked_at TIMESTAMPTZ,\n    archived BOOLEAN NOT NULL DEFAULT FALSE,\n    UNIQUE (user_id, key),\n    CHECK (\n        amount IS NULL OR (amount >= 0 AND amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))\n    ),\n    CHECK (amount IS NULL OR unit_id IS NOT NULL)\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
@@ -22157,8 +22202,8 @@
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 173,
-      "sha256": "fcf212f0da60143e3b3d1467692a3d22136cf025f8b2c6ad59bcca5bf901fff3",
-      "sql": "CREATE POLICY owned_access ON recipeweave.user_shopping_check\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)\nWITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "45658e78ec4a5070686a8925b88fb504a7e16e520072a4a365d87b8d8f86a7f2",
+      "sql": "CREATE POLICY owned_access ON recipeweave.user_shopping_check\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)\nWITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
@@ -22259,14 +22304,14 @@
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 190,
-      "sha256": "b032c52033bc035aa8659652210cbc395baa134be9541283a84cae2706f8cc8c",
-      "sql": "CREATE POLICY food_read ON recipeweave.food FOR SELECT\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR owner_id IS null\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "b8213f1845512e492538cf63981bf725a20d6d148cdae904f087394fc1770562",
+      "sql": "CREATE POLICY food_read ON recipeweave.food FOR SELECT\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR owner_id IS NULL\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 191,
-      "sha256": "61487323d892dfe90c421c1c35885b6258ab3616214b46be4f80f1525494ce83",
-      "sql": "CREATE POLICY food_write ON recipeweave.food FOR ALL\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)\nWITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)"
+      "sha256": "d33226164bb9b0b07692618d2d7c4b91a00340abcf859cdd2bddeda7d206de35",
+      "sql": "CREATE POLICY food_write ON recipeweave.food FOR ALL\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)\nWITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
@@ -22649,8 +22694,8 @@
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 255,
-      "sha256": "a078fb2cd609d4e7dd8b6eca31a9b3f835f87b2cbcdf4a92b0dc6ff3f3919c65",
-      "sql": "ALTER TABLE recipeweave.ingredient_total ADD COLUMN consumption_outcome TEXT NOT NULL DEFAULT 'not_requested'"
+      "sha256": "f5952f2ced30e8c57b970a5872fefbef04cc4eb8e946d99edefd871454e8e27b",
+      "sql": "ALTER TABLE recipeweave.ingredient_total\nADD COLUMN consumption_outcome TEXT NOT NULL DEFAULT 'not_requested'"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
@@ -22697,8 +22742,8 @@
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 263,
-      "sha256": "6b1d16f724f402b744551fc21f7f5c73fb8e6de857e06c98c8807b87603e21d0",
-      "sql": "ALTER TABLE recipeweave.receipt_import ADD CONSTRAINT undo_preserved_count_nonnegative CHECK (undo_preserved_count >= 0)"
+      "sha256": "bad7b8bfaf67026e4bd4f28b804e35f401619751947e7e6f408427ffc90d1935",
+      "sql": "ALTER TABLE recipeweave.receipt_import ADD CONSTRAINT undo_preserved_count_nonnegative CHECK (\n    undo_preserved_count >= 0\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
@@ -22727,8 +22772,8 @@
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 268,
-      "sha256": "4c8c426dde916d804ad90a684458db96e4e9424244f90c245df865aeae25f25f",
-      "sql": "ALTER TABLE recipeweave.catalog_release ADD CONSTRAINT private_catalog_unpublished CHECK (owner_id IS NULL OR published_at IS NULL)"
+      "sha256": "2e7ecda44510a51fd95ba584d3785f9e529be1f79573d89d964329e5aa584b39",
+      "sql": "ALTER TABLE recipeweave.catalog_release ADD CONSTRAINT private_catalog_unpublished CHECK (\n    owner_id IS NULL OR published_at IS NULL\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
@@ -22745,14 +22790,14 @@
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 271,
-      "sha256": "7b7c2f0ce9eba40bd5f221a26d9eda570b8dea806ba28b906e79d085199fc433",
-      "sql": "CREATE POLICY catalog_read ON recipeweave.catalog_release FOR SELECT\nUSING (CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR owner_id IS NULL\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID)"
+      "sha256": "2db95d909d1235979caf2053d5d93bb925fddb70a3883b2b6253f7ffeb6ff9a8",
+      "sql": "CREATE POLICY catalog_read ON recipeweave.catalog_release FOR SELECT\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR owner_id IS NULL\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
       "number": 272,
-      "sha256": "8c82b32a550a319d0fe5457d080ee460bed3c09dfb4fa9054deaac311fc4b408",
-      "sql": "CREATE POLICY catalog_write ON recipeweave.catalog_release FOR ALL\nUSING (CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID)\nWITH CHECK (CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID)"
+      "sha256": "e7ebbbe1a156a572ed30f8c8d4070130edc639b94cbd02ce284848643beaaa34",
+      "sql": "CREATE POLICY catalog_write ON recipeweave.catalog_release FOR ALL\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)\nWITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
     },
     {
       "file": "database/migrations/003_service_operations.sql",
@@ -22783,6 +22828,66 @@
       "number": 277,
       "sha256": "880a935b845e111e53e41dd4d80b1ac37a043419352a2b57be0378fcd626c13b",
       "sql": "CREATE CONSTRAINT TRIGGER food_release_owner AFTER INSERT OR UPDATE ON recipeweave.food\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_food_release_owner()"
+    },
+    {
+      "file": "database/migrations/003_service_operations.sql",
+      "number": 278,
+      "sha256": "456b285f8bfe9e7be899749ce61720d35e3a23d0d3ccc4e456331543b3378525",
+      "sql": "ALTER TABLE recipeweave.food\nADD CONSTRAINT food_name_wire_length CHECK (CHAR_LENGTH(name) <= 100)"
+    },
+    {
+      "file": "database/migrations/003_service_operations.sql",
+      "number": 279,
+      "sha256": "db44f3b1129a495a8c4dcf8f6ff3cb5e124a5fcbb05f7c9f8d2f59d49d42e6da",
+      "sql": "ALTER TABLE recipeweave.food_alias\nADD CONSTRAINT food_alias_alias_wire_length CHECK (CHAR_LENGTH(alias) <= 500)"
+    },
+    {
+      "file": "database/migrations/003_service_operations.sql",
+      "number": 280,
+      "sha256": "0f01cfea8dc88a87518ec2df25806aafad3d0b7204a513b733e0e099f23f9efb",
+      "sql": "ALTER TABLE recipeweave.food_form\nADD CONSTRAINT food_form_name_wire_length CHECK (CHAR_LENGTH(name) <= 500)"
+    },
+    {
+      "file": "database/migrations/003_service_operations.sql",
+      "number": 281,
+      "sha256": "bc089ce6bd92327f1383ad0aaf7a05d23d72ee027bd7f03ccd8b63be9cdd3e7d",
+      "sql": "ALTER TABLE recipeweave.recipe\nADD CONSTRAINT recipe_title_wire_length CHECK (CHAR_LENGTH(title) <= 500)"
+    },
+    {
+      "file": "database/migrations/003_service_operations.sql",
+      "number": 282,
+      "sha256": "2db86c3a63bc0bb0b7c4dfeddf7b5a38ae534d16c8722bdc7bf57a0098fadcd0",
+      "sql": "ALTER TABLE recipeweave.recipe_version\nADD CONSTRAINT recipe_version_description_wire_length CHECK (CHAR_LENGTH(description) <= 5000)"
+    },
+    {
+      "file": "database/migrations/003_service_operations.sql",
+      "number": 283,
+      "sha256": "01473597b9dd89d70fe3d710f4e73e1be347497b4b01c1bf2e36542184f436cb",
+      "sql": "ALTER TABLE recipeweave.recipe_step\nADD CONSTRAINT recipe_step_title_wire_length CHECK (CHAR_LENGTH(title) <= 500)"
+    },
+    {
+      "file": "database/migrations/003_service_operations.sql",
+      "number": 284,
+      "sha256": "d8bd635f0f70fdc356309bf497efeefe226515c8d593c7d085d3fe3a805cdb53",
+      "sql": "ALTER TABLE recipeweave.recipe_step\nADD CONSTRAINT recipe_step_instruction_wire_length CHECK (CHAR_LENGTH(instruction) <= 5000)"
+    },
+    {
+      "file": "database/migrations/003_service_operations.sql",
+      "number": 285,
+      "sha256": "318fcc6552008cf8405a8c734d45e9c572a220ecf2425698b48300ad81bd07d2",
+      "sql": "ALTER TABLE recipeweave.recipe_ingredient\nADD CONSTRAINT recipe_ingredient_note_wire_length CHECK (CHAR_LENGTH(note) <= 500)"
+    },
+    {
+      "file": "database/migrations/003_service_operations.sql",
+      "number": 286,
+      "sha256": "63eea3501b013ac925eadfa81d92a54f2c32670143b47cef12944d71814abd45",
+      "sql": "ALTER TABLE recipeweave.resource_type\nADD CONSTRAINT resource_type_name_wire_length CHECK (CHAR_LENGTH(name) <= 500)"
+    },
+    {
+      "file": "database/migrations/003_service_operations.sql",
+      "number": 287,
+      "sha256": "ad817ead42a508b651c22be15c2ee6be91c5bba0c45d29fe1004d1683ad01ed8",
+      "sql": "ALTER TABLE recipeweave.axis_option\nADD CONSTRAINT axis_option_label_wire_length CHECK (CHAR_LENGTH(label) <= 500)"
     }
   ],
   "database_contracts": [
@@ -22790,7 +22895,7 @@
     "CREATE FUNCTION recipeweave.reject_identity_change() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nBEGIN\n    IF NEW.id IS DISTINCT FROM OLD.id OR NEW.created_at IS DISTINCT FROM OLD.created_at THEN\n        RAISE EXCEPTION '識別子と作成日時は変更できません' USING ERRCODE = '23514';\n    END IF;\n    RETURN NEW;\nEND;\n$$",
     "CREATE FUNCTION recipeweave.recipe_version_for(table_name TEXT, row_data JSONB) RETURNS UUID\nLANGUAGE plpgsql STABLE AS $$\nDECLARE\n    target uuid;\nBEGIN\n    IF table_name = 'recipe_version' THEN\n        RETURN (row_data->>'id')::uuid;\n    ELSIF row_data ? 'recipe_version_id' THEN\n        RETURN (row_data->>'recipe_version_id')::uuid;\n    ELSIF table_name IN ('step_parameter', 'step_input', 'step_resource', 'step_media') THEN\n        SELECT recipe_version_id INTO target FROM recipeweave.recipe_step\n        WHERE id = (row_data->>'step_id')::uuid;\n    ELSIF table_name = 'step_dependency' THEN\n        SELECT recipe_version_id INTO target FROM recipeweave.recipe_step\n        WHERE id = (row_data->>'before_step_id')::uuid;\n    END IF;\n    RETURN target;\nEND;\n$$",
     "CREATE FUNCTION recipeweave.guard_recipe_content() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    row_data jsonb;\n    version_id uuid;\n    released boolean;\nBEGIN\n    row_data := CASE WHEN TG_OP = 'DELETE' THEN to_jsonb(OLD) ELSE to_jsonb(NEW) END;\n    version_id := recipeweave.recipe_version_for(TG_TABLE_NAME, row_data);\n    SELECT published_at IS NOT NULL INTO released FROM recipeweave.recipe_version WHERE id = version_id;\n    IF TG_TABLE_NAME = 'recipe_version' AND TG_OP = 'UPDATE' AND to_jsonb(OLD)->>'published_at' IS NOT NULL THEN\n        IF (to_jsonb(NEW) - 'status') IS DISTINCT FROM (to_jsonb(OLD) - 'status')\n           OR NEW.status NOT IN ('published', 'withdrawn') THEN\n            RAISE EXCEPTION '公開したレシピ版の内容は変更できません' USING ERRCODE = '23514';\n        END IF;\n    ELSIF released THEN\n        RAISE EXCEPTION '公開したレシピ版とその子行は変更・削除できません' USING ERRCODE = '23514';\n    END IF;\n    IF TG_OP = 'UPDATE' AND TG_TABLE_NAME <> 'recipe_version' THEN\n        version_id := recipeweave.recipe_version_for(TG_TABLE_NAME, to_jsonb(OLD));\n        IF EXISTS (SELECT 1 FROM recipeweave.recipe_version WHERE id = version_id AND published_at IS NOT NULL) THEN\n            RAISE EXCEPTION '公開版から子行を移動できません' USING ERRCODE = '23514';\n        END IF;\n    END IF;\n    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;\nEND;\n$$",
-    "CREATE FUNCTION recipeweave.validate_recipe_version(version_id UUID) RETURNS VOID\nLANGUAGE plpgsql AS $$\nDECLARE\n    current_version recipeweave.recipe_version%ROWTYPE;\nBEGIN\n    SELECT * INTO current_version FROM recipeweave.recipe_version WHERE id = version_id FOR UPDATE;\n    IF NOT FOUND THEN RETURN; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i\n        LEFT JOIN recipeweave.recipe_ingredient parent ON parent.id = i.kit_parent_line_id\n        LEFT JOIN recipeweave.product_component component ON component.id = i.component_id\n        LEFT JOIN recipeweave.product_version product ON product.id = i.product_version_id\n        WHERE i.recipe_version_id = version_id AND (\n            (i.product_version_id IS NOT NULL AND product.form_id <> i.form_id)\n            OR (i.demand_kind = 'kit_component' AND (\n                parent.recipe_version_id <> version_id OR parent.demand_kind <> 'purchase'\n                OR parent.product_version_id IS NULL\n                OR component.product_version_id <> parent.product_version_id\n                OR component.form_id <> i.form_id\n            ))\n        )\n    ) THEN RAISE EXCEPTION '商品・形態・セット親の所属が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i\n        JOIN recipeweave.food_form form ON form.id = i.form_id\n        JOIN recipeweave.unit input_unit ON input_unit.id = i.unit_id\n        JOIN recipeweave.unit base_unit ON base_unit.id = form.base_unit_id\n        LEFT JOIN recipeweave.conversion c ON c.id = i.conversion_id\n        WHERE i.recipe_version_id = version_id AND (\n            (i.conversion_id IS NOT NULL AND (c.form_id <> i.form_id OR c.from_unit_id <> i.unit_id\n                OR c.to_unit_id <> form.base_unit_id OR c.release_id <> current_version.release_id))\n            OR (i.amount_mode = 'exact' AND (\n                (i.conversion_id IS NULL AND input_unit.dimension <> base_unit.dimension)\n                OR i.canonical_amount <> round(CASE WHEN c.id IS NOT NULL THEN i.amount * c.factor\n                    ELSE (i.amount * input_unit.factor + input_unit.offset - base_unit.offset) / base_unit.factor END, 6)\n            ))\n        )\n    ) THEN RAISE EXCEPTION '形態専用換算と登録基準量が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.material_node n\n        LEFT JOIN recipeweave.recipe_ingredient i ON i.id = n.ingredient_line_id\n        LEFT JOIN recipeweave.recipe_step s ON s.id = n.producer_step_id\n        WHERE n.recipe_version_id = version_id\n          AND (i.recipe_version_id <> version_id OR s.recipe_version_id <> version_id)\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.step_input input\n        JOIN recipeweave.recipe_step s ON s.id = input.step_id\n        JOIN recipeweave.material_node n ON n.id = input.material_id\n        WHERE (s.recipe_version_id = version_id OR n.recipe_version_id = version_id)\n          AND s.recipe_version_id <> n.recipe_version_id\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.step_dependency d\n        JOIN recipeweave.recipe_step b ON b.id = d.before_step_id\n        JOIN recipeweave.recipe_step a ON a.id = d.after_step_id\n        WHERE (b.recipe_version_id = version_id OR a.recipe_version_id = version_id)\n          AND b.recipe_version_id <> a.recipe_version_id\n    ) THEN RAISE EXCEPTION '材料と工程を別のレシピ版へ接続できません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_input i JOIN recipeweave.material_node n ON n.id = i.material_id\n        WHERE n.recipe_version_id = version_id GROUP BY n.id HAVING sum(i.fraction) > 1\n    ) THEN RAISE EXCEPTION '材料の使用割合が全量を超えています' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        WITH RECURSIVE edges AS (\n            SELECT d.before_step_id AS before_id, d.after_step_id AS after_id\n            FROM recipeweave.step_dependency d JOIN recipeweave.recipe_step s ON s.id = d.before_step_id\n            WHERE s.recipe_version_id = version_id\n            UNION\n            SELECT n.producer_step_id, i.step_id FROM recipeweave.material_node n\n            JOIN recipeweave.step_input i ON i.material_id = n.id\n            WHERE n.recipe_version_id = version_id AND n.producer_step_id IS NOT NULL\n        ), reach(before_id, after_id) AS (\n            SELECT before_id, after_id FROM edges\n            UNION\n            SELECT r.before_id, e.after_id FROM reach r JOIN edges e ON e.before_id = r.after_id\n        ) SELECT 1 FROM reach WHERE before_id = after_id\n    ) THEN RAISE EXCEPTION '工程・材料の依存に循環があります' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_parameter value\n        JOIN recipeweave.recipe_step step ON step.id = value.step_id\n        JOIN recipeweave.operation_parameter parameter ON parameter.id = value.parameter_id\n        WHERE step.recipe_version_id = version_id AND (\n            step.operation_id <> parameter.operation_id\n            OR (parameter.value_type IN ('decimal', 'integer') AND (value.number_value IS NULL\n                OR value.number_value < parameter.min_value OR value.number_value > parameter.max_value))\n            OR (parameter.value_type = 'integer' AND value.number_value <> trunc(value.number_value))\n            OR (parameter.value_type = 'boolean' AND value.bool_value IS NULL)\n            OR (parameter.value_type IN ('text', 'option') AND value.text_value IS NULL)\n            OR (parameter.value_type = 'option' AND NOT parameter.allowed_values ? value.text_value)\n        )\n    ) THEN RAISE EXCEPTION '工程パラメータの動作・型・範囲が不一致です' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_media mapping\n        JOIN recipeweave.recipe_step step ON step.id = mapping.step_id\n        JOIN recipeweave.media_asset media ON media.id = mapping.media_id\n        WHERE step.recipe_version_id = version_id AND step.operation_id <> media.operation_id\n    ) THEN RAISE EXCEPTION '工程と媒体の標準動作が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_option ro\n        JOIN recipeweave.axis_option ao ON ao.id = ro.option_id JOIN recipeweave.axis axis ON axis.id = ao.axis_id\n        WHERE ro.recipe_version_id = version_id AND axis.release_id <> current_version.release_id\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i JOIN recipeweave.food_form form ON form.id = i.form_id\n        JOIN recipeweave.food food ON food.id = form.food_id\n        WHERE i.recipe_version_id = version_id AND food.release_id <> current_version.release_id\n    ) THEN RAISE EXCEPTION '食材・分類と採用カタログ版が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_option ro JOIN recipeweave.axis_option ao ON ao.id = ro.option_id\n        JOIN recipeweave.axis axis ON axis.id = ao.axis_id\n        WHERE ro.recipe_version_id = version_id AND axis.selection = 'single'\n        GROUP BY axis.id HAVING count(*) > 1\n    ) THEN RAISE EXCEPTION '単一選択軸に複数値を設定できません' USING ERRCODE = '23514'; END IF;\n    IF current_version.status = 'published' THEN\n        IF EXISTS (SELECT 1 FROM recipeweave.recipe_ingredient ingredient\n            JOIN recipeweave.food_form form ON form.id = ingredient.form_id\n            JOIN recipeweave.food food ON food.id = form.food_id\n            WHERE ingredient.recipe_version_id = version_id AND food.owner_id IS NOT NULL) THEN\n            RAISE EXCEPTION '私有食材を含むレシピは公開できません' USING ERRCODE = '23514';\n        END IF;\n        IF NOT EXISTS (SELECT 1 FROM recipeweave.recipe_ingredient WHERE recipe_version_id = version_id)\n           OR NOT EXISTS (SELECT 1 FROM recipeweave.recipe_step WHERE recipe_version_id = version_id) THEN\n            RAISE EXCEPTION '材料または工程のないレシピは公開できません' USING ERRCODE = '23514';\n        END IF;\n        IF EXISTS (\n            SELECT 1 FROM recipeweave.recipe_step s JOIN recipeweave.operation_parameter p ON p.operation_id = s.operation_id\n            WHERE s.recipe_version_id = version_id AND p.required\n            AND NOT EXISTS (SELECT 1 FROM recipeweave.step_parameter v WHERE v.step_id = s.id AND v.parameter_id = p.id)\n        ) THEN RAISE EXCEPTION '必須の工程パラメータがありません' USING ERRCODE = '23514'; END IF;\n        IF EXISTS (\n            SELECT 1 FROM recipeweave.material_node n JOIN recipeweave.step_input i ON i.material_id = n.id\n            WHERE n.recipe_version_id = version_id AND n.producer_step_id IS NOT NULL\n              AND NOT EXISTS (SELECT 1 FROM recipeweave.step_dependency d WHERE d.before_step_id = n.producer_step_id\n                  AND d.after_step_id = i.step_id AND d.kind = 'material')\n        ) THEN RAISE EXCEPTION '生成材料の受渡しに材料依存辺がありません' USING ERRCODE = '23514'; END IF;\n    END IF;\nEND;\n$$",
+    "CREATE FUNCTION recipeweave.validate_recipe_version(version_id UUID) RETURNS VOID\nLANGUAGE plpgsql AS $$\nDECLARE\n    current_version recipeweave.recipe_version%ROWTYPE;\nBEGIN\n    SELECT * INTO current_version FROM recipeweave.recipe_version WHERE id = version_id FOR UPDATE;\n    IF NOT FOUND THEN RETURN; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i\n        LEFT JOIN recipeweave.recipe_ingredient parent ON parent.id = i.kit_parent_line_id\n        LEFT JOIN recipeweave.product_component component ON component.id = i.component_id\n        LEFT JOIN recipeweave.product_version product ON product.id = i.product_version_id\n        WHERE i.recipe_version_id = version_id AND (\n            (i.product_version_id IS NOT NULL AND product.form_id <> i.form_id)\n            OR (i.demand_kind = 'kit_component' AND (\n                parent.recipe_version_id <> version_id OR parent.demand_kind <> 'purchase'\n                OR parent.product_version_id IS NULL\n                OR component.product_version_id <> parent.product_version_id\n                OR component.form_id <> i.form_id\n            ))\n        )\n    ) THEN RAISE EXCEPTION '商品・形態・セット親の所属が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i\n        JOIN recipeweave.food_form form ON form.id = i.form_id\n        JOIN recipeweave.unit input_unit ON input_unit.id = i.unit_id\n        JOIN recipeweave.unit base_unit ON base_unit.id = form.base_unit_id\n        LEFT JOIN recipeweave.conversion c ON c.id = i.conversion_id\n        WHERE i.recipe_version_id = version_id AND (\n            (i.conversion_id IS NOT NULL AND (c.form_id <> i.form_id OR c.from_unit_id <> i.unit_id\n                OR c.to_unit_id <> form.base_unit_id OR c.release_id <> current_version.release_id))\n            OR (i.amount_mode = 'exact' AND (\n                (i.conversion_id IS NULL AND input_unit.dimension <> base_unit.dimension)\n                OR i.canonical_amount <> round(CASE WHEN c.id IS NOT NULL THEN i.amount * c.factor\n                    ELSE (i.amount * input_unit.factor + input_unit.offset - base_unit.offset) / base_unit.factor END, 6)\n            ))\n        )\n    ) THEN RAISE EXCEPTION '形態専用換算と登録基準量が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.material_node n\n        LEFT JOIN recipeweave.recipe_ingredient i ON i.id = n.ingredient_line_id\n        LEFT JOIN recipeweave.recipe_step s ON s.id = n.producer_step_id\n        WHERE n.recipe_version_id = version_id\n          AND (i.recipe_version_id <> version_id OR s.recipe_version_id <> version_id)\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.step_input input\n        JOIN recipeweave.recipe_step s ON s.id = input.step_id\n        JOIN recipeweave.material_node n ON n.id = input.material_id\n        WHERE (s.recipe_version_id = version_id OR n.recipe_version_id = version_id)\n          AND s.recipe_version_id <> n.recipe_version_id\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.step_dependency d\n        JOIN recipeweave.recipe_step b ON b.id = d.before_step_id\n        JOIN recipeweave.recipe_step a ON a.id = d.after_step_id\n        WHERE (b.recipe_version_id = version_id OR a.recipe_version_id = version_id)\n          AND b.recipe_version_id <> a.recipe_version_id\n    ) THEN RAISE EXCEPTION '材料と工程を別のレシピ版へ接続できません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_input i JOIN recipeweave.material_node n ON n.id = i.material_id\n        WHERE n.recipe_version_id = version_id GROUP BY n.id HAVING sum(i.fraction) > 1\n    ) THEN RAISE EXCEPTION '材料の使用割合が全量を超えています' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        WITH RECURSIVE edges AS (\n            SELECT d.before_step_id AS before_id, d.after_step_id AS after_id\n            FROM recipeweave.step_dependency d JOIN recipeweave.recipe_step s ON s.id = d.before_step_id\n            WHERE s.recipe_version_id = version_id\n            UNION\n            SELECT n.producer_step_id, i.step_id FROM recipeweave.material_node n\n            JOIN recipeweave.step_input i ON i.material_id = n.id\n            WHERE n.recipe_version_id = version_id AND n.producer_step_id IS NOT NULL\n        ), reach(before_id, after_id) AS (\n            SELECT before_id, after_id FROM edges\n            UNION\n            SELECT r.before_id, e.after_id FROM reach r JOIN edges e ON e.before_id = r.after_id\n        ) SELECT 1 FROM reach WHERE before_id = after_id\n    ) THEN RAISE EXCEPTION '工程・材料の依存に循環があります' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_parameter value\n        JOIN recipeweave.recipe_step step ON step.id = value.step_id\n        JOIN recipeweave.operation_parameter parameter ON parameter.id = value.parameter_id\n        WHERE step.recipe_version_id = version_id AND (\n            step.operation_id <> parameter.operation_id\n            OR (parameter.value_type IN ('decimal', 'integer') AND (value.number_value IS NULL\n                OR value.number_value < parameter.min_value OR value.number_value > parameter.max_value))\n            OR (parameter.value_type = 'integer' AND value.number_value <> trunc(value.number_value))\n            OR (parameter.value_type = 'boolean' AND value.bool_value IS NULL)\n            OR (parameter.value_type IN ('text', 'option') AND value.text_value IS NULL)\n            OR (parameter.value_type = 'option' AND NOT parameter.allowed_values ? value.text_value)\n        )\n    ) THEN RAISE EXCEPTION '工程パラメータの動作・型・範囲が不一致です' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.step_media mapping\n        JOIN recipeweave.recipe_step step ON step.id = mapping.step_id\n        JOIN recipeweave.media_asset media ON media.id = mapping.media_id\n        WHERE step.recipe_version_id = version_id AND step.operation_id <> media.operation_id\n    ) THEN RAISE EXCEPTION '工程と媒体の標準動作が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_option ro\n        JOIN recipeweave.axis_option ao ON ao.id = ro.option_id JOIN recipeweave.axis axis ON axis.id = ao.axis_id\n        WHERE ro.recipe_version_id = version_id AND axis.release_id <> current_version.release_id\n    ) OR EXISTS (\n        SELECT 1 FROM recipeweave.recipe_ingredient i JOIN recipeweave.food_form form ON form.id = i.form_id\n        JOIN recipeweave.food food ON food.id = form.food_id\n        WHERE i.recipe_version_id = version_id AND food.release_id <> current_version.release_id\n    ) THEN RAISE EXCEPTION '食材・分類と採用カタログ版が一致しません' USING ERRCODE = '23514'; END IF;\n    IF EXISTS (\n        SELECT 1 FROM recipeweave.recipe_option ro JOIN recipeweave.axis_option ao ON ao.id = ro.option_id\n        JOIN recipeweave.axis axis ON axis.id = ao.axis_id\n        WHERE ro.recipe_version_id = version_id AND axis.selection = 'single'\n        GROUP BY axis.id HAVING count(*) > 1\n    ) THEN RAISE EXCEPTION '単一選択軸に複数値を設定できません' USING ERRCODE = '23514'; END IF;\n    IF current_version.status = 'published' THEN\n        IF NOT EXISTS (SELECT 1 FROM recipeweave.catalog_release\n            WHERE id = current_version.release_id AND published_at IS NOT NULL) THEN\n            RAISE EXCEPTION '公開版は公開済みカタログを参照する必要があります' USING ERRCODE = '23514';\n        END IF;\n        IF EXISTS (SELECT 1 FROM recipeweave.recipe_ingredient ingredient\n            JOIN recipeweave.food_form form ON form.id = ingredient.form_id\n            JOIN recipeweave.food food ON food.id = form.food_id\n            WHERE ingredient.recipe_version_id = version_id AND food.owner_id IS NOT NULL) THEN\n            RAISE EXCEPTION '私有食材を含むレシピは公開できません' USING ERRCODE = '23514';\n        END IF;\n        IF NOT EXISTS (SELECT 1 FROM recipeweave.recipe_ingredient WHERE recipe_version_id = version_id)\n           OR NOT EXISTS (SELECT 1 FROM recipeweave.recipe_step WHERE recipe_version_id = version_id) THEN\n            RAISE EXCEPTION '材料または工程のないレシピは公開できません' USING ERRCODE = '23514';\n        END IF;\n        IF EXISTS (\n            SELECT 1 FROM recipeweave.recipe_step s JOIN recipeweave.operation_parameter p ON p.operation_id = s.operation_id\n            WHERE s.recipe_version_id = version_id AND p.required\n            AND NOT EXISTS (SELECT 1 FROM recipeweave.step_parameter v WHERE v.step_id = s.id AND v.parameter_id = p.id)\n        ) THEN RAISE EXCEPTION '必須の工程パラメータがありません' USING ERRCODE = '23514'; END IF;\n        IF EXISTS (\n            SELECT 1 FROM recipeweave.material_node n JOIN recipeweave.step_input i ON i.material_id = n.id\n            WHERE n.recipe_version_id = version_id AND n.producer_step_id IS NOT NULL\n              AND NOT EXISTS (SELECT 1 FROM recipeweave.step_dependency d WHERE d.before_step_id = n.producer_step_id\n                  AND d.after_step_id = i.step_id AND d.kind = 'material')\n        ) THEN RAISE EXCEPTION '生成材料の受渡しに材料依存辺がありません' USING ERRCODE = '23514'; END IF;\n    END IF;\nEND;\n$$",
     "CREATE FUNCTION recipeweave.check_recipe_integrity() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    version_id uuid;\nBEGIN\n    IF TG_OP <> 'DELETE' THEN\n        version_id := recipeweave.recipe_version_for(TG_TABLE_NAME, to_jsonb(NEW));\n        PERFORM recipeweave.validate_recipe_version(version_id);\n    END IF;\n    IF TG_OP <> 'INSERT' THEN\n        version_id := recipeweave.recipe_version_for(TG_TABLE_NAME, to_jsonb(OLD));\n        PERFORM recipeweave.validate_recipe_version(version_id);\n    END IF;\n    RETURN NULL;\nEND;\n$$",
     "CREATE FUNCTION recipeweave.check_hierarchy() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    cycle_found boolean;\n    parent_release uuid;\nBEGIN\n\n    EXECUTE format('SELECT * FROM recipeweave.%I WHERE id = $1', TG_TABLE_NAME) INTO NEW USING NEW.id;\n    IF NEW.id IS NULL THEN RETURN NULL; END IF;\n    IF TG_TABLE_NAME = 'food' THEN\n        PERFORM 1 FROM recipeweave.catalog_release WHERE id = NEW.release_id FOR UPDATE;\n        SELECT release_id INTO parent_release FROM recipeweave.food WHERE id = NEW.parent_id;\n        IF parent_release IS DISTINCT FROM NEW.release_id AND NEW.parent_id IS NOT NULL THEN\n            RAISE EXCEPTION '食材の親は同じカタログ版に属する必要があります' USING ERRCODE = '23514';\n        END IF;\n        WITH RECURSIVE parents(id, parent_id) AS (\n            SELECT id, parent_id FROM recipeweave.food WHERE id = NEW.parent_id\n            UNION\n            SELECT f.id, f.parent_id FROM recipeweave.food f JOIN parents p ON f.id = p.parent_id\n        ) SELECT EXISTS (SELECT 1 FROM parents WHERE id = NEW.id) INTO cycle_found;\n    ELSE\n        PERFORM 1 FROM recipeweave.axis WHERE id = NEW.axis_id FOR UPDATE;\n        SELECT axis_id INTO parent_release FROM recipeweave.axis_option WHERE id = NEW.parent_id;\n        IF parent_release IS DISTINCT FROM NEW.axis_id AND NEW.parent_id IS NOT NULL THEN\n            RAISE EXCEPTION '候補値の親は同じ軸に属する必要があります' USING ERRCODE = '23514';\n        END IF;\n        WITH RECURSIVE parents(id, parent_id) AS (\n            SELECT id, parent_id FROM recipeweave.axis_option WHERE id = NEW.parent_id\n            UNION\n            SELECT f.id, f.parent_id FROM recipeweave.axis_option f JOIN parents p ON f.id = p.parent_id\n        ) SELECT EXISTS (SELECT 1 FROM parents WHERE id = NEW.id) INTO cycle_found;\n    END IF;\n    IF cycle_found THEN RAISE EXCEPTION '分類階層に循環があります' USING ERRCODE = '23514'; END IF;\n    RETURN NULL;\nEND;\n$$",
     "CREATE FUNCTION recipeweave.check_cross_reference() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    valid boolean := true;\nBEGIN\n\n    EXECUTE format('SELECT * FROM recipeweave.%I WHERE id = $1', TG_TABLE_NAME) INTO NEW USING NEW.id;\n    IF NEW.id IS NULL THEN RETURN NULL; END IF;\n    CASE TG_TABLE_NAME\n    WHEN 'product_version' THEN\n        SELECT p.food_id = f.food_id INTO valid FROM recipeweave.product p, recipeweave.food_form f\n        WHERE p.id = NEW.product_id AND f.id = NEW.form_id;\n    WHEN 'food_axis_option' THEN\n        SELECT f.release_id = a.release_id INTO valid FROM recipeweave.food f,\n        recipeweave.axis_option o JOIN recipeweave.axis a ON a.id = o.axis_id\n        WHERE f.id = NEW.food_id AND o.id = NEW.option_id;\n    WHEN 'food_identity_member' THEN\n        SELECT normalizer_version = NEW.normalizer_version INTO valid\n        FROM recipeweave.food_identity WHERE id = NEW.identity_id;\n    WHEN 'generation_choice' THEN\n        SELECT p.release_id = a.release_id INTO valid\n        FROM recipeweave.generation_job j JOIN recipeweave.generation_policy p ON p.id = j.policy_id,\n        recipeweave.axis_option o JOIN recipeweave.axis a ON a.id = o.axis_id\n        WHERE j.id = NEW.job_id AND o.id = NEW.option_id;\n    WHEN 'generation_food' THEN\n        SELECT p.release_id = f.release_id INTO valid\n        FROM recipeweave.generation_job j JOIN recipeweave.generation_policy p ON p.id = j.policy_id,\n        recipeweave.food_form form JOIN recipeweave.food f ON f.id = form.food_id\n        WHERE j.id = NEW.job_id AND form.id = NEW.form_id;\n    WHEN 'generation_result' THEN\n        SELECT v.release_id = p.release_id AND (NEW.job_id IS NULL OR j.policy_id = p.id) INTO valid\n        FROM recipeweave.recipe_version v, recipeweave.generation_policy p\n        LEFT JOIN recipeweave.generation_job j ON j.id = NEW.job_id\n        WHERE v.id = NEW.recipe_version_id AND p.id = NEW.policy_id;\n    WHEN 'generation_shard' THEN\n        SELECT NEW.end_ordinal <= candidate_count INTO valid FROM recipeweave.generation_template WHERE id = NEW.template_id;\n    WHEN 'candidate_attempt' THEN\n        SELECT NEW.ordinal < candidate_count INTO valid FROM recipeweave.generation_template WHERE id = NEW.template_id;\n    WHEN 'recipe_search_document' THEN\n        SELECT recipe_id = NEW.recipe_id AND status = 'published' INTO valid\n        FROM recipeweave.recipe_version WHERE id = NEW.published_version_id;\n        valid := valid AND NOT EXISTS (SELECT 1 FROM unnest(NEW.food_identity_ids) item WHERE NOT EXISTS (\n            SELECT 1 FROM recipeweave.food_identity WHERE id = item))\n            AND NOT EXISTS (SELECT 1 FROM unnest(NEW.facet_option_ids) item WHERE NOT EXISTS (\n                SELECT 1 FROM recipeweave.axis_option WHERE id = item));\n    ELSE\n        RAISE EXCEPTION '未定義の関連検査対象です';\n    END CASE;\n    IF NOT coalesce(valid, false) THEN RAISE EXCEPTION '参照先と版・所属・序数が一致しません' USING ERRCODE = '23514'; END IF;\n    RETURN NULL;\nEND;\n$$",
@@ -22873,25 +22978,25 @@
     "CREATE TRIGGER immutable_id BEFORE UPDATE ON recipeweave.recipe_embedding\nFOR EACH ROW EXECUTE FUNCTION recipeweave.reject_identity_change()",
     "CREATE TRIGGER immutable_id BEFORE UPDATE ON recipeweave.generation_stratum_metric\nFOR EACH ROW EXECUTE FUNCTION recipeweave.reject_identity_change()",
     "CREATE TRIGGER protect_recipe BEFORE UPDATE OR DELETE ON recipeweave.recipe_version\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content()",
-    "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_version\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
+    "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_version\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
     "CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.recipe_ingredient\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content()",
-    "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_ingredient\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
+    "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_ingredient\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
     "CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.recipe_option\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content()",
-    "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_option\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
+    "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_option\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
     "CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.recipe_step\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content()",
-    "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_step\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
+    "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.recipe_step\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
     "CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.step_parameter\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content()",
-    "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_parameter\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
+    "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_parameter\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
     "CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.material_node\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content()",
-    "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.material_node\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
+    "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.material_node\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
     "CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.step_input\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content()",
-    "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_input\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
+    "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_input\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
     "CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.step_dependency\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content()",
-    "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_dependency\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
+    "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_dependency\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
     "CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.step_resource\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content()",
-    "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_resource\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
+    "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_resource\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
     "CREATE TRIGGER protect_recipe BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.step_media\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_recipe_content()",
-    "CREATE CONSTRAINT TRIGGER recipe_integrity AFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_media\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
+    "CREATE CONSTRAINT TRIGGER recipe_integrity\nAFTER INSERT OR UPDATE OR DELETE ON recipeweave.step_media\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_recipe_integrity()",
     "CREATE CONSTRAINT TRIGGER hierarchy_integrity AFTER INSERT OR UPDATE ON recipeweave.food\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_hierarchy()",
     "CREATE CONSTRAINT TRIGGER hierarchy_integrity AFTER INSERT OR UPDATE ON recipeweave.axis_option\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_hierarchy()",
     "CREATE CONSTRAINT TRIGGER cross_reference AFTER INSERT OR UPDATE ON recipeweave.product_version\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cross_reference()",
@@ -22902,7 +23007,7 @@
     "CREATE CONSTRAINT TRIGGER cross_reference AFTER INSERT OR UPDATE ON recipeweave.generation_result\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cross_reference()",
     "CREATE CONSTRAINT TRIGGER cross_reference AFTER INSERT OR UPDATE ON recipeweave.generation_shard\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cross_reference()",
     "CREATE CONSTRAINT TRIGGER cross_reference AFTER INSERT OR UPDATE ON recipeweave.candidate_attempt\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cross_reference()",
-    "CREATE CONSTRAINT TRIGGER cross_reference AFTER INSERT OR UPDATE ON recipeweave.recipe_search_document\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cross_reference()",
+    "CREATE CONSTRAINT TRIGGER cross_reference\nAFTER INSERT OR UPDATE ON recipeweave.recipe_search_document\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_cross_reference()",
     "CREATE TRIGGER protect_catalog BEFORE UPDATE OR DELETE ON recipeweave.catalog_release\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
     "CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.food\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
     "CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.food_alias\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
@@ -22917,11 +23022,11 @@
     "CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.product_version\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
     "CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.product_component\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
     "CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.product_allergen\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
-    "CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.product_preparation_rule\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
+    "CREATE TRIGGER protect_catalog\nBEFORE INSERT OR UPDATE OR DELETE ON recipeweave.product_preparation_rule\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
     "CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.conversion\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
     "CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.generation_policy\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
     "CREATE TRIGGER protect_catalog BEFORE INSERT OR UPDATE OR DELETE ON recipeweave.generation_template\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_catalog_content()",
-    "CREATE CONSTRAINT TRIGGER owned_integrity AFTER INSERT OR UPDATE ON recipeweave.menu_ingredient_override\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_owned_reference()",
+    "CREATE CONSTRAINT TRIGGER owned_integrity\nAFTER INSERT OR UPDATE ON recipeweave.menu_ingredient_override\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_owned_reference()",
     "CREATE CONSTRAINT TRIGGER owned_integrity AFTER INSERT OR UPDATE ON recipeweave.shopping_item\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_owned_reference()",
     "CREATE CONSTRAINT TRIGGER owned_integrity AFTER INSERT OR UPDATE ON recipeweave.pantry_lot\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_owned_reference()",
     "CREATE CONSTRAINT TRIGGER owned_integrity AFTER INSERT OR UPDATE ON recipeweave.session_task\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_owned_reference()",
@@ -22936,50 +23041,50 @@
     "CREATE TRIGGER lifecycle_outbox AFTER DELETE ON recipeweave.app_user\nFOR EACH ROW EXECUTE FUNCTION recipeweave.publish_outbox()",
     "ALTER TABLE recipeweave.app_user ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.app_user FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.app_user\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.app_user\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR app_user.id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.user_preference ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.user_preference FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.user_preference\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.user_preference\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_preference.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.user_exclusion ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.user_exclusion FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.user_exclusion\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.user_exclusion\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_exclusion.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.user_recipe_event ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.user_recipe_event FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.user_recipe_event\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.user_recipe_event\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_recipe_event.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.menu ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.menu FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.menu\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.menu\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR menu.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.menu_item ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.menu_item FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.menu_item\nUSING (\n    CURRENT_SETTING(\n        'recipeweave.role', true) = 'admin' OR (\n        SELECT r0.user_id FROM recipeweave.menu AS r0\n        WHERE r0.id = menu_item.menu_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''\n    )::UUID\n) WITH CHECK (CURRENT_SETTING(\n    'recipeweave.role', true) = 'admin' OR (\n    SELECT r0.user_id FROM recipeweave.menu AS r0\n    WHERE r0.id = menu_item.menu_id\n) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''\n)::UUID)",
+    "CREATE POLICY owned_access ON recipeweave.menu_item\nUSING (\n    CURRENT_SETTING(\n        'recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r0.user_id FROM recipeweave.menu AS r0\n        WHERE r0.id = menu_item.menu_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''\n    )::UUID\n) WITH CHECK (CURRENT_SETTING(\n    'recipeweave.role', TRUE) = 'admin' OR (\n    SELECT r0.user_id FROM recipeweave.menu AS r0\n    WHERE r0.id = menu_item.menu_id\n) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''\n)::UUID)",
     "ALTER TABLE recipeweave.menu_ingredient_override ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.menu_ingredient_override FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.menu_ingredient_override\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.menu_item AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = menu_ingredient_override.menu_item_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.menu_item AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = menu_ingredient_override.menu_item_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.menu_ingredient_override\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.menu_item AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = menu_ingredient_override.menu_item_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.menu_item AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = menu_ingredient_override.menu_item_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.kitchen_resource ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.kitchen_resource FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.kitchen_resource\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.kitchen_resource\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR kitchen_resource.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.cooking_session ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.cooking_session FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.cooking_session\nUSING (\n    CURRENT_SETTING(\n        'recipeweave.role', true) = 'admin' OR (\n        SELECT r0.user_id FROM recipeweave.menu AS r0\n        WHERE r0.id = cooking_session.menu_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''\n    )::UUID\n) WITH CHECK (CURRENT_SETTING(\n    'recipeweave.role', true) = 'admin' OR (\n    SELECT r0.user_id FROM recipeweave.menu AS r0\n    WHERE r0.id = cooking_session.menu_id\n) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), ''\n)::UUID)",
+    "CREATE POLICY owned_access ON recipeweave.cooking_session\nUSING (\n    CURRENT_SETTING(\n        'recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r0.user_id FROM recipeweave.menu AS r0\n        WHERE r0.id = cooking_session.menu_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''\n    )::UUID\n) WITH CHECK (CURRENT_SETTING(\n    'recipeweave.role', TRUE) = 'admin' OR (\n    SELECT r0.user_id FROM recipeweave.menu AS r0\n    WHERE r0.id = cooking_session.menu_id\n) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), ''\n)::UUID)",
     "ALTER TABLE recipeweave.session_task ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.session_task FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.session_task\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = session_task.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = session_task.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.session_task\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = session_task.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = session_task.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.task_dependency ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.task_dependency FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.task_dependency\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = task_dependency.before_task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = task_dependency.before_task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.task_dependency\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = task_dependency.before_task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = task_dependency.before_task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.resource_reservation ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.resource_reservation FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.resource_reservation\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = resource_reservation.task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = resource_reservation.task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.resource_reservation\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = resource_reservation.task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r2.user_id\n        FROM recipeweave.session_task AS r0\n        INNER JOIN recipeweave.cooking_session AS r1 ON r0.session_id = r1.id\n        INNER JOIN recipeweave.menu AS r2 ON r1.menu_id = r2.id\n        WHERE r0.id = resource_reservation.task_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.ingredient_total ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.ingredient_total FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.ingredient_total\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = ingredient_total.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = ingredient_total.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.ingredient_total\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = ingredient_total.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = ingredient_total.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.pantry_lot ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.pantry_lot FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.pantry_lot\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.pantry_lot\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR pantry_lot.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "ALTER TABLE recipeweave.shopping_item ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.shopping_item FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.shopping_item\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = shopping_item.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = shopping_item.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
-    "CREATE FUNCTION recipeweave.guard_adopted_definition() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    reference record;\n    referenced boolean;\nBEGIN\n    FOR reference IN\n        SELECT namespace.nspname AS schema_name, child.relname AS table_name, attribute.attname AS column_name\n        FROM pg_constraint constraint_def\n        JOIN pg_class child ON child.oid = constraint_def.conrelid\n        JOIN pg_namespace namespace ON namespace.oid = child.relnamespace\n        JOIN pg_attribute attribute ON attribute.attrelid = child.oid AND attribute.attnum = constraint_def.conkey[1]\n        WHERE constraint_def.contype = 'f' AND constraint_def.confrelid = TG_RELID\n          AND namespace.nspname = 'recipeweave' AND cardinality(constraint_def.conkey) = 1\n    LOOP\n        EXECUTE format('SELECT EXISTS (SELECT 1 FROM %I.%I WHERE %I = $1)',\n            reference.schema_name, reference.table_name, reference.column_name) INTO referenced USING OLD.id;\n        IF referenced THEN\n            RAISE EXCEPTION '採用済みの定義版は変更・削除できません。新IDを作成してください' USING ERRCODE = '23514';\n        END IF;\n    END LOOP;\n    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;\nEND;\n$$",
+    "CREATE POLICY owned_access ON recipeweave.shopping_item\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = shopping_item.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR (\n        SELECT r1.user_id\n        FROM recipeweave.cooking_session AS r0\n        INNER JOIN recipeweave.menu AS r1 ON r0.menu_id = r1.id\n        WHERE r0.id = shopping_item.session_id\n    ) = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
+    "CREATE FUNCTION recipeweave.guard_adopted_definition() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    reference record;\n    referenced boolean;\nBEGIN\n    IF TG_OP = 'UPDATE' AND to_jsonb(OLD) ? 'status'\n       AND (to_jsonb(NEW) - 'status') = (to_jsonb(OLD) - 'status') THEN RETURN NEW; END IF;\n    FOR reference IN\n        SELECT namespace.nspname AS schema_name, child.relname AS table_name, attribute.attname AS column_name\n        FROM pg_constraint constraint_def\n        JOIN pg_class child ON child.oid = constraint_def.conrelid\n        JOIN pg_namespace namespace ON namespace.oid = child.relnamespace\n        JOIN pg_attribute attribute ON attribute.attrelid = child.oid AND attribute.attnum = constraint_def.conkey[1]\n        WHERE constraint_def.contype = 'f' AND constraint_def.confrelid = TG_RELID\n          AND namespace.nspname = 'recipeweave' AND cardinality(constraint_def.conkey) = 1\n    LOOP\n        EXECUTE format('SELECT EXISTS (SELECT 1 FROM %I.%I WHERE %I = $1)',\n            reference.schema_name, reference.table_name, reference.column_name) INTO referenced USING OLD.id;\n        IF referenced THEN\n            RAISE EXCEPTION '採用済みの定義版は変更・削除できません。新IDを作成してください' USING ERRCODE = '23514';\n        END IF;\n    END LOOP;\n    RETURN CASE WHEN TG_OP = 'DELETE' THEN OLD ELSE NEW END;\nEND;\n$$",
     "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.product_version\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()",
     "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.product_component\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()",
     "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.conversion\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()",
@@ -22989,6 +23094,8 @@
     "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.food_identity\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()",
     "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.generation_template\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()",
     "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.operation_parameter\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()",
+    "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.unit\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()",
+    "CREATE TRIGGER adopted_definition BEFORE UPDATE OR DELETE ON recipeweave.operation\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_adopted_definition()",
     "ALTER TABLE recipeweave.recipe_version ADD COLUMN description TEXT",
     "ALTER TABLE recipeweave.recipe_step ADD COLUMN title TEXT",
     "ALTER TABLE recipeweave.recipe_ingredient ADD COLUMN note TEXT",
@@ -23028,19 +23135,19 @@
     "CREATE TRIGGER immutable_id BEFORE UPDATE ON recipeweave.user_food\nFOR EACH ROW EXECUTE FUNCTION recipeweave.reject_identity_change()",
     "ALTER TABLE recipeweave.user_food ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.user_food FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.user_food\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.user_food\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "CREATE TRIGGER immutable_id BEFORE UPDATE ON recipeweave.user_pantry_food\nFOR EACH ROW EXECUTE FUNCTION recipeweave.reject_identity_change()",
     "ALTER TABLE recipeweave.user_pantry_food ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.user_pantry_food FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.user_pantry_food\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.user_pantry_food\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_pantry_food.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "CREATE TRIGGER immutable_id BEFORE UPDATE ON recipeweave.pantry_consumption\nFOR EACH ROW EXECUTE FUNCTION recipeweave.reject_identity_change()",
     "ALTER TABLE recipeweave.pantry_consumption ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.pantry_consumption FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.pantry_consumption\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.pantry_consumption\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR pantry_consumption.user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "CREATE TRIGGER immutable_id BEFORE UPDATE ON recipeweave.user_shopping_check\nFOR EACH ROW EXECUTE FUNCTION recipeweave.reject_identity_change()",
     "ALTER TABLE recipeweave.user_shopping_check ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.user_shopping_check FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY owned_access ON recipeweave.user_shopping_check\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)\nWITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY owned_access ON recipeweave.user_shopping_check\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)\nWITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "CREATE FUNCTION recipeweave.check_receipt_reference() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    v_import_id uuid;\n    current_import recipeweave.receipt_import%ROWTYPE;\n    current_lot recipeweave.pantry_lot%ROWTYPE;\nBEGIN\n\n    EXECUTE format('SELECT * FROM recipeweave.%I WHERE id = $1', TG_TABLE_NAME) INTO NEW USING NEW.id;\n    IF NEW.id IS NULL THEN RETURN NULL; END IF;\n    IF TG_TABLE_NAME = 'receipt_import' THEN\n        v_import_id := NEW.id;\n    ELSIF TG_TABLE_NAME = 'receipt_line' THEN\n        v_import_id := NEW.import_id;\n        IF NEW.pantry_lot_id IS NOT NULL THEN\n            SELECT * INTO current_lot FROM recipeweave.pantry_lot WHERE id = NEW.pantry_lot_id;\n            SELECT * INTO current_import FROM recipeweave.receipt_import WHERE id = v_import_id;\n            IF current_lot.user_id <> current_import.user_id OR current_lot.source_import_id IS DISTINCT FROM v_import_id\n               OR current_lot.form_id IS DISTINCT FROM NEW.form_id THEN\n                RAISE EXCEPTION 'レシート行と在庫ロットの所有者・登録元・食材が不一致です' USING ERRCODE = '23514';\n            END IF;\n        END IF;\n        IF NEW.product_version_id IS NOT NULL AND NOT EXISTS (\n            SELECT 1 FROM recipeweave.product_version WHERE id = NEW.product_version_id AND form_id = NEW.form_id\n        ) THEN RAISE EXCEPTION 'レシートの商品と食材形態が不一致です' USING ERRCODE = '23514'; END IF;\n    ELSIF TG_TABLE_NAME = 'pantry_lot' THEN\n        v_import_id := NEW.source_import_id;\n        IF v_import_id IS NULL THEN RETURN NULL; END IF;\n        IF NOT EXISTS (SELECT 1 FROM recipeweave.receipt_import WHERE id = v_import_id AND user_id = NEW.user_id) THEN\n            RAISE EXCEPTION '他人のレシートへ在庫を紐付けできません' USING ERRCODE = '23514';\n        END IF;\n    END IF;\n    SELECT * INTO current_import FROM recipeweave.receipt_import WHERE id = v_import_id FOR UPDATE;\n    IF NOT FOUND THEN RETURN NULL; END IF;\n    IF current_import.status = 'committed' AND EXISTS (\n        SELECT 1 FROM recipeweave.receipt_line line WHERE line.import_id = v_import_id\n        AND (line.decision = 'unresolved' OR (line.decision = 'accepted' AND line.pantry_lot_id IS NULL))\n    ) THEN RAISE EXCEPTION '未解決または未登録のレシート行が残っています' USING ERRCODE = '23514'; END IF;\n    IF current_import.status = 'reverted' AND EXISTS (\n        SELECT 1 FROM recipeweave.pantry_lot lot WHERE lot.source_import_id = v_import_id AND lot.status = 'active'\n        AND NOT lot.edited AND NOT EXISTS (SELECT 1 FROM recipeweave.pantry_consumption c WHERE c.lot_id = lot.id)\n    ) THEN RAISE EXCEPTION '取消後のレシートに未編集・未消費の有効な在庫が残っています' USING ERRCODE = '23514'; END IF;\n    RETURN NULL;\nEND;\n$$",
     "CREATE FUNCTION recipeweave.guard_receipt_lifecycle() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nBEGIN\n    IF OLD.user_id <> NEW.user_id OR OLD.idempotency_key <> NEW.idempotency_key\n       OR NEW.revision <= OLD.revision\n       OR (OLD.status = 'reverted' AND NEW.status <> 'reverted')\n       OR (OLD.status = 'committed' AND NEW.status = 'draft') THEN\n        RAISE EXCEPTION 'レシートの状態・所有者・版の遷移が不正です' USING ERRCODE = '23514';\n    END IF;\n    IF NEW.status = 'reverted' THEN\n        SELECT COUNT(*) INTO NEW.undo_preserved_count FROM recipeweave.pantry_lot lot\n        WHERE lot.source_import_id = OLD.id AND lot.status = 'active'\n        AND (lot.edited OR EXISTS (SELECT 1 FROM recipeweave.pantry_consumption c WHERE c.lot_id = lot.id));\n    END IF;\n    RETURN NEW;\nEND;\n$$",
     "CREATE FUNCTION recipeweave.check_consumption_owner() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nBEGIN\n\n    EXECUTE format('SELECT * FROM recipeweave.%I WHERE id = $1', TG_TABLE_NAME) INTO NEW USING NEW.id;\n    IF NEW.id IS NULL THEN RETURN NULL; END IF;\n    IF NOT EXISTS (\n        SELECT 1 FROM recipeweave.pantry_lot lot, recipeweave.cooking_session session\n        JOIN recipeweave.menu menu ON menu.id = session.menu_id\n        WHERE lot.id = NEW.lot_id AND lot.user_id = NEW.user_id AND lot.unit_id = NEW.unit_id\n        AND session.id = NEW.session_id AND menu.user_id = NEW.user_id\n    ) THEN RAISE EXCEPTION '消費元と調理の所有者・単位が不一致です' USING ERRCODE = '23514'; END IF;\n    RETURN NULL;\nEND;\n$$",
@@ -23052,8 +23159,8 @@
     "ALTER TABLE recipeweave.food ADD COLUMN owner_id UUID",
     "ALTER TABLE recipeweave.food ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.food FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY food_read ON recipeweave.food FOR SELECT\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin' OR owner_id IS null\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
-    "CREATE POLICY food_write ON recipeweave.food FOR ALL\nUSING (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)\nWITH CHECK (\n    CURRENT_SETTING('recipeweave.role', true) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', true), '')::UUID\n)",
+    "CREATE POLICY food_read ON recipeweave.food FOR SELECT\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR owner_id IS NULL\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
+    "CREATE POLICY food_write ON recipeweave.food FOR ALL\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)\nWITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "CREATE FUNCTION recipeweave.food_visible(food_id UUID) RETURNS BOOLEAN\nLANGUAGE sql STABLE SET search_path = pg_catalog, recipeweave AS $$\n    SELECT EXISTS (SELECT 1 FROM recipeweave.food WHERE id = food_id);\n$$",
     "CREATE FUNCTION recipeweave.food_writable(food_id UUID) RETURNS BOOLEAN\nLANGUAGE sql STABLE SET search_path = pg_catalog, recipeweave AS $$\n    SELECT current_setting('recipeweave.role', true) = 'admin' OR EXISTS (\n        SELECT 1 FROM recipeweave.food WHERE id = food_id\n        AND owner_id = nullif(current_setting('recipeweave.user_id', true), '')::uuid\n    );\n$$",
     "CREATE FUNCTION recipeweave.check_private_food_owner() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nBEGIN\n\n    EXECUTE format('SELECT * FROM recipeweave.%I WHERE id = $1', TG_TABLE_NAME) INTO NEW USING NEW.id;\n    IF NEW.id IS NULL THEN RETURN NULL; END IF;\n    IF TG_TABLE_NAME = 'user_food' AND NOT EXISTS (\n        SELECT 1 FROM recipeweave.food WHERE id = NEW.food_id AND owner_id = NEW.user_id\n    ) THEN RAISE EXCEPTION '独自食材と所有者が一致しません' USING ERRCODE = '23514'; END IF;\n    RETURN NULL;\nEND;\n$$",
@@ -23113,22 +23220,32 @@
     "ALTER TABLE recipeweave.session_task ADD CONSTRAINT timer_duration CHECK (\n    timer_duration_s IS NULL OR timer_duration_s >= 0\n)",
     "ALTER TABLE recipeweave.session_task ADD CONSTRAINT timer_start_requires_duration CHECK (\n    timer_started_at IS NULL OR timer_duration_s IS NOT NULL\n)",
     "ALTER TABLE recipeweave.ingredient_total ADD COLUMN actual_amount NUMERIC(20, 6)",
-    "ALTER TABLE recipeweave.ingredient_total ADD COLUMN consumption_outcome TEXT NOT NULL DEFAULT 'not_requested'",
+    "ALTER TABLE recipeweave.ingredient_total\nADD COLUMN consumption_outcome TEXT NOT NULL DEFAULT 'not_requested'",
     "ALTER TABLE recipeweave.ingredient_total ADD CONSTRAINT actual_amount_finite CHECK (\n    actual_amount IS NULL\n    OR (actual_amount >= 0 AND actual_amount::TEXT NOT IN ('NaN', 'Infinity', '-Infinity'))\n)",
     "ALTER TABLE recipeweave.ingredient_total ADD CONSTRAINT consumption_outcome_values CHECK (\n    consumption_outcome IN ('not_requested', 'applied', 'insufficient', 'unknown', 'incompatible')\n)",
     "ALTER TABLE recipeweave.kitchen_resource ADD COLUMN active BOOLEAN NOT NULL DEFAULT TRUE",
     "ALTER TABLE recipeweave.receipt_import ADD COLUMN undo_preserved_count INTEGER NOT NULL DEFAULT 0",
-    "ALTER TABLE recipeweave.receipt_import ADD CONSTRAINT undo_preserved_count_nonnegative CHECK (undo_preserved_count >= 0)",
+    "ALTER TABLE recipeweave.receipt_import ADD CONSTRAINT undo_preserved_count_nonnegative CHECK (\n    undo_preserved_count >= 0\n)",
     "ALTER TABLE recipeweave.catalog_release ADD COLUMN owner_id UUID",
-    "ALTER TABLE recipeweave.catalog_release ADD CONSTRAINT private_catalog_unpublished CHECK (owner_id IS NULL OR published_at IS NULL)",
+    "ALTER TABLE recipeweave.catalog_release ADD CONSTRAINT private_catalog_unpublished CHECK (\n    owner_id IS NULL OR published_at IS NULL\n)",
     "ALTER TABLE recipeweave.catalog_release ENABLE ROW LEVEL SECURITY",
     "ALTER TABLE recipeweave.catalog_release FORCE ROW LEVEL SECURITY",
-    "CREATE POLICY catalog_read ON recipeweave.catalog_release FOR SELECT\nUSING (CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR owner_id IS NULL\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID)",
-    "CREATE POLICY catalog_write ON recipeweave.catalog_release FOR ALL\nUSING (CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID)\nWITH CHECK (CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID)",
+    "CREATE POLICY catalog_read ON recipeweave.catalog_release FOR SELECT\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin' OR owner_id IS NULL\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
+    "CREATE POLICY catalog_write ON recipeweave.catalog_release FOR ALL\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)\nWITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR owner_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
     "CREATE FUNCTION recipeweave.guard_private_owner() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nBEGIN\n    IF NEW.owner_id IS DISTINCT FROM OLD.owner_id THEN\n        RAISE EXCEPTION '所有者の付替えや私有データの共通公開への変更はできません' USING ERRCODE = '23514';\n    END IF;\n    RETURN NEW;\nEND;\n$$",
     "CREATE TRIGGER private_owner_immutable BEFORE UPDATE ON recipeweave.food\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_private_owner()",
     "CREATE TRIGGER private_owner_immutable BEFORE UPDATE ON recipeweave.catalog_release\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_private_owner()",
     "CREATE FUNCTION recipeweave.check_food_release_owner() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    catalog_owner uuid;\nBEGIN\n    SELECT owner_id INTO catalog_owner FROM recipeweave.catalog_release WHERE id = NEW.release_id;\n    IF catalog_owner IS DISTINCT FROM NEW.owner_id THEN\n        RAISE EXCEPTION '食材と所属カタログの所有者が一致しません' USING ERRCODE = '23514';\n    END IF;\n    RETURN NULL;\nEND;\n$$",
-    "CREATE CONSTRAINT TRIGGER food_release_owner AFTER INSERT OR UPDATE ON recipeweave.food\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_food_release_owner()"
+    "CREATE CONSTRAINT TRIGGER food_release_owner AFTER INSERT OR UPDATE ON recipeweave.food\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION recipeweave.check_food_release_owner()",
+    "ALTER TABLE recipeweave.food\nADD CONSTRAINT food_name_wire_length CHECK (CHAR_LENGTH(name) <= 100)",
+    "ALTER TABLE recipeweave.food_alias\nADD CONSTRAINT food_alias_alias_wire_length CHECK (CHAR_LENGTH(alias) <= 500)",
+    "ALTER TABLE recipeweave.food_form\nADD CONSTRAINT food_form_name_wire_length CHECK (CHAR_LENGTH(name) <= 500)",
+    "ALTER TABLE recipeweave.recipe\nADD CONSTRAINT recipe_title_wire_length CHECK (CHAR_LENGTH(title) <= 500)",
+    "ALTER TABLE recipeweave.recipe_version\nADD CONSTRAINT recipe_version_description_wire_length CHECK (CHAR_LENGTH(description) <= 5000)",
+    "ALTER TABLE recipeweave.recipe_step\nADD CONSTRAINT recipe_step_title_wire_length CHECK (CHAR_LENGTH(title) <= 500)",
+    "ALTER TABLE recipeweave.recipe_step\nADD CONSTRAINT recipe_step_instruction_wire_length CHECK (CHAR_LENGTH(instruction) <= 5000)",
+    "ALTER TABLE recipeweave.recipe_ingredient\nADD CONSTRAINT recipe_ingredient_note_wire_length CHECK (CHAR_LENGTH(note) <= 500)",
+    "ALTER TABLE recipeweave.resource_type\nADD CONSTRAINT resource_type_name_wire_length CHECK (CHAR_LENGTH(name) <= 500)",
+    "ALTER TABLE recipeweave.axis_option\nADD CONSTRAINT axis_option_label_wire_length CHECK (CHAR_LENGTH(label) <= 500)"
   ]
 }

@@ -6,7 +6,8 @@ from typing import Any, LiteralString
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 主体とIDが両方一致する有効状態を確認する。
+    "query": """\
+-- 主体とIDが両方一致する有効状態を確認する。
 SELECT
     id,
     state

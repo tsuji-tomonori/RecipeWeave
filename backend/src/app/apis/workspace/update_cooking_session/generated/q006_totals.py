@@ -1,15 +1,17 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: b92e100098bca49e44bb8c3ce4fc10a206726fadb1a5fb2ed59fcefae2212870
+# SQLのSHA256: 664f398c861b8933385571c0f05823a4cb2fee31db3dccd0d7c329dc1453666f
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
 from psycopg import Connection
 
 QUERIES: dict[str, LiteralString] = {
-    "query": """-- 消費する量の正本はクライアントの適用結果でなくDBの需要行とする。
+    "query": """\
+-- 消費する量の正本はクライアントの適用結果でなくDBの需要行とする。
 SELECT
     t.id,
-    t.form_id, t.product_version_id,
+    t.form_id,
+    t.product_version_id,
     t.unit_id,
     t.required_amount,
     fm.food_id,

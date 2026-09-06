@@ -4,6 +4,7 @@ WITH candidate AS (
         recipe.id,
         recipe.title,
         recipe.status AS recipe_status,
+        recipe.withdrawal_reason,
         recipe_view.id AS version_id,
         recipe_view.description,
         recipe_view.base_servings,
@@ -40,6 +41,7 @@ matched AS (
         candidate.id,
         candidate.title,
         candidate.recipe_status,
+        candidate.withdrawal_reason,
         candidate.version_id,
         candidate.description,
         candidate.base_servings,
@@ -101,6 +103,7 @@ page AS (
         matched.id,
         matched.title,
         matched.recipe_status,
+        matched.withdrawal_reason,
         matched.version_id,
         matched.description,
         matched.base_servings,
@@ -118,6 +121,13 @@ payloads AS (
         page.title,
         JSONB_BUILD_OBJECT(
             'id', page.id::TEXT, 'name', page.title, 'description', page.description,
+            'versionId', page.version_id::TEXT,
+            'publicationStatus', CASE
+                WHEN page.recipe_status = 'withdrawn'
+                    THEN 'withdrawn'
+                ELSE page.version_status
+            END,
+            'withdrawalReason', page.withdrawal_reason,
             'servings', page.base_servings, 'minutes', page.minutes,
             'equipment', COALESCE((
                 SELECT JSONB_AGG(DISTINCT equipment_type.name)
@@ -133,6 +143,9 @@ payloads AS (
             'ingredients', COALESCE((
                 SELECT
                     JSONB_AGG(JSONB_BUILD_OBJECT(
+                        'ingredientId', ingredient.id::TEXT,
+                        'formId', ingredient.form_id::TEXT,
+                        'productVersionId', ingredient.product_version_id::TEXT,
                         'foodId', form.food_id::TEXT,
                         'quantity',
                         JSONB_BUILD_OBJECT('value', ingredient.amount, 'unit', unit.code),

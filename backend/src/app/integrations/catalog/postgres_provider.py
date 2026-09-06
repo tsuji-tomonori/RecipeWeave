@@ -36,6 +36,8 @@ class PostgresCatalog:
         preview: bool = False,
         recipe_id: UUID | None = None,
         exclude_id: UUID | None = None,
+        version_id: UUID | None = None,
+        owner_id: UUID | None = None,
     ) -> tuple[list[Recipe], int]:
         queries = {
             "list_recipes": ("recipes/list_recipes", "q001_select_recipes"),
@@ -43,8 +45,7 @@ class PostgresCatalog:
             "random_recipe": ("recipes/random_recipe", "q001_random_recipe"),
         }
         slug, statement = queries[operation]
-        rows = OperationQueries(self.connection, slug).run(
-            statement,
+        parameters: dict[str, Any] = dict(
             q=query,
             selected_food_ids=selected_food_ids or [],
             excluded_food_ids=excluded_food_ids or [],
@@ -57,4 +58,7 @@ class PostgresCatalog:
             recipe_id=recipe_id,
             exclude_id=exclude_id,
         )
+        if operation == "get_recipe":
+            parameters.update(version_id=version_id, owner_id=owner_id)
+        rows = OperationQueries(self.connection, slug).run(statement, **parameters)
         return [Recipe.model_validate(row) for row in rows[0]["items"]], int(rows[0]["total"])

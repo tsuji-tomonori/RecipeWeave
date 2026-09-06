@@ -1,0 +1,208 @@
+{
+  "components": {
+    "schemas": {
+      "GenerationStratumMetricRow": {
+        "additionalProperties": false,
+        "description": "採用率・飽和度の実測のDB応答。",
+        "properties": {
+          "attempted": {
+            "description": "試行数",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Attempted",
+            "type": "string"
+          },
+          "cost_amount": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "同一通貨の費用",
+            "title": "Cost Amount"
+          },
+          "created_at": {
+            "description": "作成日時",
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "maxLength": 3,
+                "minLength": 3,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "JPY/USD等",
+            "title": "Currency"
+          },
+          "etag": {
+            "description": "更新・削除時のIf-Matchに使う行版",
+            "pattern": "^[0-9]+$",
+            "title": "Etag",
+            "type": "string"
+          },
+          "id": {
+            "description": "不変ID",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "input_tokens": {
+            "description": "入力トークン合計",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Input Tokens",
+            "type": "string"
+          },
+          "output_tokens": {
+            "description": "出力トークン合計",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Output Tokens",
+            "type": "string"
+          },
+          "publishable": {
+            "description": "公開基準通過数",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Publishable",
+            "type": "string"
+          },
+          "stratum_key": {
+            "description": "層の安定キー(料理構造x食品カテゴリx入手性)。集計定義はテンプレート版に固定",
+            "maxLength": 20000,
+            "minLength": 1,
+            "title": "Stratum Key",
+            "type": "string"
+          },
+          "template_id": {
+            "description": "対象テンプレート",
+            "format": "uuid",
+            "title": "Template Id",
+            "type": "string"
+          },
+          "unique_count": {
+            "description": "既存集合との差分数",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Unique Count",
+            "type": "string"
+          },
+          "valid": {
+            "description": "適合生成数",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "title": "Valid",
+            "type": "string"
+          },
+          "window_end": {
+            "description": "計測窓終了",
+            "format": "date-time",
+            "title": "Window End",
+            "type": "string"
+          },
+          "window_start": {
+            "description": "計測窓開始",
+            "format": "date-time",
+            "title": "Window Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "template_id",
+          "window_start",
+          "window_end",
+          "attempted",
+          "valid",
+          "unique_count",
+          "publishable",
+          "input_tokens",
+          "output_tokens",
+          "cost_amount",
+          "currency",
+          "stratum_key",
+          "etag"
+        ],
+        "title": "GenerationStratumMetricRow",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
+    "title": "RecipeWeave API",
+    "version": "0.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/entities/generation_stratum_metric/{row_id}": {
+      "get": {
+        "description": "採用率・飽和度の実測の取得。認証情報は依存から取得し、本人所有または管理者権限を検査する。",
+        "operationId": "entity_generation_stratum_metric_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenerationStratumMetricRow"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "認証が必要"
+          },
+          "403": {
+            "description": "操作・参照権限なし"
+          },
+          "404": {
+            "description": "対象なし"
+          },
+          "409": {
+            "description": "同時更新またはDB業務制約違反"
+          },
+          "422": {
+            "description": "入力不正"
+          },
+          "503": {
+            "description": "DB接続不可"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "採用率・飽和度の実測の取得",
+        "tags": [
+          "正規化データ: 採用率・飽和度の実測"
+        ]
+      }
+    }
+  }
+}
