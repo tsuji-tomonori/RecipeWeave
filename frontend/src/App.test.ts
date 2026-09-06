@@ -35,7 +35,19 @@ beforeEach(() => {
     },
     configurable: true,
   });
-  window.scrollTo = vi.fn();
+  Object.defineProperty(window, "scrollY", {
+    value: 0,
+    writable: true,
+    configurable: true,
+  });
+  window.scrollTo = vi.fn((options?: ScrollToOptions | number, y?: number) => {
+    const top = typeof options === "number" ? (y ?? 0) : (options?.top ?? 0);
+    Object.defineProperty(window, "scrollY", {
+      value: top,
+      writable: true,
+      configurable: true,
+    });
+  });
   window.confirm = vi.fn(() => true);
   URL.createObjectURL = vi.fn(() => "blob:receipt-preview");
   URL.revokeObjectURL = vi.fn();
@@ -80,6 +92,113 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
           .getAttribute("aria-pressed"),
       ).toBe("true"),
     );
+  });
+  it("restores list and home positions on screen back, while a new search starts at the top", async () => {
+    page("home");
+    await click("なすを選ぶ");
+    await click("卵を選ぶ");
+    await waitFor(() =>
+      expect(saved().search.selectedFoodIds).toEqual(["eggplant", "egg"]),
+    );
+    Object.defineProperty(window, "scrollY", { value: 320, writable: true });
+    await fireEvent.scroll(window);
+    await click("この2つで探す");
+    await screen.findByRole("heading", { name: "こんな一品、どう？" });
+    await waitFor(() =>
+      expect(window.scrollTo).toHaveBeenLastCalledWith({
+        top: 0,
+        behavior: "instant",
+      }),
+    );
+    Object.defineProperty(window, "scrollY", { value: 680, writable: true });
+    await fireEvent.scroll(window);
+    await click("なすと卵の醤油炒めを見る");
+    await screen.findByRole("heading", { name: "なすと卵の醤油炒め" });
+    await click("戻る");
+    await screen.findByRole("heading", { name: "こんな一品、どう？" });
+    await waitFor(() =>
+      expect(window.scrollTo).toHaveBeenLastCalledWith({
+        top: 680,
+        behavior: "instant",
+      }),
+    );
+    expect(saved().search.selectedFoodIds).toEqual(["eggplant", "egg"]);
+    await click("戻る");
+    await screen.findByRole("heading", { name: "今日の一品、ここから。" });
+    await waitFor(() =>
+      expect(window.scrollTo).toHaveBeenLastCalledWith({
+        top: 320,
+        behavior: "instant",
+      }),
+    );
+    await click("この2つで探す");
+    await screen.findByRole("heading", { name: "こんな一品、どう？" });
+    await waitFor(() =>
+      expect(window.scrollTo).toHaveBeenLastCalledWith({
+        top: 0,
+        behavior: "instant",
+      }),
+    );
+    Object.defineProperty(window, "scrollY", { value: 440, writable: true });
+    await fireEvent.scroll(window);
+    await click("条件");
+    await click("この条件で探す");
+    await waitFor(() =>
+      expect(window.scrollTo).toHaveBeenLastCalledWith({
+        top: 0,
+        behavior: "instant",
+      }),
+    );
+  });
+  it("restores the home origin of a random recipe and handles browser back without clearing selections", async () => {
+    page("home");
+    await click("なすを選ぶ");
+    await waitFor(() =>
+      expect(saved().search.selectedFoodIds).toEqual(["eggplant"]),
+    );
+    Object.defineProperty(window, "scrollY", { value: 520, writable: true });
+    await fireEvent.scroll(window);
+    const dish = document.querySelector<HTMLButtonElement>(".discover .recipe-card")!;
+    await fireEvent.click(dish);
+    await screen.findByRole("button", { name: "この料理を作る" });
+    await click("戻る");
+    await screen.findByRole("heading", { name: "今日の一品、ここから。" });
+    await waitFor(() =>
+      expect(window.scrollTo).toHaveBeenLastCalledWith({
+        top: 520,
+        behavior: "instant",
+      }),
+    );
+    await click("この1つで探す");
+    await screen.findByRole("heading", { name: "こんな一品、どう？" });
+    Object.defineProperty(window, "scrollY", { value: 750, writable: true });
+    await fireEvent.scroll(window);
+    await click("なすと卵の醤油炒めを見る");
+    await screen.findByRole("button", { name: "この料理を作る" });
+    window.history.back();
+    await screen.findByRole("heading", { name: "こんな一品、どう？" });
+    await waitFor(() =>
+      expect(window.scrollTo).toHaveBeenLastCalledWith({
+        top: 750,
+        behavior: "instant",
+      }),
+    );
+    expect(saved().search.selectedFoodIds).toEqual(["eggplant"]);
+  });
+  it("starts a reloaded page at the top while retaining persisted search selections", async () => {
+    const initial = createInitialState();
+    initial.search.selectedFoodIds = ["eggplant", "egg"];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+    Object.defineProperty(window, "scrollY", { value: 900, writable: true });
+    page("results");
+    await screen.findByRole("heading", { name: "こんな一品、どう？" });
+    await waitFor(() =>
+      expect(window.scrollTo).toHaveBeenLastCalledWith({
+        top: 0,
+        behavior: "instant",
+      }),
+    );
+    expect(saved().search.selectedFoodIds).toEqual(["eggplant", "egg"]);
   });
   it("registers only selected sample receipt foods, then reviews a duplicate without losing candidates", async () => {
     page("receipt");

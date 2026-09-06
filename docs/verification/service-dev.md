@@ -12,16 +12,21 @@
 | 検証対象 | 状態と証跡 |
 |---|---|
 | 利用者文書 | `docs/service/reviews/novice-review.md`、`receipt-review.md` に反復記録 |
-| 実装と動線 | `docs/service/reviews/implementation-ux-review.md` の指摘を修正中 |
+| 実装と動線 | 独立レビューの重大4件・中3件を修正し再確認。表示位置保持も追加 |
 | 数量・レシート・端末保存 | TypeScript strict、独立計算・保存23テスト成功 |
-| Svelte画面 | 型検査・production build成功。疑似DOMの操作テストを修正中 |
-| FastAPI | ローカルAPI・認証など21テスト成功。SQL生成を含む全体はCI確認待ち |
-| AWS CDK | 型・lint・Data/OIDC/config 3テスト成功。実Lambdaを使う5テストと全体合成はCI待ち |
-| 実装由来の設計 | OpenAPI生成済み。SQL wrapperとCDKを含む全体生成・差分確認はCI待ち |
+| Svelte画面 | 型・build成功。疑似DOM11テストと計算・保存23テストを実行。最新CI確認待ち |
+| FastAPI | CIで26テスト、Ruff・Pyright・mypy成功。移行契約4件を追加して最新CI確認中 |
+| AWS CDK | 実Lambda梱包はCI成功。8構造検査中の期待値誤り1件を修正して再確認中 |
+| 実装由来の設計 | OpenAPIとSQL wrapperの生成成功。CDKを含む全体生成・差分確認はCI待ち |
 | GitHub Pages | 初期設定未完了。現連携から設定を変更できないため未公開 |
 | AWS実環境 | 接続が再認証を要求。未配備、Cognito/DSQL実接続は未受入 |
 | 実ブラウザ・実機 | この作業環境のローカルURL制限により未実施。疑似DOMテストと区別 |
 | OCR一般精度 | 実店舗の多様なレシートによる精度測定は未実施。必ず確認・訂正を通す |
+
+NodeのTesseract日本語エンジンと同梱モデルは、生成済みの操作画像22を使った
+スモーク検査で195文字（うち日本語77文字）を認識した。実ブラウザのworker読込みや
+実レシートの認識精度を示す試験ではなく、認識全文は記録していない。
+利用者マニュアル7 HTMLのリンク・画像・日本語見出しanchorは検査済み。
 
 ## 再現
 

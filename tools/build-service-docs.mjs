@@ -5,7 +5,22 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const requireFrontend = createRequire(join(root, 'frontend/package.json'));
-const { marked } = await import(pathToFileURL(requireFrontend.resolve('marked')).href);
+const { Marked } = await import(pathToFileURL(requireFrontend.resolve('marked')).href);
+function renderMarkdown(text) {
+  const counts = new Map();
+  const parser = new Marked({ renderer: {
+    heading({ tokens, depth }) {
+      const inner = this.parser.parseInline(tokens);
+      const plain = inner.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&');
+      const slug = plain.toLowerCase().replace(/[^\p{L}\p{N}_\s-]/gu, '').trim().replace(/\s/g, '-') || 'section';
+      const count = counts.get(slug) || 0;
+      counts.set(slug, count + 1);
+      const id = count ? `${slug}-${count}` : slug;
+      return `<h${depth} id="${id}">${inner}</h${depth}>\n`;
+    },
+  } });
+  return parser.parse(text);
+}
 const source = join(root, 'docs/service');
 const out = resolve(root, process.argv[2] ?? 'frontend/public/help');
 const names = {
@@ -22,7 +37,7 @@ const page = (title, body) => `<!doctype html><html lang="ja"><head><meta charse
 await mkdir(out, { recursive: true });
 for (const [key, title] of Object.entries(names)) {
   const text = await readFile(join(source, `${key}.md`), 'utf8');
-  const html = marked.parse(text).replace(/href="([^"#]+)\.md(?=["#])/g, 'href="$1.html');
+  const html = renderMarkdown(text).replace(/href="([^"#]+)\.md(?=["#])/g, 'href="$1.html');
   await writeFile(join(out, `${key}.html`), page(title, html));
   await writeFile(join(out, `${key}.md`), text);
 }

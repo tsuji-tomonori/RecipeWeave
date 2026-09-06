@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import {
     Home,
     Refrigerator,
@@ -249,7 +249,17 @@
     return work;
   }
 
-  function navigate(to: string, id = "") {
+  type ScrollMode = "top" | "restore";
+  const scrollPositions = new Map<string, number>();
+  const recipeOrigins = new Map<string, { route: string; id: string }>();
+  let activeRouteKey = "";
+  let pendingScrollMode: ScrollMode | null = null;
+  let navigationEpoch = 0;
+  function rememberScroll() {
+    if (activeRouteKey)
+      scrollPositions.set(activeRouteKey, Math.max(0, window.scrollY));
+  }
+  function navigate(to: string, id = "", scrollMode: ScrollMode = "top") {
     if (
       route === "receipt" &&
       to !== "receipt" &&
@@ -260,11 +270,24 @@
       )
     )
       return;
-    window.location.hash = `/${to}${id ? "/" + id : ""}`;
+    rememberScroll();
+    pendingScrollMode = scrollMode;
+    const hash = `#/${to}${id ? "/" + id : ""}`;
+    if (window.location.hash === hash) readRoute();
+    else window.location.hash = hash;
   }
   function readRoute() {
     const parts = window.location.hash.replace(/^#\/?/, "").split("/");
     const next = parts[0] || "home";
+    const nextKey = `/${next}${parts[1] ? "/" + parts[1] : ""}`;
+    const scrollMode =
+      pendingScrollMode ?? (activeRouteKey ? "restore" : "top");
+    pendingScrollMode = null;
+    rememberScroll();
+    if (scrollMode === "top") scrollPositions.set(nextKey, 0);
+    activeRouteKey = nextKey;
+    const scrollTop = scrollPositions.get(nextKey) ?? 0;
+    const epoch = ++navigationEpoch;
     if (route === "receipt" && next !== "receipt") {
       void clearReceipt();
     }
@@ -286,7 +309,11 @@
       pantryFoods = [...appState.settings.pantryFoodIds];
       equipment = [...appState.settings.equipment];
     }
-    window.scrollTo({ top: 0 });
+    // Restore only after Svelte has rendered the destination; ignore superseded navigation.
+    void tick().then(() => {
+      if (epoch === navigationEpoch)
+        window.scrollTo({ top: scrollTop, behavior: "instant" });
+    });
   }
   function foodName(id: string) {
     return foods.find((f) => f.id === id)?.name ?? id;
@@ -315,7 +342,12 @@
     randomId = next?.id ?? "";
   }
   function openRecipe(r: Recipe) {
+    recipeOrigins.set(r.id, { route, id: routeId });
     navigate("detail", r.id);
+  }
+  function returnFromRecipe() {
+    const origin = recipeOrigins.get(routeId) ?? { route: "results", id: "" };
+    navigate(origin.route, origin.id, "restore");
   }
   function updateDraft(next: RecipeDraft) {
     change((s) => D.saveDraft(s, next));
@@ -537,8 +569,10 @@
           equipment: $state.snapshot(stagedEquipment),
         },
       }))
-    )
+    ) {
       modal = "";
+      navigate(route, routeId, "top");
+    }
   }
   async function pickReceipt(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -897,13 +931,19 @@
       }
     }
     chooseRandom();
+    const previousRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
     readRoute();
     window.addEventListener("hashchange", readRoute);
+    window.addEventListener("scroll", rememberScroll, { passive: true });
     const timer = setInterval(() => {
       now = Date.now();
     }, 1000);
     return () => {
       window.removeEventListener("hashchange", readRoute);
+      window.removeEventListener("scroll", rememberScroll);
+      window.history.scrollRestoration = previousRestoration;
+      navigationEpoch += 1;
       clearInterval(timer);
       void clearReceipt();
     };
@@ -1044,7 +1084,7 @@
         </aside>
       </div>
     {:else if route === "ingredients"}
-      <button class="back" onclick={() => navigate("home")}
+      <button class="back" onclick={() => navigate("home", "", "restore")}
         ><ArrowLeft size={16} />ホームへ</button
       >
       <div class="page-header">
@@ -1086,7 +1126,8 @@
     {:else if route === "results" || route === "meal-add"}
       <button
         class="back"
-        onclick={() => navigate(route === "meal-add" ? "meal" : "home")}
+        onclick={() =>
+          navigate(route === "meal-add" ? "meal" : "home", "", "restore")}
         ><ArrowLeft size={16} />戻る</button
       >
       <div class="page-header">
@@ -1453,7 +1494,7 @@
       </div>
     {:else if route === "history"}
       <div class="desktop-narrow">
-        <button class="back" onclick={() => navigate("fridge")}
+        <button class="back" onclick={() => navigate("fridge", "", "restore")}
           ><ArrowLeft size={16} />冷蔵庫へ</button
         >
         <div class="page-header">
@@ -1502,8 +1543,8 @@
       </div>
     {:else if route === "detail" && currentRecipe && draft}
       <div class="recipe-detail">
-        <button class="back" onclick={() => navigate("results")}
-          ><ArrowLeft size={16} />料理一覧へ</button
+        <button class="back" onclick={returnFromRecipe}
+          ><ArrowLeft size={16} />戻る</button
         >
         <div class="columns">
           <section>
@@ -1632,7 +1673,9 @@
         </div>
       </div>
     {:else if route === "arrangements" && currentRecipe}
-      <button class="back" onclick={() => navigate("detail", currentRecipe.id)}
+      <button
+        class="back"
+        onclick={() => navigate("detail", currentRecipe.id, "restore")}
         ><ArrowLeft size={16} />料理に戻る</button
       >
       <div class="page-header">
@@ -1814,7 +1857,7 @@
           >
         </div>{/if}
     {:else if route === "shopping"}
-      <button class="back" onclick={() => navigate("meal")}
+      <button class="back" onclick={() => navigate("meal", "", "restore")}
         ><ArrowLeft size={16} />献立へ</button
       >
       <div class="page-header">
@@ -1883,7 +1926,7 @@
     {:else if route === "plan"}
       {@const plan = planned.steps}
       <div class="desktop-narrow">
-        <button class="back" onclick={() => navigate("meal")}
+        <button class="back" onclick={() => navigate("meal", "", "restore")}
           ><ArrowLeft size={16} />献立へ</button
         >
         <div class="page-header">

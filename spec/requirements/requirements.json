@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 3,
+  "catalog_revision": 4,
   "product": "RecipeWeave",
   "requirements": [
     {
@@ -490,11 +490,11 @@
       "action": "select",
       "category": "functional",
       "id": "REQ-SVC-SELECT-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "カード全体の押下による食材の選択状態",
       "rationale": "小さな位置合わせを求めず、選択できる対象と選択済みを利用者が判別できるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -510,9 +510,14 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/FoodTile.svelte"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -544,11 +549,11 @@
       "action": "select",
       "category": "functional",
       "id": "REQ-SVC-SEARCH-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "選択した食材を用いる公開対象料理",
       "rationale": "最初の料理選びを食材の選択だけで開始できるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -564,9 +569,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/App.test.ts",
+          "frontend/src/lib/domain.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -592,11 +603,11 @@
       "action": "provide",
       "category": "functional",
       "id": "REQ-SVC-DISCOVERY-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "利用条件を満たすランダムな一品",
       "rationale": "検索語を考えなくても料理を発見できるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -612,9 +623,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/App.test.ts",
+          "frontend/src/lib/domain.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -640,11 +657,11 @@
       "action": "provide",
       "category": "functional",
       "id": "REQ-SVC-SAMPLE-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "試用可能と明示した初期料理セット",
       "rationale": "将来の大量レシピ生成の完了を待たず、料理を探して作る操作を確認できるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -660,9 +677,16 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "data/samples/recipes.json",
+          "data/samples/foods.json",
+          "backend/src/app/integrations/catalog/json_provider.py"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "backend/tests/test_api.py"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -688,11 +712,11 @@
       "action": "derive",
       "category": "functional",
       "id": "REQ-SVC-SCALE-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "確定分量に対する人数比の材料量",
       "rationale": "同一料理の人数違いを別レシピとして探す手間をなくす。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -708,9 +732,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -736,11 +766,11 @@
       "action": "preserve",
       "category": "functional",
       "id": "REQ-SVC-AMOUNT-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "利用者が個別調整した材料分量",
       "rationale": "手持ちの量や好みに合わせた変更を検索後に行い、次の操作へ引き継ぐ。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -756,9 +786,16 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts",
+          "frontend/src/lib/persistence.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -784,11 +821,11 @@
       "action": "maintain",
       "category": "functional",
       "id": "REQ-SVC-LOCAL-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "冷蔵庫・献立・しおり・調理状態の端末内データ",
       "rationale": "ログインなしで途中から使え、保存範囲を誤認しないようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -804,9 +841,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/persistence.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -832,11 +875,11 @@
       "action": "generate",
       "category": "functional",
       "id": "REQ-SVC-OCR-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "画像内の日本語から得た登録候補",
       "rationale": "実画像から入力候補を作り、個別手入力の手間を減らす。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -852,9 +895,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/ocr.ts",
+          "frontend/scripts/prepare-ocr.mjs"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/scripts/ocr-smoke.mjs"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -880,11 +929,11 @@
       "action": "validate",
       "category": "functional",
       "id": "REQ-SVC-RECEIPT-INPUT-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "撮影または画像選択で渡された画像",
       "rationale": "端末ごとの撮影条件と画像制限を明示し、失敗後も利用を続けられるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -900,9 +949,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/receipt.ts",
+          "frontend/src/lib/ocr.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -934,11 +989,11 @@
       "action": "enable",
       "category": "functional",
       "id": "REQ-SVC-RECEIPT-REVIEW-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "選択する食品候補と除外した行",
       "rationale": "OCRの誤読と誤除外から利用者が自力で復帰できるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -954,9 +1009,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/receipt.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -982,11 +1043,11 @@
       "action": "constrain",
       "category": "functional",
       "id": "REQ-SVC-RECEIPT-CANCEL-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "確定していない画像・全文・候補",
       "rationale": "登録する前ならやめられ、取り消し作業を在庫へ持ち越さないようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1002,9 +1063,14 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/ocr.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1030,11 +1096,11 @@
       "action": "preserve",
       "category": "functional",
       "id": "REQ-SVC-QUANTITY-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "数量不明・購入単位・使用量の区別",
       "rationale": "価格やパック数を内容量へ取り違えることを防ぐ。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1050,9 +1116,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/lib/receipt.ts",
+          "frontend/src/lib/domain.ts",
+          "frontend/src/lib/types.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1078,11 +1150,11 @@
       "action": "generate",
       "category": "functional",
       "id": "REQ-SVC-RECEIPT-COMMIT-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "利用者が確認した食品候補の在庫追加",
       "rationale": "確認操作と在庫変更を対応させ、二重押下や途中失敗による不整合を防ぐ。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1098,9 +1170,16 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts",
+          "frontend/src/lib/persistence.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1126,11 +1205,11 @@
       "action": "provide",
       "category": "functional",
       "id": "REQ-SVC-RECEIPT-DUPLICATE-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "重複の可能性がある買い物の確認",
       "rationale": "同じ画像の再登録と似た別の買い物を、利用者が区別できるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1146,9 +1225,16 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/receipt.ts",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1180,11 +1266,11 @@
       "action": "enable",
       "category": "functional",
       "id": "REQ-SVC-RECEIPT-UNDO-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "指定した登録単位の未消費在庫の取消",
       "rationale": "過去の在庫や使用履歴を壊さず、誤登録を後から戻せるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1200,9 +1286,14 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1228,11 +1319,11 @@
       "action": "maintain",
       "category": "functional",
       "id": "REQ-SVC-FOOD-EDIT-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "食材名と任意の数量・保存場所・優先状態",
       "rationale": "検索に使う食材を選ぶ操作と在庫を書き換える操作を混同しないようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1248,9 +1339,14 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1276,11 +1372,11 @@
       "action": "preserve",
       "category": "functional",
       "id": "REQ-SVC-MEAL-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "選んだ各料理と独立した人数・分量",
       "rationale": "主菜3人分と副菜2人分のように必要な量を料理ごとに決められるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1296,9 +1392,14 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1324,11 +1425,11 @@
       "action": "derive",
       "category": "functional",
       "id": "REQ-SVC-MEAL-QUANTITY-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "各料理の確定した原材料必要量",
       "rationale": "別料理の同じ食材をまとめつつ、異なる単位や加工状態を根拠なく合算しないようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1344,9 +1445,14 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1372,11 +1478,11 @@
       "action": "maintain",
       "category": "functional",
       "id": "REQ-SVC-SHOPPING-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "購入チェックと変更後の必要量",
       "rationale": "買い物中のメモ操作で在庫が二重追加されることを防ぐ。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1392,9 +1498,14 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1420,11 +1531,11 @@
       "action": "provide",
       "category": "functional",
       "id": "REQ-SVC-COOK-PLAN-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "確定した料理工程の実行順",
       "rationale": "複数料理を作るときに手順や器具の衝突を利用者へ押し付けないようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1440,9 +1551,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1468,11 +1585,11 @@
       "action": "preserve",
       "category": "functional",
       "id": "REQ-SVC-COOK-RESUME-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "選んだ料理の工程位置と完了状態",
       "rationale": "画面を離れても最初からやり直さず、誤って進めた工程へ戻れるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1488,9 +1605,16 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts",
+          "frontend/src/lib/persistence.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1516,11 +1640,11 @@
       "action": "preserve",
       "category": "functional",
       "id": "REQ-SVC-COOK-TIMER-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "起動したタイマーとその経過状態",
       "rationale": "工程移動や再開で同じタイマーが増え、誤った残時間を伝えることを防ぐ。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1536,9 +1660,14 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1564,11 +1693,11 @@
       "action": "constrain",
       "category": "functional",
       "id": "REQ-SVC-STOCK-CONSENT-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "同単位で量が足りる在庫への確認済み使用量の反映",
       "rationale": "完成操作だけで不明な在庫を推測して減らすことを防ぐ。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1584,9 +1713,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1612,11 +1747,11 @@
       "action": "enforce",
       "category": "functional",
       "id": "REQ-SVC-EXCLUSION-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "利用者が指定した食べられない食材の条件",
       "rationale": "入口によって除外条件が失われ、意図しない食品を提案することを防ぐ。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1632,9 +1767,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1660,11 +1801,11 @@
       "action": "enable",
       "category": "functional",
       "id": "REQ-SVC-BACKUP-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "利用者が指定したバックアップ内容による現在データの置換",
       "rationale": "同期のない試用版でも持ち出しと復元を行い、不正ファイルによるデータ消失を防ぐ。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1680,9 +1821,15 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/persistence.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "functional",
       "verification": {
@@ -1708,11 +1855,11 @@
       "action": "constrain",
       "category": "nonfunctional",
       "id": "REQ-SVC-PRIVACY-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "確認のため一時的に保持した画像とOCR全文の保存期間",
       "rationale": "レシートの個人情報を在庫登録に不要な形で残さないようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1728,9 +1875,18 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/ocr.ts",
+          "frontend/src/lib/receipt.ts",
+          "frontend/src/lib/persistence.ts",
+          "frontend/src/lib/types.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "frontend/src/lib/domain.test.ts",
+          "frontend/src/App.test.ts"
+        ]
       },
       "type": "data",
       "verification": {
@@ -1756,11 +1912,11 @@
       "action": "preserve",
       "category": "functional",
       "id": "REQ-SVC-BOOKMARK-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "料理IDに対するしおり",
       "rationale": "保存した料理と今回調整した量の意味を混同しないようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1776,7 +1932,11 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "frontend/src/lib/domain.ts",
+          "frontend/src/lib/persistence.ts"
+        ],
         "standards": [],
         "tests": []
       },
@@ -1804,11 +1964,11 @@
       "action": "provide",
       "category": "functional",
       "id": "REQ-SVC-GUIDE-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "調理工程で参照した切り方",
       "rationale": "用語が分からないため調理を中断したり、工程位置を見失うことを防ぐ。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1824,7 +1984,9 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte"
+        ],
         "standards": [],
         "tests": []
       },
@@ -1852,11 +2014,11 @@
       "action": "provide",
       "category": "nonfunctional",
       "id": "REQ-SVC-CAPABILITY-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "実際に利用できる機能と未提供機能",
       "rationale": "仮想レビューや静的画像を実装成功と誤認せず、利用者が試せる範囲を判断できるようにする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1872,7 +2034,10 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/src/App.svelte",
+          "tools/build-service-docs.mjs"
+        ],
         "standards": [],
         "tests": []
       },
@@ -1900,11 +2065,11 @@
       "action": "provide",
       "category": "nonfunctional",
       "id": "REQ-SVC-PAGES-001",
-      "last_changed_by": "service-spec:2026-09-05:review2",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "検査対象の変更版と対応したDevプレビュー",
       "rationale": "ユーザーが依頼したGitHub Pages上で、変更結果を継続して確認できる状態にする。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "project",
       "source_refs": [
         "user:2026-09-05:recipeweave-dev-pages",
@@ -1919,7 +2084,11 @@
           "docs/service/manual.md",
           "docs/service/screens-and-flows.md"
         ],
-        "implementation": [],
+        "implementation": [
+          ".github/workflows/dev.yml",
+          "frontend/vite.config.ts",
+          "frontend/package.json"
+        ],
         "standards": [],
         "tests": []
       },
@@ -1953,11 +2122,11 @@
       "action": "provide",
       "category": "nonfunctional",
       "id": "REQ-DEV-ARCH-001",
-      "last_changed_by": "dev-profile:2026-09-05:adr0001",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "ADR-0001で採用した構成に従う実装プロファイル",
       "rationale": "CornellNoteWebの既知の開発方針へおおむね合わせるという依頼を、採用済みADRの構成として検証可能に固定する。未確認の別会話全体への完全準拠は主張しない。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "project",
       "source_refs": [
         "user:2026-09-05:cornellnoteweb-architecture",
@@ -1973,9 +2142,26 @@
           "docs/design/ADR-0001-service-dev.md",
           "docs/service/overview.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "frontend/package.json",
+          "frontend/src/App.svelte",
+          "backend/src/app/main.py",
+          "backend/src/app/core/dependencies.py",
+          "backend/src/app/integrations/auth/cognito_provider.py",
+          "backend/src/app/integrations/state/memory_provider.py",
+          "backend/src/app/integrations/state/dsql_provider.py",
+          "infra/lib/data-stack.ts",
+          "infra/lib/service-stack.ts"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "backend/tests/test_api.py",
+          "backend/tests/test_auth.py",
+          "backend/tests/test_state.py",
+          "backend/tests/test_dsql.py",
+          "infra/test/core.test.ts",
+          "infra/test/stack.test.ts"
+        ]
       },
       "type": "constraint",
       "verification": {
@@ -2013,11 +2199,11 @@
       "action": "maintain",
       "category": "nonfunctional",
       "id": "REQ-DEV-QUALITY-001",
-      "last_changed_by": "dev-profile:2026-09-05:adr0001",
+      "last_changed_by": "trace:2026-09-06:dev-v0.1",
       "object": "採用した配備とデータ移行に対応する再現可能な検証証跡",
       "rationale": "インフラやDB移行をコードと検査で扱い、実装と設計文書の乖離、およびローカル検査と実環境受入の混同を防ぐ。",
       "retirement_reason": "",
-      "revision": 1,
+      "revision": 2,
       "scope": "project",
       "source_refs": [
         "user:2026-09-05:cornellnoteweb-development",
@@ -2032,9 +2218,27 @@
         "design": [
           "docs/design/ADR-0001-service-dev.md"
         ],
-        "implementation": [],
+        "implementation": [
+          "infra/lib/data-stack.ts",
+          "infra/lib/service-stack.ts",
+          "infra/lib/github-deploy-stack.ts",
+          "backend/tools/package_lambda.py",
+          "database/migrate.py",
+          "database/migrations/manifest.manual.json",
+          "database/migrations/001_user_state.sql",
+          "backend/src/app/integrations/state/dsql_provider.py",
+          "backend/src/app/tools/generate.py",
+          "tools/generate_service_design.py",
+          "tools/check_generated_service.py",
+          ".github/workflows/dev.yml"
+        ],
         "standards": [],
-        "tests": []
+        "tests": [
+          "backend/tests/test_generation.py",
+          "backend/tests/test_dsql.py",
+          "infra/test/core.test.ts",
+          "infra/test/stack.test.ts"
+        ]
       },
       "type": "operational",
       "verification": {
@@ -2044,5 +2248,5 @@
     }
   ],
   "schema_version": 1,
-  "updated_at": "2026-09-05"
+  "updated_at": "2026-09-06"
 }

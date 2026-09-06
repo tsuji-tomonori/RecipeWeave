@@ -52,6 +52,7 @@ jobs:
           npm run check --prefix frontend
           npm test --prefix frontend
           npm run build --prefix frontend
+          python tools/check_service_docs.py frontend/dist/help
       - name: Python lint, API architecture and strict types
         run: |
           uv run --locked ruff check packages/generator tools/generate_service_design.py

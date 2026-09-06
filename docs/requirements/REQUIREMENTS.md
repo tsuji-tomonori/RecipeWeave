@@ -2,9 +2,9 @@
 # RecipeWeave 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 3
+- カタログ版: 4
 - Product(JSON): <code>"RecipeWeave"</code>
-- 更新日(JSON): <code>"2026-09-05"</code>
+- 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
 - 機械可読view: `spec/requirements/requirements.json`
 
@@ -20,38 +20,38 @@
 | <code>"REQ-COST-001"</code> | 1 | 有効 | 機能 | 実験実行は、ユーザー未承認の大量課金なしを**維持する**（<code>"preserve"</code>） | 自動検査とartifact review |
 | <code>"REQ-BOUNDARY-001"</code> | 1 | 有効 | 機能 | workspaceは、frontend/backend/database/infra/batch/scriptsの境界を**維持する**（<code>"preserve"</code>） | 自動検査とartifact review |
 | <code>"REQ-DESIGN-001"</code> | 1 | 有効 | 機能 | as-built設計は、実装artifact由来の決定的な設計導線を**維持する**（<code>"preserve"</code>） | 自動検査とartifact review |
-| <code>"REQ-SVC-SELECT-001"</code> | 1 | 有効 | 機能 | 食材選択画面は、カード全体の押下による食材の選択状態を**選択する**（<code>"select"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-SEARCH-001"</code> | 1 | 有効 | 機能 | 料理検索は、選択した食材を用いる公開対象料理を**選択する**（<code>"select"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-DISCOVERY-001"</code> | 1 | 有効 | 機能 | ホームは、利用条件を満たすランダムな一品を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-SAMPLE-001"</code> | 1 | 有効 | 機能 | Dev公開版は、試用可能と明示した初期料理セットを**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-SCALE-001"</code> | 1 | 有効 | 機能 | 料理詳細は、確定分量に対する人数比の材料量を**導出する**（<code>"derive"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-AMOUNT-001"</code> | 1 | 有効 | 機能 | 料理詳細は、利用者が個別調整した材料分量を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-LOCAL-001"</code> | 1 | 有効 | 機能 | Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内データを**維持する**（<code>"maintain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-OCR-001"</code> | 1 | 有効 | 機能 | レシート読取は、画像内の日本語から得た登録候補を**生成する**（<code>"generate"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-RECEIPT-INPUT-001"</code> | 1 | 有効 | 機能 | レシート入力は、撮影または画像選択で渡された画像を**妥当性確認する**（<code>"validate"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-RECEIPT-REVIEW-001"</code> | 1 | 有効 | 機能 | 読取確認画面は、選択する食品候補と除外した行を**実現する**（<code>"enable"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-RECEIPT-CANCEL-001"</code> | 1 | 有効 | 機能 | レシート読取は、確定していない画像・全文・候補を**制約する**（<code>"constrain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-QUANTITY-001"</code> | 1 | 有効 | 機能 | 数量管理は、数量不明・購入単位・使用量の区別を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-RECEIPT-COMMIT-001"</code> | 1 | 有効 | 機能 | レシート登録は、利用者が確認した食品候補の在庫追加を**生成する**（<code>"generate"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-RECEIPT-DUPLICATE-001"</code> | 1 | 有効 | 機能 | レシート登録は、重複の可能性がある買い物の確認を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-RECEIPT-UNDO-001"</code> | 1 | 有効 | 機能 | レシート履歴は、指定した登録単位の未消費在庫の取消を**実現する**（<code>"enable"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-FOOD-EDIT-001"</code> | 1 | 有効 | 機能 | 冷蔵庫は、食材名と任意の数量・保存場所・優先状態を**維持する**（<code>"maintain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-MEAL-001"</code> | 1 | 有効 | 機能 | 献立は、選んだ各料理と独立した人数・分量を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-MEAL-QUANTITY-001"</code> | 1 | 有効 | 機能 | 献立の材料集計は、各料理の確定した原材料必要量を**導出する**（<code>"derive"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-SHOPPING-001"</code> | 1 | 有効 | 機能 | 買い物リストは、購入チェックと変更後の必要量を**維持する**（<code>"maintain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-COOK-PLAN-001"</code> | 1 | 有効 | 機能 | 調理の段取りは、確定した料理工程の実行順を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-COOK-RESUME-001"</code> | 1 | 有効 | 機能 | 調理画面は、選んだ料理の工程位置と完了状態を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-COOK-TIMER-001"</code> | 1 | 有効 | 機能 | 調理タイマーは、起動したタイマーとその経過状態を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-STOCK-CONSENT-001"</code> | 1 | 有効 | 機能 | 調理完了は、同単位で量が足りる在庫への確認済み使用量の反映を**制約する**（<code>"constrain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-EXCLUSION-001"</code> | 1 | 有効 | 機能 | 候補選定は、利用者が指定した食べられない食材の条件を**強制する**（<code>"enforce"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-BACKUP-001"</code> | 1 | 有効 | 機能 | データ管理は、利用者が指定したバックアップ内容による現在データの置換を**実現する**（<code>"enable"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-PRIVACY-001"</code> | 1 | 有効 | データ | レシートデータ管理は、確認のため一時的に保持した画像とOCR全文の保存期間を**制約する**（<code>"constrain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-BOOKMARK-001"</code> | 1 | 有効 | 機能 | 保存機能は、料理IDに対するしおりを**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-GUIDE-001"</code> | 1 | 有効 | 機能 | 技法ガイドは、調理工程で参照した切り方を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-CAPABILITY-001"</code> | 1 | 有効 | 品質 | 提供状態表示は、実際に利用できる機能と未提供機能を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-PAGES-001"</code> | 1 | 有効 | 運用 | 開発配布工程は、検査対象の変更版と対応したDevプレビューを**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-DEV-ARCH-001"</code> | 1 | 有効 | 制約 | RecipeWeaveの開発基盤は、ADR-0001で採用した構成に従う実装プロファイルを**提供する**（<code>"provide"</code>） | 構成コード・API契約の検査、認証と利用者分離の対象試験、実配備記録の照合 |
-| <code>"REQ-DEV-QUALITY-001"</code> | 1 | 有効 | 運用 | RecipeWeaveの開発工程は、採用した配備とデータ移行に対応する再現可能な検証証跡を**維持する**（<code>"maintain"</code>） | CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー |
+| <code>"REQ-SVC-SELECT-001"</code> | 2 | 有効 | 機能 | 食材選択画面は、カード全体の押下による食材の選択状態を**選択する**（<code>"select"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-SEARCH-001"</code> | 2 | 有効 | 機能 | 料理検索は、選択した食材を用いる公開対象料理を**選択する**（<code>"select"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-DISCOVERY-001"</code> | 2 | 有効 | 機能 | ホームは、利用条件を満たすランダムな一品を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-SAMPLE-001"</code> | 2 | 有効 | 機能 | Dev公開版は、試用可能と明示した初期料理セットを**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-SCALE-001"</code> | 2 | 有効 | 機能 | 料理詳細は、確定分量に対する人数比の材料量を**導出する**（<code>"derive"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-AMOUNT-001"</code> | 2 | 有効 | 機能 | 料理詳細は、利用者が個別調整した材料分量を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-LOCAL-001"</code> | 2 | 有効 | 機能 | Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内データを**維持する**（<code>"maintain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-OCR-001"</code> | 2 | 有効 | 機能 | レシート読取は、画像内の日本語から得た登録候補を**生成する**（<code>"generate"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-RECEIPT-INPUT-001"</code> | 2 | 有効 | 機能 | レシート入力は、撮影または画像選択で渡された画像を**妥当性確認する**（<code>"validate"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-RECEIPT-REVIEW-001"</code> | 2 | 有効 | 機能 | 読取確認画面は、選択する食品候補と除外した行を**実現する**（<code>"enable"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-RECEIPT-CANCEL-001"</code> | 2 | 有効 | 機能 | レシート読取は、確定していない画像・全文・候補を**制約する**（<code>"constrain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-QUANTITY-001"</code> | 2 | 有効 | 機能 | 数量管理は、数量不明・購入単位・使用量の区別を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-RECEIPT-COMMIT-001"</code> | 2 | 有効 | 機能 | レシート登録は、利用者が確認した食品候補の在庫追加を**生成する**（<code>"generate"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-RECEIPT-DUPLICATE-001"</code> | 2 | 有効 | 機能 | レシート登録は、重複の可能性がある買い物の確認を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-RECEIPT-UNDO-001"</code> | 2 | 有効 | 機能 | レシート履歴は、指定した登録単位の未消費在庫の取消を**実現する**（<code>"enable"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-FOOD-EDIT-001"</code> | 2 | 有効 | 機能 | 冷蔵庫は、食材名と任意の数量・保存場所・優先状態を**維持する**（<code>"maintain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-MEAL-001"</code> | 2 | 有効 | 機能 | 献立は、選んだ各料理と独立した人数・分量を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-MEAL-QUANTITY-001"</code> | 2 | 有効 | 機能 | 献立の材料集計は、各料理の確定した原材料必要量を**導出する**（<code>"derive"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-SHOPPING-001"</code> | 2 | 有効 | 機能 | 買い物リストは、購入チェックと変更後の必要量を**維持する**（<code>"maintain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-COOK-PLAN-001"</code> | 2 | 有効 | 機能 | 調理の段取りは、確定した料理工程の実行順を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-COOK-RESUME-001"</code> | 2 | 有効 | 機能 | 調理画面は、選んだ料理の工程位置と完了状態を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-COOK-TIMER-001"</code> | 2 | 有効 | 機能 | 調理タイマーは、起動したタイマーとその経過状態を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-STOCK-CONSENT-001"</code> | 2 | 有効 | 機能 | 調理完了は、同単位で量が足りる在庫への確認済み使用量の反映を**制約する**（<code>"constrain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-EXCLUSION-001"</code> | 2 | 有効 | 機能 | 候補選定は、利用者が指定した食べられない食材の条件を**強制する**（<code>"enforce"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-BACKUP-001"</code> | 2 | 有効 | 機能 | データ管理は、利用者が指定したバックアップ内容による現在データの置換を**実現する**（<code>"enable"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-PRIVACY-001"</code> | 2 | 有効 | データ | レシートデータ管理は、確認のため一時的に保持した画像とOCR全文の保存期間を**制約する**（<code>"constrain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-BOOKMARK-001"</code> | 2 | 有効 | 機能 | 保存機能は、料理IDに対するしおりを**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-GUIDE-001"</code> | 2 | 有効 | 機能 | 技法ガイドは、調理工程で参照した切り方を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-CAPABILITY-001"</code> | 2 | 有効 | 品質 | 提供状態表示は、実際に利用できる機能と未提供機能を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-PAGES-001"</code> | 2 | 有効 | 運用 | 開発配布工程は、検査対象の変更版と対応したDevプレビューを**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-DEV-ARCH-001"</code> | 2 | 有効 | 制約 | RecipeWeaveの開発基盤は、ADR-0001で採用した構成に従う実装プロファイルを**提供する**（<code>"provide"</code>） | 構成コード・API契約の検査、認証と利用者分離の対象試験、実配備記録の照合 |
+| <code>"REQ-DEV-QUALITY-001"</code> | 2 | 有効 | 運用 | RecipeWeaveの開発工程は、採用した配備とデータ移行に対応する再現可能な検証証跡を**維持する**（<code>"maintain"</code>） | CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー |
 
 ## REQ-DOMAIN-001: semantic food identity
 
@@ -385,8 +385,8 @@ as-built設計は、実装artifact由来の決定的な設計導線を**維持�
 根拠: 小さな位置合わせを求めず、選択できる対象と選択済みを利用者が判別できるようにする。
 根拠(JSON): <code>"小さな位置合わせを求めず、選択できる対象と選択済みを利用者が判別できるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -401,8 +401,8 @@ as-built設計は、実装artifact由来の決定的な設計導線を**維持�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/FoodTile.svelte"]</code>
+- テスト: <code>["frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -419,8 +419,8 @@ as-built設計は、実装artifact由来の決定的な設計導線を**維持�
 根拠: 最初の料理選びを食材の選択だけで開始できるようにする。
 根拠(JSON): <code>"最初の料理選びを食材の選択だけで開始できるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -437,8 +437,8 @@ as-built設計は、実装artifact由来の決定的な設計導線を**維持�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/App.test.ts","frontend/src/lib/domain.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -455,8 +455,8 @@ as-built設計は、実装artifact由来の決定的な設計導線を**維持�
 根拠: 検索語を考えなくても料理を発見できるようにする。
 根拠(JSON): <code>"検索語を考えなくても料理を発見できるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -471,8 +471,8 @@ as-built設計は、実装artifact由来の決定的な設計導線を**維持�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/App.test.ts","frontend/src/lib/domain.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -489,8 +489,8 @@ Dev公開版は、試用可能と明示した初期料理セットを**提供す
 根拠: 将来の大量レシピ生成の完了を待たず、料理を探して作る操作を確認できるようにする。
 根拠(JSON): <code>"将来の大量レシピ生成の完了を待たず、料理を探して作る操作を確認できるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -505,8 +505,8 @@ Dev公開版は、試用可能と明示した初期料理セットを**提供す
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","data/samples/recipes.json","data/samples/foods.json","backend/src/app/integrations/catalog/json_provider.py"]</code>
+- テスト: <code>["backend/tests/test_api.py"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -523,8 +523,8 @@ Dev公開版は、試用可能と明示した初期料理セットを**提供す
 根拠: 同一料理の人数違いを別レシピとして探す手間をなくす。
 根拠(JSON): <code>"同一料理の人数違いを別レシピとして探す手間をなくす。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -539,8 +539,8 @@ Dev公開版は、試用可能と明示した初期料理セットを**提供す
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -557,8 +557,8 @@ Dev公開版は、試用可能と明示した初期料理セットを**提供す
 根拠: 手持ちの量や好みに合わせた変更を検索後に行い、次の操作へ引き継ぐ。
 根拠(JSON): <code>"手持ちの量や好みに合わせた変更を検索後に行い、次の操作へ引き継ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -573,8 +573,8 @@ Dev公開版は、試用可能と明示した初期料理セットを**提供す
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts","frontend/src/lib/persistence.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -591,8 +591,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: ログインなしで途中から使え、保存範囲を誤認しないようにする。
 根拠(JSON): <code>"ログインなしで途中から使え、保存範囲を誤認しないようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -607,8 +607,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/persistence.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -625,8 +625,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 実画像から入力候補を作り、個別手入力の手間を減らす。
 根拠(JSON): <code>"実画像から入力候補を作り、個別手入力の手間を減らす。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -641,8 +641,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/ocr.ts","frontend/scripts/prepare-ocr.mjs"]</code>
+- テスト: <code>["frontend/scripts/ocr-smoke.mjs"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -659,8 +659,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 端末ごとの撮影条件と画像制限を明示し、失敗後も利用を続けられるようにする。
 根拠(JSON): <code>"端末ごとの撮影条件と画像制限を明示し、失敗後も利用を続けられるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -675,8 +675,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/receipt.ts","frontend/src/lib/ocr.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -693,8 +693,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: OCRの誤読と誤除外から利用者が自力で復帰できるようにする。
 根拠(JSON): <code>"OCRの誤読と誤除外から利用者が自力で復帰できるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -711,8 +711,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/receipt.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -729,8 +729,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 登録する前ならやめられ、取り消し作業を在庫へ持ち越さないようにする。
 根拠(JSON): <code>"登録する前ならやめられ、取り消し作業を在庫へ持ち越さないようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -745,8 +745,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/ocr.ts"]</code>
+- テスト: <code>["frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -763,8 +763,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 価格やパック数を内容量へ取り違えることを防ぐ。
 根拠(JSON): <code>"価格やパック数を内容量へ取り違えることを防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -779,8 +779,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/lib/receipt.ts","frontend/src/lib/domain.ts","frontend/src/lib/types.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -797,8 +797,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 確認操作と在庫変更を対応させ、二重押下や途中失敗による不整合を防ぐ。
 根拠(JSON): <code>"確認操作と在庫変更を対応させ、二重押下や途中失敗による不整合を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -813,8 +813,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts","frontend/src/lib/persistence.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -831,8 +831,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 同じ画像の再登録と似た別の買い物を、利用者が区別できるようにする。
 根拠(JSON): <code>"同じ画像の再登録と似た別の買い物を、利用者が区別できるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -847,8 +847,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/receipt.ts","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -865,8 +865,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 過去の在庫や使用履歴を壊さず、誤登録を後から戻せるようにする。
 根拠(JSON): <code>"過去の在庫や使用履歴を壊さず、誤登録を後から戻せるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -883,8 +883,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -901,8 +901,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 検索に使う食材を選ぶ操作と在庫を書き換える操作を混同しないようにする。
 根拠(JSON): <code>"検索に使う食材を選ぶ操作と在庫を書き換える操作を混同しないようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -917,8 +917,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -935,8 +935,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 主菜3人分と副菜2人分のように必要な量を料理ごとに決められるようにする。
 根拠(JSON): <code>"主菜3人分と副菜2人分のように必要な量を料理ごとに決められるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -951,8 +951,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -969,8 +969,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 別料理の同じ食材をまとめつつ、異なる単位や加工状態を根拠なく合算しないようにする。
 根拠(JSON): <code>"別料理の同じ食材をまとめつつ、異なる単位や加工状態を根拠なく合算しないようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -985,8 +985,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1003,8 +1003,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 買い物中のメモ操作で在庫が二重追加されることを防ぐ。
 根拠(JSON): <code>"買い物中のメモ操作で在庫が二重追加されることを防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1019,8 +1019,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1037,8 +1037,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 複数料理を作るときに手順や器具の衝突を利用者へ押し付けないようにする。
 根拠(JSON): <code>"複数料理を作るときに手順や器具の衝突を利用者へ押し付けないようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1053,8 +1053,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1071,8 +1071,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 画面を離れても最初からやり直さず、誤って進めた工程へ戻れるようにする。
 根拠(JSON): <code>"画面を離れても最初からやり直さず、誤って進めた工程へ戻れるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1087,8 +1087,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts","frontend/src/lib/persistence.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1105,8 +1105,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 工程移動や再開で同じタイマーが増え、誤った残時間を伝えることを防ぐ。
 根拠(JSON): <code>"工程移動や再開で同じタイマーが増え、誤った残時間を伝えることを防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1121,8 +1121,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1139,8 +1139,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 完成操作だけで不明な在庫を推測して減らすことを防ぐ。
 根拠(JSON): <code>"完成操作だけで不明な在庫を推測して減らすことを防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1155,8 +1155,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1173,8 +1173,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 入口によって除外条件が失われ、意図しない食品を提案することを防ぐ。
 根拠(JSON): <code>"入口によって除外条件が失われ、意図しない食品を提案することを防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1189,8 +1189,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1207,8 +1207,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 同期のない試用版でも持ち出しと復元を行い、不正ファイルによるデータ消失を防ぐ。
 根拠(JSON): <code>"同期のない試用版でも持ち出しと復元を行い、不正ファイルによるデータ消失を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1223,8 +1223,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/persistence.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1241,8 +1241,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: レシートの個人情報を在庫登録に不要な形で残さないようにする。
 根拠(JSON): <code>"レシートの個人情報を在庫登録に不要な形で残さないようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `data`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `data`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
@@ -1257,8 +1257,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/ocr.ts","frontend/src/lib/receipt.ts","frontend/src/lib/persistence.ts","frontend/src/lib/types.ts"]</code>
+- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1275,8 +1275,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 保存した料理と今回調整した量の意味を混同しないようにする。
 根拠(JSON): <code>"保存した料理と今回調整した量の意味を混同しないようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1291,7 +1291,7 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts","frontend/src/lib/persistence.ts"]</code>
 - テスト: <code>[]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
@@ -1309,8 +1309,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 用語が分からないため調理を中断したり、工程位置を見失うことを防ぐ。
 根拠(JSON): <code>"用語が分からないため調理を中断したり、工程位置を見失うことを防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
@@ -1325,7 +1325,7 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte"]</code>
 - テスト: <code>[]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
@@ -1343,8 +1343,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 仮想レビューや静的画像を実装成功と誤認せず、利用者が試せる範囲を判断できるようにする。
 根拠(JSON): <code>"仮想レビューや静的画像を実装成功と誤認せず、利用者が試せる範囲を判断できるようにする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `quality`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `quality`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
@@ -1359,7 +1359,7 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
+- 実装: <code>["frontend/src/App.svelte","tools/build-service-docs.mjs"]</code>
 - テスト: <code>[]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
@@ -1377,8 +1377,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: ユーザーが依頼したGitHub Pages上で、変更結果を継続して確認できる状態にする。
 根拠(JSON): <code>"ユーザーが依頼したGitHub Pages上で、変更結果を継続して確認できる状態にする。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `operational`
-変更識別子: <code>"service-spec:2026-09-05:review2"</code>
+項目版: 2 / 状態: `active` / 種別: `operational`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
@@ -1393,7 +1393,7 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>[]</code>
+- 実装: <code>[".github/workflows/dev.yml","frontend/vite.config.ts","frontend/package.json"]</code>
 - テスト: <code>[]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
@@ -1411,8 +1411,8 @@ RecipeWeaveの開発基盤は、ADR-0001で採用した構成に従う実装プ�
 根拠: CornellNoteWebの既知の開発方針へおおむね合わせるという依頼を、採用済みADRの構成として検証可能に固定する。未確認の別会話全体への完全準拠は主張しない。
 根拠(JSON): <code>"CornellNoteWebの既知の開発方針へおおむね合わせるという依頼を、採用済みADRの構成として検証可能に固定する。未確認の別会話全体への完全準拠は主張しない。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `constraint`
-変更識別子: <code>"dev-profile:2026-09-05:adr0001"</code>
+項目版: 2 / 状態: `active` / 種別: `constraint`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
@@ -1429,8 +1429,8 @@ RecipeWeaveの開発基盤は、ADR-0001で採用した構成に従う実装プ�
 検証(JSON Object): <code>{"evidence":"採用済みADR-0001を要求源とする。構成の実装完成・対象試験・AWS実配備の受入証跡はこの要件追加時点では未登録。","method":"構成コード・API契約の検査、認証と利用者分離の対象試験、実配備記録の照合"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/design/ADR-0001-service-dev.md","docs/service/overview.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["frontend/package.json","frontend/src/App.svelte","backend/src/app/main.py","backend/src/app/core/dependencies.py","backend/src/app/integrations/auth/cognito_provider.py","backend/src/app/integrations/state/memory_provider.py","backend/src/app/integrations/state/dsql_provider.py","infra/lib/data-stack.ts","infra/lib/service-stack.ts"]</code>
+- テスト: <code>["backend/tests/test_api.py","backend/tests/test_auth.py","backend/tests/test_state.py","backend/tests/test_dsql.py","infra/test/core.test.ts","infra/test/stack.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1447,8 +1447,8 @@ RecipeWeaveの開発工程は、採用した配備とデータ移行に対応す
 根拠: インフラやDB移行をコードと検査で扱い、実装と設計文書の乖離、およびローカル検査と実環境受入の混同を防ぐ。
 根拠(JSON): <code>"インフラやDB移行をコードと検査で扱い、実装と設計文書の乖離、およびローカル検査と実環境受入の混同を防ぐ。"</code>
 
-項目版: 1 / 状態: `active` / 種別: `operational`
-変更識別子: <code>"dev-profile:2026-09-05:adr0001"</code>
+項目版: 2 / 状態: `active` / 種別: `operational`
+変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
@@ -1467,8 +1467,8 @@ RecipeWeaveの開発工程は、採用した配備とデータ移行に対応す
 検証(JSON Object): <code>{"evidence":"採用済みADR-0001と既存AGENTSの三つの開発規約を要求源とする。実装・試験traceは実装完成後に存在と結果を確認して登録する。","method":"CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/design/ADR-0001-service-dev.md"]</code>
-- 実装: <code>[]</code>
-- テスト: <code>[]</code>
+- 実装: <code>["infra/lib/data-stack.ts","infra/lib/service-stack.ts","infra/lib/github-deploy-stack.ts","backend/tools/package_lambda.py","database/migrate.py","database/migrations/manifest.manual.json","database/migrations/001_user_state.sql","backend/src/app/integrations/state/dsql_provider.py","backend/src/app/tools/generate.py","tools/generate_service_design.py","tools/check_generated_service.py",".github/workflows/dev.yml"]</code>
+- テスト: <code>["backend/tests/test_generation.py","backend/tests/test_dsql.py","infra/test/core.test.ts","infra/test/stack.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>

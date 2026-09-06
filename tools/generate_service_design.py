@@ -60,7 +60,10 @@ def render() -> str:
         exports = re.findall(
             r"export\s+(?:async\s+)?(?:function|class|interface|type|const)\s+(\w+)", text
         )
-        public = ", ".join(f"`{name}`" for name in exports) or "画面コンポーネント／起動処理"
+        fallback = (
+            "検証コード" if path.name.endswith(".test.ts") else "画面コンポーネント／起動処理"
+        )
+        public = ", ".join(f"`{name}`" for name in exports) or fallback
         lines.append(f"| `{path.relative_to(ROOT)}` | {public} | `{digest(path)}` |")
     lines += ["", "## SQL境界", "", "| SQL | SHA-256 |", "|---|---|"]
     sql_paths = sorted((ROOT / "backend/src").rglob("*.sql"))
