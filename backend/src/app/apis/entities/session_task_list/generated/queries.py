@@ -28,6 +28,8 @@ SELECT
     t.actual_end_at,
     t.timer_started_at,
     t.timer_duration_s,
+    t.duration_source,
+    t.confirmed_duration_s,
     t.xmin::TEXT AS etag
 FROM recipeweave.session_task AS t
 WHERE

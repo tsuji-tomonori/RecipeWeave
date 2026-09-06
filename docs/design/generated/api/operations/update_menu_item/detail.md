@@ -41,9 +41,9 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/workspace_service.py:187) / menu_id (backend/src/app/core/workspace_service.py:205) / menu_id (backend/src/app/core/workspace_service.py:279) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:302) / self.menu_id (backend/src/app/core/workspace_service.py:315) |
-| row_id | uuid4() (backend/src/app/core/workspace_service.py:71) / identifier(item.id) (backend/src/app/core/workspace_service.py:280) / uuid4() (backend/src/app/core/workspace_service.py:294) / row_id (backend/src/app/core/workspace_service.py:315) |
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| menu_id | menu_id (backend/src/app/core/workspace_service.py:188) / menu_id (backend/src/app/core/workspace_service.py:206) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:281) / menu_id (backend/src/app/core/workspace_service.py:303) / self.menu_id (backend/src/app/core/workspace_service.py:316) |
+| row_id | uuid4() (backend/src/app/core/workspace_service.py:72) / identifier(item.id) (backend/src/app/core/workspace_service.py:281) / uuid4() (backend/src/app/core/workspace_service.py:295) / row_id (backend/src/app/core/workspace_service.py:316) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 上記の条件に一致する行を削除する。参照先への削除動作はテーブル仕様の外部キー定義に従う。
 
@@ -63,9 +63,9 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| preview | local_auth_enabled() (backend/src/app/core/workspace_service.py:263) |
-| recipe_id | identifier(item.recipe_id) (backend/src/app/core/workspace_service.py:263) |
-| requested_version_id | identifier(item.recipe_version_id) if item.recipe_version_id else None (backend/src/app/core/workspace_service.py:263) |
+| preview | catalog_preview_enabled() (backend/src/app/core/workspace_service.py:264) |
+| recipe_id | identifier(item.recipe_id) (backend/src/app/core/workspace_service.py:264) |
+| requested_version_id | identifier(item.recipe_version_id) if item.recipe_version_id else None (backend/src/app/core/workspace_service.py:264) |
 
 代入・選択式: `rv.id; rv.base_servings; ARRAY(SELECT ao.id FROM recipeweave.recipe_option AS ro INNER JOIN recipeweave.axis_option AS ao ON ro.option_id = ao.id INNER JOIN recipeweave.axis AS ax ON ao.axis_id = ax.id WHERE ro.recipe_version_id = rv.id AND ax.code = 'dish_role' ORDER BY ao.id) AS role_option_ids`
 
@@ -83,7 +83,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| version_id | version[0]['id'] (backend/src/app/core/workspace_service.py:276) / version[0]['id'] (backend/src/app/core/workspace_service.py:280) |
+| version_id | version[0]['id'] (backend/src/app/core/workspace_service.py:277) / version[0]['id'] (backend/src/app/core/workspace_service.py:281) |
 
 代入・選択式: `ri.id; fm.food_id; ri.amount; ri.optional; ri.unit_id; ri.form_id; u.code AS unit`
 
@@ -99,9 +99,9 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/workspace_service.py:187) / menu_id (backend/src/app/core/workspace_service.py:205) / menu_id (backend/src/app/core/workspace_service.py:279) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:302) / self.menu_id (backend/src/app/core/workspace_service.py:315) |
-| name | r['name'] (backend/src/app/core/workspace_service.py:137) / name (backend/src/app/core/workspace_service.py:279) |
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| menu_id | menu_id (backend/src/app/core/workspace_service.py:188) / menu_id (backend/src/app/core/workspace_service.py:206) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:281) / menu_id (backend/src/app/core/workspace_service.py:303) / self.menu_id (backend/src/app/core/workspace_service.py:316) |
+| name | r['name'] (backend/src/app/core/workspace_service.py:138) / name (backend/src/app/core/workspace_service.py:280) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 変更する列とSQL式
 
@@ -127,11 +127,11 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/workspace_service.py:187) / menu_id (backend/src/app/core/workspace_service.py:205) / menu_id (backend/src/app/core/workspace_service.py:279) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:302) / self.menu_id (backend/src/app/core/workspace_service.py:315) |
-| role_option_id | roles[0] (backend/src/app/core/workspace_service.py:280) |
-| row_id | uuid4() (backend/src/app/core/workspace_service.py:71) / identifier(item.id) (backend/src/app/core/workspace_service.py:280) / uuid4() (backend/src/app/core/workspace_service.py:294) / row_id (backend/src/app/core/workspace_service.py:315) |
-| servings | float(r['servings']) (backend/src/app/core/workspace_service.py:193) / Decimal(str(item.servings)) (backend/src/app/core/workspace_service.py:280) |
-| version_id | version[0]['id'] (backend/src/app/core/workspace_service.py:276) / version[0]['id'] (backend/src/app/core/workspace_service.py:280) |
+| menu_id | menu_id (backend/src/app/core/workspace_service.py:188) / menu_id (backend/src/app/core/workspace_service.py:206) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:281) / menu_id (backend/src/app/core/workspace_service.py:303) / self.menu_id (backend/src/app/core/workspace_service.py:316) |
+| role_option_id | roles[0] (backend/src/app/core/workspace_service.py:281) |
+| row_id | uuid4() (backend/src/app/core/workspace_service.py:72) / identifier(item.id) (backend/src/app/core/workspace_service.py:281) / uuid4() (backend/src/app/core/workspace_service.py:295) / row_id (backend/src/app/core/workspace_service.py:316) |
+| servings | float(r['servings']) (backend/src/app/core/workspace_service.py:194) / Decimal(str(item.servings)) (backend/src/app/core/workspace_service.py:281) |
+| version_id | version[0]['id'] (backend/src/app/core/workspace_service.py:277) / version[0]['id'] (backend/src/app/core/workspace_service.py:281) |
 
 変更する列とSQL式
 
@@ -156,11 +156,11 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| amount | Decimal(str(amount.value)) if amount.value &gt; 0 else None (backend/src/app/core/workspace_service.py:294) |
-| ingredient_id | ingredient['id'] (backend/src/app/core/workspace_service.py:294) |
-| item_id | identifier(item.id) (backend/src/app/core/workspace_service.py:294) |
-| row_id | uuid4() (backend/src/app/core/workspace_service.py:71) / identifier(item.id) (backend/src/app/core/workspace_service.py:280) / uuid4() (backend/src/app/core/workspace_service.py:294) / row_id (backend/src/app/core/workspace_service.py:315) |
-| selected | amount.value &gt; 0 (backend/src/app/core/workspace_service.py:294) |
+| amount | Decimal(str(amount.value)) if amount.value &gt; 0 else None (backend/src/app/core/workspace_service.py:295) |
+| ingredient_id | ingredient['id'] (backend/src/app/core/workspace_service.py:295) |
+| item_id | identifier(item.id) (backend/src/app/core/workspace_service.py:295) |
+| row_id | uuid4() (backend/src/app/core/workspace_service.py:72) / identifier(item.id) (backend/src/app/core/workspace_service.py:281) / uuid4() (backend/src/app/core/workspace_service.py:295) / row_id (backend/src/app/core/workspace_service.py:316) |
+| selected | amount.value &gt; 0 (backend/src/app/core/workspace_service.py:295) |
 
 変更する列とSQL式
 
@@ -186,8 +186,8 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/workspace_service.py:187) / menu_id (backend/src/app/core/workspace_service.py:205) / menu_id (backend/src/app/core/workspace_service.py:279) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:302) / self.menu_id (backend/src/app/core/workspace_service.py:315) |
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| menu_id | menu_id (backend/src/app/core/workspace_service.py:188) / menu_id (backend/src/app/core/workspace_service.py:206) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:281) / menu_id (backend/src/app/core/workspace_service.py:303) / self.menu_id (backend/src/app/core/workspace_service.py:316) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 変更する列とSQL式
 
@@ -211,7 +211,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `revision`
 
@@ -227,7 +227,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 変更する列とSQL式
 
@@ -249,10 +249,10 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| action | queries.operation (backend/src/app/core/workspace_service.py:71) |
-| key_hash | hashlib.sha256(str(self.user_id).encode()).hexdigest() (backend/src/app/core/workspace_service.py:71) |
-| row_id | uuid4() (backend/src/app/core/workspace_service.py:71) / identifier(item.id) (backend/src/app/core/workspace_service.py:280) / uuid4() (backend/src/app/core/workspace_service.py:294) / row_id (backend/src/app/core/workspace_service.py:315) |
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| action | queries.operation (backend/src/app/core/workspace_service.py:72) |
+| key_hash | hashlib.sha256(str(self.user_id).encode()).hexdigest() (backend/src/app/core/workspace_service.py:72) |
+| row_id | uuid4() (backend/src/app/core/workspace_service.py:72) / identifier(item.id) (backend/src/app/core/workspace_service.py:281) / uuid4() (backend/src/app/core/workspace_service.py:295) / row_id (backend/src/app/core/workspace_service.py:316) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 変更する列とSQL式
 
@@ -280,7 +280,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `revision`
 
@@ -298,7 +298,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `p.id; f.food_id; f.name AS form; p.amount; u.code AS unit; p.original_amount; p.location; p.priority; p.expires_on; p.created_at; p.updated_at; p.source_import_id; p.status; p.edited; COALESCE(ofm.food_id, f.food_id) AS original_food_id; COALESCE(ou.code, u.code) AS original_unit`
 
@@ -315,7 +315,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `c.lot_id; c.amount; u.code AS unit; c.session_id`
 
@@ -331,7 +331,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `r.id; r.file_sha256; r.idempotency_key; r.created_at; r.status; r.reverted_at`
 
@@ -349,8 +349,8 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/workspace_service.py:187) / menu_id (backend/src/app/core/workspace_service.py:205) / menu_id (backend/src/app/core/workspace_service.py:279) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:302) / self.menu_id (backend/src/app/core/workspace_service.py:315) |
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| menu_id | menu_id (backend/src/app/core/workspace_service.py:188) / menu_id (backend/src/app/core/workspace_service.py:206) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:281) / menu_id (backend/src/app/core/workspace_service.py:303) / self.menu_id (backend/src/app/core/workspace_service.py:316) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `mi.id; rv.recipe_id; mi.servings; mi.recipe_version_id; m.revision`
 
@@ -372,8 +372,8 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/workspace_service.py:187) / menu_id (backend/src/app/core/workspace_service.py:205) / menu_id (backend/src/app/core/workspace_service.py:279) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:302) / self.menu_id (backend/src/app/core/workspace_service.py:315) |
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| menu_id | menu_id (backend/src/app/core/workspace_service.py:188) / menu_id (backend/src/app/core/workspace_service.py:206) / menu_id (backend/src/app/core/workspace_service.py:280) / menu_id (backend/src/app/core/workspace_service.py:281) / menu_id (backend/src/app/core/workspace_service.py:303) / self.menu_id (backend/src/app/core/workspace_service.py:316) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `mi.id AS menu_item_id; f.food_id; f.name AS form; ri.id AS ingredient_id; u.code AS unit; ov.id AS override_id; CASE WHEN ov.selected = FALSE THEN 0 ELSE ov.amount END AS override_amount; ri.amount * mi.servings / rv.base_servings AS scaled_amount`
 
@@ -390,7 +390,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `ranked.recipe_id`
 
@@ -409,7 +409,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 ### `backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql`
 
@@ -426,7 +426,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `f.id; f.name; u.code AS unit`
 
@@ -443,7 +443,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `c.key AS client_key; c.signature; c.food_id; c.amount; u.code AS unit; c.checked_at; c.archived`
 
@@ -460,7 +460,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/workspace_service.py:64) / self.user_id (backend/src/app/core/workspace_service.py:70) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:83) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:132) / self.user_id (backend/src/app/core/workspace_service.py:105) / self.user_id (backend/src/app/core/workspace_service.py:119) / self.user_id (backend/src/app/core/workspace_service.py:147) / self.user_id (backend/src/app/core/workspace_service.py:158) / self.user_id (backend/src/app/core/workspace_service.py:171) / self.user_id (backend/src/app/core/workspace_service.py:187) / self.user_id (backend/src/app/core/workspace_service.py:205) / self.user_id (backend/src/app/core/workspace_service.py:279) / self.user_id (backend/src/app/core/workspace_service.py:302) / self.user_id (backend/src/app/core/workspace_service.py:315) |
+| user_id | self.user_id (backend/src/app/core/workspace_service.py:65) / self.user_id (backend/src/app/core/workspace_service.py:71) / self.user_id (backend/src/app/core/workspace_service.py:72) / self.user_id (backend/src/app/core/workspace_service.py:84) / self.user_id (backend/src/app/core/workspace_service.py:85) / self.user_id (backend/src/app/core/workspace_service.py:133) / self.user_id (backend/src/app/core/workspace_service.py:106) / self.user_id (backend/src/app/core/workspace_service.py:120) / self.user_id (backend/src/app/core/workspace_service.py:148) / self.user_id (backend/src/app/core/workspace_service.py:159) / self.user_id (backend/src/app/core/workspace_service.py:172) / self.user_id (backend/src/app/core/workspace_service.py:188) / self.user_id (backend/src/app/core/workspace_service.py:206) / self.user_id (backend/src/app/core/workspace_service.py:280) / self.user_id (backend/src/app/core/workspace_service.py:303) / self.user_id (backend/src/app/core/workspace_service.py:316) |
 
 代入・選択式: `s.id; s.menu_id; s.status; s.current_task_index; s.input_snapshot`
 
@@ -472,9 +472,10 @@
 |---|---|---|
 | recipeweave.menu_item | R | id: 不変の行識別子; recipe_version_id: 固定レシピ版; position: 表示順 |
 | recipeweave.recipe | R | id: 不変の行識別子; title: 代表名 |
-| recipeweave.recipe_step | R | id: 不変の行識別子; step_no: 表示順（依存順とは別）; instruction: 個別補足; attention: 作業者拘束; duration_max_s: 所要秒上限; title: 工程の短い見出し |
+| recipeweave.recipe_step | R | id: 不変の行識別子; step_no: 表示順（依存順とは別）; instruction: 個別補足; attention: 作業者拘束; duration_max_s: 所要秒上限; scaling_rule_id: 時間の人数変更規則; title: 工程の短い見出し |
 | recipeweave.recipe_version | R | id: 不変の行識別子; recipe_id: 所属レシピ |
-| recipeweave.session_task | R | id: 不変の行識別子; session_id: 実行; menu_item_id: 料理; step_id: 元工程; planned_start_s: 開始相対秒; planned_end_s: 終了相対秒; status: 進捗; timer_started_at: 稼働中タイマーの開始日時; timer_duration_s: 利用者が設定したタイマー秒数 |
+| recipeweave.scaling_rule | R | id: 不変の行識別子; mode: 比例・バッチ等 |
+| recipeweave.session_task | R | id: 不変の行識別子; session_id: 実行; menu_item_id: 料理; step_id: 元工程; planned_start_s: 開始相対秒; planned_end_s: 終了相対秒; status: 進捗; timer_started_at: 稼働中タイマーの開始日時; timer_duration_s: 利用者が設定したタイマー秒数; duration_source: 計画時間の根拠。料理の時間規則または利用者が確認した見積り; confirmed_duration_s: 利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない |
 
 対象条件: `WHERE t.session_id = %(session_id)s`
 
@@ -482,7 +483,7 @@
 |---|---|
 | session_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
 
-代入・選択式: `t.id; t.menu_item_id; t.step_id; t.planned_start_s; t.planned_end_s; t.status; t.timer_started_at; t.timer_duration_s; rv.recipe_id; r.title AS recipe_name; st.title; st.instruction; st.attention; st.duration_max_s`
+代入・選択式: `t.id; t.menu_item_id; t.step_id; t.planned_start_s; t.planned_end_s; t.duration_source; t.confirmed_duration_s; t.status; t.timer_started_at; t.timer_duration_s; rv.recipe_id; r.title AS recipe_name; st.title; st.instruction; st.attention; st.duration_max_s; scaling.mode AS scaling_mode`
 
 ### `backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql`
 
@@ -630,14 +631,14 @@
 
 | 判定条件 | 例外・応答 | 定義元 |
 |---|---|---|
-| not rows or int(rows[0]['revision']) != request.expected_version | HTTPException(409, '他の画面で更新されています。最新の内容を読み込んでください') | backend/src/app/core/workspace_service.py:62 |
-| not version | HTTPException(404, '料理が公開されていません') | backend/src/app/core/workspace_service.py:262 |
-| len(roles) != 1 | HTTPException(422, '料理の献立内役割が未確定です。料理の分類を確認してください') | backend/src/app/core/workspace_service.py:262 |
-| set(item.amounts) != {str(r['id']) for r in ingredients} | HTTPException(422, '材料の構成が料理版と一致しません') | backend/src/app/core/workspace_service.py:262 |
-| amount.value is None or amount.unit != ingredient['unit'] | HTTPException(422, '確定した分量と料理の単位を指定してください') | backend/src/app/core/workspace_service.py:262 |
-| amount.value == 0 and (not ingredient['optional']) | HTTPException(422, '必須材料には0より大きい分量を指定してください') | backend/src/app/core/workspace_service.py:262 |
-| identifier(request.item.id) != row_id | HTTPException(422, '対象の料理IDが一致しません') | backend/src/app/core/workspace_service.py:310 |
-| not q.run('q001_delete_item', row_id=row_id, menu_id=self.menu_id, user_id=self.user_id) | HTTPException(404, '献立の料理が見つかりません') | backend/src/app/core/workspace_service.py:310 |
+| not rows or int(rows[0]['revision']) != request.expected_version | HTTPException(409, '他の画面で更新されています。最新の内容を読み込んでください') | backend/src/app/core/workspace_service.py:63 |
+| not version | HTTPException(404, '料理が公開されていません') | backend/src/app/core/workspace_service.py:263 |
+| len(roles) != 1 | HTTPException(422, '料理の献立内役割が未確定です。料理の分類を確認してください') | backend/src/app/core/workspace_service.py:263 |
+| set(item.amounts) != {str(r['id']) for r in ingredients} | HTTPException(422, '材料の構成が料理版と一致しません') | backend/src/app/core/workspace_service.py:263 |
+| amount.value is None or amount.unit != ingredient['unit'] | HTTPException(422, '確定した分量と料理の単位を指定してください') | backend/src/app/core/workspace_service.py:263 |
+| amount.value == 0 and (not ingredient['optional']) | HTTPException(422, '必須材料には0より大きい分量を指定してください') | backend/src/app/core/workspace_service.py:263 |
+| identifier(request.item.id) != row_id | HTTPException(422, '対象の料理IDが一致しません') | backend/src/app/core/workspace_service.py:311 |
+| not q.run('q001_delete_item', row_id=row_id, menu_id=self.menu_id, user_id=self.user_id) | HTTPException(404, '献立の料理が見つかりません') | backend/src/app/core/workspace_service.py:311 |
 
 ## 出力
 
@@ -645,15 +646,15 @@
 |---|---|---|
 | handle | execute(WorkspaceService(database, identity), request, row_id) | backend/src/app/apis/workspace/update_menu_item/router.py:24 |
 | execute | service.update_menu_item(request, row_id) | backend/src/app/apis/workspace/update_menu_item/functions.py:8 |
-| identifier | UUID(value) | backend/src/app/core/workspace_service.py:32 |
-| quantity | {'value': None if value is None else float(value), 'unit': unit} | backend/src/app/core/workspace_service.py:40 |
-| iso | value.isoformat() if isinstance(value, date &#124; datetime) else None | backend/src/app/core/workspace_service.py:45 |
-| WorkspaceService.queries | OperationQueries(self.connection, 'workspace/' + name) | backend/src/app/core/workspace_service.py:59 |
-| WorkspaceService.begin | queries | backend/src/app/core/workspace_service.py:62 |
-| WorkspaceService.finish | self.get_workspace() | backend/src/app/core/workspace_service.py:69 |
-| WorkspaceService.get_workspace | AppSnapshot.model_validate({'schemaVersion': 1, 'version': int(revision[0]['revision']) if revision else 0, 'lots': lots, 'imports': imports, 'drafts': {}, 'meal': meal, 'saved': [str(r['recipe_id']) for r in q.run('q007_saved', user_id=self.user_id)], 'shoppingChecks': checks, 'cooking': cooking, 'settings': settings, 'customFoods': customs, 'search': {'selectedFoodIds': [], 'match': 'all', 'maxMinutes': None, 'noShopping': False, 'equipment': []}}) | backend/src/app/core/workspace_service.py:80 |
-| WorkspaceService.read_meal | [{'id': str(r['id']), 'recipeId': str(r['recipe_id']), 'recipeVersionId': str(r['recipe_version_id']), 'servings': float(r['servings']), 'adjusted': any((a['override_id'] is not None for a in amounts if a['menu_item_id'] == r['id'])), 'amounts': {str(a['ingredient_id']): quantity(a['override_amount'] if a['override_id'] else a['scaled_amount'], a['unit']) for a in amounts if a['menu_item_id'] == r['id']}} for r in q.run('q005_menu', menu_id=menu_id, user_id=self.user_id)] | backend/src/app/core/workspace_service.py:186 |
-| WorkspaceService.update_menu_item | self.finish(q) | backend/src/app/core/workspace_service.py:310 |
+| identifier | UUID(value) | backend/src/app/core/workspace_service.py:33 |
+| quantity | {'value': None if value is None else float(value), 'unit': unit} | backend/src/app/core/workspace_service.py:41 |
+| iso | value.isoformat() if isinstance(value, date &#124; datetime) else None | backend/src/app/core/workspace_service.py:46 |
+| WorkspaceService.queries | OperationQueries(self.connection, 'workspace/' + name) | backend/src/app/core/workspace_service.py:60 |
+| WorkspaceService.begin | queries | backend/src/app/core/workspace_service.py:63 |
+| WorkspaceService.finish | self.get_workspace() | backend/src/app/core/workspace_service.py:70 |
+| WorkspaceService.get_workspace | AppSnapshot.model_validate({'schemaVersion': 1, 'version': int(revision[0]['revision']) if revision else 0, 'lots': lots, 'imports': imports, 'drafts': {}, 'meal': meal, 'saved': [str(r['recipe_id']) for r in q.run('q007_saved', user_id=self.user_id)], 'shoppingChecks': checks, 'cooking': cooking, 'settings': settings, 'customFoods': customs, 'search': {'selectedFoodIds': [], 'match': 'all', 'maxMinutes': None, 'noShopping': False, 'equipment': []}}) | backend/src/app/core/workspace_service.py:81 |
+| WorkspaceService.read_meal | [{'id': str(r['id']), 'recipeId': str(r['recipe_id']), 'recipeVersionId': str(r['recipe_version_id']), 'servings': float(r['servings']), 'adjusted': any((a['override_id'] is not None for a in amounts if a['menu_item_id'] == r['id'])), 'amounts': {str(a['ingredient_id']): quantity(a['override_amount'] if a['override_id'] else a['scaled_amount'], a['unit']) for a in amounts if a['menu_item_id'] == r['id']}} for r in q.run('q005_menu', menu_id=menu_id, user_id=self.user_id)] | backend/src/app/core/workspace_service.py:187 |
+| WorkspaceService.update_menu_item | self.finish(q) | backend/src/app/core/workspace_service.py:311 |
 
 APIとして返す型・status・headerは [インターフェース](interface.md) の実OpenAPIを参照。
 
@@ -663,15 +664,15 @@ APIとして返す型・status・headerは [インターフェース](interface.
 |---|---|---|
 | handle | 献立の人数・分量を変更する。呼出元が送った利用者IDは使用しない。 | backend/src/app/apis/workspace/update_menu_item/router.py:24 |
 | execute | 献立の人数・分量を変更する。永続値は業務サービスが検証し、同一トランザクションで扱う。 | backend/src/app/apis/workspace/update_menu_item/functions.py:8 |
-| identifier | 画面から来る識別子はUUIDとして検証する。 | backend/src/app/core/workspace_service.py:32 |
-| quantity | 未知の数量をNULLのまま通信し、DBの十進値を表示用の数へ変換する。 | backend/src/app/core/workspace_service.py:40 |
-| iso | 日時はISO形式にそろえる。 | backend/src/app/core/workspace_service.py:45 |
-| WorkspaceService.queries | 個別説明なし | backend/src/app/core/workspace_service.py:59 |
-| WorkspaceService.begin | 個別説明なし | backend/src/app/core/workspace_service.py:62 |
-| WorkspaceService.finish | 個別説明なし | backend/src/app/core/workspace_service.py:69 |
-| WorkspaceService.get_workspace | 在庫・献立・設定・履歴を各テーブルから集約し、一貫した版を返す。 | backend/src/app/core/workspace_service.py:80 |
-| WorkspaceService.read_meal | 個別説明なし | backend/src/app/core/workspace_service.py:186 |
-| WorkspaceService.add_item | 個別説明なし | backend/src/app/core/workspace_service.py:262 |
-| WorkspaceService.update_menu_item | 本人の献立項目を置き換え、調理用に確定済みの献立は変更しない。 | backend/src/app/core/workspace_service.py:310 |
+| identifier | 画面から来る識別子はUUIDとして検証する。 | backend/src/app/core/workspace_service.py:33 |
+| quantity | 未知の数量をNULLのまま通信し、DBの十進値を表示用の数へ変換する。 | backend/src/app/core/workspace_service.py:41 |
+| iso | 日時はISO形式にそろえる。 | backend/src/app/core/workspace_service.py:46 |
+| WorkspaceService.queries | 個別説明なし | backend/src/app/core/workspace_service.py:60 |
+| WorkspaceService.begin | 個別説明なし | backend/src/app/core/workspace_service.py:63 |
+| WorkspaceService.finish | 個別説明なし | backend/src/app/core/workspace_service.py:70 |
+| WorkspaceService.get_workspace | 在庫・献立・設定・履歴を各テーブルから集約し、一貫した版を返す。 | backend/src/app/core/workspace_service.py:81 |
+| WorkspaceService.read_meal | 個別説明なし | backend/src/app/core/workspace_service.py:187 |
+| WorkspaceService.add_item | 個別説明なし | backend/src/app/core/workspace_service.py:263 |
+| WorkspaceService.update_menu_item | 本人の献立項目を置き換え、調理用に確定済みの献立は変更しない。 | backend/src/app/core/workspace_service.py:311 |
 
 [SQL](queries.md) / [シーケンス](sequence.md) / [ログ](messages.md) / [要因別テスト](tests.md)

@@ -18,6 +18,14 @@ from app.apis.entities.axis_option_get.router import router as entity_axis_optio
 from app.apis.entities.axis_option_list.router import router as entity_axis_option_list
 from app.apis.entities.axis_option_update.router import router as entity_axis_option_update
 from app.apis.entities.axis_update.router import router as entity_axis_update
+from app.apis.entities.backup_artifact_get.router import router as entity_backup_artifact_get
+from app.apis.entities.backup_artifact_list.router import router as entity_backup_artifact_list
+from app.apis.entities.backup_restore_intent_get.router import (
+    router as entity_backup_restore_intent_get,
+)
+from app.apis.entities.backup_restore_intent_list.router import (
+    router as entity_backup_restore_intent_list,
+)
 from app.apis.entities.candidate_attempt_create.router import (
     router as entity_candidate_attempt_create,
 )
@@ -726,4 +734,8 @@ def register_entity_routes(application: FastAPI) -> None:
     application.include_router(entity_user_shopping_check_create)
     application.include_router(entity_user_shopping_check_update)
     application.include_router(entity_user_shopping_check_delete)
+    application.include_router(entity_backup_artifact_list)
+    application.include_router(entity_backup_artifact_get)
+    application.include_router(entity_backup_restore_intent_list)
+    application.include_router(entity_backup_restore_intent_get)
     register_generation_routes(application)

@@ -41,6 +41,29 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_cooking_session.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_ingredient_total.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_menu.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_menu_ingredient_override.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_menu_item.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_resource_reservation.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_session_task.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_shopping_item.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_task_dependency.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_menu.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_cooking_session.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_ingredient_total.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_menu.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_menu_ingredient_override.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_menu_item.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_resource_reservation.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_session_task.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_shopping_item.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_task_dependency.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_menu.sql |
 | entity_cooking_session_create | R | backend/src/app/apis/entities/cooking_session_create/sql/002_reference_menu_id.sql |
 | entity_cooking_session_delete | R | backend/src/app/apis/entities/cooking_session_delete/sql/001_delete.sql |
 | entity_cooking_session_get | R | backend/src/app/apis/entities/cooking_session_get/sql/001_get.sql |
@@ -116,6 +139,9 @@
 | update_menu_item | R | backend/src/app/apis/workspace/update_menu_item/sql/q001_delete_item.sql |
 | update_menu_item | C | backend/src/app/apis/workspace/update_menu_item/sql/q012_menu.sql |
 | update_menu_item | U | backend/src/app/apis/workspace/update_menu_item/sql/q015_advance_menu.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q005_menu.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q011_session.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q005_menu.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q011_session.sql |

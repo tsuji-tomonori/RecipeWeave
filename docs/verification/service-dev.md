@@ -1,67 +1,44 @@
 # RecipeWeave Dev の検証・公開状況
 
-更新日: 2026-09-06。対象ブランチ: `feat/service-receipts-dev`。
+更新日: 2026-09-06。対象ブランチ: `feat/service-receipts-dev`、PRの取り込み先: `dev`。
 
-実装コミット `bf8a0c3a8c89d5a779f1fcb3012c93159bc3163e` の
-[CI run 34002028247・attempt 3](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34002028247/attempts/3) で、
-**verify・publishとも成功した**。84テスト、型・lint、実Lambda梱包、CDK strict合成、
-生成設計の差分検査を通ったartifactを公開した。
-公開先: [RecipeWeave Dev](https://tsuji-tomonori.github.io/RecipeWeave/)。
-これはPages試用版の公開完了であり、AWS配備や全端末の総合受入の完了ではない。
+## 今回の実装
 
-## 状況
+元スプレッドシートの71表をDDLへ実装した。レシート・在庫消費・復元確認等の運用9表、旧互換表と移行台帳を含む物理82表から、設計書を自動生成する。業務80表の型付き操作と認証・検索・画面用の業務APIを実OpenAPIから列挙し、330操作を生成した。
 
-サービス概要・利用者マニュアル・Q&A・画面一覧を独立した評価者で2回確認し、
-レシート訂正・重複・取消・数量・保存の規則を確定した。
-正本QNTには計42要件・80受入条件を持つ。生成と整合チェックは成功。
-机上の評価を実ユーザーの使いやすさ実測とは扱わない。
+レシピ8品、食品1,018件、材料、工程、分類は初期投入用データであり、実行中のAPIはPostgreSQLから取得する。初期料理は未試作で、公開・検証済みへ変更していない。利用者の在庫・レシート・献立・調理履歴は、認証済み本人の正規化テーブルに保存する。
 
-| 検証対象 | 状態と証跡 |
+## 実行した検証
+
+| 対象版と実行 | 結果と範囲 |
 |---|---|
-| 利用者文書 | `docs/service/reviews/novice-review.md`、`receipt-review.md` に反復記録 |
-| 実装と動線 | 独立レビューの重大4件・中3件を修正し再確認。表示位置保持も追加 |
-| 数量・レシート・端末保存 | TypeScript strict、独立計算・保存23テスト成功 |
-| Svelte画面 | 型・build成功、svelte-checkは0 errors / 0 warnings。疑似DOM11件＋計算・保存23件が成功 |
-| FastAPI・移行 | 30テスト成功（API等26件、移行契約4件）。Ruff・Pyright・mypy・operation境界検査成功。backend branch coverageを含む集計85% |
-| 既存の生成処理 | Pythonの12テスト成功 |
-| AWS CDK | 実Lambda梱包、8構造検査、strict合成成功。参照保護をstrongと明示し、既定証明書に効かない設定を除いた |
-| 実装由来の設計 | OpenAPI・SQL wrapper・サービス構成・生成処理設計を再生成して追跡版と一致。未追跡ファイルも含め差分なし |
-| GitHub Pages | attempt 3でpublish成功。公開Chromeでトップ・食材選択・検索結果・料理詳細と料理画像の読込みを確認 |
-| AWS実環境 | 接続が再認証を要求。未配備、Cognito/DSQL実接続は未受入 |
-| 実ブラウザ・実機 | 公開サイトのChromeで基本操作を実施。スマートフォン実機・カメラ・画面外タイマーなどの総合受入は未実施 |
-| OCR一般精度 | 実店舗の多様なレシートによる精度測定は未実施。必ず確認・訂正を通す |
+| `0ab65d9`・[実DB CI 34025093894](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34025093894) | 初回の実PostgreSQL検証118件成功、スキップ0件。管理用接続で移行し、非管理者・RLS有効のアプリ接続でAPIを実行 |
+| `dfeb67f5`・[実DB CI 34026452442](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34026452442) | 142件成功・2件失敗。試験のHTTPメソッドと、献立内役割の保存不足を検出。後続版で修正 |
+| `1acc6a4`・[実DB CI 34026790719](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34026790719) | **145件成功・スキップ0件**。全表・外部キー・公開後不変・所有権・CRUD、初期データ、レシート取消、在庫、献立、調理完了、版を固定した履歴、Cognito初回登録を確認 |
+| `1acc6a4`・[総合CI 34026790738](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34026790738) | Python716件成功・1件失敗、Vitest48件成功、利用画面14件失敗・2件成功、品質画面4件成功・2件失敗。DB接続の試験差替え対象、ログイン後の読込、検索入力の待機条件を調査・修正。公開は失敗ゲートにより未実行 |
+| ローカルの型・SQL・生成検査 | SQLFluff507ファイルで違反0件。Ruff・Pyright strict・mypy strict、Quint生成差分、API配置・生成差分を確認。実行ごとの最終結果はCI成果物を参照 |
+| ローカルの設計・品質サイト検査 | 生成・証跡関連45試験成功。直前版の設計2,353ファイル、Starlight2,036ページ、70,758リンク・参照資源を検査。追加後の生成設計は2,404ファイル。閲覧UIの合格を静的検査から推測しない |
+| `8fe62ae`・[独立ブラウザCI 34029055375](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34029055375) | APIは200で本人データを返す一方、URLのみホームへ移動してDOMがログイン画面に残る不具合を確認。アプリ内遷移の同期を修正し、関連13単体試験成功。修正後の実ブラウザは次CIで確認 |
+| PC・モバイルの実ブラウザ | 現行版の全利用動線と品質サイトの成功はCIで確認中。ローカルChromiumはOSのsocket権限により起動前に停止し、そこで実画面検証に成功したとは記録しない |
 
-公開Chromeでは「なす」の選択表示、検索結果2品、醤油炒めの詳細、
-人数2→3でなす160→240g・卵2→3個・油8→12g・醤油10→15mlとなることを確認した。
-これは基本動線のスモーク確認で、全機能の実ブラウザ受入を示すものではない。
+## 証跡と再現
 
-NodeのTesseract日本語エンジンと同梱モデルは、生成済みの操作画像22を使った
-スモーク検査で195文字（うち日本語77文字）を認識した。実ブラウザのworker読込みや
-実レシートの認識精度を示す試験ではなく、認識全文は記録していない。
-利用者マニュアル7 HTMLのリンク・画像・日本語見出しanchorは検査済み。
+`.github/workflows/relational.yml` は、PostgreSQL16とpgvector、実DDL移行、初期投入、非管理者接続での制約・API試験を行う。CIで必要なDB設定がなければ失敗し、必須試験のスキップを成功として扱わない。
 
-## 再現
+`.github/workflows/dev.yml` は、静的解析・型・単体/実DB試験の後、同じ移行と初期データを別のE2E用DBへ適用し、実APIと画面を起動する。PC・モバイルのGiven/When/Then、各操作の実画面、失敗trace、JUnit、カバレッジ、SQL診断、終了コードを品質成果物へ保存する。設計サイトの検索・ER/シーケンス描画・画像拡大もブラウザで検証する。
 
-`.github/workflows/dev.yml` が、固定依存の導入、QNT整合、Svelte型・操作テスト、
-Python lint/strict型/認証・CASテスト、Lambda梱包、CDK構造テスト・合成、
-実装由来設計の差分確認、Pages配置を順に実行する。
-検査が失敗したビルドは公開しない。AWSへの自動配備はこのworkflowに含めない。
+新しいPages成果物は必要な全検査が成功したときだけ公開する。公開配置はアプリをルート、品質証跡を `quality/`、検索可能な設計書を `quality/design/` とする。生成設計の元入力とSHA-256は `docs/design/generated/MANIFEST.md` を参照する。
 
-生成物の差分検査は新規未追跡ファイルも検出する。初回CIの生成内容はSHA-256を照合して
-所定の5ファイルだけを取り込み、コードと同じブランチへ記録した。
-再検査で一致し、サービス設計に記載した17の入力ファイルハッシュも照合した。
+## 実配備の境界
 
-pytestは依存するStarlette/TestClient由来の非推奨警告2件を出すが、テスト失敗はない。
-これは実機受入や将来の依存更新での互換性を保証するものではない。
+`dfeb67f5` と `1acc6a4` のCIは、`DEV_API_BASE_URL`、`DEV_COGNITO_DOMAIN`、`DEV_COGNITO_CLIENT_ID`、`AWS_DEPLOY_ROLE_ARN`、`PRODUCTION_WEB_CALLBACK_URL` の全5設定が未設定だったことを記録した。値の内容は成果物へ出力しない。
 
-## 公開設定と経緯
+AWS接続への読み取り専用STS照会は応答を取得できず、認証状態・アカウント・既存stack・実APIの存在を確認できていない。明示的な再認証要求や権限エラーも受け取っていない。AWS実配備を完了とは記録しない。
 
-リポジトリの [Pages設定](https://github.com/tsuji-tomonori/RecipeWeave/settings/pages) で
-**Settings → Pages → Build and deployment → Source → GitHub Actions** を所有者が設定した。
-初回はPages未有効で停止し、attempt 2は `github-pages` 環境のブランチ保護により停止した。
-所有者が公開許可に `feat/*` を追加した後、失敗したpublishジョブのみを再実行し、
-attempt 3で成功した。環境保護の解除やworkflow側での回避は行っていない。
+Pagesは静的画面と証跡の公開であり、DB/APIのホスティングではない。API未設定時は未接続状態を表示する。Cognito・Aurora PostgreSQL・APIの実配備、1,000万料理の負荷、料理の試作、実店舗レシートの一般精度、スマートフォン実機のカメラ/バックグラウンド動作は、それぞれ別の実測が必要である。
 
-AWSは接続を再認証した後、`infra/README.md` と `database/README.md` に沿って
-対象アカウント・リージョン、CDK bootstrap、DB role mappingとmigrationを確認して進める。
-合成テンプレートの成功をAWSでの動作確認済みとは記録しない。
+## 以前のPages公開記録
+
+旧ブラウザ保存版 `bf8a0c3` の [CI run 34002028247・attempt3](https://github.com/tsuji-tomonori/RecipeWeave/actions/runs/34002028247/attempts/3) はverify・publishが成功した。当時の基本表示確認は、今回の正規化DB版の受入結果へ転用しない。
+
+所有者がPagesのSourceをGitHub Actionsとし、公開許可に `feat/*` を追加した経緯がある。公開先は [RecipeWeave Dev](https://tsuji-tomonori.github.io/RecipeWeave/) 。環境保護の解除や回避は行わない。

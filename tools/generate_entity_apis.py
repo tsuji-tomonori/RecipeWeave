@@ -15,6 +15,8 @@ API_ROOT = ROOT / "backend/src/app/apis/entities"
 ENTITY_ROOT = ROOT / "backend/src/app/entities"
 HEADER = "# generate_entity_apis.py による自動生成。直接編集しない。\n"
 READ_ONLY = {
+    "backup_artifact",
+    "backup_restore_intent",
     "audit_event",
     "outbox_event",
     "recipe_search_document",

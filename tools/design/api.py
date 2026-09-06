@@ -407,6 +407,8 @@ def render_api(
             "WHERE/RETURNINGを独立したRへ水増ししない。"
             "監査とアウトボックスの共有SQLも書込み操作に対応づける。",
             "数百APIを横一列へ並べず、表ごとに関連APIと4操作を縦に表示する。",
+            "SQLが行う操作を示す。プレビュー内で試しに行ってロールバックする書込みも含み、"
+            "最終的に保持する範囲は各APIのトランザクション仕様とシーケンスで確認する。",
             table(["テーブル", "API", "C", "R", "U", "D"], crud_rows),
             "移行台帳等、APIから参照しない表の運用処理は個別テーブル仕様を参照する。",
         ],
@@ -457,6 +459,7 @@ def render_api(
                     + "実行条件: "
                     + q.condition
                     + "\n\n"
+                    + (q.transaction_effect + "\n\n" if q.transaction_effect else "")
                     + table(
                         ["対象表", "CRUD", "参照・書込列"],
                         [

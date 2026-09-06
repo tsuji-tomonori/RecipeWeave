@@ -9,13 +9,15 @@ from .common import DesignError, read_source, table
 
 
 def factor_rows(root: Path, operation: Any) -> list[list[object]]:
-    path = root / "backend/tests/entity_test_contracts.json"
-    if not path.exists():
-        return []
-    catalog = json.loads(read_source(path, root))
-    entries = (
-        catalog.get("cases", catalog.get("tests", [])) if isinstance(catalog, dict) else catalog
-    )
+    entries = []
+    for path in sorted((root / "backend/tests").glob("*_test_contracts.json")):
+        catalog = json.loads(read_source(path, root))
+        values = (
+            catalog.get("cases", catalog.get("tests")) if isinstance(catalog, dict) else catalog
+        )
+        if not isinstance(values, list):
+            raise DesignError(f"要因別試験はtestsまたはcasesの配列が必要です: {path}")
+        entries.extend(values)
     rows = []
     for entry in entries:
         ids = entry.get("operation_ids", [])

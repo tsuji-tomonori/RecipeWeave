@@ -11,16 +11,32 @@ async function step(
   action: () => Promise<void>,
 ) {
   await test.step(`${kind}: ${description}`, async () => {
+    let actionFailed = false;
     try {
       await action();
+    } catch (cause) {
+      actionFailed = true;
+      throw cause;
     } finally {
-      if (!page.isClosed()) {
+      try {
+        if (page.isClosed())
+          throw new Error("証跡撮影前にページが閉じられました。");
         const path = info.outputPath(`${kind}-${info.attachments.length}.png`);
-        await page.screenshot({ path, fullPage: true });
+        await page.screenshot({ path, fullPage: true, timeout: 5000 });
         await info.attach(`${kind}: ${description}`, {
           path,
           contentType: "image/png",
         });
+      } catch (captureError) {
+        info.annotations.push({
+          type: "証跡取得失敗",
+          description:
+            captureError instanceof Error
+              ? captureError.message
+              : String(captureError),
+        });
+        // 元の操作失敗を保持し、画像欠落は別の証跡エラーとして記録する。
+        if (!actionFailed) throw captureError;
       }
     }
   });
@@ -159,23 +175,26 @@ test("ログインして実DBの食材を選び、料理の分量を変えて献
         page.getByRole("heading", { name: "買うもの、これだけ。" }),
       ).toBeVisible();
       await page.getByRole("button", { name: "献立に戻る" }).click();
-      // 初期レシピの工程時間は基準2人だけが登録済み。人数を推測で外挿しない。
-      const servings = page.getByRole("spinbutton", {
-        name: "なすと卵の醤油炒めの人数",
-      });
-      for (const input of await servings.all()) {
-        await input.fill("2");
-        await input.press("Tab");
-      }
-      await expect
-        .poll(async () =>
-          (await workspace(page)).meal.every((item) => item.servings === 2),
-        )
-        .toBe(true);
       await page.getByRole("button", { name: "段取りを見る" }).click();
       await expect(
-        page.getByRole("heading", { name: "無理なく、ひとつずつ。" }),
+        page.getByRole("heading", { name: "この人数の目安時間を確認" }),
       ).toBeVisible();
+      const estimates = page.locator("[data-duration-estimate]");
+      expect(await estimates.count()).toBeGreaterThan(0);
+      // 基準人数の時間を検証済みと扱わず、今回の目安として本人が確認する。
+      await estimates.first().fill("7");
+      await page
+        .getByRole("button", { name: "この目安時間で段取りを作る" })
+        .click();
+      await expect(
+        page.getByRole("button", { name: "調理を始める" }),
+      ).toBeVisible();
+      await expect(
+        page.getByText("確認した目安時間", { exact: true }).first(),
+      ).toBeVisible();
+      expect(
+        (await workspace(page)).meal.every((item) => item.servings === 3),
+      ).toBe(true);
       expect(await page.evaluate(() => localStorage.length)).toBe(0);
     },
   );
@@ -189,6 +208,20 @@ test("ログインして実DBの食材を選び、料理の分量を変えて献
         .getByRole("button", { name: "調理を始める", exact: true })
         .click();
       await expect(page.locator(".focus-screen")).toBeVisible();
+      await expect
+        .poll(async () => {
+          const session = (await workspace(page)).cooking;
+          return (
+            !!session &&
+            session.mealSnapshot.every((item) => item.servings === 3) &&
+            session.plan.some(
+              (item) =>
+                item.durationSource === "user_estimate" &&
+                item.confirmedDurationSeconds === 420,
+            )
+          );
+        })
+        .toBe(true);
       const count = (await workspace(page)).cooking!.plan.length;
       for (let index = 0; index < count - 1; index++) {
         await page.getByRole("button", { name: "次へ", exact: true }).click();

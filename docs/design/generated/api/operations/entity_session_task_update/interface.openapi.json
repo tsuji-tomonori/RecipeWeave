@@ -37,10 +37,31 @@
             "title": "Batch No",
             "type": "integer"
           },
+          "confirmed_duration_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない",
+            "title": "Confirmed Duration S"
+          },
           "created_at": {
             "description": "作成日時(UTC)",
             "format": "date-time",
             "title": "Created At",
+            "type": "string"
+          },
+          "duration_source": {
+            "description": "計画時間の根拠。料理の時間規則または利用者が確認した見積り",
+            "enum": [
+              "recipe_rule",
+              "user_estimate"
+            ],
+            "title": "Duration Source",
             "type": "string"
           },
           "etag": {
@@ -135,6 +156,8 @@
           "actual_end_at",
           "timer_started_at",
           "timer_duration_s",
+          "duration_source",
+          "confirmed_duration_s",
           "etag"
         ],
         "title": "SessionTaskRow",
@@ -175,6 +198,27 @@
             "exclusiveMinimum": 0.0,
             "title": "Batch No",
             "type": "integer"
+          },
+          "confirmed_duration_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない",
+            "title": "Confirmed Duration S"
+          },
+          "duration_source": {
+            "description": "計画時間の根拠。料理の時間規則または利用者が確認した見積り",
+            "enum": [
+              "recipe_rule",
+              "user_estimate"
+            ],
+            "title": "Duration Source",
+            "type": "string"
           },
           "menu_item_id": {
             "description": "料理",
@@ -249,7 +293,8 @@
           "batch_no",
           "planned_start_s",
           "planned_end_s",
-          "status"
+          "status",
+          "duration_source"
         ],
         "title": "SessionTaskWrite",
         "type": "object"

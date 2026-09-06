@@ -68,11 +68,11 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| action | 'update' (backend/src/app/core/entity_generation.py:38) / spec.action (backend/src/app/core/entity_service.py:141) |
-| actor_id | self.identity.user_id (backend/src/app/core/entity_service.py:140) / self.identity.user_id (backend/src/app/core/entity_service.py:148) |
-| entity_key_hash | key_hash (backend/src/app/core/entity_service.py:143) |
-| entity_type | spec.table (backend/src/app/core/entity_service.py:142) |
-| row_id | uuid4() (backend/src/app/core/entity_service.py:139) / uuid4() (backend/src/app/core/entity_service.py:148) / uuid4() (backend/src/app/core/entity_service.py:154) |
+| action | 'update' (backend/src/app/core/entity_generation.py:38) / spec.action (backend/src/app/core/entity_service.py:142) |
+| actor_id | self.identity.user_id (backend/src/app/core/entity_service.py:141) / self.identity.user_id (backend/src/app/core/entity_service.py:149) |
+| entity_key_hash | key_hash (backend/src/app/core/entity_service.py:144) |
+| entity_type | spec.table (backend/src/app/core/entity_service.py:143) |
+| row_id | uuid4() (backend/src/app/core/entity_service.py:140) / uuid4() (backend/src/app/core/entity_service.py:149) / uuid4() (backend/src/app/core/entity_service.py:155) |
 
 変更する列とSQL式
 
@@ -98,9 +98,9 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| aggregate_id | row_id (backend/src/app/core/entity_service.py:156) |
-| event_type | f'{spec.table}.{spec.action}' (backend/src/app/core/entity_service.py:155) |
-| row_id | uuid4() (backend/src/app/core/entity_service.py:139) / uuid4() (backend/src/app/core/entity_service.py:148) / uuid4() (backend/src/app/core/entity_service.py:154) |
+| aggregate_id | row_id (backend/src/app/core/entity_service.py:157) |
+| event_type | f'{spec.table}.{spec.action}' (backend/src/app/core/entity_service.py:156) |
+| row_id | uuid4() (backend/src/app/core/entity_service.py:140) / uuid4() (backend/src/app/core/entity_service.py:149) / uuid4() (backend/src/app/core/entity_service.py:155) |
 
 変更する列とSQL式
 
@@ -240,6 +240,6 @@ APIとして返す型・status・headerは [インターフェース](interface.
 | handle | 個別説明なし | backend/src/app/apis/generation/claim_shard/router.py:29 |
 | execute | 生成範囲のリース取得の値を検証済み主体と固定SQLへ渡す。 | backend/src/app/apis/generation/claim_shard/functions.py:9 |
 | run_lease_operation | 検証済みワーカーだけがリースを取得・更新でき、失効・交代後は409にする。 | backend/src/app/core/entity_generation.py:17 |
-| EntityService.record_change | 本文を複製せず、行キーのハッシュと操作種別だけを監査へ残す。 | backend/src/app/core/entity_service.py:130 |
+| EntityService.record_change | 本文を複製せず、行キーのハッシュと操作種別だけを監査へ残す。 | backend/src/app/core/entity_service.py:131 |
 
 [SQL](queries.md) / [シーケンス](sequence.md) / [ログ](messages.md) / [要因別テスト](tests.md)

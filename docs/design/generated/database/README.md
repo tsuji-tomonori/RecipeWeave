@@ -11,6 +11,8 @@
 | [recipeweave.audit_event](tables/recipeweave.audit_event.md) | 変更・公開監査 | 8 | database/migrations/002_relational_schema.sql:statement-582 |
 | [recipeweave.axis](tables/recipeweave.axis.md) | 組み合わせ軸 | 8 | database/migrations/002_relational_schema.sql:statement-152 |
 | [recipeweave.axis_option](tables/recipeweave.axis_option.md) | 軸候補値 | 8 | database/migrations/002_relational_schema.sql:statement-162 |
+| [recipeweave.backup_artifact](tables/recipeweave.backup_artifact.md) | 本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持する | 5 | database/migrations/004_backup_restore.sql:statement-1 |
+| [recipeweave.backup_restore_intent](tables/recipeweave.backup_restore_intent.md) | 復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費する | 8 | database/migrations/004_backup_restore.sql:statement-10 |
 | [recipeweave.candidate_attempt](tables/recipeweave.candidate_attempt.md) | 試行済み設計点の台帳 | 10 | database/migrations/002_relational_schema.sql:statement-648 |
 | [recipeweave.catalog_release](tables/recipeweave.catalog_release.md) | カタログ公開版 | 6 | database/migrations/002_relational_schema.sql:statement-13 |
 | [recipeweave.compatibility_rule](tables/recipeweave.compatibility_rule.md) | 組み合わせ・公開ルール | 9 | database/migrations/002_relational_schema.sql:statement-400 |
@@ -67,7 +69,7 @@
 | [recipeweave.scaling_point](tables/recipeweave.scaling_point.md) | 検証済み換算点 | 5 | database/migrations/002_relational_schema.sql:statement-218 |
 | [recipeweave.scaling_rule](tables/recipeweave.scaling_rule.md) | 人数変更規則 | 10 | database/migrations/002_relational_schema.sql:statement-206 |
 | [recipeweave.schema_migrations](tables/recipeweave.schema_migrations.md) | 移行IDとchecksum、完了時刻を保持する運用台帳。DDLの構造確認が成功した後に記録し、アプリAPIから更新しない。 | 3 | database/migrate.py:121 |
-| [recipeweave.session_task](tables/recipeweave.session_task.md) | 展開済み工程 | 13 | database/migrations/002_relational_schema.sql:statement-518 |
+| [recipeweave.session_task](tables/recipeweave.session_task.md) | 展開済み工程 | 15 | database/migrations/002_relational_schema.sql:statement-518 |
 | [recipeweave.shopping_item](tables/recipeweave.shopping_item.md) | 買い物行 | 12 | database/migrations/002_relational_schema.sql:statement-571 |
 | [recipeweave.source_record](tables/recipeweave.source_record.md) | 根拠資料 | 8 | database/migrations/002_relational_schema.sql:statement-3 |
 | [recipeweave.step_dependency](tables/recipeweave.step_dependency.md) | 工程依存辺 | 7 | database/migrations/002_relational_schema.sql:statement-308 |

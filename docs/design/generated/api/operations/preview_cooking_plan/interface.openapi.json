@@ -1,6 +1,36 @@
 {
   "components": {
     "schemas": {
+      "DurationEstimate": {
+        "additionalProperties": false,
+        "properties": {
+          "durationSeconds": {
+            "maximum": 86400.0,
+            "minimum": 1.0,
+            "title": "Durationseconds",
+            "type": "integer"
+          },
+          "mealItemId": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Mealitemid",
+            "type": "string"
+          },
+          "stepId": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Stepid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mealItemId",
+          "stepId",
+          "durationSeconds"
+        ],
+        "title": "DurationEstimate",
+        "type": "object"
+      },
       "MealItem": {
         "additionalProperties": false,
         "properties": {
@@ -65,6 +95,14 @@
         "additionalProperties": false,
         "description": "未保存の分量調整も、明示した料理版の材料行だけへ適用する。",
         "properties": {
+          "durationEstimates": {
+            "items": {
+              "$ref": "#/components/schemas/DurationEstimate"
+            },
+            "maxItems": 500,
+            "title": "Durationestimates",
+            "type": "array"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/MealItem"
@@ -102,6 +140,28 @@
       "PlannedStep": {
         "additionalProperties": false,
         "properties": {
+          "confirmedDurationSeconds": {
+            "anyOf": [
+              {
+                "maximum": 86400.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmeddurationseconds"
+          },
+          "durationSource": {
+            "default": "recipe_rule",
+            "enum": [
+              "recipe_rule",
+              "user_estimate"
+            ],
+            "title": "Durationsource",
+            "type": "string"
+          },
           "endMinute": {
             "maximum": 1000000.0,
             "minimum": 0.0,
@@ -182,6 +242,18 @@
             "minimum": 0.0,
             "title": "Startminute",
             "type": "number"
+          },
+          "timeScalingMode": {
+            "default": "manual",
+            "enum": [
+              "linear",
+              "fixed_batch",
+              "capacity_batch",
+              "validated_curve",
+              "manual"
+            ],
+            "title": "Timescalingmode",
+            "type": "string"
           },
           "title": {
             "maxLength": 500,

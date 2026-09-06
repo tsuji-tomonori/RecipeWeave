@@ -39,6 +39,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_food.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_food.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_food.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_food.sql |
 | entity_user_food_create | C | backend/src/app/apis/entities/user_food_create/sql/001_create.sql |
 | entity_user_food_delete | D | backend/src/app/apis/entities/user_food_delete/sql/001_delete.sql |
 | entity_user_food_get | R | backend/src/app/apis/entities/user_food_get/sql/001_get.sql |
@@ -50,6 +57,7 @@
 | create_pantry_lot | R | backend/src/app/apis/workspace/create_pantry_lot/sql/q001_resolve_form.sql |
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql |
 | update_pantry_lot | R | backend/src/app/apis/workspace/update_pantry_lot/sql/q001_resolve_form.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql |

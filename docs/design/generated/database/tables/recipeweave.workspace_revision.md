@@ -38,6 +38,10 @@
 | operationId | CRUD | SQL |
 |---|---|---|
 | get_me | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q001_lock_revision.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q001_lock_revision.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q001_lock_revision.sql |
+| restore_backup | U | backend/src/app/apis/backup/restore_backup/sql/q901_advance_revision.sql |
 | entity_workspace_revision_get | R | backend/src/app/apis/entities/workspace_revision_get/sql/001_get.sql |
 | entity_workspace_revision_list | R | backend/src/app/apis/entities/workspace_revision_list/sql/001_list.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/add_menu_item/sql/q900_lock_revision.sql |
@@ -125,6 +129,7 @@
 | entity_user_shopping_check_create | C,U | backend/src/app/entities/sql/workspace.sql |
 | entity_user_shopping_check_update | C,U | backend/src/app/entities/sql/workspace.sql |
 | entity_user_shopping_check_delete | C,U | backend/src/app/entities/sql/workspace.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q001_revision.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q001_revision.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q001_revision.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q001_revision.sql |
@@ -140,6 +145,9 @@
 | update_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q001_revision.sql |
 | update_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q001_revision.sql |
 | update_pantry_lot | R | backend/src/app/apis/workspace/get_workspace/sql/q001_revision.sql |
+| export_backup | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
+| preview_backup | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
+| restore_backup | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
 | entity_allergen_create | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
 | entity_allergen_get | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
 | entity_allergen_list | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
@@ -157,6 +165,10 @@
 | entity_axis_option_list | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
 | entity_axis_option_update | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
 | entity_axis_update | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
+| entity_backup_artifact_get | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
+| entity_backup_artifact_list | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
+| entity_backup_restore_intent_get | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
+| entity_backup_restore_intent_list | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
 | entity_candidate_attempt_create | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
 | entity_candidate_attempt_get | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |
 | entity_candidate_attempt_list | C | backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql |

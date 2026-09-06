@@ -45,6 +45,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_task_dependency.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_task_dependency.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_task_dependency.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_task_dependency.sql |
 | entity_task_dependency_create | C | backend/src/app/apis/entities/task_dependency_create/sql/001_create.sql |
 | entity_task_dependency_delete | D | backend/src/app/apis/entities/task_dependency_delete/sql/001_delete.sql |
 | entity_task_dependency_get | R | backend/src/app/apis/entities/task_dependency_get/sql/001_get.sql |

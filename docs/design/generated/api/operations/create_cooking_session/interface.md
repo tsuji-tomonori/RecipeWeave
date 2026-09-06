@@ -25,6 +25,7 @@
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
 | deduct | boolean | 任意 | default=false | Deduct |
+| durationEstimates | array&lt;DurationEstimate&gt; | 任意 | maxItems=500 | Durationestimates |
 | expectedVersion | integer | 必須 | minimum=0.0; maximum=9007199254740990.0 | Expectedversion |
 | session | CookingSession | 必須 | 追加制約なし |  |
 

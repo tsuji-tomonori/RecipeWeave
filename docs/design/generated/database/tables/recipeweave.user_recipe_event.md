@@ -45,6 +45,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_recipe_event.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_recipe_event.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_recipe_event.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_recipe_event.sql |
 | entity_menu_item_create | R | backend/src/app/apis/entities/menu_item_create/sql/003_reference_recipe_version_id.sql |
 | entity_menu_item_update | R | backend/src/app/apis/entities/menu_item_update/sql/003_reference_recipe_version_id.sql |
 | entity_user_recipe_event_create | C | backend/src/app/apis/entities/user_recipe_event_create/sql/001_create.sql |
@@ -56,6 +63,7 @@
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q007_saved.sql |
 | save_recipe | C | backend/src/app/apis/workspace/save_recipe/sql/q002_event.sql |
 | unsave_recipe | C | backend/src/app/apis/workspace/unsave_recipe/sql/q002_event.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q007_saved.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q007_saved.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q007_saved.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q007_saved.sql |

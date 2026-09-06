@@ -8,8 +8,8 @@
 
 | レベル | メッセージ・イベント | 構造化項目 | 発生関数 | 実装位置 |
 |---|---|---|---|---|
-| WARNING | entity_operation_rejected | extra={'operation_id': spec.operation_id} | EntityService.execute | backend/src/app/core/entity_service.py:49 |
-| INFO | entity_operation_completed | extra={'operation_id': spec.operation_id, 'table': spec.table, 'action': spec.action, 'row_count': len(rows)} | EntityService.execute | backend/src/app/core/entity_service.py:105 |
-| WARNING | entity_operation_rejected | extra={'operation_id': spec.operation_id, 'sqlstate': exc.sqlstate} | EntityService.execute | backend/src/app/core/entity_service.py:116 |
+| WARNING | entity_operation_rejected | extra={'operation_id': spec.operation_id} | EntityService.execute | backend/src/app/core/entity_service.py:50 |
+| INFO | entity_operation_completed | extra={'operation_id': spec.operation_id, 'table': spec.table, 'action': spec.action, 'row_count': len(rows)} | EntityService.execute | backend/src/app/core/entity_service.py:106 |
+| WARNING | entity_operation_rejected | extra={'operation_id': spec.operation_id, 'sqlstate': exc.sqlstate} | EntityService.execute | backend/src/app/core/entity_service.py:117 |
 
 [詳細設計](detail.md) / [エラー応答](interface.md)

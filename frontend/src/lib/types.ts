@@ -37,6 +37,13 @@ export interface RecipeIngredient {
   form: string;
   note: string;
 }
+export type TimeScalingMode =
+  "linear" | "fixed_batch" | "capacity_batch" | "validated_curve" | "manual";
+export interface DurationEstimate {
+  mealItemId: string;
+  stepId: string;
+  durationSeconds: number;
+}
 export interface RecipeStep {
   id: string;
   title: string;
@@ -45,6 +52,7 @@ export interface RecipeStep {
   mode: "active" | "passive" | "monitored";
   equipment: string[];
   guide: string | null;
+  timeScalingMode?: TimeScalingMode;
 }
 export interface Recipe {
   id: string;
@@ -140,6 +148,8 @@ export interface ShoppingList {
   previous: ShoppingCheck[];
 }
 export interface PlannedStep extends RecipeStep {
+  durationSource?: "recipe_rule" | "user_estimate";
+  confirmedDurationSeconds?: number | null;
   key: string;
   mealItemId: string;
   recipeId: string;

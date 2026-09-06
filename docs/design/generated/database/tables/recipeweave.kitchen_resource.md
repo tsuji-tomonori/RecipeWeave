@@ -46,6 +46,13 @@
 | operationId | CRUD | SQL |
 |---|---|---|
 | get_me | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_kitchen_resource.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_kitchen_resource.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_kitchen_resource.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_kitchen_resource.sql |
 | entity_kitchen_resource_create | C | backend/src/app/apis/entities/kitchen_resource_create/sql/001_create.sql |
 | entity_kitchen_resource_delete | D | backend/src/app/apis/entities/kitchen_resource_delete/sql/001_delete.sql |
 | entity_kitchen_resource_get | R | backend/src/app/apis/entities/kitchen_resource_get/sql/001_get.sql |
@@ -59,6 +66,7 @@
 | put_settings | U | backend/src/app/apis/workspace/put_settings/sql/q003_clear_equipment.sql |
 | put_settings | U | backend/src/app/apis/workspace/put_settings/sql/q006_equipment.sql |
 | put_settings | C,R | backend/src/app/apis/workspace/put_settings/sql/q007_add_equipment.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
@@ -74,6 +82,9 @@
 | update_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | update_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | update_pantry_lot | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
+| export_backup | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
+| preview_backup | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
+| restore_backup | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
 | entity_allergen_create | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
 | entity_allergen_get | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
 | entity_allergen_list | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
@@ -91,6 +102,10 @@
 | entity_axis_option_list | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
 | entity_axis_option_update | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
 | entity_axis_update | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
+| entity_backup_artifact_get | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
+| entity_backup_artifact_list | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
+| entity_backup_restore_intent_get | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
+| entity_backup_restore_intent_list | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
 | entity_candidate_attempt_create | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
 | entity_candidate_attempt_get | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |
 | entity_candidate_attempt_list | C,R | backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql |

@@ -12,7 +12,9 @@ SET
     actual_start_at = %(actual_start_at)s,
     actual_end_at = %(actual_end_at)s,
     timer_started_at = %(timer_started_at)s,
-    timer_duration_s = %(timer_duration_s)s
+    timer_duration_s = %(timer_duration_s)s,
+    duration_source = %(duration_source)s,
+    confirmed_duration_s = %(confirmed_duration_s)s
 WHERE
     t.id = %(row_id)s
     AND t.xmin::TEXT = %(expected_etag)s
@@ -43,4 +45,6 @@ RETURNING
     t.actual_end_at,
     t.timer_started_at,
     t.timer_duration_s,
+    t.duration_source,
+    t.confirmed_duration_s,
     t.xmin::TEXT AS etag;

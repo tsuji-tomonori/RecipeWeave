@@ -12,7 +12,7 @@
 |---|---|---|
 | recipeweave.cooking_session | R | id, menu_id |
 | recipeweave.menu | R | id, user_id |
-| recipeweave.session_task | R | actual_end_at, actual_start_at, batch_no, created_at, id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id, timer_duration_s, timer_started_at, xmin |
+| recipeweave.session_task | R | actual_end_at, actual_start_at, batch_no, confirmed_duration_s, created_at, duration_source, id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id, timer_duration_s, timer_started_at, xmin |
 
 バインド変数: actor_id, after_id, page_limit
 
@@ -33,6 +33,8 @@ SELECT
     t.actual_end_at,
     t.timer_started_at,
     t.timer_duration_s,
+    t.duration_source,
+    t.confirmed_duration_s,
     t.xmin::TEXT AS etag
 FROM recipeweave.session_task AS t
 WHERE

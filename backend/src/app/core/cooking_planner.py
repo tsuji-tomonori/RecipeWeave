@@ -20,6 +20,8 @@ class PlannedTask:
     start: int
     end: int
     reservations: list[tuple[UUID, int]]
+    duration_source: str = "recipe_rule"
+    confirmed_duration_s: int | None = None
 
 
 @dataclass(frozen=True)
@@ -29,6 +31,7 @@ class _Step:
     number: int
     duration: int
     attention: str
+    confirmed_duration_s: int | None
 
 
 @dataclass(frozen=True)
@@ -87,7 +90,7 @@ def _integer(value: object, name: str, *, positive: bool = False) -> int:
     return int(number)
 
 
-def _duration(row: Row) -> int:
+def _duration(row: Row, confirmed: int | None = None) -> int:
     base = _decimal(row.get("base_servings"), "基準人数")
     servings = _decimal(row.get("servings"), "人数")
     nominal = _integer(row.get("duration_max_s"), "基準所要時間")
@@ -98,6 +101,10 @@ def _duration(row: Row) -> int:
     if maximum is not None and servings > _decimal(maximum, "人数上限"):
         raise ValueError("この人数は調理条件の検証範囲を超えています。")
     mode = row.get("scaling_mode")
+    if confirmed is not None:
+        if mode != "manual":
+            raise ValueError("時間の見積りを指定できるのは手動確認の工程だけです。")
+        return confirmed
     if mode == "linear":
         factor = servings / base
     elif mode in {"fixed_batch", "capacity_batch"}:
@@ -107,14 +114,25 @@ def _duration(row: Row) -> int:
         factor = after / before
     elif mode in {"manual", "validated_curve"}:
         if servings != base:
-            raise ValueError("この人数の調理時間は未確認です。基準人数へ戻してください。")
+            raise ValueError(
+                "この人数の調理時間は未確認です。各工程の見積り秒数を確認してください。"
+            )
         factor = Decimal(1)
     else:
         raise ValueError("所要時間の換算規則を解釈できません。")
     return int((Decimal(nominal) * factor).to_integral_value(rounding=ROUND_CEILING))
 
 
-def _steps(rows: Sequence[Row]) -> dict[Key, _Step]:
+def _steps(rows: Sequence[Row], estimates: Sequence[Row]) -> dict[Key, _Step]:
+    confirmed: dict[Key, int] = {}
+    for estimate in estimates:
+        key = (_uuid(estimate.get("meal_item_id")), _uuid(estimate.get("step_id")))
+        if key in confirmed:
+            raise ValueError("同じ工程の見積り時間を重複して指定できません。")
+        duration = _integer(estimate.get("duration_seconds"), "見積り秒数", positive=True)
+        if duration > 86400:
+            raise ValueError("見積り秒数は86400秒以下で指定してください。")
+        confirmed[key] = duration
     result: dict[Key, _Step] = {}
     for row in rows:
         key = (_uuid(row.get("item_id")), _uuid(row.get("step_id")))
@@ -125,9 +143,12 @@ def _steps(rows: Sequence[Row]) -> dict[Key, _Step]:
             key,
             _integer(row.get("position"), "献立の順番"),
             _integer(row.get("step_no"), "工程の順番", positive=True),
-            _duration(row),
+            _duration(row, confirmed.get(key)),
             attention,
+            confirmed.get(key),
         )
+    if set(confirmed) - set(result):
+        raise ValueError("この献立・料理版に含まれない工程の見積りが指定されています。")
     if not result:
         raise ValueError("献立に調理する工程がありません。")
     return result
@@ -285,9 +306,11 @@ def build_plan(
     dependencies: Sequence[Row],
     requirements: Sequence[Row],
     resources: Sequence[Row],
+    *,
+    duration_estimates: Sequence[Row] = (),
 ) -> list[PlannedTask]:
     """待ち時間上限を優先する非割込み計画。成立しない場合は時刻を捏造せず拒否する。"""
-    tasks = _steps(steps)
+    tasks = _steps(steps, duration_estimates)
     parents = _dependencies(dependencies, tasks)
     available = _resources(resources)
     demands = _requirements(requirements)
@@ -331,7 +354,14 @@ def build_plan(
             raise ValueError("工程の依存関係を解決できません。")
         _, start, _, _, _, selected, reservations = min(candidates, key=lambda item: item[:5])
         end = start + selected.duration
-        planned[selected.key] = PlannedTask(*selected.key, start, end, reservations)
+        planned[selected.key] = PlannedTask(
+            *selected.key,
+            start,
+            end,
+            reservations,
+            "user_estimate" if selected.confirmed_duration_s is not None else "recipe_rule",
+            selected.confirmed_duration_s,
+        )
         for resource_id, quantity in reservations:
             calendar[resource_id].append((start, end, quantity))
         if selected.attention != "passive":

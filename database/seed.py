@@ -472,6 +472,12 @@ class SeedBuilder:
         for code, name, mode, maximum in [
             ("ingredient_linear", "初期分量の比例換算（調理試作は未実施）", "linear", 12),
             ("time_manual", "工程時間は人数変更時に再確認", "manual", 2),
+            (
+                "time_manual_user_estimate_v2",
+                "人数変更時は利用者の時間見積りが必要（1〜1000は入力範囲・物理容量は別途確認）",
+                "manual",
+                1000,
+            ),
         ]:
             self.add(
                 "scaling_rule",
@@ -687,7 +693,7 @@ class SeedBuilder:
                 attention="monitored" if step["mode"] == "passive" else "active",
                 duration_min_s=step["minutes"] * 60,
                 duration_max_s=step["minutes"] * 60,
-                scaling_rule_id=stable_id("scaling_rule", "time_manual"),
+                scaling_rule_id=stable_id("scaling_rule", "time_manual_user_estimate_v2"),
                 completion_cue=flow["completion"],
             )
             for field, value in flow.get("parameters", {}).items():

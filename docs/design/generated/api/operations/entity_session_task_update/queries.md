@@ -12,9 +12,9 @@
 |---|---|---|
 | recipeweave.cooking_session | R | id, menu_id |
 | recipeweave.menu | R | id, user_id |
-| recipeweave.session_task | U | actual_end_at, actual_start_at, batch_no, created_at, id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id, timer_duration_s, timer_started_at, xmin |
+| recipeweave.session_task | U | actual_end_at, actual_start_at, batch_no, confirmed_duration_s, created_at, duration_source, id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id, timer_duration_s, timer_started_at, xmin |
 
-バインド変数: actor_id, actual_end_at, actual_start_at, batch_no, expected_etag, menu_item_id, planned_end_s, planned_start_s, row_id, session_id, status, step_id, timer_duration_s, timer_started_at
+バインド変数: actor_id, actual_end_at, actual_start_at, batch_no, confirmed_duration_s, duration_source, expected_etag, menu_item_id, planned_end_s, planned_start_s, row_id, session_id, status, step_id, timer_duration_s, timer_started_at
 
 ```sql
 -- 展開済み工程を条件付き更新する。
@@ -31,7 +31,9 @@ SET
     actual_start_at = %(actual_start_at)s,
     actual_end_at = %(actual_end_at)s,
     timer_started_at = %(timer_started_at)s,
-    timer_duration_s = %(timer_duration_s)s
+    timer_duration_s = %(timer_duration_s)s,
+    duration_source = %(duration_source)s,
+    confirmed_duration_s = %(confirmed_duration_s)s
 WHERE
     t.id = %(row_id)s
     AND t.xmin::TEXT = %(expected_etag)s
@@ -62,6 +64,8 @@ RETURNING
     t.actual_end_at,
     t.timer_started_at,
     t.timer_duration_s,
+    t.duration_source,
+    t.confirmed_duration_s,
     t.xmin::TEXT AS etag;
 ```
 

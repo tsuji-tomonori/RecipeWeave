@@ -6,6 +6,7 @@ from pydantic import Field
 
 from app.core.models import (
     CookingSession,
+    DurationEstimate,
     Food,
     Identifier,
     Location,
@@ -77,5 +78,8 @@ class ReceiptRequest(RevisionRequest):
 
 
 class CookingRequest(RevisionRequest):
+    duration_estimates: Annotated[list[DurationEstimate], Field(max_length=500)] = Field(
+        default_factory=list[DurationEstimate]
+    )
     session: CookingSession
     deduct: bool = False

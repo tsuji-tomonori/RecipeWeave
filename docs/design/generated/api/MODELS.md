@@ -857,6 +857,1281 @@
 }
 ```
 
+## BackupArtifactRow
+
+本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持するのDB応答。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| body_sha256 | string | 必須 | minLength=1; maxLength=20000 | 発行識別子を含む正規化済み本文全体のSHA-256 |
+| created_at | string (date-time) | 必須 | 追加制約なし | サーバーによる発行日時(UTC) |
+| etag | string | 必須 | pattern="^[0-9]+$" | 更新・削除時のIf-Matchに使う行版 |
+| format_version | integer | 必須 | 追加制約なし | 対応するバックアップの形式版。現在は2 |
+| id | string (uuid) | 必須 | 追加制約なし | バックアップ本文に含める不変の発行識別子 |
+| user_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 発行先の本人。利用者消去後だけNULLへ匿名化する |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持するのDB応答。",
+  "properties": {
+    "body_sha256": {
+      "description": "発行識別子を含む正規化済み本文全体のSHA-256",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Body Sha256",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "サーバーによる発行日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "etag": {
+      "description": "更新・削除時のIf-Matchに使う行版",
+      "pattern": "^[0-9]+$",
+      "title": "Etag",
+      "type": "string"
+    },
+    "format_version": {
+      "description": "対応するバックアップの形式版。現在は2",
+      "title": "Format Version",
+      "type": "integer"
+    },
+    "id": {
+      "description": "バックアップ本文に含める不変の発行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "user_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "発行先の本人。利用者消去後だけNULLへ匿名化する",
+      "title": "User Id"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "body_sha256",
+    "format_version",
+    "etag"
+  ],
+  "title": "BackupArtifactRow",
+  "type": "object"
+}
+```
+
+## BackupCount
+
+
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| currentCount | integer | 必須 | minimum=0.0 | Currentcount |
+| label | string | 必須 | 追加制約なし | Label |
+| restoreCount | integer | 必須 | minimum=0.0 | Restorecount |
+| table | string | 必須 | 追加制約なし | Table |
+
+```json
+{
+  "additionalProperties": false,
+  "properties": {
+    "currentCount": {
+      "minimum": 0.0,
+      "title": "Currentcount",
+      "type": "integer"
+    },
+    "label": {
+      "title": "Label",
+      "type": "string"
+    },
+    "restoreCount": {
+      "minimum": 0.0,
+      "title": "Restorecount",
+      "type": "integer"
+    },
+    "table": {
+      "title": "Table",
+      "type": "string"
+    }
+  },
+  "required": [
+    "table",
+    "label",
+    "currentCount",
+    "restoreCount"
+  ],
+  "title": "BackupCount",
+  "type": "object"
+}
+```
+
+## BackupDocument-Input
+
+
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| artifactId | string (uuid) | 必須 | 追加制約なし | Artifactid |
+| exportedAt | string (date-time) | 必須 | 追加制約なし | Exportedat |
+| format | string | 必須 | const="recipeweave-relational" | Format |
+| formatVersion | integer | 必須 | const=2 | Formatversion |
+| ownerId | string (uuid) | 必須 | 追加制約なし | Ownerid |
+| profile | BackupProfile | 必須 | 追加制約なし |  |
+| sourceVersion | integer | 必須 | minimum=0.0 | Sourceversion |
+| tables | BackupTables-Input | 必須 | 追加制約なし |  |
+
+```json
+{
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "format": "uuid",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "exportedAt": {
+      "format": "date-time",
+      "title": "Exportedat",
+      "type": "string"
+    },
+    "format": {
+      "const": "recipeweave-relational",
+      "title": "Format",
+      "type": "string"
+    },
+    "formatVersion": {
+      "const": 2,
+      "title": "Formatversion",
+      "type": "integer"
+    },
+    "ownerId": {
+      "format": "uuid",
+      "title": "Ownerid",
+      "type": "string"
+    },
+    "profile": {
+      "$ref": "#/components/schemas/BackupProfile"
+    },
+    "sourceVersion": {
+      "minimum": 0.0,
+      "title": "Sourceversion",
+      "type": "integer"
+    },
+    "tables": {
+      "$ref": "#/components/schemas/BackupTables-Input"
+    }
+  },
+  "required": [
+    "format",
+    "formatVersion",
+    "artifactId",
+    "ownerId",
+    "exportedAt",
+    "sourceVersion",
+    "profile",
+    "tables"
+  ],
+  "title": "BackupDocument",
+  "type": "object"
+}
+```
+
+## BackupDocument-Output
+
+
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| artifactId | string (uuid) | 必須 | 追加制約なし | Artifactid |
+| exportedAt | string (date-time) | 必須 | 追加制約なし | Exportedat |
+| format | string | 必須 | const="recipeweave-relational" | Format |
+| formatVersion | integer | 必須 | const=2 | Formatversion |
+| ownerId | string (uuid) | 必須 | 追加制約なし | Ownerid |
+| profile | BackupProfile | 必須 | 追加制約なし |  |
+| sourceVersion | integer | 必須 | minimum=0.0 | Sourceversion |
+| tables | BackupTables-Output | 必須 | 追加制約なし |  |
+
+```json
+{
+  "additionalProperties": false,
+  "properties": {
+    "artifactId": {
+      "format": "uuid",
+      "title": "Artifactid",
+      "type": "string"
+    },
+    "exportedAt": {
+      "format": "date-time",
+      "title": "Exportedat",
+      "type": "string"
+    },
+    "format": {
+      "const": "recipeweave-relational",
+      "title": "Format",
+      "type": "string"
+    },
+    "formatVersion": {
+      "const": 2,
+      "title": "Formatversion",
+      "type": "integer"
+    },
+    "ownerId": {
+      "format": "uuid",
+      "title": "Ownerid",
+      "type": "string"
+    },
+    "profile": {
+      "$ref": "#/components/schemas/BackupProfile"
+    },
+    "sourceVersion": {
+      "minimum": 0.0,
+      "title": "Sourceversion",
+      "type": "integer"
+    },
+    "tables": {
+      "$ref": "#/components/schemas/BackupTables-Output"
+    }
+  },
+  "required": [
+    "format",
+    "formatVersion",
+    "artifactId",
+    "ownerId",
+    "exportedAt",
+    "sourceVersion",
+    "profile",
+    "tables"
+  ],
+  "title": "BackupDocument",
+  "type": "object"
+}
+```
+
+## BackupPreview
+
+
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| backupSha256 | string | 必須 | pattern="^[0-9a-f]{64}$" | Backupsha256 |
+| counts | array&lt;BackupCount&gt; | 必須 | 追加制約なし | Counts |
+| expectedVersion | integer | 必須 | minimum=0.0 | Expectedversion |
+| expiresAt | string (date-time) | 必須 | 追加制約なし | Expiresat |
+| intentId | string (uuid) | 必須 | 追加制約なし | Intentid |
+| preservedTargets | array&lt;string&gt; | 必須 | 追加制約なし | Preservedtargets |
+| replaceTargets | array&lt;string&gt; | 必須 | 追加制約なし | Replacetargets |
+| sourceVersion | integer | 必須 | minimum=0.0 | Sourceversion |
+
+```json
+{
+  "additionalProperties": false,
+  "properties": {
+    "backupSha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Backupsha256",
+      "type": "string"
+    },
+    "counts": {
+      "items": {
+        "$ref": "#/components/schemas/BackupCount"
+      },
+      "title": "Counts",
+      "type": "array"
+    },
+    "expectedVersion": {
+      "minimum": 0.0,
+      "title": "Expectedversion",
+      "type": "integer"
+    },
+    "expiresAt": {
+      "format": "date-time",
+      "title": "Expiresat",
+      "type": "string"
+    },
+    "intentId": {
+      "format": "uuid",
+      "title": "Intentid",
+      "type": "string"
+    },
+    "preservedTargets": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Preservedtargets",
+      "type": "array"
+    },
+    "replaceTargets": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Replacetargets",
+      "type": "array"
+    },
+    "sourceVersion": {
+      "minimum": 0.0,
+      "title": "Sourceversion",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "intentId",
+    "expiresAt",
+    "expectedVersion",
+    "backupSha256",
+    "sourceVersion",
+    "counts",
+    "replaceTargets",
+    "preservedTargets"
+  ],
+  "title": "BackupPreview",
+  "type": "object"
+}
+```
+
+## BackupPreviewRequest
+
+
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| backup | BackupDocument-Input | 必須 | 追加制約なし |  |
+
+```json
+{
+  "additionalProperties": false,
+  "properties": {
+    "backup": {
+      "$ref": "#/components/schemas/BackupDocument-Input"
+    }
+  },
+  "required": [
+    "backup"
+  ],
+  "title": "BackupPreviewRequest",
+  "type": "object"
+}
+```
+
+## BackupProfile
+
+
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| locale | string | 必須 | minLength=1; maxLength=20000 | Locale |
+| timezone | string | 必須 | minLength=1; maxLength=20000 | Timezone |
+
+```json
+{
+  "additionalProperties": false,
+  "properties": {
+    "locale": {
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Locale",
+      "type": "string"
+    },
+    "timezone": {
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Timezone",
+      "type": "string"
+    }
+  },
+  "required": [
+    "locale",
+    "timezone"
+  ],
+  "title": "BackupProfile",
+  "type": "object"
+}
+```
+
+## BackupRestoreIntentRow
+
+復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費するのDB応答。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| artifact_id | string (uuid) | 必須 | 追加制約なし | 本人へ発行したバックアップ証拠の識別子 |
+| body_sha256 | string | 必須 | minLength=1; maxLength=20000 | 確認した本文全体のSHA-256。発行記録と一致する |
+| consumed_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 復元と同一トランザクションで確定する使用日時。取消・再使用は不可 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 復元内容を検証して確認記録を発行した日時(UTC) |
+| current_revision | string | 必須 | pattern="^-?(0&#124;[1-9][0-9]{0,18})$" | 確認時の現在データの更新版。復元直前にも同じ値であることを検査する |
+| etag | string | 必須 | pattern="^[0-9]+$" | 更新・削除時のIf-Matchに使う行版 |
+| expires_at | string (date-time) | 必須 | 追加制約なし | 確認の有効期限。発行から最大15分 |
+| id | string (uuid) | 必須 | 追加制約なし | 確認画面へ返す不変の復元確認識別子 |
+| user_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 復元する本人。利用者消去後だけNULLへ匿名化する |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費するのDB応答。",
+  "properties": {
+    "artifact_id": {
+      "description": "本人へ発行したバックアップ証拠の識別子",
+      "format": "uuid",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "body_sha256": {
+      "description": "確認した本文全体のSHA-256。発行記録と一致する",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Body Sha256",
+      "type": "string"
+    },
+    "consumed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "復元と同一トランザクションで確定する使用日時。取消・再使用は不可",
+      "title": "Consumed At"
+    },
+    "created_at": {
+      "description": "復元内容を検証して確認記録を発行した日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "current_revision": {
+      "description": "確認時の現在データの更新版。復元直前にも同じ値であることを検査する",
+      "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+      "title": "Current Revision",
+      "type": "string"
+    },
+    "etag": {
+      "description": "更新・削除時のIf-Matchに使う行版",
+      "pattern": "^[0-9]+$",
+      "title": "Etag",
+      "type": "string"
+    },
+    "expires_at": {
+      "description": "確認の有効期限。発行から最大15分",
+      "format": "date-time",
+      "title": "Expires At",
+      "type": "string"
+    },
+    "id": {
+      "description": "確認画面へ返す不変の復元確認識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "user_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "復元する本人。利用者消去後だけNULLへ匿名化する",
+      "title": "User Id"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "artifact_id",
+    "body_sha256",
+    "current_revision",
+    "expires_at",
+    "consumed_at",
+    "etag"
+  ],
+  "title": "BackupRestoreIntentRow",
+  "type": "object"
+}
+```
+
+## BackupRestoreRequest
+
+
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| backup | BackupDocument-Input | 必須 | 追加制約なし |  |
+| confirmed | boolean | 必須 | const=true | 全置換の最終確認を明示した場合だけtrue |
+| expectedVersion | integer | 必須 | minimum=0.0 | Expectedversion |
+| intentId | string (uuid) | 必須 | 追加制約なし | Intentid |
+
+```json
+{
+  "additionalProperties": false,
+  "properties": {
+    "backup": {
+      "$ref": "#/components/schemas/BackupDocument-Input"
+    },
+    "confirmed": {
+      "const": true,
+      "description": "全置換の最終確認を明示した場合だけtrue",
+      "title": "Confirmed",
+      "type": "boolean"
+    },
+    "expectedVersion": {
+      "minimum": 0.0,
+      "title": "Expectedversion",
+      "type": "integer"
+    },
+    "intentId": {
+      "format": "uuid",
+      "title": "Intentid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "backup",
+    "intentId",
+    "expectedVersion",
+    "confirmed"
+  ],
+  "title": "BackupRestoreRequest",
+  "type": "object"
+}
+```
+
+## BackupTables-Input
+
+一部省略による意図しない消去を避け、全34表を必須にする。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| catalog_release | array&lt;CatalogReleaseBackupRow&gt; | 必須 | maxItems=100000 | Catalog Release |
+| conversion | array&lt;ConversionBackupRow-Input&gt; | 必須 | maxItems=100000 | Conversion |
+| cooking_session | array&lt;CookingSessionBackupRow-Input&gt; | 必須 | maxItems=100000 | Cooking Session |
+| food | array&lt;FoodBackupRow&gt; | 必須 | maxItems=100000 | Food |
+| food_alias | array&lt;FoodAliasBackupRow&gt; | 必須 | maxItems=100000 | Food Alias |
+| food_allergen | array&lt;FoodAllergenBackupRow&gt; | 必須 | maxItems=100000 | Food Allergen |
+| food_axis_option | array&lt;FoodAxisOptionBackupRow&gt; | 必須 | maxItems=100000 | Food Axis Option |
+| food_form | array&lt;FoodFormBackupRow&gt; | 必須 | maxItems=100000 | Food Form |
+| form_yield | array&lt;FormYieldBackupRow-Input&gt; | 必須 | maxItems=100000 | Form Yield |
+| ingredient_total | array&lt;IngredientTotalBackupRow-Input&gt; | 必須 | maxItems=100000 | Ingredient Total |
+| kitchen_resource | array&lt;KitchenResourceBackupRow-Input&gt; | 必須 | maxItems=100000 | Kitchen Resource |
+| menu | array&lt;MenuBackupRow-Input&gt; | 必須 | maxItems=100000 | Menu |
+| menu_ingredient_override | array&lt;MenuIngredientOverrideBackupRow-Input&gt; | 必須 | maxItems=100000 | Menu Ingredient Override |
+| menu_item | array&lt;MenuItemBackupRow-Input&gt; | 必須 | maxItems=100000 | Menu Item |
+| nutrition_fact | array&lt;NutritionFactBackupRow-Input&gt; | 必須 | maxItems=100000 | Nutrition Fact |
+| pantry_consumption | array&lt;PantryConsumptionBackupRow-Input&gt; | 必須 | maxItems=100000 | Pantry Consumption |
+| pantry_lot | array&lt;PantryLotBackupRow-Input&gt; | 必須 | maxItems=100000 | Pantry Lot |
+| product | array&lt;ProductBackupRow&gt; | 必須 | maxItems=100000 | Product |
+| product_allergen | array&lt;ProductAllergenBackupRow&gt; | 必須 | maxItems=100000 | Product Allergen |
+| product_component | array&lt;ProductComponentBackupRow-Input&gt; | 必須 | maxItems=100000 | Product Component |
+| product_preparation_rule | array&lt;ProductPreparationRuleBackupRow-Input&gt; | 必須 | maxItems=100000 | Product Preparation Rule |
+| product_version | array&lt;ProductVersionBackupRow-Input&gt; | 必須 | maxItems=100000 | Product Version |
+| receipt_import | array&lt;ReceiptImportBackupRow&gt; | 必須 | maxItems=100000 | Receipt Import |
+| receipt_line | array&lt;ReceiptLineBackupRow-Input&gt; | 必須 | maxItems=100000 | Receipt Line |
+| resource_reservation | array&lt;ResourceReservationBackupRow&gt; | 必須 | maxItems=100000 | Resource Reservation |
+| session_task | array&lt;SessionTaskBackupRow&gt; | 必須 | maxItems=100000 | Session Task |
+| shopping_item | array&lt;ShoppingItemBackupRow-Input&gt; | 必須 | maxItems=100000 | Shopping Item |
+| task_dependency | array&lt;TaskDependencyBackupRow&gt; | 必須 | maxItems=100000 | Task Dependency |
+| user_exclusion | array&lt;UserExclusionBackupRow&gt; | 必須 | maxItems=100000 | User Exclusion |
+| user_food | array&lt;UserFoodBackupRow&gt; | 必須 | maxItems=100000 | User Food |
+| user_pantry_food | array&lt;UserPantryFoodBackupRow&gt; | 必須 | maxItems=100000 | User Pantry Food |
+| user_preference | array&lt;UserPreferenceBackupRow-Input&gt; | 必須 | maxItems=100000 | User Preference |
+| user_recipe_event | array&lt;UserRecipeEventBackupRow&gt; | 必須 | maxItems=100000 | User Recipe Event |
+| user_shopping_check | array&lt;UserShoppingCheckBackupRow-Input&gt; | 必須 | maxItems=100000 | User Shopping Check |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "一部省略による意図しない消去を避け、全34表を必須にする。",
+  "properties": {
+    "catalog_release": {
+      "items": {
+        "$ref": "#/components/schemas/CatalogReleaseBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Catalog Release",
+      "type": "array"
+    },
+    "conversion": {
+      "items": {
+        "$ref": "#/components/schemas/ConversionBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Conversion",
+      "type": "array"
+    },
+    "cooking_session": {
+      "items": {
+        "$ref": "#/components/schemas/CookingSessionBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Cooking Session",
+      "type": "array"
+    },
+    "food": {
+      "items": {
+        "$ref": "#/components/schemas/FoodBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Food",
+      "type": "array"
+    },
+    "food_alias": {
+      "items": {
+        "$ref": "#/components/schemas/FoodAliasBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Food Alias",
+      "type": "array"
+    },
+    "food_allergen": {
+      "items": {
+        "$ref": "#/components/schemas/FoodAllergenBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Food Allergen",
+      "type": "array"
+    },
+    "food_axis_option": {
+      "items": {
+        "$ref": "#/components/schemas/FoodAxisOptionBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Food Axis Option",
+      "type": "array"
+    },
+    "food_form": {
+      "items": {
+        "$ref": "#/components/schemas/FoodFormBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Food Form",
+      "type": "array"
+    },
+    "form_yield": {
+      "items": {
+        "$ref": "#/components/schemas/FormYieldBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Form Yield",
+      "type": "array"
+    },
+    "ingredient_total": {
+      "items": {
+        "$ref": "#/components/schemas/IngredientTotalBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Ingredient Total",
+      "type": "array"
+    },
+    "kitchen_resource": {
+      "items": {
+        "$ref": "#/components/schemas/KitchenResourceBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Kitchen Resource",
+      "type": "array"
+    },
+    "menu": {
+      "items": {
+        "$ref": "#/components/schemas/MenuBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Menu",
+      "type": "array"
+    },
+    "menu_ingredient_override": {
+      "items": {
+        "$ref": "#/components/schemas/MenuIngredientOverrideBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Menu Ingredient Override",
+      "type": "array"
+    },
+    "menu_item": {
+      "items": {
+        "$ref": "#/components/schemas/MenuItemBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Menu Item",
+      "type": "array"
+    },
+    "nutrition_fact": {
+      "items": {
+        "$ref": "#/components/schemas/NutritionFactBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Nutrition Fact",
+      "type": "array"
+    },
+    "pantry_consumption": {
+      "items": {
+        "$ref": "#/components/schemas/PantryConsumptionBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Pantry Consumption",
+      "type": "array"
+    },
+    "pantry_lot": {
+      "items": {
+        "$ref": "#/components/schemas/PantryLotBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Pantry Lot",
+      "type": "array"
+    },
+    "product": {
+      "items": {
+        "$ref": "#/components/schemas/ProductBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Product",
+      "type": "array"
+    },
+    "product_allergen": {
+      "items": {
+        "$ref": "#/components/schemas/ProductAllergenBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Product Allergen",
+      "type": "array"
+    },
+    "product_component": {
+      "items": {
+        "$ref": "#/components/schemas/ProductComponentBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Product Component",
+      "type": "array"
+    },
+    "product_preparation_rule": {
+      "items": {
+        "$ref": "#/components/schemas/ProductPreparationRuleBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Product Preparation Rule",
+      "type": "array"
+    },
+    "product_version": {
+      "items": {
+        "$ref": "#/components/schemas/ProductVersionBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Product Version",
+      "type": "array"
+    },
+    "receipt_import": {
+      "items": {
+        "$ref": "#/components/schemas/ReceiptImportBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Receipt Import",
+      "type": "array"
+    },
+    "receipt_line": {
+      "items": {
+        "$ref": "#/components/schemas/ReceiptLineBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Receipt Line",
+      "type": "array"
+    },
+    "resource_reservation": {
+      "items": {
+        "$ref": "#/components/schemas/ResourceReservationBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Resource Reservation",
+      "type": "array"
+    },
+    "session_task": {
+      "items": {
+        "$ref": "#/components/schemas/SessionTaskBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Session Task",
+      "type": "array"
+    },
+    "shopping_item": {
+      "items": {
+        "$ref": "#/components/schemas/ShoppingItemBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "Shopping Item",
+      "type": "array"
+    },
+    "task_dependency": {
+      "items": {
+        "$ref": "#/components/schemas/TaskDependencyBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Task Dependency",
+      "type": "array"
+    },
+    "user_exclusion": {
+      "items": {
+        "$ref": "#/components/schemas/UserExclusionBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "User Exclusion",
+      "type": "array"
+    },
+    "user_food": {
+      "items": {
+        "$ref": "#/components/schemas/UserFoodBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "User Food",
+      "type": "array"
+    },
+    "user_pantry_food": {
+      "items": {
+        "$ref": "#/components/schemas/UserPantryFoodBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "User Pantry Food",
+      "type": "array"
+    },
+    "user_preference": {
+      "items": {
+        "$ref": "#/components/schemas/UserPreferenceBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "User Preference",
+      "type": "array"
+    },
+    "user_recipe_event": {
+      "items": {
+        "$ref": "#/components/schemas/UserRecipeEventBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "User Recipe Event",
+      "type": "array"
+    },
+    "user_shopping_check": {
+      "items": {
+        "$ref": "#/components/schemas/UserShoppingCheckBackupRow-Input"
+      },
+      "maxItems": 100000,
+      "title": "User Shopping Check",
+      "type": "array"
+    }
+  },
+  "required": [
+    "user_preference",
+    "user_exclusion",
+    "user_recipe_event",
+    "menu",
+    "menu_item",
+    "menu_ingredient_override",
+    "kitchen_resource",
+    "cooking_session",
+    "session_task",
+    "task_dependency",
+    "resource_reservation",
+    "ingredient_total",
+    "pantry_lot",
+    "shopping_item",
+    "receipt_import",
+    "receipt_line",
+    "user_food",
+    "user_pantry_food",
+    "pantry_consumption",
+    "user_shopping_check",
+    "catalog_release",
+    "food",
+    "food_alias",
+    "food_form",
+    "food_axis_option",
+    "product",
+    "conversion",
+    "food_allergen",
+    "product_version",
+    "product_component",
+    "product_allergen",
+    "product_preparation_rule",
+    "nutrition_fact",
+    "form_yield"
+  ],
+  "title": "BackupTables",
+  "type": "object"
+}
+```
+
+## BackupTables-Output
+
+一部省略による意図しない消去を避け、全34表を必須にする。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| catalog_release | array&lt;CatalogReleaseBackupRow&gt; | 必須 | maxItems=100000 | Catalog Release |
+| conversion | array&lt;ConversionBackupRow-Output&gt; | 必須 | maxItems=100000 | Conversion |
+| cooking_session | array&lt;CookingSessionBackupRow-Output&gt; | 必須 | maxItems=100000 | Cooking Session |
+| food | array&lt;FoodBackupRow&gt; | 必須 | maxItems=100000 | Food |
+| food_alias | array&lt;FoodAliasBackupRow&gt; | 必須 | maxItems=100000 | Food Alias |
+| food_allergen | array&lt;FoodAllergenBackupRow&gt; | 必須 | maxItems=100000 | Food Allergen |
+| food_axis_option | array&lt;FoodAxisOptionBackupRow&gt; | 必須 | maxItems=100000 | Food Axis Option |
+| food_form | array&lt;FoodFormBackupRow&gt; | 必須 | maxItems=100000 | Food Form |
+| form_yield | array&lt;FormYieldBackupRow-Output&gt; | 必須 | maxItems=100000 | Form Yield |
+| ingredient_total | array&lt;IngredientTotalBackupRow-Output&gt; | 必須 | maxItems=100000 | Ingredient Total |
+| kitchen_resource | array&lt;KitchenResourceBackupRow-Output&gt; | 必須 | maxItems=100000 | Kitchen Resource |
+| menu | array&lt;MenuBackupRow-Output&gt; | 必須 | maxItems=100000 | Menu |
+| menu_ingredient_override | array&lt;MenuIngredientOverrideBackupRow-Output&gt; | 必須 | maxItems=100000 | Menu Ingredient Override |
+| menu_item | array&lt;MenuItemBackupRow-Output&gt; | 必須 | maxItems=100000 | Menu Item |
+| nutrition_fact | array&lt;NutritionFactBackupRow-Output&gt; | 必須 | maxItems=100000 | Nutrition Fact |
+| pantry_consumption | array&lt;PantryConsumptionBackupRow-Output&gt; | 必須 | maxItems=100000 | Pantry Consumption |
+| pantry_lot | array&lt;PantryLotBackupRow-Output&gt; | 必須 | maxItems=100000 | Pantry Lot |
+| product | array&lt;ProductBackupRow&gt; | 必須 | maxItems=100000 | Product |
+| product_allergen | array&lt;ProductAllergenBackupRow&gt; | 必須 | maxItems=100000 | Product Allergen |
+| product_component | array&lt;ProductComponentBackupRow-Output&gt; | 必須 | maxItems=100000 | Product Component |
+| product_preparation_rule | array&lt;ProductPreparationRuleBackupRow-Output&gt; | 必須 | maxItems=100000 | Product Preparation Rule |
+| product_version | array&lt;ProductVersionBackupRow-Output&gt; | 必須 | maxItems=100000 | Product Version |
+| receipt_import | array&lt;ReceiptImportBackupRow&gt; | 必須 | maxItems=100000 | Receipt Import |
+| receipt_line | array&lt;ReceiptLineBackupRow-Output&gt; | 必須 | maxItems=100000 | Receipt Line |
+| resource_reservation | array&lt;ResourceReservationBackupRow&gt; | 必須 | maxItems=100000 | Resource Reservation |
+| session_task | array&lt;SessionTaskBackupRow&gt; | 必須 | maxItems=100000 | Session Task |
+| shopping_item | array&lt;ShoppingItemBackupRow-Output&gt; | 必須 | maxItems=100000 | Shopping Item |
+| task_dependency | array&lt;TaskDependencyBackupRow&gt; | 必須 | maxItems=100000 | Task Dependency |
+| user_exclusion | array&lt;UserExclusionBackupRow&gt; | 必須 | maxItems=100000 | User Exclusion |
+| user_food | array&lt;UserFoodBackupRow&gt; | 必須 | maxItems=100000 | User Food |
+| user_pantry_food | array&lt;UserPantryFoodBackupRow&gt; | 必須 | maxItems=100000 | User Pantry Food |
+| user_preference | array&lt;UserPreferenceBackupRow-Output&gt; | 必須 | maxItems=100000 | User Preference |
+| user_recipe_event | array&lt;UserRecipeEventBackupRow&gt; | 必須 | maxItems=100000 | User Recipe Event |
+| user_shopping_check | array&lt;UserShoppingCheckBackupRow-Output&gt; | 必須 | maxItems=100000 | User Shopping Check |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "一部省略による意図しない消去を避け、全34表を必須にする。",
+  "properties": {
+    "catalog_release": {
+      "items": {
+        "$ref": "#/components/schemas/CatalogReleaseBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Catalog Release",
+      "type": "array"
+    },
+    "conversion": {
+      "items": {
+        "$ref": "#/components/schemas/ConversionBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Conversion",
+      "type": "array"
+    },
+    "cooking_session": {
+      "items": {
+        "$ref": "#/components/schemas/CookingSessionBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Cooking Session",
+      "type": "array"
+    },
+    "food": {
+      "items": {
+        "$ref": "#/components/schemas/FoodBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Food",
+      "type": "array"
+    },
+    "food_alias": {
+      "items": {
+        "$ref": "#/components/schemas/FoodAliasBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Food Alias",
+      "type": "array"
+    },
+    "food_allergen": {
+      "items": {
+        "$ref": "#/components/schemas/FoodAllergenBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Food Allergen",
+      "type": "array"
+    },
+    "food_axis_option": {
+      "items": {
+        "$ref": "#/components/schemas/FoodAxisOptionBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Food Axis Option",
+      "type": "array"
+    },
+    "food_form": {
+      "items": {
+        "$ref": "#/components/schemas/FoodFormBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Food Form",
+      "type": "array"
+    },
+    "form_yield": {
+      "items": {
+        "$ref": "#/components/schemas/FormYieldBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Form Yield",
+      "type": "array"
+    },
+    "ingredient_total": {
+      "items": {
+        "$ref": "#/components/schemas/IngredientTotalBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Ingredient Total",
+      "type": "array"
+    },
+    "kitchen_resource": {
+      "items": {
+        "$ref": "#/components/schemas/KitchenResourceBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Kitchen Resource",
+      "type": "array"
+    },
+    "menu": {
+      "items": {
+        "$ref": "#/components/schemas/MenuBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Menu",
+      "type": "array"
+    },
+    "menu_ingredient_override": {
+      "items": {
+        "$ref": "#/components/schemas/MenuIngredientOverrideBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Menu Ingredient Override",
+      "type": "array"
+    },
+    "menu_item": {
+      "items": {
+        "$ref": "#/components/schemas/MenuItemBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Menu Item",
+      "type": "array"
+    },
+    "nutrition_fact": {
+      "items": {
+        "$ref": "#/components/schemas/NutritionFactBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Nutrition Fact",
+      "type": "array"
+    },
+    "pantry_consumption": {
+      "items": {
+        "$ref": "#/components/schemas/PantryConsumptionBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Pantry Consumption",
+      "type": "array"
+    },
+    "pantry_lot": {
+      "items": {
+        "$ref": "#/components/schemas/PantryLotBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Pantry Lot",
+      "type": "array"
+    },
+    "product": {
+      "items": {
+        "$ref": "#/components/schemas/ProductBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Product",
+      "type": "array"
+    },
+    "product_allergen": {
+      "items": {
+        "$ref": "#/components/schemas/ProductAllergenBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Product Allergen",
+      "type": "array"
+    },
+    "product_component": {
+      "items": {
+        "$ref": "#/components/schemas/ProductComponentBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Product Component",
+      "type": "array"
+    },
+    "product_preparation_rule": {
+      "items": {
+        "$ref": "#/components/schemas/ProductPreparationRuleBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Product Preparation Rule",
+      "type": "array"
+    },
+    "product_version": {
+      "items": {
+        "$ref": "#/components/schemas/ProductVersionBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Product Version",
+      "type": "array"
+    },
+    "receipt_import": {
+      "items": {
+        "$ref": "#/components/schemas/ReceiptImportBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Receipt Import",
+      "type": "array"
+    },
+    "receipt_line": {
+      "items": {
+        "$ref": "#/components/schemas/ReceiptLineBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Receipt Line",
+      "type": "array"
+    },
+    "resource_reservation": {
+      "items": {
+        "$ref": "#/components/schemas/ResourceReservationBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Resource Reservation",
+      "type": "array"
+    },
+    "session_task": {
+      "items": {
+        "$ref": "#/components/schemas/SessionTaskBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Session Task",
+      "type": "array"
+    },
+    "shopping_item": {
+      "items": {
+        "$ref": "#/components/schemas/ShoppingItemBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "Shopping Item",
+      "type": "array"
+    },
+    "task_dependency": {
+      "items": {
+        "$ref": "#/components/schemas/TaskDependencyBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "Task Dependency",
+      "type": "array"
+    },
+    "user_exclusion": {
+      "items": {
+        "$ref": "#/components/schemas/UserExclusionBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "User Exclusion",
+      "type": "array"
+    },
+    "user_food": {
+      "items": {
+        "$ref": "#/components/schemas/UserFoodBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "User Food",
+      "type": "array"
+    },
+    "user_pantry_food": {
+      "items": {
+        "$ref": "#/components/schemas/UserPantryFoodBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "User Pantry Food",
+      "type": "array"
+    },
+    "user_preference": {
+      "items": {
+        "$ref": "#/components/schemas/UserPreferenceBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "User Preference",
+      "type": "array"
+    },
+    "user_recipe_event": {
+      "items": {
+        "$ref": "#/components/schemas/UserRecipeEventBackupRow"
+      },
+      "maxItems": 100000,
+      "title": "User Recipe Event",
+      "type": "array"
+    },
+    "user_shopping_check": {
+      "items": {
+        "$ref": "#/components/schemas/UserShoppingCheckBackupRow-Output"
+      },
+      "maxItems": 100000,
+      "title": "User Shopping Check",
+      "type": "array"
+    }
+  },
+  "required": [
+    "user_preference",
+    "user_exclusion",
+    "user_recipe_event",
+    "menu",
+    "menu_item",
+    "menu_ingredient_override",
+    "kitchen_resource",
+    "cooking_session",
+    "session_task",
+    "task_dependency",
+    "resource_reservation",
+    "ingredient_total",
+    "pantry_lot",
+    "shopping_item",
+    "receipt_import",
+    "receipt_line",
+    "user_food",
+    "user_pantry_food",
+    "pantry_consumption",
+    "user_shopping_check",
+    "catalog_release",
+    "food",
+    "food_alias",
+    "food_form",
+    "food_axis_option",
+    "product",
+    "conversion",
+    "food_allergen",
+    "product_version",
+    "product_component",
+    "product_allergen",
+    "product_preparation_rule",
+    "nutrition_fact",
+    "form_yield"
+  ],
+  "title": "BackupTables",
+  "type": "object"
+}
+```
+
 ## CandidateAttemptRow
 
 試行済み設計点の台帳のDB応答。
@@ -1281,6 +2556,90 @@
 }
 ```
 
+## CatalogReleaseBackupRow
+
+カタログ公開版の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| manifest_hash | string | 必須 | minLength=64; maxLength=64 | 採用したID・内容のハッシュ |
+| owner_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 私有カタログの所有者。NULLは共通カタログ |
+| published_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 公開日時 |
+| version | string | 必須 | minLength=1; maxLength=20000 | カタログ版番号 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "カタログ公開版の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "manifest_hash": {
+      "description": "採用したID・内容のハッシュ",
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "owner_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "私有カタログの所有者。NULLは共通カタログ",
+      "title": "Owner Id"
+    },
+    "published_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "公開日時",
+      "title": "Published At"
+    },
+    "version": {
+      "description": "カタログ版番号",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "version",
+    "manifest_hash",
+    "published_at",
+    "owner_id"
+  ],
+  "title": "CatalogReleaseBackupRow",
+  "type": "object"
+}
+```
+
 ## CatalogReleaseRow
 
 カタログ公開版のDB応答。
@@ -1692,6 +3051,242 @@
 }
 ```
 
+## ConversionBackupRow-Input
+
+食材形態別換算の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| conditions | string | 必須 | minLength=1; maxLength=20000 | サイズ・温度・すり切り等 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| factor | anyOf(number, string) | 必須 | anyOfの制約=number: exclusiveMinimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 出力量=入力量x倍率 |
+| form_id | string (uuid) | 必須 | 追加制約なし | 換算対象形態 |
+| from_unit_id | string (uuid) | 必須 | 追加制約なし | 入力単位 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| quality | string | 必須 | enum=["measured", "manufacturer", "reference", "estimated", "unknown"] | 実測・推定区別 |
+| release_id | string (uuid) | 必須 | 追加制約なし | 換算版 |
+| source_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 換算根拠 |
+| to_unit_id | string (uuid) | 必須 | 追加制約なし | 出力単位 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "食材形態別換算の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "conditions": {
+      "description": "サイズ・温度・すり切り等",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Conditions",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "factor": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "出力量=入力量x倍率",
+      "title": "Factor"
+    },
+    "form_id": {
+      "description": "換算対象形態",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "from_unit_id": {
+      "description": "入力単位",
+      "format": "uuid",
+      "title": "From Unit Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "quality": {
+      "description": "実測・推定区別",
+      "enum": [
+        "measured",
+        "manufacturer",
+        "reference",
+        "estimated",
+        "unknown"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "release_id": {
+      "description": "換算版",
+      "format": "uuid",
+      "title": "Release Id",
+      "type": "string"
+    },
+    "source_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "換算根拠",
+      "title": "Source Id"
+    },
+    "to_unit_id": {
+      "description": "出力単位",
+      "format": "uuid",
+      "title": "To Unit Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "form_id",
+    "from_unit_id",
+    "to_unit_id",
+    "factor",
+    "quality",
+    "source_id",
+    "conditions",
+    "release_id"
+  ],
+  "title": "ConversionBackupRow",
+  "type": "object"
+}
+```
+
+## ConversionBackupRow-Output
+
+食材形態別換算の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| conditions | string | 必須 | minLength=1; maxLength=20000 | サイズ・温度・すり切り等 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| factor | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 出力量=入力量x倍率 |
+| form_id | string (uuid) | 必須 | 追加制約なし | 換算対象形態 |
+| from_unit_id | string (uuid) | 必須 | 追加制約なし | 入力単位 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| quality | string | 必須 | enum=["measured", "manufacturer", "reference", "estimated", "unknown"] | 実測・推定区別 |
+| release_id | string (uuid) | 必須 | 追加制約なし | 換算版 |
+| source_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 換算根拠 |
+| to_unit_id | string (uuid) | 必須 | 追加制約なし | 出力単位 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "食材形態別換算の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "conditions": {
+      "description": "サイズ・温度・すり切り等",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Conditions",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "factor": {
+      "description": "出力量=入力量x倍率",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Factor",
+      "type": "string"
+    },
+    "form_id": {
+      "description": "換算対象形態",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "from_unit_id": {
+      "description": "入力単位",
+      "format": "uuid",
+      "title": "From Unit Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "quality": {
+      "description": "実測・推定区別",
+      "enum": [
+        "measured",
+        "manufacturer",
+        "reference",
+        "estimated",
+        "unknown"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "release_id": {
+      "description": "換算版",
+      "format": "uuid",
+      "title": "Release Id",
+      "type": "string"
+    },
+    "source_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "換算根拠",
+      "title": "Source Id"
+    },
+    "to_unit_id": {
+      "description": "出力単位",
+      "format": "uuid",
+      "title": "To Unit Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "form_id",
+    "from_unit_id",
+    "to_unit_id",
+    "factor",
+    "quality",
+    "source_id",
+    "conditions",
+    "release_id"
+  ],
+  "title": "ConversionBackupRow",
+  "type": "object"
+}
+```
+
 ## ConversionRow
 
 食材形態別換算のDB応答。
@@ -2062,6 +3657,7 @@
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
 | deduct | boolean | 任意 | default=false | Deduct |
+| durationEstimates | array&lt;DurationEstimate&gt; | 任意 | maxItems=500 | Durationestimates |
 | expectedVersion | integer | 必須 | minimum=0.0; maximum=9007199254740990.0 | Expectedversion |
 | session | CookingSession | 必須 | 追加制約なし |  |
 
@@ -2073,6 +3669,14 @@
       "default": false,
       "title": "Deduct",
       "type": "boolean"
+    },
+    "durationEstimates": {
+      "items": {
+        "$ref": "#/components/schemas/DurationEstimate"
+      },
+      "maxItems": 500,
+      "title": "Durationestimates",
+      "type": "array"
     },
     "expectedVersion": {
       "maximum": 9007199254740990.0,
@@ -2187,6 +3791,228 @@
     "consumptionResults"
   ],
   "title": "CookingSession",
+  "type": "object"
+}
+```
+
+## CookingSessionBackupRow-Input
+
+調理計画実行の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| current_task_index | integer | 必須 | 追加制約なし | 調理画面の現在の工程位置(0始まり) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| input_hash | string | 必須 | minLength=64; maxLength=64 | 入力ハッシュ |
+| input_snapshot | CookingInput-Input | 必須 | 追加制約なし | 材料・資源・人数の固定入力 |
+| menu_id | string (uuid) | 必須 | 追加制約なし | 対象献立 |
+| menu_revision | integer | 必須 | exclusiveMinimum=0.0 | 献立版 |
+| planner_version | string | 必須 | minLength=1; maxLength=20000 | 計画器の版 |
+| status | string | 必須 | enum=["planned", "cooking", "completed", "cancelled"] | 実行状態 |
+| target_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 完成希望時刻 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "調理計画実行の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "current_task_index": {
+      "description": "調理画面の現在の工程位置(0始まり)",
+      "title": "Current Task Index",
+      "type": "integer"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "input_hash": {
+      "description": "入力ハッシュ",
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "input_snapshot": {
+      "$ref": "#/components/schemas/CookingInput-Input",
+      "description": "材料・資源・人数の固定入力"
+    },
+    "menu_id": {
+      "description": "対象献立",
+      "format": "uuid",
+      "title": "Menu Id",
+      "type": "string"
+    },
+    "menu_revision": {
+      "description": "献立版",
+      "exclusiveMinimum": 0.0,
+      "title": "Menu Revision",
+      "type": "integer"
+    },
+    "planner_version": {
+      "description": "計画器の版",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Planner Version",
+      "type": "string"
+    },
+    "status": {
+      "description": "実行状態",
+      "enum": [
+        "planned",
+        "cooking",
+        "completed",
+        "cancelled"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "target_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "完成希望時刻",
+      "title": "Target At"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "menu_id",
+    "menu_revision",
+    "status",
+    "target_at",
+    "planner_version",
+    "input_snapshot",
+    "input_hash",
+    "current_task_index"
+  ],
+  "title": "CookingSessionBackupRow",
+  "type": "object"
+}
+```
+
+## CookingSessionBackupRow-Output
+
+調理計画実行の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| current_task_index | integer | 必須 | 追加制約なし | 調理画面の現在の工程位置(0始まり) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| input_hash | string | 必須 | minLength=64; maxLength=64 | 入力ハッシュ |
+| input_snapshot | CookingInput-Output | 必須 | 追加制約なし | 材料・資源・人数の固定入力 |
+| menu_id | string (uuid) | 必須 | 追加制約なし | 対象献立 |
+| menu_revision | integer | 必須 | exclusiveMinimum=0.0 | 献立版 |
+| planner_version | string | 必須 | minLength=1; maxLength=20000 | 計画器の版 |
+| status | string | 必須 | enum=["planned", "cooking", "completed", "cancelled"] | 実行状態 |
+| target_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 完成希望時刻 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "調理計画実行の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "current_task_index": {
+      "description": "調理画面の現在の工程位置(0始まり)",
+      "title": "Current Task Index",
+      "type": "integer"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "input_hash": {
+      "description": "入力ハッシュ",
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "input_snapshot": {
+      "$ref": "#/components/schemas/CookingInput-Output",
+      "description": "材料・資源・人数の固定入力"
+    },
+    "menu_id": {
+      "description": "対象献立",
+      "format": "uuid",
+      "title": "Menu Id",
+      "type": "string"
+    },
+    "menu_revision": {
+      "description": "献立版",
+      "exclusiveMinimum": 0.0,
+      "title": "Menu Revision",
+      "type": "integer"
+    },
+    "planner_version": {
+      "description": "計画器の版",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Planner Version",
+      "type": "string"
+    },
+    "status": {
+      "description": "実行状態",
+      "enum": [
+        "planned",
+        "cooking",
+        "completed",
+        "cancelled"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "target_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "完成希望時刻",
+      "title": "Target At"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "menu_id",
+    "menu_revision",
+    "status",
+    "target_at",
+    "planner_version",
+    "input_snapshot",
+    "input_hash",
+    "current_task_index"
+  ],
+  "title": "CookingSessionBackupRow",
   "type": "object"
 }
 ```
@@ -2562,6 +4388,49 @@
 }
 ```
 
+## DurationEstimate
+
+
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| durationSeconds | integer | 必須 | minimum=1.0; maximum=86400.0 | Durationseconds |
+| mealItemId | string | 必須 | minLength=1; maxLength=128 | Mealitemid |
+| stepId | string | 必須 | minLength=1; maxLength=128 | Stepid |
+
+```json
+{
+  "additionalProperties": false,
+  "properties": {
+    "durationSeconds": {
+      "maximum": 86400.0,
+      "minimum": 1.0,
+      "title": "Durationseconds",
+      "type": "integer"
+    },
+    "mealItemId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Mealitemid",
+      "type": "string"
+    },
+    "stepId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Stepid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "mealItemId",
+    "stepId",
+    "durationSeconds"
+  ],
+  "title": "DurationEstimate",
+  "type": "object"
+}
+```
+
 ## Food
 
 
@@ -2681,6 +4550,68 @@
 }
 ```
 
+## FoodAliasBackupRow
+
+食材別名の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| alias | string | 必須 | minLength=1; maxLength=500 | 別名・かな |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| food_id | string (uuid) | 必須 | 追加制約なし | 正規食材 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| locale | string | 必須 | minLength=1; maxLength=20000 | 言語・地域 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "食材別名の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "alias": {
+      "description": "別名・かな",
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Alias",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "food_id": {
+      "description": "正規食材",
+      "format": "uuid",
+      "title": "Food Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "locale": {
+      "description": "言語・地域",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Locale",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "food_id",
+    "alias",
+    "locale"
+  ],
+  "title": "FoodAliasBackupRow",
+  "type": "object"
+}
+```
+
 ## FoodAliasRow
 
 食材別名のDB応答。
@@ -2793,6 +4724,79 @@
     "locale"
   ],
   "title": "FoodAliasWrite",
+  "type": "object"
+}
+```
+
+## FoodAllergenBackupRow
+
+食材アレルゲン知識の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| allergen_id | string (uuid) | 必須 | 追加制約なし | 対象物質 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| form_id | string (uuid) | 必須 | 追加制約なし | 食材形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| presence | string | 必須 | enum=["contains", "may_contain", "absent_verified", "unknown"] | 含有・不明 |
+| source_id | string (uuid) | 必須 | 追加制約なし | 判断根拠 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "食材アレルゲン知識の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "allergen_id": {
+      "description": "対象物質",
+      "format": "uuid",
+      "title": "Allergen Id",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "form_id": {
+      "description": "食材形態",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "presence": {
+      "description": "含有・不明",
+      "enum": [
+        "contains",
+        "may_contain",
+        "absent_verified",
+        "unknown"
+      ],
+      "title": "Presence",
+      "type": "string"
+    },
+    "source_id": {
+      "description": "判断根拠",
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "form_id",
+    "allergen_id",
+    "presence",
+    "source_id"
+  ],
+  "title": "FoodAllergenBackupRow",
   "type": "object"
 }
 ```
@@ -2935,6 +4939,58 @@
 }
 ```
 
+## FoodAxisOptionBackupRow
+
+食材の分類属性の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| food_id | string (uuid) | 必須 | 追加制約なし | 食材 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| option_id | string (uuid) | 必須 | 追加制約なし | カテゴリ・入手性等の値 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "食材の分類属性の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "food_id": {
+      "description": "食材",
+      "format": "uuid",
+      "title": "Food Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "option_id": {
+      "description": "カテゴリ・入手性等の値",
+      "format": "uuid",
+      "title": "Option Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "food_id",
+    "option_id"
+  ],
+  "title": "FoodAxisOptionBackupRow",
+  "type": "object"
+}
+```
+
 ## FoodAxisOptionRow
 
 食材の分類属性のDB応答。
@@ -3027,6 +5083,225 @@
     "option_id"
   ],
   "title": "FoodAxisOptionWrite",
+  "type": "object"
+}
+```
+
+## FoodBackupRow
+
+購入・利用食材概念の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| code | string | 必須 | minLength=1; maxLength=20000 | 固定食材コード |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| kind | string | 必須 | enum=["basic", "processed", "ready_meal", "kit", "utility"] | 基本食材か加工食品か |
+| name | string | 必須 | minLength=1; maxLength=100 | 食材名・加工品種別 |
+| owner_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 私有食材の所有者。NULLは共通カタログ食材 |
+| parent_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | カテゴリ親 |
+| release_id | string (uuid) | 必須 | 追加制約なし | 所属公開版 |
+| status | string | 必須 | enum=["active", "retired"] | 新規使用可否 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "購入・利用食材概念の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "code": {
+      "description": "固定食材コード",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Code",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "description": "基本食材か加工食品か",
+      "enum": [
+        "basic",
+        "processed",
+        "ready_meal",
+        "kit",
+        "utility"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "name": {
+      "description": "食材名・加工品種別",
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "owner_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "私有食材の所有者。NULLは共通カタログ食材",
+      "title": "Owner Id"
+    },
+    "parent_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "カテゴリ親",
+      "title": "Parent Id"
+    },
+    "release_id": {
+      "description": "所属公開版",
+      "format": "uuid",
+      "title": "Release Id",
+      "type": "string"
+    },
+    "status": {
+      "description": "新規使用可否",
+      "enum": [
+        "active",
+        "retired"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "code",
+    "name",
+    "kind",
+    "parent_id",
+    "release_id",
+    "status",
+    "owner_id"
+  ],
+  "title": "FoodBackupRow",
+  "type": "object"
+}
+```
+
+## FoodFormBackupRow
+
+食材形態の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| base_unit_id | string (uuid) | 必須 | 追加制約なし | 計算基準単位 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| food_id | string (uuid) | 必須 | 追加制約なし | 対応食材 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| name | string | 必須 | minLength=1; maxLength=500 | 生皮付き・冷凍刻み等 |
+| quantity_basis | string | 必須 | enum=["edible", "as_purchased", "drained", "prepared"] | 数量の対象部分 |
+| state | string | 必須 | enum=["raw", "dry", "frozen", "cooked", "rehydrated", "drained", "peeled", "ready"] | 処理状態 |
+| status | string | 必須 | enum=["active", "retired"] | 利用状態 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "食材形態の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "base_unit_id": {
+      "description": "計算基準単位",
+      "format": "uuid",
+      "title": "Base Unit Id",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "food_id": {
+      "description": "対応食材",
+      "format": "uuid",
+      "title": "Food Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "description": "生皮付き・冷凍刻み等",
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "quantity_basis": {
+      "description": "数量の対象部分",
+      "enum": [
+        "edible",
+        "as_purchased",
+        "drained",
+        "prepared"
+      ],
+      "title": "Quantity Basis",
+      "type": "string"
+    },
+    "state": {
+      "description": "処理状態",
+      "enum": [
+        "raw",
+        "dry",
+        "frozen",
+        "cooked",
+        "rehydrated",
+        "drained",
+        "peeled",
+        "ready"
+      ],
+      "title": "State",
+      "type": "string"
+    },
+    "status": {
+      "description": "利用状態",
+      "enum": [
+        "active",
+        "retired"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "food_id",
+    "name",
+    "state",
+    "base_unit_id",
+    "quantity_basis",
+    "status"
+  ],
+  "title": "FoodFormBackupRow",
   "type": "object"
 }
 ```
@@ -3717,6 +5992,210 @@
     "total"
   ],
   "title": "FoodsResponse",
+  "type": "object"
+}
+```
+
+## FormYieldBackupRow-Input
+
+処理歩留まりの全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| conditions | string | 必須 | minLength=1; maxLength=20000 | 皮むき・水戻し等の条件 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| input_form_id | string (uuid) | 必須 | 追加制約なし | 処理前形態 |
+| output_form_id | string (uuid) | 必須 | 追加制約なし | 処理後形態 |
+| quality | string | 必須 | enum=["measured", "manufacturer", "reference", "estimated", "unknown"] | 精度区分 |
+| source_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 根拠 |
+| yield_ratio | anyOf(number, string) | 必須 | anyOfの制約=number: exclusiveMinimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 出力量/入力量 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "処理歩留まりの全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "conditions": {
+      "description": "皮むき・水戻し等の条件",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Conditions",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "input_form_id": {
+      "description": "処理前形態",
+      "format": "uuid",
+      "title": "Input Form Id",
+      "type": "string"
+    },
+    "output_form_id": {
+      "description": "処理後形態",
+      "format": "uuid",
+      "title": "Output Form Id",
+      "type": "string"
+    },
+    "quality": {
+      "description": "精度区分",
+      "enum": [
+        "measured",
+        "manufacturer",
+        "reference",
+        "estimated",
+        "unknown"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "source_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "根拠",
+      "title": "Source Id"
+    },
+    "yield_ratio": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "出力量/入力量",
+      "title": "Yield Ratio"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "input_form_id",
+    "output_form_id",
+    "yield_ratio",
+    "source_id",
+    "quality",
+    "conditions"
+  ],
+  "title": "FormYieldBackupRow",
+  "type": "object"
+}
+```
+
+## FormYieldBackupRow-Output
+
+処理歩留まりの全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| conditions | string | 必須 | minLength=1; maxLength=20000 | 皮むき・水戻し等の条件 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| input_form_id | string (uuid) | 必須 | 追加制約なし | 処理前形態 |
+| output_form_id | string (uuid) | 必須 | 追加制約なし | 処理後形態 |
+| quality | string | 必須 | enum=["measured", "manufacturer", "reference", "estimated", "unknown"] | 精度区分 |
+| source_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 根拠 |
+| yield_ratio | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 出力量/入力量 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "処理歩留まりの全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "conditions": {
+      "description": "皮むき・水戻し等の条件",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Conditions",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "input_form_id": {
+      "description": "処理前形態",
+      "format": "uuid",
+      "title": "Input Form Id",
+      "type": "string"
+    },
+    "output_form_id": {
+      "description": "処理後形態",
+      "format": "uuid",
+      "title": "Output Form Id",
+      "type": "string"
+    },
+    "quality": {
+      "description": "精度区分",
+      "enum": [
+        "measured",
+        "manufacturer",
+        "reference",
+        "estimated",
+        "unknown"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "source_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "根拠",
+      "title": "Source Id"
+    },
+    "yield_ratio": {
+      "description": "出力量/入力量",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Yield Ratio",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "input_form_id",
+    "output_form_id",
+    "yield_ratio",
+    "source_id",
+    "quality",
+    "conditions"
+  ],
+  "title": "FormYieldBackupRow",
   "type": "object"
 }
 ```
@@ -6141,6 +8620,277 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## IngredientTotalBackupRow-Input
+
+献立材料集計結果の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| actual_amount | anyOf(number, string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 利用者が確定した実使用量。不明はNULL |
+| calculation_version | string | 必須 | minLength=1; maxLength=20000 | 計算器版 |
+| consumption_outcome | string | 必須 | minLength=1; maxLength=20000 | 未要求・反映済み・在庫不足・数量不明・単位不一致の結果 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| form_id | string (uuid) | 必須 | 追加制約なし | 合算可能な形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 商品固定 |
+| quality | string | 必須 | enum=["measured", "manufacturer", "reference", "estimated", "unknown"] | 最も低い入力精度 |
+| required_amount | anyOf(number, string) | 必須 | anyOfの制約=number: minimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 必要量 |
+| session_id | string (uuid) | 必須 | 追加制約なし | 固定計算対象 |
+| unit_id | string (uuid) | 必須 | 追加制約なし | 基準単位 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "献立材料集計結果の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "actual_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "利用者が確定した実使用量。不明はNULL",
+      "title": "Actual Amount"
+    },
+    "calculation_version": {
+      "description": "計算器版",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Calculation Version",
+      "type": "string"
+    },
+    "consumption_outcome": {
+      "description": "未要求・反映済み・在庫不足・数量不明・単位不一致の結果",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Consumption Outcome",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "form_id": {
+      "description": "合算可能な形態",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "商品固定",
+      "title": "Product Version Id"
+    },
+    "quality": {
+      "description": "最も低い入力精度",
+      "enum": [
+        "measured",
+        "manufacturer",
+        "reference",
+        "estimated",
+        "unknown"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "required_amount": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "必要量",
+      "title": "Required Amount"
+    },
+    "session_id": {
+      "description": "固定計算対象",
+      "format": "uuid",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "unit_id": {
+      "description": "基準単位",
+      "format": "uuid",
+      "title": "Unit Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "session_id",
+    "form_id",
+    "product_version_id",
+    "unit_id",
+    "required_amount",
+    "quality",
+    "calculation_version",
+    "actual_amount",
+    "consumption_outcome"
+  ],
+  "title": "IngredientTotalBackupRow",
+  "type": "object"
+}
+```
+
+## IngredientTotalBackupRow-Output
+
+献立材料集計結果の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| actual_amount | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 利用者が確定した実使用量。不明はNULL |
+| calculation_version | string | 必須 | minLength=1; maxLength=20000 | 計算器版 |
+| consumption_outcome | string | 必須 | minLength=1; maxLength=20000 | 未要求・反映済み・在庫不足・数量不明・単位不一致の結果 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| form_id | string (uuid) | 必須 | 追加制約なし | 合算可能な形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 商品固定 |
+| quality | string | 必須 | enum=["measured", "manufacturer", "reference", "estimated", "unknown"] | 最も低い入力精度 |
+| required_amount | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 必要量 |
+| session_id | string (uuid) | 必須 | 追加制約なし | 固定計算対象 |
+| unit_id | string (uuid) | 必須 | 追加制約なし | 基準単位 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "献立材料集計結果の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "actual_amount": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "利用者が確定した実使用量。不明はNULL",
+      "title": "Actual Amount"
+    },
+    "calculation_version": {
+      "description": "計算器版",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Calculation Version",
+      "type": "string"
+    },
+    "consumption_outcome": {
+      "description": "未要求・反映済み・在庫不足・数量不明・単位不一致の結果",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Consumption Outcome",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "form_id": {
+      "description": "合算可能な形態",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "商品固定",
+      "title": "Product Version Id"
+    },
+    "quality": {
+      "description": "最も低い入力精度",
+      "enum": [
+        "measured",
+        "manufacturer",
+        "reference",
+        "estimated",
+        "unknown"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "required_amount": {
+      "description": "必要量",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Required Amount",
+      "type": "string"
+    },
+    "session_id": {
+      "description": "固定計算対象",
+      "format": "uuid",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "unit_id": {
+      "description": "基準単位",
+      "format": "uuid",
+      "title": "Unit Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "session_id",
+    "form_id",
+    "product_version_id",
+    "unit_id",
+    "required_amount",
+    "quality",
+    "calculation_version",
+    "actual_amount",
+    "consumption_outcome"
+  ],
+  "title": "IngredientTotalBackupRow",
+  "type": "object"
+}
+```
+
 ## IngredientTotalRow
 
 献立材料集計結果のDB応答。
@@ -6275,6 +9025,191 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "etag"
   ],
   "title": "IngredientTotalRow",
+  "type": "object"
+}
+```
+
+## KitchenResourceBackupRow-Input
+
+キッチンの実資源の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| active | boolean | 必須 | 追加制約なし | 新規の調理計画で利用する資源か |
+| capacity | anyOf(number, string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 容量 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| name | string | 必須 | minLength=1; maxLength=20000 | 左コンロ・26cmフライパン等 |
+| quantity | integer | 必須 | exclusiveMinimum=0.0 | 同等資源数 |
+| resource_type_id | string (uuid) | 必須 | 追加制約なし | コンロ・鍋・人等 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "キッチンの実資源の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "active": {
+      "description": "新規の調理計画で利用する資源か",
+      "title": "Active",
+      "type": "boolean"
+    },
+    "capacity": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "容量",
+      "title": "Capacity"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "description": "左コンロ・26cmフライパン等",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "quantity": {
+      "description": "同等資源数",
+      "exclusiveMinimum": 0.0,
+      "title": "Quantity",
+      "type": "integer"
+    },
+    "resource_type_id": {
+      "description": "コンロ・鍋・人等",
+      "format": "uuid",
+      "title": "Resource Type Id",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "resource_type_id",
+    "name",
+    "capacity",
+    "quantity",
+    "active"
+  ],
+  "title": "KitchenResourceBackupRow",
+  "type": "object"
+}
+```
+
+## KitchenResourceBackupRow-Output
+
+キッチンの実資源の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| active | boolean | 必須 | 追加制約なし | 新規の調理計画で利用する資源か |
+| capacity | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 容量 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| name | string | 必須 | minLength=1; maxLength=20000 | 左コンロ・26cmフライパン等 |
+| quantity | integer | 必須 | exclusiveMinimum=0.0 | 同等資源数 |
+| resource_type_id | string (uuid) | 必須 | 追加制約なし | コンロ・鍋・人等 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "キッチンの実資源の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "active": {
+      "description": "新規の調理計画で利用する資源か",
+      "title": "Active",
+      "type": "boolean"
+    },
+    "capacity": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "容量",
+      "title": "Capacity"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "description": "左コンロ・26cmフライパン等",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "quantity": {
+      "description": "同等資源数",
+      "exclusiveMinimum": 0.0,
+      "title": "Quantity",
+      "type": "integer"
+    },
+    "resource_type_id": {
+      "description": "コンロ・鍋・人等",
+      "format": "uuid",
+      "title": "Resource Type Id",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "resource_type_id",
+    "name",
+    "capacity",
+    "quantity",
+    "active"
+  ],
+  "title": "KitchenResourceBackupRow",
   "type": "object"
 }
 ```
@@ -7192,6 +10127,363 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## MenuBackupRow-Input
+
+献立の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| name | string | 必須 | minLength=1; maxLength=20000 | 献立名 |
+| revision | integer | 必須 | exclusiveMinimum=0.0 | 楽観ロック版 |
+| servings | anyOf(number, string) | 必須 | anyOfの制約=number: exclusiveMinimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 標準人数 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "献立の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "description": "献立名",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "revision": {
+      "description": "楽観ロック版",
+      "exclusiveMinimum": 0.0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "servings": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "標準人数",
+      "title": "Servings"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "name",
+    "servings",
+    "revision"
+  ],
+  "title": "MenuBackupRow",
+  "type": "object"
+}
+```
+
+## MenuBackupRow-Output
+
+献立の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| name | string | 必須 | minLength=1; maxLength=20000 | 献立名 |
+| revision | integer | 必須 | exclusiveMinimum=0.0 | 楽観ロック版 |
+| servings | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 標準人数 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "献立の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "description": "献立名",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "revision": {
+      "description": "楽観ロック版",
+      "exclusiveMinimum": 0.0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "servings": {
+      "description": "標準人数",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Servings",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "name",
+    "servings",
+    "revision"
+  ],
+  "title": "MenuBackupRow",
+  "type": "object"
+}
+```
+
+## MenuIngredientOverrideBackupRow-Input
+
+献立別材料確定の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(number, string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 適量等の確定基準量 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| form_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 明示的代替形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| ingredient_line_id | string (uuid) | 必須 | 追加制約なし | 元材料行 |
+| menu_item_id | string (uuid) | 必須 | 追加制約なし | 対象料理 |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 購入商品指定 |
+| selected | boolean | 必須 | 追加制約なし | 任意材料を使うか |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "献立別材料確定の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "適量等の確定基準量",
+      "title": "Amount"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "form_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "明示的代替形態",
+      "title": "Form Id"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "ingredient_line_id": {
+      "description": "元材料行",
+      "format": "uuid",
+      "title": "Ingredient Line Id",
+      "type": "string"
+    },
+    "menu_item_id": {
+      "description": "対象料理",
+      "format": "uuid",
+      "title": "Menu Item Id",
+      "type": "string"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入商品指定",
+      "title": "Product Version Id"
+    },
+    "selected": {
+      "description": "任意材料を使うか",
+      "title": "Selected",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "menu_item_id",
+    "ingredient_line_id",
+    "selected",
+    "amount",
+    "form_id",
+    "product_version_id"
+  ],
+  "title": "MenuIngredientOverrideBackupRow",
+  "type": "object"
+}
+```
+
+## MenuIngredientOverrideBackupRow-Output
+
+献立別材料確定の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 適量等の確定基準量 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| form_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 明示的代替形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| ingredient_line_id | string (uuid) | 必須 | 追加制約なし | 元材料行 |
+| menu_item_id | string (uuid) | 必須 | 追加制約なし | 対象料理 |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 購入商品指定 |
+| selected | boolean | 必須 | 追加制約なし | 任意材料を使うか |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "献立別材料確定の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "適量等の確定基準量",
+      "title": "Amount"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "form_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "明示的代替形態",
+      "title": "Form Id"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "ingredient_line_id": {
+      "description": "元材料行",
+      "format": "uuid",
+      "title": "Ingredient Line Id",
+      "type": "string"
+    },
+    "menu_item_id": {
+      "description": "対象料理",
+      "format": "uuid",
+      "title": "Menu Item Id",
+      "type": "string"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入商品指定",
+      "title": "Product Version Id"
+    },
+    "selected": {
+      "description": "任意材料を使うか",
+      "title": "Selected",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "menu_item_id",
+    "ingredient_line_id",
+    "selected",
+    "amount",
+    "form_id",
+    "product_version_id"
+  ],
+  "title": "MenuIngredientOverrideBackupRow",
+  "type": "object"
+}
+```
+
 ## MenuIngredientOverrideRow
 
 献立別材料確定のDB応答。
@@ -7388,6 +10680,166 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "selected"
   ],
   "title": "MenuIngredientOverrideWrite",
+  "type": "object"
+}
+```
+
+## MenuItemBackupRow-Input
+
+献立の料理の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| menu_id | string (uuid) | 必須 | 追加制約なし | 献立 |
+| position | integer | 必須 | exclusiveMinimum=0.0 | 表示順 |
+| recipe_version_id | string (uuid) | 必須 | 追加制約なし | 固定レシピ版 |
+| role_option_id | string (uuid) | 必須 | 追加制約なし | 主菜等 |
+| servings | anyOf(number, string) | 必須 | anyOfの制約=number: exclusiveMinimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | その料理を作る人数 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "献立の料理の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "menu_id": {
+      "description": "献立",
+      "format": "uuid",
+      "title": "Menu Id",
+      "type": "string"
+    },
+    "position": {
+      "description": "表示順",
+      "exclusiveMinimum": 0.0,
+      "title": "Position",
+      "type": "integer"
+    },
+    "recipe_version_id": {
+      "description": "固定レシピ版",
+      "format": "uuid",
+      "title": "Recipe Version Id",
+      "type": "string"
+    },
+    "role_option_id": {
+      "description": "主菜等",
+      "format": "uuid",
+      "title": "Role Option Id",
+      "type": "string"
+    },
+    "servings": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "その料理を作る人数",
+      "title": "Servings"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "menu_id",
+    "recipe_version_id",
+    "servings",
+    "role_option_id",
+    "position"
+  ],
+  "title": "MenuItemBackupRow",
+  "type": "object"
+}
+```
+
+## MenuItemBackupRow-Output
+
+献立の料理の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| menu_id | string (uuid) | 必須 | 追加制約なし | 献立 |
+| position | integer | 必須 | exclusiveMinimum=0.0 | 表示順 |
+| recipe_version_id | string (uuid) | 必須 | 追加制約なし | 固定レシピ版 |
+| role_option_id | string (uuid) | 必須 | 追加制約なし | 主菜等 |
+| servings | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | その料理を作る人数 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "献立の料理の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "menu_id": {
+      "description": "献立",
+      "format": "uuid",
+      "title": "Menu Id",
+      "type": "string"
+    },
+    "position": {
+      "description": "表示順",
+      "exclusiveMinimum": 0.0,
+      "title": "Position",
+      "type": "integer"
+    },
+    "recipe_version_id": {
+      "description": "固定レシピ版",
+      "format": "uuid",
+      "title": "Recipe Version Id",
+      "type": "string"
+    },
+    "role_option_id": {
+      "description": "主菜等",
+      "format": "uuid",
+      "title": "Role Option Id",
+      "type": "string"
+    },
+    "servings": {
+      "description": "その料理を作る人数",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Servings",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "menu_id",
+    "recipe_version_id",
+    "servings",
+    "role_option_id",
+    "position"
+  ],
+  "title": "MenuItemBackupRow",
   "type": "object"
 }
 ```
@@ -7820,6 +11272,234 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "unit_label"
   ],
   "title": "NutrientWrite",
+  "type": "object"
+}
+```
+
+## NutritionFactBackupRow-Input
+
+形態・商品別栄養値の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(number, string) | 必須 | anyOfの制約=number: minimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 基準量あたり成分量 |
+| basis_amount | anyOf(number, string) | 必須 | anyOfの制約=number: exclusiveMinimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 基準量 |
+| basis_unit_id | string (uuid) | 必須 | 追加制約なし | 基準単位 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| form_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 汎用形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| nutrient_id | string (uuid) | 必須 | 追加制約なし | 栄養成分 |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 商品仕様 |
+| source_id | string (uuid) | 必須 | 追加制約なし | 出典 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "形態・商品別栄養値の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "基準量あたり成分量",
+      "title": "Amount"
+    },
+    "basis_amount": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "基準量",
+      "title": "Basis Amount"
+    },
+    "basis_unit_id": {
+      "description": "基準単位",
+      "format": "uuid",
+      "title": "Basis Unit Id",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "form_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "汎用形態",
+      "title": "Form Id"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "nutrient_id": {
+      "description": "栄養成分",
+      "format": "uuid",
+      "title": "Nutrient Id",
+      "type": "string"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "商品仕様",
+      "title": "Product Version Id"
+    },
+    "source_id": {
+      "description": "出典",
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "form_id",
+    "product_version_id",
+    "nutrient_id",
+    "amount",
+    "basis_amount",
+    "basis_unit_id",
+    "source_id"
+  ],
+  "title": "NutritionFactBackupRow",
+  "type": "object"
+}
+```
+
+## NutritionFactBackupRow-Output
+
+形態・商品別栄養値の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 基準量あたり成分量 |
+| basis_amount | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 基準量 |
+| basis_unit_id | string (uuid) | 必須 | 追加制約なし | 基準単位 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| form_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 汎用形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| nutrient_id | string (uuid) | 必須 | 追加制約なし | 栄養成分 |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 商品仕様 |
+| source_id | string (uuid) | 必須 | 追加制約なし | 出典 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "形態・商品別栄養値の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "description": "基準量あたり成分量",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Amount",
+      "type": "string"
+    },
+    "basis_amount": {
+      "description": "基準量",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Basis Amount",
+      "type": "string"
+    },
+    "basis_unit_id": {
+      "description": "基準単位",
+      "format": "uuid",
+      "title": "Basis Unit Id",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "form_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "汎用形態",
+      "title": "Form Id"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "nutrient_id": {
+      "description": "栄養成分",
+      "format": "uuid",
+      "title": "Nutrient Id",
+      "type": "string"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "商品仕様",
+      "title": "Product Version Id"
+    },
+    "source_id": {
+      "description": "出典",
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "form_id",
+    "product_version_id",
+    "nutrient_id",
+    "amount",
+    "basis_amount",
+    "basis_unit_id",
+    "source_id"
+  ],
+  "title": "NutritionFactBackupRow",
   "type": "object"
 }
 ```
@@ -8639,6 +12319,166 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## PantryConsumptionBackupRow-Input
+
+調理による在庫消費の冪等台帳の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(number, string) | 必須 | anyOfの制約=number: exclusiveMinimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 消費数量 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| lot_id | string (uuid) | 必須 | 追加制約なし | 消費元ロット |
+| session_id | string (uuid) | 必須 | 追加制約なし | 消費した調理セッション |
+| unit_id | string (uuid) | 必須 | 追加制約なし | 消費数量の単位 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "調理による在庫消費の冪等台帳の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "消費数量",
+      "title": "Amount"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "lot_id": {
+      "description": "消費元ロット",
+      "format": "uuid",
+      "title": "Lot Id",
+      "type": "string"
+    },
+    "session_id": {
+      "description": "消費した調理セッション",
+      "format": "uuid",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "unit_id": {
+      "description": "消費数量の単位",
+      "format": "uuid",
+      "title": "Unit Id",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "session_id",
+    "lot_id",
+    "amount",
+    "unit_id"
+  ],
+  "title": "PantryConsumptionBackupRow",
+  "type": "object"
+}
+```
+
+## PantryConsumptionBackupRow-Output
+
+調理による在庫消費の冪等台帳の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 消費数量 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| lot_id | string (uuid) | 必須 | 追加制約なし | 消費元ロット |
+| session_id | string (uuid) | 必須 | 追加制約なし | 消費した調理セッション |
+| unit_id | string (uuid) | 必須 | 追加制約なし | 消費数量の単位 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "調理による在庫消費の冪等台帳の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "description": "消費数量",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Amount",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "lot_id": {
+      "description": "消費元ロット",
+      "format": "uuid",
+      "title": "Lot Id",
+      "type": "string"
+    },
+    "session_id": {
+      "description": "消費した調理セッション",
+      "format": "uuid",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "unit_id": {
+      "description": "消費数量の単位",
+      "format": "uuid",
+      "title": "Unit Id",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "session_id",
+    "lot_id",
+    "amount",
+    "unit_id"
+  ],
+  "title": "PantryConsumptionBackupRow",
+  "type": "object"
+}
+```
+
 ## PantryConsumptionRow
 
 調理による在庫消費の冪等台帳のDB応答。
@@ -8719,6 +12559,475 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "etag"
   ],
   "title": "PantryConsumptionRow",
+  "type": "object"
+}
+```
+
+## PantryLotBackupRow-Input
+
+手持ち食材ロットの全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(number, string, null) | 必須 | anyOfの制約=number: minimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 残量 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| edited | boolean | 必須 | 追加制約なし | 登録後の編集有無 |
+| expires_on | anyOf(string (date), null) | 必須 | 追加制約なし | 表示期限 |
+| form_id | string (uuid) | 必須 | 追加制約なし | 食材形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| location | string | 必須 | minLength=1; maxLength=20000 | 冷蔵・冷凍・常温の保管場所 |
+| opened_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 開封時点 |
+| original_amount | anyOf(number, string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 登録時数量。不明はNULL |
+| original_form_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 登録時の食材形態 |
+| original_unit_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 登録時単位 |
+| priority | string | 必須 | minLength=1; maxLength=20000 | 先に使う優先指定 |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 商品版 |
+| quantity_quality | string | 必須 | minLength=1; maxLength=20000 | 数量の確定・不明 |
+| source_import_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 登録元レシート |
+| status | string | 必須 | minLength=1; maxLength=20000 | 在庫の有効・削除・レシート取消状態 |
+| unit_id | string (uuid) | 必須 | 追加制約なし | 単位 |
+| updated_at | string (date-time) | 必須 | 追加制約なし | 最終編集日時 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "手持ち食材ロットの全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "残量",
+      "title": "Amount"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "edited": {
+      "description": "登録後の編集有無",
+      "title": "Edited",
+      "type": "boolean"
+    },
+    "expires_on": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "表示期限",
+      "title": "Expires On"
+    },
+    "form_id": {
+      "description": "食材形態",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "location": {
+      "description": "冷蔵・冷凍・常温の保管場所",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Location",
+      "type": "string"
+    },
+    "opened_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "開封時点",
+      "title": "Opened At"
+    },
+    "original_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録時数量。不明はNULL",
+      "title": "Original Amount"
+    },
+    "original_form_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録時の食材形態",
+      "title": "Original Form Id"
+    },
+    "original_unit_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録時単位",
+      "title": "Original Unit Id"
+    },
+    "priority": {
+      "description": "先に使う優先指定",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Priority",
+      "type": "string"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "商品版",
+      "title": "Product Version Id"
+    },
+    "quantity_quality": {
+      "description": "数量の確定・不明",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Quantity Quality",
+      "type": "string"
+    },
+    "source_import_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録元レシート",
+      "title": "Source Import Id"
+    },
+    "status": {
+      "description": "在庫の有効・削除・レシート取消状態",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Status",
+      "type": "string"
+    },
+    "unit_id": {
+      "description": "単位",
+      "format": "uuid",
+      "title": "Unit Id",
+      "type": "string"
+    },
+    "updated_at": {
+      "description": "最終編集日時",
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "form_id",
+    "product_version_id",
+    "amount",
+    "unit_id",
+    "expires_on",
+    "opened_at",
+    "location",
+    "priority",
+    "status",
+    "source_import_id",
+    "quantity_quality",
+    "original_form_id",
+    "original_amount",
+    "original_unit_id",
+    "updated_at",
+    "edited"
+  ],
+  "title": "PantryLotBackupRow",
+  "type": "object"
+}
+```
+
+## PantryLotBackupRow-Output
+
+手持ち食材ロットの全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 残量 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| edited | boolean | 必須 | 追加制約なし | 登録後の編集有無 |
+| expires_on | anyOf(string (date), null) | 必須 | 追加制約なし | 表示期限 |
+| form_id | string (uuid) | 必須 | 追加制約なし | 食材形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| location | string | 必須 | minLength=1; maxLength=20000 | 冷蔵・冷凍・常温の保管場所 |
+| opened_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 開封時点 |
+| original_amount | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 登録時数量。不明はNULL |
+| original_form_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 登録時の食材形態 |
+| original_unit_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 登録時単位 |
+| priority | string | 必須 | minLength=1; maxLength=20000 | 先に使う優先指定 |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 商品版 |
+| quantity_quality | string | 必須 | minLength=1; maxLength=20000 | 数量の確定・不明 |
+| source_import_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 登録元レシート |
+| status | string | 必須 | minLength=1; maxLength=20000 | 在庫の有効・削除・レシート取消状態 |
+| unit_id | string (uuid) | 必須 | 追加制約なし | 単位 |
+| updated_at | string (date-time) | 必須 | 追加制約なし | 最終編集日時 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "手持ち食材ロットの全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "残量",
+      "title": "Amount"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "edited": {
+      "description": "登録後の編集有無",
+      "title": "Edited",
+      "type": "boolean"
+    },
+    "expires_on": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "表示期限",
+      "title": "Expires On"
+    },
+    "form_id": {
+      "description": "食材形態",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "location": {
+      "description": "冷蔵・冷凍・常温の保管場所",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Location",
+      "type": "string"
+    },
+    "opened_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "開封時点",
+      "title": "Opened At"
+    },
+    "original_amount": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録時数量。不明はNULL",
+      "title": "Original Amount"
+    },
+    "original_form_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録時の食材形態",
+      "title": "Original Form Id"
+    },
+    "original_unit_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録時単位",
+      "title": "Original Unit Id"
+    },
+    "priority": {
+      "description": "先に使う優先指定",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Priority",
+      "type": "string"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "商品版",
+      "title": "Product Version Id"
+    },
+    "quantity_quality": {
+      "description": "数量の確定・不明",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Quantity Quality",
+      "type": "string"
+    },
+    "source_import_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録元レシート",
+      "title": "Source Import Id"
+    },
+    "status": {
+      "description": "在庫の有効・削除・レシート取消状態",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Status",
+      "type": "string"
+    },
+    "unit_id": {
+      "description": "単位",
+      "format": "uuid",
+      "title": "Unit Id",
+      "type": "string"
+    },
+    "updated_at": {
+      "description": "最終編集日時",
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "form_id",
+    "product_version_id",
+    "amount",
+    "unit_id",
+    "expires_on",
+    "opened_at",
+    "location",
+    "priority",
+    "status",
+    "source_import_id",
+    "quantity_quality",
+    "original_form_id",
+    "original_amount",
+    "original_unit_id",
+    "updated_at",
+    "edited"
+  ],
+  "title": "PantryLotBackupRow",
   "type": "object"
 }
 ```
@@ -9182,6 +13491,7 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
+| durationEstimates | array&lt;DurationEstimate&gt; | 任意 | maxItems=500 | Durationestimates |
 | items | array&lt;MealItem&gt; | 必須 | minItems=1; maxItems=50 | Items |
 
 ```json
@@ -9189,6 +13499,14 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
   "additionalProperties": false,
   "description": "未保存の分量調整も、明示した料理版の材料行だけへ適用する。",
   "properties": {
+    "durationEstimates": {
+      "items": {
+        "$ref": "#/components/schemas/DurationEstimate"
+      },
+      "maxItems": 500,
+      "title": "Durationestimates",
+      "type": "array"
+    },
     "items": {
       "items": {
         "$ref": "#/components/schemas/MealItem"
@@ -9242,6 +13560,8 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
+| confirmedDurationSeconds | anyOf(integer, null) | 任意 | anyOfの制約=integer: minimum=1.0; maximum=86400.0 | Confirmeddurationseconds |
+| durationSource | string | 任意 | enum=["recipe_rule", "user_estimate"]; default="recipe_rule" | Durationsource |
 | endMinute | number | 必須 | minimum=0.0; maximum=1000000.0 | Endminute |
 | equipment | array&lt;string&gt; | 必須 | maxItems=50; 要素の制約=maxLength=500 | Equipment |
 | guide | anyOf(string, null) | 必須 | anyOfの制約=string: maxLength=500 | Guide |
@@ -9254,12 +13574,35 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 | recipeId | string | 必須 | minLength=1; maxLength=128 | Recipeid |
 | recipeName | string | 必須 | maxLength=500 | Recipename |
 | startMinute | number | 必須 | minimum=0.0; maximum=1000000.0 | Startminute |
+| timeScalingMode | string | 任意 | enum=["linear", "fixed_batch", "capacity_batch", "validated_curve", "manual"]; default="manual" | Timescalingmode |
 | title | string | 必須 | maxLength=500 | Title |
 
 ```json
 {
   "additionalProperties": false,
   "properties": {
+    "confirmedDurationSeconds": {
+      "anyOf": [
+        {
+          "maximum": 86400.0,
+          "minimum": 1.0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Confirmeddurationseconds"
+    },
+    "durationSource": {
+      "default": "recipe_rule",
+      "enum": [
+        "recipe_rule",
+        "user_estimate"
+      ],
+      "title": "Durationsource",
+      "type": "string"
+    },
     "endMinute": {
       "maximum": 1000000.0,
       "minimum": 0.0,
@@ -9340,6 +13683,18 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
       "minimum": 0.0,
       "title": "Startminute",
       "type": "number"
+    },
+    "timeScalingMode": {
+      "default": "manual",
+      "enum": [
+        "linear",
+        "fixed_batch",
+        "capacity_batch",
+        "validated_curve",
+        "manual"
+      ],
+      "title": "Timescalingmode",
+      "type": "string"
     },
     "title": {
       "maxLength": 500,
@@ -9660,6 +14015,79 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## ProductAllergenBackupRow
+
+商品表示アレルゲンの全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| allergen_id | string (uuid) | 必須 | 追加制約なし | 物質 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| presence | string | 必須 | enum=["contains", "may_contain", "absent_verified", "unknown"] | 表示状態 |
+| product_version_id | string (uuid) | 必須 | 追加制約なし | 商品仕様版 |
+| source_id | string (uuid) | 必須 | 追加制約なし | ラベル等 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "商品表示アレルゲンの全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "allergen_id": {
+      "description": "物質",
+      "format": "uuid",
+      "title": "Allergen Id",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "presence": {
+      "description": "表示状態",
+      "enum": [
+        "contains",
+        "may_contain",
+        "absent_verified",
+        "unknown"
+      ],
+      "title": "Presence",
+      "type": "string"
+    },
+    "product_version_id": {
+      "description": "商品仕様版",
+      "format": "uuid",
+      "title": "Product Version Id",
+      "type": "string"
+    },
+    "source_id": {
+      "description": "ラベル等",
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "product_version_id",
+    "allergen_id",
+    "presence",
+    "source_id"
+  ],
+  "title": "ProductAllergenBackupRow",
+  "type": "object"
+}
+```
+
 ## ProductAllergenRow
 
 商品表示アレルゲンのDB応答。
@@ -9794,6 +14222,308 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "source_id"
   ],
   "title": "ProductAllergenWrite",
+  "type": "object"
+}
+```
+
+## ProductBackupRow
+
+市販商品識別の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| brand | string | 必須 | minLength=1; maxLength=20000 | ブランド |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| food_id | string (uuid) | 必須 | 追加制約なし | 汎用食材との対応 |
+| gtin | anyOf(string, null) | 必須 | anyOfの制約=string: minLength=1; maxLength=20000 | JAN等(先頭0保持) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| name | string | 必須 | minLength=1; maxLength=20000 | 商品名 |
+| status | string | 必須 | enum=["active", "retired"] | 終売はretired |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "市販商品識別の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "brand": {
+      "description": "ブランド",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Brand",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "food_id": {
+      "description": "汎用食材との対応",
+      "format": "uuid",
+      "title": "Food Id",
+      "type": "string"
+    },
+    "gtin": {
+      "anyOf": [
+        {
+          "maxLength": 20000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "JAN等(先頭0保持)",
+      "title": "Gtin"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "description": "商品名",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "status": {
+      "description": "終売はretired",
+      "enum": [
+        "active",
+        "retired"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "food_id",
+    "brand",
+    "name",
+    "gtin",
+    "status"
+  ],
+  "title": "ProductBackupRow",
+  "type": "object"
+}
+```
+
+## ProductComponentBackupRow-Input
+
+セット内構成品の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(number, string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 量(不明はNULL) |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| form_id | string (uuid) | 必須 | 追加制約なし | 麺・ソース・かやく等 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| name | string | 必須 | minLength=1; maxLength=20000 | 構成品名 |
+| product_version_id | string (uuid) | 必須 | 追加制約なし | 親商品版 |
+| quality | string | 必須 | enum=["measured", "manufacturer", "reference", "estimated", "unknown"] | 数量の根拠 |
+| unit_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 構成品量単位 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "セット内構成品の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "量(不明はNULL)",
+      "title": "Amount"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "form_id": {
+      "description": "麺・ソース・かやく等",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "description": "構成品名",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "product_version_id": {
+      "description": "親商品版",
+      "format": "uuid",
+      "title": "Product Version Id",
+      "type": "string"
+    },
+    "quality": {
+      "description": "数量の根拠",
+      "enum": [
+        "measured",
+        "manufacturer",
+        "reference",
+        "estimated",
+        "unknown"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "unit_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "構成品量単位",
+      "title": "Unit Id"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "product_version_id",
+    "form_id",
+    "name",
+    "amount",
+    "unit_id",
+    "quality"
+  ],
+  "title": "ProductComponentBackupRow",
+  "type": "object"
+}
+```
+
+## ProductComponentBackupRow-Output
+
+セット内構成品の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 量(不明はNULL) |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| form_id | string (uuid) | 必須 | 追加制約なし | 麺・ソース・かやく等 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| name | string | 必須 | minLength=1; maxLength=20000 | 構成品名 |
+| product_version_id | string (uuid) | 必須 | 追加制約なし | 親商品版 |
+| quality | string | 必須 | enum=["measured", "manufacturer", "reference", "estimated", "unknown"] | 数量の根拠 |
+| unit_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 構成品量単位 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "セット内構成品の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "量(不明はNULL)",
+      "title": "Amount"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "form_id": {
+      "description": "麺・ソース・かやく等",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "description": "構成品名",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "product_version_id": {
+      "description": "親商品版",
+      "format": "uuid",
+      "title": "Product Version Id",
+      "type": "string"
+    },
+    "quality": {
+      "description": "数量の根拠",
+      "enum": [
+        "measured",
+        "manufacturer",
+        "reference",
+        "estimated",
+        "unknown"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "unit_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "構成品量単位",
+      "title": "Unit Id"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "product_version_id",
+    "form_id",
+    "name",
+    "amount",
+    "unit_id",
+    "quality"
+  ],
+  "title": "ProductComponentBackupRow",
   "type": "object"
 }
 ```
@@ -10163,6 +14893,166 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## ProductPreparationRuleBackupRow-Input
+
+商品固有の調理条件の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| allowed | boolean | 必須 | 追加制約なし | 表示で許可される方法か |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| operation_id | string (uuid) | 必須 | 追加制約なし | 対象標準動作 |
+| parameter_contract | ProductPreparation-Input | 必須 | 追加制約なし | 電力・注湯量・時間・蓋などの確定条件 |
+| product_version_id | string (uuid) | 必須 | 追加制約なし | 対象商品仕様 |
+| source_id | string (uuid) | 必須 | 追加制約なし | 商品表示根拠 |
+| use_original_container | boolean | 必須 | 追加制約なし | 付属容器で調理するか |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "商品固有の調理条件の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "allowed": {
+      "description": "表示で許可される方法か",
+      "title": "Allowed",
+      "type": "boolean"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "operation_id": {
+      "description": "対象標準動作",
+      "format": "uuid",
+      "title": "Operation Id",
+      "type": "string"
+    },
+    "parameter_contract": {
+      "$ref": "#/components/schemas/ProductPreparation-Input",
+      "description": "電力・注湯量・時間・蓋などの確定条件"
+    },
+    "product_version_id": {
+      "description": "対象商品仕様",
+      "format": "uuid",
+      "title": "Product Version Id",
+      "type": "string"
+    },
+    "source_id": {
+      "description": "商品表示根拠",
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+    },
+    "use_original_container": {
+      "description": "付属容器で調理するか",
+      "title": "Use Original Container",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "product_version_id",
+    "operation_id",
+    "allowed",
+    "use_original_container",
+    "parameter_contract",
+    "source_id"
+  ],
+  "title": "ProductPreparationRuleBackupRow",
+  "type": "object"
+}
+```
+
+## ProductPreparationRuleBackupRow-Output
+
+商品固有の調理条件の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| allowed | boolean | 必須 | 追加制約なし | 表示で許可される方法か |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| operation_id | string (uuid) | 必須 | 追加制約なし | 対象標準動作 |
+| parameter_contract | ProductPreparation-Output | 必須 | 追加制約なし | 電力・注湯量・時間・蓋などの確定条件 |
+| product_version_id | string (uuid) | 必須 | 追加制約なし | 対象商品仕様 |
+| source_id | string (uuid) | 必須 | 追加制約なし | 商品表示根拠 |
+| use_original_container | boolean | 必須 | 追加制約なし | 付属容器で調理するか |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "商品固有の調理条件の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "allowed": {
+      "description": "表示で許可される方法か",
+      "title": "Allowed",
+      "type": "boolean"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "operation_id": {
+      "description": "対象標準動作",
+      "format": "uuid",
+      "title": "Operation Id",
+      "type": "string"
+    },
+    "parameter_contract": {
+      "$ref": "#/components/schemas/ProductPreparation-Output",
+      "description": "電力・注湯量・時間・蓋などの確定条件"
+    },
+    "product_version_id": {
+      "description": "対象商品仕様",
+      "format": "uuid",
+      "title": "Product Version Id",
+      "type": "string"
+    },
+    "source_id": {
+      "description": "商品表示根拠",
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+    },
+    "use_original_container": {
+      "description": "付属容器で調理するか",
+      "title": "Use Original Container",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "product_version_id",
+    "operation_id",
+    "allowed",
+    "use_original_container",
+    "parameter_contract",
+    "source_id"
+  ],
+  "title": "ProductPreparationRuleBackupRow",
+  "type": "object"
+}
+```
+
 ## ProductPreparationRuleRow
 
 商品固有の調理条件のDB応答。
@@ -10408,6 +15298,249 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "etag"
   ],
   "title": "ProductRow",
+  "type": "object"
+}
+```
+
+## ProductVersionBackupRow-Input
+
+商品仕様版の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| drain_amount | anyOf(number, string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 固形量 |
+| form_id | string (uuid) | 必須 | 追加制約なし | 販売形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| net_amount | anyOf(number, string) | 必須 | anyOfの制約=number: exclusiveMinimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 1包装の内容量 |
+| preparation_note | string | 必須 | minLength=1; maxLength=20000 | 容器・加熱方式・表示手順 |
+| product_id | string (uuid) | 必須 | 追加制約なし | 商品 |
+| source_id | string (uuid) | 必須 | 追加制約なし | メーカー表示根拠 |
+| unit_id | string (uuid) | 必須 | 追加制約なし | 内容量単位 |
+| valid_from | string (date) | 必須 | 追加制約なし | 適用開始日 |
+| version | integer | 必須 | exclusiveMinimum=0.0 | 仕様版 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "商品仕様版の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "drain_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "固形量",
+      "title": "Drain Amount"
+    },
+    "form_id": {
+      "description": "販売形態",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "net_amount": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "1包装の内容量",
+      "title": "Net Amount"
+    },
+    "preparation_note": {
+      "description": "容器・加熱方式・表示手順",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Preparation Note",
+      "type": "string"
+    },
+    "product_id": {
+      "description": "商品",
+      "format": "uuid",
+      "title": "Product Id",
+      "type": "string"
+    },
+    "source_id": {
+      "description": "メーカー表示根拠",
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+    },
+    "unit_id": {
+      "description": "内容量単位",
+      "format": "uuid",
+      "title": "Unit Id",
+      "type": "string"
+    },
+    "valid_from": {
+      "description": "適用開始日",
+      "format": "date",
+      "title": "Valid From",
+      "type": "string"
+    },
+    "version": {
+      "description": "仕様版",
+      "exclusiveMinimum": 0.0,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "product_id",
+    "version",
+    "form_id",
+    "net_amount",
+    "unit_id",
+    "drain_amount",
+    "source_id",
+    "preparation_note",
+    "valid_from"
+  ],
+  "title": "ProductVersionBackupRow",
+  "type": "object"
+}
+```
+
+## ProductVersionBackupRow-Output
+
+商品仕様版の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| drain_amount | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 固形量 |
+| form_id | string (uuid) | 必須 | 追加制約なし | 販売形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| net_amount | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 1包装の内容量 |
+| preparation_note | string | 必須 | minLength=1; maxLength=20000 | 容器・加熱方式・表示手順 |
+| product_id | string (uuid) | 必須 | 追加制約なし | 商品 |
+| source_id | string (uuid) | 必須 | 追加制約なし | メーカー表示根拠 |
+| unit_id | string (uuid) | 必須 | 追加制約なし | 内容量単位 |
+| valid_from | string (date) | 必須 | 追加制約なし | 適用開始日 |
+| version | integer | 必須 | exclusiveMinimum=0.0 | 仕様版 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "商品仕様版の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "drain_amount": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "固形量",
+      "title": "Drain Amount"
+    },
+    "form_id": {
+      "description": "販売形態",
+      "format": "uuid",
+      "title": "Form Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "net_amount": {
+      "description": "1包装の内容量",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Net Amount",
+      "type": "string"
+    },
+    "preparation_note": {
+      "description": "容器・加熱方式・表示手順",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Preparation Note",
+      "type": "string"
+    },
+    "product_id": {
+      "description": "商品",
+      "format": "uuid",
+      "title": "Product Id",
+      "type": "string"
+    },
+    "source_id": {
+      "description": "メーカー表示根拠",
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+    },
+    "unit_id": {
+      "description": "内容量単位",
+      "format": "uuid",
+      "title": "Unit Id",
+      "type": "string"
+    },
+    "valid_from": {
+      "description": "適用開始日",
+      "format": "date",
+      "title": "Valid From",
+      "type": "string"
+    },
+    "version": {
+      "description": "仕様版",
+      "exclusiveMinimum": 0.0,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "product_id",
+    "version",
+    "form_id",
+    "net_amount",
+    "unit_id",
+    "drain_amount",
+    "source_id",
+    "preparation_note",
+    "valid_from"
+  ],
+  "title": "ProductVersionBackupRow",
   "type": "object"
 }
 ```
@@ -11050,6 +16183,132 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## ReceiptImportBackupRow
+
+レシート読取・在庫登録の処理単位の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| committed_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 在庫へ登録した日時 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| file_sha256 | anyOf(string, null) | 必須 | anyOfの制約=string: minLength=64; maxLength=64 | 画像本文のSHA256。本文はDBに保存しない |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| idempotency_key | string | 必須 | minLength=1; maxLength=20000 | 本人内で一意の再送防止キー |
+| reverted_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 登録取消日時 |
+| revision | string | 必須 | pattern="^-?(0&#124;[1-9][0-9]{0,18})$" | 楽観ロック版 |
+| status | string | 必須 | enum=["draft", "committed", "reverted"] | draft/committed/revertedの状態 |
+| undo_preserved_count | integer | 必須 | 追加制約なし | レシート取消時に編集・消費済みとして残した在庫件数 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "レシート読取・在庫登録の処理単位の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "committed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "在庫へ登録した日時",
+      "title": "Committed At"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "file_sha256": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "minLength": 64,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "画像本文のSHA256。本文はDBに保存しない",
+      "title": "File Sha256"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "idempotency_key": {
+      "description": "本人内で一意の再送防止キー",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "reverted_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録取消日時",
+      "title": "Reverted At"
+    },
+    "revision": {
+      "description": "楽観ロック版",
+      "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+      "title": "Revision",
+      "type": "string"
+    },
+    "status": {
+      "description": "draft/committed/revertedの状態",
+      "enum": [
+        "draft",
+        "committed",
+        "reverted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "undo_preserved_count": {
+      "description": "レシート取消時に編集・消費済みとして残した在庫件数",
+      "title": "Undo Preserved Count",
+      "type": "integer"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "file_sha256",
+    "idempotency_key",
+    "status",
+    "revision",
+    "committed_at",
+    "reverted_at",
+    "undo_preserved_count"
+  ],
+  "title": "ReceiptImportBackupRow",
+  "type": "object"
+}
+```
+
 ## ReceiptImportRow
 
 レシート読取・在庫登録の処理単位のDB応答。
@@ -11287,6 +16546,305 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "undo_preserved_count"
   ],
   "title": "ReceiptImportWrite",
+  "type": "object"
+}
+```
+
+## ReceiptLineBackupRow-Input
+
+レシートの商品候補と確定した在庫の対応の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(number, string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 数量。不明はNULL |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| decision | string | 必須 | enum=["accepted", "skipped", "unresolved"] | accepted/skipped/unresolved |
+| form_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 確定した食材形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| import_id | string (uuid) | 必須 | 追加制約なし | レシート処理 |
+| line_no | integer | 必須 | exclusiveMinimum=0.0 | レシート内の表示順 |
+| pantry_lot_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 登録したロット |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 確定した商品版 |
+| raw_name | string | 必須 | minLength=1; maxLength=20000 | 利用者が確認できる商品原表記 |
+| unit_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 確定数量の単位 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "レシートの商品候補と確定した在庫の対応の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "数量。不明はNULL",
+      "title": "Amount"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decision": {
+      "description": "accepted/skipped/unresolved",
+      "enum": [
+        "accepted",
+        "skipped",
+        "unresolved"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "form_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "確定した食材形態",
+      "title": "Form Id"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "import_id": {
+      "description": "レシート処理",
+      "format": "uuid",
+      "title": "Import Id",
+      "type": "string"
+    },
+    "line_no": {
+      "description": "レシート内の表示順",
+      "exclusiveMinimum": 0.0,
+      "title": "Line No",
+      "type": "integer"
+    },
+    "pantry_lot_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録したロット",
+      "title": "Pantry Lot Id"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "確定した商品版",
+      "title": "Product Version Id"
+    },
+    "raw_name": {
+      "description": "利用者が確認できる商品原表記",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Raw Name",
+      "type": "string"
+    },
+    "unit_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "確定数量の単位",
+      "title": "Unit Id"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "import_id",
+    "line_no",
+    "raw_name",
+    "form_id",
+    "product_version_id",
+    "amount",
+    "unit_id",
+    "decision",
+    "pantry_lot_id"
+  ],
+  "title": "ReceiptLineBackupRow",
+  "type": "object"
+}
+```
+
+## ReceiptLineBackupRow-Output
+
+レシートの商品候補と確定した在庫の対応の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 数量。不明はNULL |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| decision | string | 必須 | enum=["accepted", "skipped", "unresolved"] | accepted/skipped/unresolved |
+| form_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 確定した食材形態 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| import_id | string (uuid) | 必須 | 追加制約なし | レシート処理 |
+| line_no | integer | 必須 | exclusiveMinimum=0.0 | レシート内の表示順 |
+| pantry_lot_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 登録したロット |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 確定した商品版 |
+| raw_name | string | 必須 | minLength=1; maxLength=20000 | 利用者が確認できる商品原表記 |
+| unit_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 確定数量の単位 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "レシートの商品候補と確定した在庫の対応の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "数量。不明はNULL",
+      "title": "Amount"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decision": {
+      "description": "accepted/skipped/unresolved",
+      "enum": [
+        "accepted",
+        "skipped",
+        "unresolved"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "form_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "確定した食材形態",
+      "title": "Form Id"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "import_id": {
+      "description": "レシート処理",
+      "format": "uuid",
+      "title": "Import Id",
+      "type": "string"
+    },
+    "line_no": {
+      "description": "レシート内の表示順",
+      "exclusiveMinimum": 0.0,
+      "title": "Line No",
+      "type": "integer"
+    },
+    "pantry_lot_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "登録したロット",
+      "title": "Pantry Lot Id"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "確定した商品版",
+      "title": "Product Version Id"
+    },
+    "raw_name": {
+      "description": "利用者が確認できる商品原表記",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Raw Name",
+      "type": "string"
+    },
+    "unit_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "確定数量の単位",
+      "title": "Unit Id"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "import_id",
+    "line_no",
+    "raw_name",
+    "form_id",
+    "product_version_id",
+    "amount",
+    "unit_id",
+    "decision",
+    "pantry_lot_id"
+  ],
+  "title": "ReceiptLineBackupRow",
   "type": "object"
 }
 ```
@@ -13248,6 +18806,7 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 | instruction | string | 必須 | maxLength=5000 | Instruction |
 | minutes | number | 必須 | minimum=0.0; maximum=1000000.0 | Minutes |
 | mode | string | 必須 | enum=["active", "passive", "monitored"] | Mode |
+| timeScalingMode | string | 任意 | enum=["linear", "fixed_batch", "capacity_batch", "validated_curve", "manual"]; default="manual" | Timescalingmode |
 | title | string | 必須 | maxLength=500 | Title |
 
 ```json
@@ -13299,6 +18858,18 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
         "monitored"
       ],
       "title": "Mode",
+      "type": "string"
+    },
+    "timeScalingMode": {
+      "default": "manual",
+      "enum": [
+        "linear",
+        "fixed_batch",
+        "capacity_batch",
+        "validated_curve",
+        "manual"
+      ],
+      "title": "Timescalingmode",
       "type": "string"
     },
     "title": {
@@ -13980,6 +19551,81 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "offset"
   ],
   "title": "RecipesResponse",
+  "type": "object"
+}
+```
+
+## ResourceReservationBackupRow
+
+資源の予約の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| end_s | integer | 必須 | 追加制約なし | 占有終了 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| quantity | integer | 必須 | exclusiveMinimum=0.0 | 占有量 |
+| resource_id | string (uuid) | 必須 | 追加制約なし | 実資源 |
+| start_s | integer | 必須 | minimum=0.0 | 占有開始 |
+| task_id | string (uuid) | 必須 | 追加制約なし | 使用タスク |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "資源の予約の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "end_s": {
+      "description": "占有終了",
+      "title": "End S",
+      "type": "integer"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "quantity": {
+      "description": "占有量",
+      "exclusiveMinimum": 0.0,
+      "title": "Quantity",
+      "type": "integer"
+    },
+    "resource_id": {
+      "description": "実資源",
+      "format": "uuid",
+      "title": "Resource Id",
+      "type": "string"
+    },
+    "start_s": {
+      "description": "占有開始",
+      "minimum": 0.0,
+      "title": "Start S",
+      "type": "integer"
+    },
+    "task_id": {
+      "description": "使用タスク",
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "task_id",
+    "resource_id",
+    "start_s",
+    "end_s",
+    "quantity"
+  ],
+  "title": "ResourceReservationBackupRow",
   "type": "object"
 }
 ```
@@ -14771,6 +20417,186 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## SessionTaskBackupRow
+
+展開済み工程の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| actual_end_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 実完了 |
+| actual_start_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 実開始 |
+| batch_no | integer | 必須 | exclusiveMinimum=0.0 | 容量分割した回 |
+| confirmed_duration_s | anyOf(integer, null) | 必須 | 追加制約なし | 利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| duration_source | string | 必須 | enum=["recipe_rule", "user_estimate"] | 計画時間の根拠。料理の時間規則または利用者が確認した見積り |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| menu_item_id | string (uuid) | 必須 | 追加制約なし | 料理 |
+| planned_end_s | integer | 必須 | 追加制約なし | 終了相対秒 |
+| planned_start_s | integer | 必須 | minimum=0.0 | 開始相対秒 |
+| session_id | string (uuid) | 必須 | 追加制約なし | 実行 |
+| status | string | 必須 | enum=["pending", "running", "completed", "skipped"] | 進捗 |
+| step_id | string (uuid) | 必須 | 追加制約なし | 元工程 |
+| timer_duration_s | anyOf(integer, null) | 必須 | 追加制約なし | 利用者が設定したタイマー秒数 |
+| timer_started_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 稼働中タイマーの開始日時 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "展開済み工程の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "actual_end_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "実完了",
+      "title": "Actual End At"
+    },
+    "actual_start_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "実開始",
+      "title": "Actual Start At"
+    },
+    "batch_no": {
+      "description": "容量分割した回",
+      "exclusiveMinimum": 0.0,
+      "title": "Batch No",
+      "type": "integer"
+    },
+    "confirmed_duration_s": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない",
+      "title": "Confirmed Duration S"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "duration_source": {
+      "description": "計画時間の根拠。料理の時間規則または利用者が確認した見積り",
+      "enum": [
+        "recipe_rule",
+        "user_estimate"
+      ],
+      "title": "Duration Source",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "menu_item_id": {
+      "description": "料理",
+      "format": "uuid",
+      "title": "Menu Item Id",
+      "type": "string"
+    },
+    "planned_end_s": {
+      "description": "終了相対秒",
+      "title": "Planned End S",
+      "type": "integer"
+    },
+    "planned_start_s": {
+      "description": "開始相対秒",
+      "minimum": 0.0,
+      "title": "Planned Start S",
+      "type": "integer"
+    },
+    "session_id": {
+      "description": "実行",
+      "format": "uuid",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "status": {
+      "description": "進捗",
+      "enum": [
+        "pending",
+        "running",
+        "completed",
+        "skipped"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "step_id": {
+      "description": "元工程",
+      "format": "uuid",
+      "title": "Step Id",
+      "type": "string"
+    },
+    "timer_duration_s": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "利用者が設定したタイマー秒数",
+      "title": "Timer Duration S"
+    },
+    "timer_started_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "稼働中タイマーの開始日時",
+      "title": "Timer Started At"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "session_id",
+    "menu_item_id",
+    "step_id",
+    "batch_no",
+    "planned_start_s",
+    "planned_end_s",
+    "status",
+    "actual_start_at",
+    "actual_end_at",
+    "timer_started_at",
+    "timer_duration_s",
+    "duration_source",
+    "confirmed_duration_s"
+  ],
+  "title": "SessionTaskBackupRow",
+  "type": "object"
+}
+```
+
 ## SessionTaskRow
 
 展開済み工程のDB応答。
@@ -14780,7 +20606,9 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 | actual_end_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 実完了 |
 | actual_start_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 実開始 |
 | batch_no | integer | 必須 | exclusiveMinimum=0.0 | 容量分割した回 |
+| confirmed_duration_s | anyOf(integer, null) | 必須 | 追加制約なし | 利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない |
 | created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| duration_source | string | 必須 | enum=["recipe_rule", "user_estimate"] | 計画時間の根拠。料理の時間規則または利用者が確認した見積り |
 | etag | string | 必須 | pattern="^[0-9]+$" | 更新・削除時のIf-Matchに使う行版 |
 | id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
 | menu_item_id | string (uuid) | 必須 | 追加制約なし | 料理 |
@@ -14829,10 +20657,31 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
       "title": "Batch No",
       "type": "integer"
     },
+    "confirmed_duration_s": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない",
+      "title": "Confirmed Duration S"
+    },
     "created_at": {
       "description": "作成日時(UTC)",
       "format": "date-time",
       "title": "Created At",
+      "type": "string"
+    },
+    "duration_source": {
+      "description": "計画時間の根拠。料理の時間規則または利用者が確認した見積り",
+      "enum": [
+        "recipe_rule",
+        "user_estimate"
+      ],
+      "title": "Duration Source",
       "type": "string"
     },
     "etag": {
@@ -14927,6 +20776,8 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "actual_end_at",
     "timer_started_at",
     "timer_duration_s",
+    "duration_source",
+    "confirmed_duration_s",
     "etag"
   ],
   "title": "SessionTaskRow",
@@ -14943,6 +20794,8 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 | actual_end_at | anyOf(string (date-time), null) | 任意 | 追加制約なし | 実完了 |
 | actual_start_at | anyOf(string (date-time), null) | 任意 | 追加制約なし | 実開始 |
 | batch_no | integer | 必須 | exclusiveMinimum=0.0 | 容量分割した回 |
+| confirmed_duration_s | anyOf(integer, null) | 任意 | 追加制約なし | 利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない |
+| duration_source | string | 必須 | enum=["recipe_rule", "user_estimate"] | 計画時間の根拠。料理の時間規則または利用者が確認した見積り |
 | menu_item_id | string (uuid) | 必須 | 追加制約なし | 料理 |
 | planned_end_s | integer | 必須 | 追加制約なし | 終了相対秒 |
 | planned_start_s | integer | 必須 | minimum=0.0 | 開始相対秒 |
@@ -14988,6 +20841,27 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
       "exclusiveMinimum": 0.0,
       "title": "Batch No",
       "type": "integer"
+    },
+    "confirmed_duration_s": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない",
+      "title": "Confirmed Duration S"
+    },
+    "duration_source": {
+      "description": "計画時間の根拠。料理の時間規則または利用者が確認した見積り",
+      "enum": [
+        "recipe_rule",
+        "user_estimate"
+      ],
+      "title": "Duration Source",
+      "type": "string"
     },
     "menu_item_id": {
       "description": "料理",
@@ -15062,7 +20936,8 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "batch_no",
     "planned_start_s",
     "planned_end_s",
-    "status"
+    "status",
+    "duration_source"
   ],
   "title": "SessionTaskWrite",
   "type": "object"
@@ -15210,6 +21085,315 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "archived"
   ],
   "title": "ShoppingCheck",
+  "type": "object"
+}
+```
+
+## ShoppingItemBackupRow-Input
+
+買い物行の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| archived | boolean | 必須 | 追加制約なし | 完了した買い物の保管状態 |
+| checked | boolean | 必須 | 追加制約なし | 購入済み |
+| checked_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 購入確認日時 |
+| client_key | anyOf(string, null) | 必須 | anyOfの制約=string: minLength=1; maxLength=20000 | 画面操作の安定キー |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| net_shortage | anyOf(number, string) | 必須 | anyOfの制約=number: minimum=0.0 / string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 在庫控除後の不足量 |
+| package_count | anyOf(integer, null) | 必須 | 追加制約なし | 購入包装数 |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 購入SKU |
+| session_id | string (uuid) | 必須 | 追加制約なし | 対象調理 |
+| surplus_amount | anyOf(number, string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 購入後余剰 |
+| total_id | string (uuid) | 必須 | 追加制約なし | 需要行 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "買い物行の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "archived": {
+      "description": "完了した買い物の保管状態",
+      "title": "Archived",
+      "type": "boolean"
+    },
+    "checked": {
+      "description": "購入済み",
+      "title": "Checked",
+      "type": "boolean"
+    },
+    "checked_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入確認日時",
+      "title": "Checked At"
+    },
+    "client_key": {
+      "anyOf": [
+        {
+          "maxLength": 20000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "画面操作の安定キー",
+      "title": "Client Key"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "net_shortage": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "在庫控除後の不足量",
+      "title": "Net Shortage"
+    },
+    "package_count": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入包装数",
+      "title": "Package Count"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入SKU",
+      "title": "Product Version Id"
+    },
+    "session_id": {
+      "description": "対象調理",
+      "format": "uuid",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "surplus_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入後余剰",
+      "title": "Surplus Amount"
+    },
+    "total_id": {
+      "description": "需要行",
+      "format": "uuid",
+      "title": "Total Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "session_id",
+    "total_id",
+    "product_version_id",
+    "net_shortage",
+    "package_count",
+    "surplus_amount",
+    "checked",
+    "client_key",
+    "checked_at",
+    "archived"
+  ],
+  "title": "ShoppingItemBackupRow",
+  "type": "object"
+}
+```
+
+## ShoppingItemBackupRow-Output
+
+買い物行の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| archived | boolean | 必須 | 追加制約なし | 完了した買い物の保管状態 |
+| checked | boolean | 必須 | 追加制約なし | 購入済み |
+| checked_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 購入確認日時 |
+| client_key | anyOf(string, null) | 必須 | anyOfの制約=string: minLength=1; maxLength=20000 | 画面操作の安定キー |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| net_shortage | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 在庫控除後の不足量 |
+| package_count | anyOf(integer, null) | 必須 | 追加制約なし | 購入包装数 |
+| product_version_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 購入SKU |
+| session_id | string (uuid) | 必須 | 追加制約なし | 対象調理 |
+| surplus_amount | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 購入後余剰 |
+| total_id | string (uuid) | 必須 | 追加制約なし | 需要行 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "買い物行の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "archived": {
+      "description": "完了した買い物の保管状態",
+      "title": "Archived",
+      "type": "boolean"
+    },
+    "checked": {
+      "description": "購入済み",
+      "title": "Checked",
+      "type": "boolean"
+    },
+    "checked_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入確認日時",
+      "title": "Checked At"
+    },
+    "client_key": {
+      "anyOf": [
+        {
+          "maxLength": 20000,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "画面操作の安定キー",
+      "title": "Client Key"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "net_shortage": {
+      "description": "在庫控除後の不足量",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Net Shortage",
+      "type": "string"
+    },
+    "package_count": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入包装数",
+      "title": "Package Count"
+    },
+    "product_version_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入SKU",
+      "title": "Product Version Id"
+    },
+    "session_id": {
+      "description": "対象調理",
+      "format": "uuid",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "surplus_amount": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入後余剰",
+      "title": "Surplus Amount"
+    },
+    "total_id": {
+      "description": "需要行",
+      "format": "uuid",
+      "title": "Total Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "session_id",
+    "total_id",
+    "product_version_id",
+    "net_shortage",
+    "package_count",
+    "surplus_amount",
+    "checked",
+    "client_key",
+    "checked_at",
+    "archived"
+  ],
+  "title": "ShoppingItemBackupRow",
   "type": "object"
 }
 ```
@@ -16683,6 +22867,89 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## TaskDependencyBackupRow
+
+献立展開後依存の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| after_task_id | string (uuid) | 必須 | 追加制約なし | 後続タスク |
+| before_task_id | string (uuid) | 必須 | 追加制約なし | 先行タスク |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| max_lag_s | anyOf(integer, null) | 必須 | 追加制約なし | 最大間隔 |
+| min_lag_s | integer | 必須 | minimum=0.0 | 最小間隔 |
+| reason | string | 必須 | minLength=1; maxLength=20000 | 元DAG/洗浄/設備切替等 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "献立展開後依存の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "after_task_id": {
+      "description": "後続タスク",
+      "format": "uuid",
+      "title": "After Task Id",
+      "type": "string"
+    },
+    "before_task_id": {
+      "description": "先行タスク",
+      "format": "uuid",
+      "title": "Before Task Id",
+      "type": "string"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "max_lag_s": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "最大間隔",
+      "title": "Max Lag S"
+    },
+    "min_lag_s": {
+      "description": "最小間隔",
+      "minimum": 0.0,
+      "title": "Min Lag S",
+      "type": "integer"
+    },
+    "reason": {
+      "description": "元DAG/洗浄/設備切替等",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "before_task_id",
+    "after_task_id",
+    "min_lag_s",
+    "max_lag_s",
+    "reason"
+  ],
+  "title": "TaskDependencyBackupRow",
+  "type": "object"
+}
+```
+
 ## TaskDependencyRow
 
 献立展開後依存のDB応答。
@@ -17124,6 +23391,87 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## UserExclusionBackupRow
+
+避けたい食材・物質の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| allergen_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | アレルゲン |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| food_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 食材 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| strict | boolean | 必須 | 追加制約なし | 不明も除外するか |
+| user_id | string (uuid) | 必須 | 追加制約なし | 利用者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "避けたい食材・物質の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "allergen_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "アレルゲン",
+      "title": "Allergen Id"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "food_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "食材",
+      "title": "Food Id"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "strict": {
+      "description": "不明も除外するか",
+      "title": "Strict",
+      "type": "boolean"
+    },
+    "user_id": {
+      "description": "利用者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "food_id",
+    "allergen_id",
+    "strict"
+  ],
+  "title": "UserExclusionBackupRow",
+  "type": "object"
+}
+```
+
 ## UserExclusionRow
 
 避けたい食材・物質のDB応答。
@@ -17276,6 +23624,58 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## UserFoodBackupRow
+
+利用者が追加した独自食材の所有の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| food_id | string (uuid) | 必須 | 追加制約なし | 独自食材 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "利用者が追加した独自食材の所有の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "food_id": {
+      "description": "独自食材",
+      "format": "uuid",
+      "title": "Food Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "food_id"
+  ],
+  "title": "UserFoodBackupRow",
+  "type": "object"
+}
+```
+
 ## UserFoodRow
 
 利用者が追加した独自食材の所有のDB応答。
@@ -17372,6 +23772,58 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## UserPantryFoodBackupRow
+
+利用者が常備すると設定した食材の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| food_id | string (uuid) | 必須 | 追加制約なし | 常備食材 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "利用者が常備すると設定した食材の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "food_id": {
+      "description": "常備食材",
+      "format": "uuid",
+      "title": "Food Id",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "food_id"
+  ],
+  "title": "UserPantryFoodBackupRow",
+  "type": "object"
+}
+```
+
 ## UserPantryFoodRow
 
 利用者が常備すると設定した食材のDB応答。
@@ -17464,6 +23916,133 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "food_id"
   ],
   "title": "UserPantryFoodWrite",
+  "type": "object"
+}
+```
+
+## UserPreferenceBackupRow-Input
+
+ユーザーの嗜好の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| option_id | string (uuid) | 必須 | 追加制約なし | 味・料理等 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 利用者 |
+| weight | anyOf(number, string) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 好みの重み |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "ユーザーの嗜好の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "option_id": {
+      "description": "味・料理等",
+      "format": "uuid",
+      "title": "Option Id",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "利用者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    },
+    "weight": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        }
+      ],
+      "description": "好みの重み",
+      "title": "Weight"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "option_id",
+    "weight"
+  ],
+  "title": "UserPreferenceBackupRow",
+  "type": "object"
+}
+```
+
+## UserPreferenceBackupRow-Output
+
+ユーザーの嗜好の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| option_id | string (uuid) | 必須 | 追加制約なし | 味・料理等 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 利用者 |
+| weight | string | 必須 | pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 好みの重み |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "ユーザーの嗜好の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "option_id": {
+      "description": "味・料理等",
+      "format": "uuid",
+      "title": "Option Id",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "利用者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    },
+    "weight": {
+      "description": "好みの重み",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+      "title": "Weight",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "option_id",
+    "weight"
+  ],
+  "title": "UserPreferenceBackupRow",
   "type": "object"
 }
 ```
@@ -17623,6 +24202,88 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
 }
 ```
 
+## UserRecipeEventBackupRow
+
+提案・調理履歴の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| kind | string | 必須 | enum=["shown", "cooked", "liked", "disliked"] | 提示/調理/評価 |
+| occurred_at | string (date-time) | 必須 | 追加制約なし | 発生時刻 |
+| recipe_version_id | string (uuid) | 必須 | 追加制約なし | 提案版 |
+| request_key | string | 必須 | minLength=1; maxLength=20000 | リクエスト識別子 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 利用者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "提案・調理履歴の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "description": "提示/調理/評価",
+      "enum": [
+        "shown",
+        "cooked",
+        "liked",
+        "disliked"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "occurred_at": {
+      "description": "発生時刻",
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "recipe_version_id": {
+      "description": "提案版",
+      "format": "uuid",
+      "title": "Recipe Version Id",
+      "type": "string"
+    },
+    "request_key": {
+      "description": "リクエスト識別子",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Request Key",
+      "type": "string"
+    },
+    "user_id": {
+      "description": "利用者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "recipe_version_id",
+    "kind",
+    "occurred_at",
+    "request_key"
+  ],
+  "title": "UserRecipeEventBackupRow",
+  "type": "object"
+}
+```
+
 ## UserRecipeEventRow
 
 提案・調理履歴のDB応答。
@@ -17775,6 +24436,267 @@ AI生成方針版の編集可能列。未指定NULL列はNULLにする。
     "request_key"
   ],
   "title": "UserRecipeEventWrite",
+  "type": "object"
+}
+```
+
+## UserShoppingCheckBackupRow-Input
+
+調理前の買い物確認の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(number, string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 必要数量。不明はNULL |
+| archived | boolean | 必須 | 追加制約なし | 保管済みか |
+| checked_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 購入確認日時 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| food_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 対象食材 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| key | string | 必須 | minLength=1; maxLength=20000 | 買い物対象の安定キー |
+| signature | string | 必須 | minLength=1; maxLength=20000 | 数量・商品条件の一致確認用署名 |
+| unit_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 数量単位 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "調理前の買い物確認の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "必要数量。不明はNULL",
+      "title": "Amount"
+    },
+    "archived": {
+      "description": "保管済みか",
+      "title": "Archived",
+      "type": "boolean"
+    },
+    "checked_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入確認日時",
+      "title": "Checked At"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "food_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "対象食材",
+      "title": "Food Id"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "key": {
+      "description": "買い物対象の安定キー",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Key",
+      "type": "string"
+    },
+    "signature": {
+      "description": "数量・商品条件の一致確認用署名",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Signature",
+      "type": "string"
+    },
+    "unit_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "数量単位",
+      "title": "Unit Id"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "key",
+    "signature",
+    "food_id",
+    "amount",
+    "unit_id",
+    "checked_at",
+    "archived"
+  ],
+  "title": "UserShoppingCheckBackupRow",
+  "type": "object"
+}
+```
+
+## UserShoppingCheckBackupRow-Output
+
+調理前の買い物確認の全列。ID・作成時刻も元の値を保持する。
+
+| 項目 | 型 | 必須性 | 制約 | 説明 |
+|---|---|---|---|---|
+| amount | anyOf(string, null) | 必須 | anyOfの制約=string: pattern="^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}&#124;(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)" | 必要数量。不明はNULL |
+| archived | boolean | 必須 | 追加制約なし | 保管済みか |
+| checked_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 購入確認日時 |
+| created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| food_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 対象食材 |
+| id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
+| key | string | 必須 | minLength=1; maxLength=20000 | 買い物対象の安定キー |
+| signature | string | 必須 | minLength=1; maxLength=20000 | 数量・商品条件の一致確認用署名 |
+| unit_id | anyOf(string (uuid), null) | 必須 | 追加制約なし | 数量単位 |
+| user_id | string (uuid) | 必須 | 追加制約なし | 所有者 |
+
+```json
+{
+  "additionalProperties": false,
+  "description": "調理前の買い物確認の全列。ID・作成時刻も元の値を保持する。",
+  "properties": {
+    "amount": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,14}|(?=[\\d.]{1,21}0*$)\\d{0,14}\\.\\d{0,6}0*$)",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "必要数量。不明はNULL",
+      "title": "Amount"
+    },
+    "archived": {
+      "description": "保管済みか",
+      "title": "Archived",
+      "type": "boolean"
+    },
+    "checked_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "購入確認日時",
+      "title": "Checked At"
+    },
+    "created_at": {
+      "description": "作成日時(UTC)",
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "food_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "対象食材",
+      "title": "Food Id"
+    },
+    "id": {
+      "description": "不変の行識別子",
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "key": {
+      "description": "買い物対象の安定キー",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Key",
+      "type": "string"
+    },
+    "signature": {
+      "description": "数量・商品条件の一致確認用署名",
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Signature",
+      "type": "string"
+    },
+    "unit_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "数量単位",
+      "title": "Unit Id"
+    },
+    "user_id": {
+      "description": "所有者",
+      "format": "uuid",
+      "title": "User Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "created_at",
+    "user_id",
+    "key",
+    "signature",
+    "food_id",
+    "amount",
+    "unit_id",
+    "checked_at",
+    "archived"
+  ],
+  "title": "UserShoppingCheckBackupRow",
   "type": "object"
 }
 ```

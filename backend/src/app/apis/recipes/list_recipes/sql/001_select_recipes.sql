@@ -161,6 +161,7 @@ payloads AS (
                     JSONB_AGG(JSONB_BUILD_OBJECT(
                         'id', step.id::TEXT, 'title', step.title, 'instruction', step.instruction,
                         'minutes', step.duration_max_s / 60.0, 'mode', step.attention,
+                        'timeScalingMode', time_rule.mode,
                         'equipment', COALESCE((
                             SELECT JSONB_AGG(resource_kind.name ORDER BY resource_kind.name)
                             FROM recipeweave.step_resource AS resource_usage
@@ -179,6 +180,9 @@ payloads AS (
                 INNER JOIN
                     recipeweave.operation AS cook_operation
                     ON step.operation_id = cook_operation.id
+                INNER JOIN
+                    recipeweave.scaling_rule AS time_rule
+                    ON step.scaling_rule_id = time_rule.id
                 WHERE step.recipe_version_id = page.version_id
             ), '[]'::JSONB),
             'arrangementIds', '[]'::JSONB,

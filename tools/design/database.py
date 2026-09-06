@@ -45,6 +45,7 @@ class Query:
     parameters: list[str]
     columns: dict[str, list[str]] = field(default_factory=dict)
     condition: str = "このSQLの呼出し経路で実行"
+    transaction_effect: str | None = None
 
 
 def sql_name(node: exp.Table) -> str:
@@ -250,7 +251,43 @@ def load_tables(root: Path) -> dict[str, Table]:
     return tables
 
 
+def constraint_mode(text: str, source: str) -> bool | None:
+    """制約検証モードの固定2文だけをPostgreSQLの実構文で判定する。"""
+    tokens = sqlglot.tokenize(text, read="postgres")
+    if [token.text.upper() for token in tokens[:2]] != ["SET", "CONSTRAINTS"]:
+        return None
+    from pglast import ast as postgres_ast
+    from pglast import parse_sql
+    from pglast.parser import ParseError
+
+    try:
+        statements = parse_sql(text)
+    except ParseError as exc:
+        raise DesignError(f"制約検証モードのSQLが不正です: {source}: {exc}") from exc
+    if (
+        len(statements) != 1
+        or not isinstance(statements[0].stmt, postgres_ast.ConstraintsSetStmt)
+        or statements[0].stmt.constraints is not None
+    ):
+        raise DesignError(f"制約検証モードはSET CONSTRAINTS ALLの単文だけを扱います: {source}")
+    return bool(statements[0].stmt.deferred)
+
+
 def query_projection(text: str, source: str, operation: str, tables: dict[str, Table]) -> Query:
+    deferred = constraint_mode(text, source)
+    if deferred is not None:
+        return Query(
+            source,
+            operation,
+            text,
+            {},
+            [],
+            transaction_effect=(
+                "遅延可能な制約の検査をトランザクション終了まで遅延する。"
+                if deferred
+                else "保留していた遅延可能な制約を直ちに検査し、以後も即時検査する。"
+            ),
+        )
     stmt = parse_one(text, source)
     kinds = {
         exp.Select: "R",
@@ -439,7 +476,7 @@ def load_queries(root: Path, tables: dict[str, Table], slugs: dict[str, str]) ->
 
     direct_queries = list(result)
     for slug, operation in sorted(slugs.items()):
-        if not slug.startswith("workspace/"):
+        if not slug.startswith(("workspace/", "backup/")):
             continue
         op = SimpleNamespace(slug=slug, directory=root / "backend/src/app/apis" / slug)
         functions = [
@@ -487,7 +524,7 @@ def load_queries(root: Path, tables: dict[str, Table], slugs: dict[str, str]) ->
             )
     authentication = [query for query in result if "/auth/get_me/sql/" in query.source]
     for slug, operation in sorted(slugs.items()):
-        if slug.startswith(("entities/", "workspace/", "generation/")):
+        if slug.startswith(("entities/", "workspace/", "generation/", "backup/")):
             result.extend(
                 replace(
                     query,
@@ -507,7 +544,7 @@ def load_queries(root: Path, tables: dict[str, Table], slugs: dict[str, str]) ->
                         "preview=true、または料理詳細でBearer認証を指定した場合。"
                         "認証なしの公開検索では実行しない。"
                         if slug == "recipes/get_recipe"
-                        else "preview=trueで開発用認証を行う場合のみ。"
+                        else "試用を許可した開発環境でpreview=trueとして認証する場合のみ。"
                         "通常の公開検索では実行しない。"
                     ),
                 )

@@ -10,9 +10,9 @@
 
 | 対象表 | CRUD | 参照・書込列 |
 |---|---|---|
-| recipeweave.session_task | C | actual_end_at, actual_start_at, batch_no, created_at, id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id, timer_duration_s, timer_started_at, xmin |
+| recipeweave.session_task | C | actual_end_at, actual_start_at, batch_no, confirmed_duration_s, created_at, duration_source, id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id, timer_duration_s, timer_started_at, xmin |
 
-バインド変数: actual_end_at, actual_start_at, batch_no, menu_item_id, planned_end_s, planned_start_s, row_id, session_id, status, step_id, timer_duration_s, timer_started_at
+バインド変数: actual_end_at, actual_start_at, batch_no, confirmed_duration_s, duration_source, menu_item_id, planned_end_s, planned_start_s, row_id, session_id, status, step_id, timer_duration_s, timer_started_at
 
 ```sql
 -- 展開済み工程を作成する。
@@ -29,7 +29,9 @@ INSERT INTO recipeweave.session_task AS t (
     actual_start_at,
     actual_end_at,
     timer_started_at,
-    timer_duration_s
+    timer_duration_s,
+    duration_source,
+    confirmed_duration_s
 )
 VALUES (
     %(row_id)s,
@@ -43,7 +45,9 @@ VALUES (
     %(actual_start_at)s,
     %(actual_end_at)s,
     %(timer_started_at)s,
-    %(timer_duration_s)s
+    %(timer_duration_s)s,
+    %(duration_source)s,
+    %(confirmed_duration_s)s
 )
 RETURNING
     t.id,
@@ -59,6 +63,8 @@ RETURNING
     t.actual_end_at,
     t.timer_started_at,
     t.timer_duration_s,
+    t.duration_source,
+    t.confirmed_duration_s,
     t.xmin::TEXT AS etag;
 ```
 

@@ -4,7 +4,7 @@ import os
 import secrets
 import time
 from collections.abc import Iterator
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
 import jwt
@@ -19,6 +19,11 @@ from app.core.dependencies import get_settings
 from app.main import create_app
 
 from .conftest import HttpTestClient
+
+if TYPE_CHECKING:
+    from cryptography.hazmat.primitives.asymmetric import rsa
+
+    from app.integrations.auth.cognito_provider import CognitoVerifier
 
 
 @pytest.fixture(scope="module")
@@ -254,3 +259,57 @@ def test_owned_history_pins_exact_version_and_isolates_withdrawn_content(
         ).status_code
         == 404
     )
+
+
+def test_aws_dev_preview_requires_explicit_flag_and_signed_cognito_identity(
+    database_client: HttpTestClient,
+    private_key: "rsa.RSAPrivateKey",
+    verifier: "CognitoVerifier",
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """CognitoのDevでは未試作8件を認証後だけ表示し、本番公開へ昇格させない。"""
+    from app.core import identity
+
+    from .conftest import CLIENT_ID, ISSUER, access_token
+
+    def configured_verifier(issuer: str, client_id: str) -> "CognitoVerifier":
+        assert issuer == ISSUER
+        assert client_id == CLIENT_ID
+        return verifier
+
+    monkeypatch.setenv("AUTH_MODE", "cognito")
+    monkeypatch.setenv("COGNITO_ISSUER", ISSUER)
+    monkeypatch.setenv("COGNITO_CLIENT_ID", CLIENT_ID)
+    monkeypatch.setenv("ENVIRONMENT", "dev")
+    monkeypatch.setenv("ALLOW_CATALOG_PREVIEW", "true")
+    monkeypatch.setenv("AWS_LAMBDA_FUNCTION_NAME", "recipeweave-dev")
+    monkeypatch.setattr(identity, "CognitoVerifier", configured_verifier)
+    get_settings.cache_clear()
+    auth = {"Authorization": "Bearer " + access_token(private_key, "dev-preview-" + str(uuid4()))}
+    query: dict[str, str | list[str]] = {"preview": "true"}
+    assert database_client.get("/api/recipes", params=query).status_code == 401
+    invalid_auth = {"Authorization": "Bearer invalid-signature"}
+    assert (
+        database_client.get("/api/recipes", params=query, headers=invalid_auth).status_code == 401
+    )
+    listed = database_client.get("/api/recipes", params=query, headers=auth)
+    assert listed.status_code == 200, listed.text
+    assert listed.json()["total"] == 8
+    assert all(
+        row["sample"] and row["publicationStatus"] == "draft" for row in listed.json()["items"]
+    )
+    detail = database_client.get(
+        "/api/recipes/" + stable_id("recipe", "tomato-egg"), params=query, headers=auth
+    )
+    assert detail.status_code == 200, detail.text
+    random = database_client.get("/api/recipes/random", params=query, headers=auth)
+    assert random.status_code == 200 and random.json()["item"]["sample"]
+    public = database_client.get("/api/recipes", headers=auth)
+    assert public.status_code == 200 and public.json()["total"] == 0
+    monkeypatch.setenv("ALLOW_CATALOG_PREVIEW", "false")
+    get_settings.cache_clear()
+    assert database_client.get("/api/recipes", params=query, headers=auth).status_code == 403
+    monkeypatch.setenv("ALLOW_CATALOG_PREVIEW", "true")
+    monkeypatch.setenv("ENVIRONMENT", "production")
+    get_settings.cache_clear()
+    assert database_client.get("/api/recipes", params=query, headers=auth).status_code == 403

@@ -143,9 +143,34 @@ def block(statements: list[ast.stmt], source: str, indent: str = "    ") -> list
         elif isinstance(node, ast.Assert):
             lines += render_expression(node.test, indent)
             lines.append(f"{indent}Note over Function: 表明を確認: {label(expression(node.test))}")
+        elif isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
+            if node.decorator_list or node.args.defaults or any(node.args.kw_defaults):
+                raise DesignError(f"ローカル関数の定義時評価は未対応です: {source}:{node.lineno}")
+            lines.append(
+                f"{indent}Note over Function: ローカル関数 {node.name} を定義。"
+                "本文は別図に示し、定義しただけでは実行しない。"
+            )
         else:
             raise DesignError(f"未対応の文: {source}:{node.lineno}: {type(node).__name__}")
     return lines
+
+
+def scoped_functions(
+    fn: ast.FunctionDef | ast.AsyncFunctionDef, name: str
+) -> list[tuple[ast.FunctionDef | ast.AsyncFunctionDef, str]]:
+    """ローカル関数を字句スコープ付きで別図へ分ける。"""
+    found = [(fn, name)]
+
+    def visit(node: ast.AST) -> None:
+        if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
+            found.extend(scoped_functions(node, f"{name}.{node.name}"))
+        else:
+            for child in ast.iter_child_nodes(node):
+                visit(child)
+
+    for statement in fn.body:
+        visit(statement)
+    return found
 
 
 def function_sections(
@@ -162,28 +187,26 @@ def function_sections(
         candidates += [
             node for node in cls.body if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef)
         ]
-    for fn in candidates:
-        if allowed is not None and fn.name not in allowed:
-            continue
+    scoped = [
+        item
+        for candidate in candidates
+        if allowed is None or candidate.name in allowed
+        for item in scoped_functions(candidate, candidate.name)
+    ]
+    for fn, name in scoped:
         validate_tree(fn, source)
-        if any(
-            isinstance(item, ast.FunctionDef | ast.AsyncFunctionDef)
-            for stmt in fn.body
-            for item in ast.walk(stmt)
-        ):
-            raise DesignError(f"入れ子の関数は未対応です: {source}:{fn.name}")
         doc = ast.get_docstring(fn) or "個別の説明なし。下記の実装を参照。"
-        functions.append([fn.name, doc, f"{source}:{fn.lineno}"])
+        functions.append([name, doc, f"{source}:{fn.lineno}"])
         signature = ast.unparse(fn.args)
         lines = [
-            f"### {path.name}: `{fn.name}`",
+            f"### {path.name}: `{name}`",
             "",
             f"定義元: `{source}:{fn.lineno}`",
             "",
             "```mermaid",
             "sequenceDiagram",
             "    participant Caller as 呼出元",
-            f"    participant Function as {fn.name}",
+            f"    participant Function as {name}",
             "    participant Callee as 呼出先",
             f"    Caller->>Function: {label(signature)}",
         ]
@@ -216,6 +239,7 @@ def render_sequences(directory: Path, root: Path, operation_id: str) -> tuple[st
         [
             "対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。"
             "関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。"
+            "ローカル関数は字句スコープ付きの別図にし、関数定義と本文の実行を区別する。"
             "エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。"
             "continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。",
             *diagrams,

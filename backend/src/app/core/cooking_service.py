@@ -48,6 +48,9 @@ class CookingService:
                     "recipeName": task["recipe_name"],
                     "title": task["title"] or "調理工程",
                     "instruction": task["instruction"],
+                    "timeScalingMode": task["scaling_mode"],
+                    "durationSource": task["duration_source"],
+                    "confirmedDurationSeconds": task["confirmed_duration_s"],
                     "minutes": (task["planned_end_s"] - task["planned_start_s"]) / 60,
                     "mode": task["attention"],
                     "guide": None,
@@ -117,15 +120,29 @@ class CookingService:
         session_id = identifier(request.session.id)
         menu_id = uuid5(session_id, "frozen-menu")
         # 将来の献立編集が実行中の調理へ影響しないよう、専用の関連行を作る。
+        frozen_ids: dict[str, UUID] = {}
         for item in request.session.meal_snapshot:
             frozen = item.model_copy(update={"id": str(uuid5(session_id, "item:" + item.id))})
+            frozen_ids[item.id] = identifier(frozen.id)
             self.workspace.add_item(q, frozen, menu_id, "調理開始時の献立")
         steps = q.run("q020_steps", menu_id=menu_id)
         dependencies = q.run("q021_dependencies", menu_id=menu_id)
         requirements = q.run("q022_requirements", menu_id=menu_id)
         resources = q.run("q023_resources", user_id=self.user_id)
         try:
-            plan = build_plan(steps, dependencies, requirements, resources)
+            estimates: list[dict[str, Any]] = []
+            for estimate in request.duration_estimates:
+                if estimate.meal_item_id not in frozen_ids:
+                    raise ValueError("この献立に含まれない工程の見積りが指定されています。")
+                estimates.append(
+                    {
+                        **estimate.model_dump(),
+                        "meal_item_id": frozen_ids[estimate.meal_item_id],
+                    }
+                )
+            plan = build_plan(
+                steps, dependencies, requirements, resources, duration_estimates=estimates
+            )
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc
         ingredients = q.run("q024_ingredients", menu_id=menu_id)
@@ -166,7 +183,7 @@ class CookingService:
                     for r in resources
                 ],
                 "planner_config": {
-                    "planner_version": "dag-resource-v1",
+                    "planner_version": "dag-resource-manual-v2",
                     "concurrent_active_tasks": 1,
                 },
             }
@@ -192,6 +209,8 @@ class CookingService:
                 step_id=task.step_id,
                 start=task.start,
                 end=task.end,
+                duration_source=task.duration_source,
+                confirmed_duration_s=task.confirmed_duration_s,
             )
             for resource_id, count in task.reservations:
                 q.run(
@@ -231,6 +250,10 @@ class CookingService:
 
     def update(self, request: CookingRequest, row_id: UUID) -> AppSnapshot:
         """本人の工程・タイマーだけを更新し、完了の確定と消費を同時に行う。"""
+        if request.duration_estimates:
+            raise HTTPException(
+                422, "開始後の見積り時間は変更できません。新しい調理として計画してください"
+            )
         q = self.workspace.begin("update_cooking_session", request)
         if identifier(request.session.id) != row_id:
             raise HTTPException(422, "調理IDが一致しません")

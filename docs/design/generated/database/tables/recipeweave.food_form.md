@@ -50,6 +50,23 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_conversion.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_food_allergen.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_food_form.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_form_yield.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_nutrition_fact.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_food_form.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q300_reference_food_form.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_conversion.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_food_allergen.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_food_form.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_form_yield.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_nutrition_fact.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_food_form.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q300_reference_food_form.sql |
 | entity_food_form_create | C | backend/src/app/apis/entities/food_form_create/sql/001_create.sql |
 | entity_food_form_get | R | backend/src/app/apis/entities/food_form_get/sql/001_get.sql |
 | entity_food_form_list | R | backend/src/app/apis/entities/food_form_list/sql/001_list.sql |
@@ -71,6 +88,10 @@
 | update_cooking_session | R | backend/src/app/apis/workspace/update_cooking_session/sql/q006_totals.sql |
 | update_menu_item | R | backend/src/app/apis/workspace/update_menu_item/sql/q011_ingredients.sql |
 | update_pantry_lot | R | backend/src/app/apis/workspace/update_pantry_lot/sql/q001_resolve_form.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q002_lots.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q002_lots.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql |

@@ -4,7 +4,7 @@
 
 実装から自動生成。手編集禁止。`uv run python tools/generate_service_design.py` で更新。
 
-対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。
+対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。ローカル関数は字句スコープ付きの別図にし、関数定義と本文の実行を区別する。エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。
 
 ### router.py: `handle`
 
@@ -44,7 +44,7 @@ sequenceDiagram
 
 ### workspace_service.py: `identifier`
 
-定義元: `backend/src/app/core/workspace_service.py:32`
+定義元: `backend/src/app/core/workspace_service.py:33`
 
 ```mermaid
 sequenceDiagram
@@ -71,7 +71,7 @@ sequenceDiagram
 
 ### workspace_service.py: `quantity`
 
-定義元: `backend/src/app/core/workspace_service.py:40`
+定義元: `backend/src/app/core/workspace_service.py:41`
 
 ```mermaid
 sequenceDiagram
@@ -87,7 +87,7 @@ sequenceDiagram
 
 ### workspace_service.py: `iso`
 
-定義元: `backend/src/app/core/workspace_service.py:45`
+定義元: `backend/src/app/core/workspace_service.py:46`
 
 ```mermaid
 sequenceDiagram
@@ -103,7 +103,7 @@ sequenceDiagram
 
 ### workspace_service.py: `queries`
 
-定義元: `backend/src/app/core/workspace_service.py:59`
+定義元: `backend/src/app/core/workspace_service.py:60`
 
 ```mermaid
 sequenceDiagram
@@ -120,7 +120,7 @@ sequenceDiagram
 
 ### workspace_service.py: `begin`
 
-定義元: `backend/src/app/core/workspace_service.py:62`
+定義元: `backend/src/app/core/workspace_service.py:63`
 
 ```mermaid
 sequenceDiagram
@@ -149,7 +149,7 @@ sequenceDiagram
 
 ### workspace_service.py: `finish`
 
-定義元: `backend/src/app/core/workspace_service.py:69`
+定義元: `backend/src/app/core/workspace_service.py:70`
 
 ```mermaid
 sequenceDiagram
@@ -180,7 +180,7 @@ sequenceDiagram
 
 ### workspace_service.py: `get_workspace`
 
-定義元: `backend/src/app/core/workspace_service.py:80`
+定義元: `backend/src/app/core/workspace_service.py:81`
 
 ```mermaid
 sequenceDiagram
@@ -230,7 +230,7 @@ sequenceDiagram
 
 ### workspace_service.py: `read_meal`
 
-定義元: `backend/src/app/core/workspace_service.py:186`
+定義元: `backend/src/app/core/workspace_service.py:187`
 
 ```mermaid
 sequenceDiagram
@@ -249,7 +249,7 @@ sequenceDiagram
 
 ### workspace_service.py: `_stock`
 
-定義元: `backend/src/app/core/workspace_service.py:208`
+定義元: `backend/src/app/core/workspace_service.py:209`
 
 ```mermaid
 sequenceDiagram
@@ -289,7 +289,7 @@ sequenceDiagram
 
 ### workspace_service.py: `_custom_food`
 
-定義元: `backend/src/app/core/workspace_service.py:390`
+定義元: `backend/src/app/core/workspace_service.py:391`
 
 ```mermaid
 sequenceDiagram
@@ -340,7 +340,7 @@ sequenceDiagram
 
 ### workspace_service.py: `commit_receipt`
 
-定義元: `backend/src/app/core/workspace_service.py:425`
+定義元: `backend/src/app/core/workspace_service.py:426`
 
 ```mermaid
 sequenceDiagram

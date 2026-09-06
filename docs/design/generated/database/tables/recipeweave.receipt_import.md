@@ -47,6 +47,15 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_receipt_import.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_receipt_line.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_receipt_import.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_receipt_import.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_receipt_line.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_receipt_import.sql |
 | entity_pantry_lot_create | R | backend/src/app/apis/entities/pantry_lot_create/sql/003_reference_source_import_id.sql |
 | entity_pantry_lot_update | R | backend/src/app/apis/entities/pantry_lot_update/sql/003_reference_source_import_id.sql |
 | entity_receipt_import_create | C | backend/src/app/apis/entities/receipt_import_create/sql/001_create.sql |
@@ -66,6 +75,7 @@
 | undo_receipt | R | backend/src/app/apis/workspace/undo_receipt/sql/q001_import.sql |
 | undo_receipt | U | backend/src/app/apis/workspace/undo_receipt/sql/q003_revert.sql |
 | update_pantry_lot | R | backend/src/app/apis/workspace/update_pantry_lot/sql/q002_update_lot.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q004_receipts.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q004_receipts.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q004_receipts.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q004_receipts.sql |

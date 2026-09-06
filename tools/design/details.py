@@ -45,6 +45,10 @@ def operation_sources(root: Path, op: Any) -> list[Path]:
             root / "backend/src/app/core/entity_generation.py",
             root / "backend/src/app/core/entity_service.py",
         ]
+    if op.slug.startswith("backup/"):
+        paths += [root / "backend/src/app/core/backup_service.py"]
+        if op.slug == "backup/restore_backup":
+            paths += [root / "backend/src/app/core/workspace_service.py"]
     if op.slug.startswith(("foods/", "recipes/")):
         paths += [root / "backend/src/app/integrations/catalog/postgres_provider.py"]
     return paths
@@ -69,6 +73,10 @@ def selected_functions(
         workspace = root / "backend/src/app/core/workspace_service.py"
         methods = selected_functions(root, op, workspace)
         calls += [node for _, fn in methods for node in ast.walk(fn)]
+    if path.name == "workspace_service.py" and op.directory.parent.name == "backup":
+        backup = root / "backend/src/app/core/backup_service.py"
+        methods = selected_functions(root, op, backup)
+        calls += [node for _, fn in methods for node in ast.walk(fn)]
     if path.name == "postgres_provider.py" and op.directory.name == "preview_cooking_plan":
         plan_service = root / "backend/src/app/core/cooking_plan_service.py"
         methods = selected_functions(root, op, plan_service)
@@ -90,7 +98,7 @@ def selected_functions(
             isinstance(node.func, ast.Attribute)
             and isinstance(node.func.value, ast.Call)
             and isinstance(node.func.value.func, ast.Name)
-            and node.func.value.func.id == "CookingService"
+            and node.func.value.func.id in {"CookingService", "WorkspaceService"}
         ):
             wanted.add(node.func.attr)
     found = set()
@@ -146,6 +154,63 @@ def expression_origins(root: Path, op: Any, extra: Path | None = None) -> dict[s
     return {name: " / ".join(dict.fromkeys(values)) for name, values in result.items()}
 
 
+def backup_row_origins(root: Path, op: Any) -> dict[str, dict[str, str]]:
+    """復元行の展開を追跡し、新規発行ID等の同名引数と混同しない。"""
+    if op.slug not in {"backup/preview_backup", "backup/restore_backup"}:
+        return {}
+    service_path = root / "backend/src/app/core/backup_service.py"
+    functions = dict(source_functions(service_path, root))
+    reference = functions.get("BackupService.check_references")
+    replace = functions.get("BackupService.replace_rows")
+    if reference is None or replace is None:
+        raise DesignError("バックアップ行の検証・全置換の実装を解決できません")
+    expressions = {ast.unparse(item) for item in ast.walk(reference)}
+    replacements = {ast.unparse(item) for item in ast.walk(replace)}
+    if (
+        not {
+            "document.tables.model_dump(mode='python')",
+        }
+        <= expressions
+        or not {
+            "values = dict(row)",
+            "queries.run('q200_insert_' + table, **values)",
+            "Jsonb(to_jsonable_python(values[column]))",
+            "int(values[column])",
+        }
+        <= replacements
+    ):
+        raise DesignError("バックアップ行からSQL引数への代入経路が変わりました")
+    inventory_path = root / "backend/src/app/backup/inventory.py"
+    inventory = ast.parse(read_source(inventory_path, root))
+    definitions = [
+        item.value
+        for item in inventory.body
+        if isinstance(item, ast.AnnAssign)
+        and isinstance(item.target, ast.Name)
+        and item.target.id == "TABLES"
+    ]
+    if len(definitions) != 1:
+        raise DesignError("バックアップ対象列の実装定義を一意に解決できません")
+    metadata = ast.literal_eval(definitions[0])
+    result = {}
+    for name, item in metadata.items():
+        columns = {}
+        for column in item["columns"]:
+            conversion = "値を維持"
+            if column in item["json_columns"]:
+                conversion = "非NULLならJsonb(to_jsonable_python(values[column]))へ変換"
+            elif column in item["bigint_columns"]:
+                conversion = "非NULLならint(values[column])へ変換"
+            columns[column] = (
+                f"request.backup.tables.{name} の各行.{column} → "
+                "document.tables.model_dump(mode='python') → data[table] → dict(row) → "
+                f"{conversion} → **valuesの名前付きSQL引数。"
+                f"({service_path.relative_to(root)}:{reference.lineno}, {replace.lineno})"
+            )
+        result[name] = columns
+    return result
+
+
 def render_detail(
     root: Path, op: Any, queries: list[Query], tables: dict[str, Table], spec: dict[str, Any]
 ) -> str:
@@ -178,10 +243,20 @@ def render_detail(
             ),
         ]
     origins = expression_origins(root, op)
+    backup_origins = backup_row_origins(root, op)
     identity_path = root / "backend/src/app/core/identity.py"
     identity_origins = expression_origins(root, op, identity_path) if identity_path.exists() else {}
     sections += ["## データベースの対象と値の流れ"]
     for query in queries:
+        if query.transaction_effect is not None:
+            sections += [
+                f"### `{query.source}`",
+                "実行条件: " + query.condition,
+                query.transaction_effect,
+                "この文自体の行CRUDはない。制約違反は呼出元へ返し、"
+                "プレビューの試験書込みを保持するか戻すかは呼出元のトランザクション制御に従う。",
+            ]
+            continue
         statement = parse_one(query.sql, query.source)
         sections += [
             f"### `{query.source}`",
@@ -213,6 +288,13 @@ def render_detail(
         binds = []
         for parameter in query.parameters:
             query_origins = identity_origins if "/auth/get_me/sql/" in query.source else origins
+            if backup_origins and Path(query.source).stem.startswith("q200_insert_"):
+                target = Path(query.source).stem.removeprefix("q200_insert_")
+                if query.actions != {f"recipeweave.{target}": {"C"}}:
+                    raise DesignError(f"バックアップの挿入先と対象定義が不一致です: {query.source}")
+                query_origins = backup_origins.get(target, {})
+                if parameter not in query_origins:
+                    raise DesignError(f"バックアップ列の値の出所がありません: {target}.{parameter}")
             source = query_origins.get(parameter)
             if (
                 not source

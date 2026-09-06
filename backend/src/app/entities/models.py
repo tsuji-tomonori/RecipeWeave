@@ -1626,6 +1626,12 @@ class SessionTaskRow(EntityModel):
     actual_end_at: AwareDatetime | None = Field(description="実完了")
     timer_started_at: AwareDatetime | None = Field(description="稼働中タイマーの開始日時")
     timer_duration_s: int | None = Field(description="利用者が設定したタイマー秒数")
+    duration_source: Literal["recipe_rule", "user_estimate"] = Field(
+        description="計画時間の根拠。料理の時間規則または利用者が確認した見積り"
+    )
+    confirmed_duration_s: int | None = Field(
+        description="利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない"
+    )
     etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
 
 
@@ -1645,6 +1651,13 @@ class SessionTaskWrite(EntityModel):
         default=None, description="稼働中タイマーの開始日時"
     )
     timer_duration_s: int | None = Field(default=None, description="利用者が設定したタイマー秒数")
+    duration_source: Literal["recipe_rule", "user_estimate"] = Field(
+        description="計画時間の根拠。料理の時間規則または利用者が確認した見積り"
+    )
+    confirmed_duration_s: int | None = Field(
+        default=None,
+        description="利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない",
+    )
 
 
 class TaskDependencyRow(EntityModel):
@@ -2394,3 +2407,67 @@ class UserShoppingCheckWrite(EntityModel):
     unit_id: UUID | None = Field(default=None, description="数量単位")
     checked_at: AwareDatetime | None = Field(default=None, description="購入確認日時")
     archived: bool = Field(description="保管済みか")
+
+
+class BackupArtifactRow(EntityModel):
+    """本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持するのDB応答。"""
+
+    id: UUID = Field(description="バックアップ本文に含める不変の発行識別子")
+    created_at: AwareDatetime = Field(description="サーバーによる発行日時(UTC)")
+    user_id: UUID | None = Field(description="発行先の本人。利用者消去後だけNULLへ匿名化する")
+    body_sha256: str = Field(
+        description="発行識別子を含む正規化済み本文全体のSHA-256", min_length=1, max_length=20000
+    )
+    format_version: int = Field(description="対応するバックアップの形式版。現在は2")
+    etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
+
+
+class BackupArtifactWrite(EntityModel):
+    """本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持するの編集可能列。未指定NULL列はNULLにする。"""
+
+    user_id: UUID | None = Field(
+        default=None, description="発行先の本人。利用者消去後だけNULLへ匿名化する"
+    )
+    body_sha256: str = Field(
+        description="発行識別子を含む正規化済み本文全体のSHA-256", min_length=1, max_length=20000
+    )
+    format_version: int = Field(description="対応するバックアップの形式版。現在は2")
+
+
+class BackupRestoreIntentRow(EntityModel):
+    """復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費するのDB応答。"""
+
+    id: UUID = Field(description="確認画面へ返す不変の復元確認識別子")
+    created_at: AwareDatetime = Field(description="復元内容を検証して確認記録を発行した日時(UTC)")
+    user_id: UUID | None = Field(description="復元する本人。利用者消去後だけNULLへ匿名化する")
+    artifact_id: UUID = Field(description="本人へ発行したバックアップ証拠の識別子")
+    body_sha256: str = Field(
+        description="確認した本文全体のSHA-256。発行記録と一致する", min_length=1, max_length=20000
+    )
+    current_revision: BigInteger = Field(
+        description="確認時の現在データの更新版。復元直前にも同じ値であることを検査する"
+    )
+    expires_at: AwareDatetime = Field(description="確認の有効期限。発行から最大15分")
+    consumed_at: AwareDatetime | None = Field(
+        description="復元と同一トランザクションで確定する使用日時。取消・再使用は不可"
+    )
+    etag: str = Field(pattern=r"^[0-9]+$", description="更新・削除時のIf-Matchに使う行版")
+
+
+class BackupRestoreIntentWrite(EntityModel):
+    """復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費するの編集可能列。未指定NULL列はNULLにする。"""
+
+    user_id: UUID | None = Field(
+        default=None, description="復元する本人。利用者消去後だけNULLへ匿名化する"
+    )
+    artifact_id: UUID = Field(description="本人へ発行したバックアップ証拠の識別子")
+    body_sha256: str = Field(
+        description="確認した本文全体のSHA-256。発行記録と一致する", min_length=1, max_length=20000
+    )
+    current_revision: BigInteger = Field(
+        description="確認時の現在データの更新版。復元直前にも同じ値であることを検査する"
+    )
+    expires_at: AwareDatetime = Field(description="確認の有効期限。発行から最大15分")
+    consumed_at: AwareDatetime | None = Field(
+        default=None, description="復元と同一トランザクションで確定する使用日時。取消・再使用は不可"
+    )

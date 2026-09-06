@@ -39,6 +39,8 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q300_reference_allergen.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q300_reference_allergen.sql |
 | entity_allergen_create | C | backend/src/app/apis/entities/allergen_create/sql/001_create.sql |
 | entity_allergen_get | R | backend/src/app/apis/entities/allergen_get/sql/001_get.sql |
 | entity_allergen_list | R | backend/src/app/apis/entities/allergen_list/sql/001_list.sql |

@@ -1,5 +1,5 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: befc8078ff189010fe5c1c226fbd5d3b3ee19ec08b00ce91ed2603c06e4ee9f6
+# SQLのSHA256: 0f474bd79716f319c05be3e7288aa47617d77065fa55e33465a2a13d3b92f718
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
@@ -14,6 +14,8 @@ SELECT
     t.step_id,
     t.planned_start_s,
     t.planned_end_s,
+    t.duration_source,
+    t.confirmed_duration_s,
     t.status,
     t.timer_started_at,
     t.timer_duration_s,
@@ -22,11 +24,13 @@ SELECT
     st.title,
     st.instruction,
     st.attention,
-    st.duration_max_s
+    st.duration_max_s,
+    scaling.mode AS scaling_mode
 FROM recipeweave.session_task AS t INNER JOIN recipeweave.menu_item AS mi ON t.menu_item_id = mi.id
 INNER JOIN recipeweave.recipe_version AS rv ON mi.recipe_version_id = rv.id
 INNER JOIN recipeweave.recipe AS r ON rv.recipe_id = r.id
 INNER JOIN recipeweave.recipe_step AS st ON t.step_id = st.id
+INNER JOIN recipeweave.scaling_rule AS scaling ON st.scaling_rule_id = scaling.id
 WHERE t.session_id = %(session_id)s
 ORDER BY t.planned_start_s, mi.position, st.step_no, t.id;
 """

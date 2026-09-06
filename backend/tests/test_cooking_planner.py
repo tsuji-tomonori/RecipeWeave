@@ -219,3 +219,70 @@ def test_missing_operator_is_rejected() -> None:
     """台所の作業者を設定せずに手作業や見守りを開始しない。"""
     with pytest.raises(ValueError, match="作業者"):
         build_plan([step(1, "monitored")], [], [], [resource(401, 501)])
+
+
+def estimate(number: int, seconds: object = 90) -> dict[str, object]:
+    return {"meal_item_id": uid(100), "step_id": uid(number), "duration_seconds": seconds}
+
+
+def test_three_servings_use_confirmed_manual_duration_and_keep_dependencies() -> None:
+    rows = [{**step(1), "servings": 3}, {**step(2), "servings": 3}]
+    result = build_plan(
+        rows,
+        [dependency(1, 2, 15)],
+        [],
+        kitchen(),
+        duration_estimates=[estimate(1, 90), estimate(2, 120)],
+    )
+    assert [(task.start, task.end) for task in result] == [(0, 90), (105, 225)]
+    assert all(task.duration_source == "user_estimate" for task in result)
+    assert [task.confirmed_duration_s for task in result] == [90, 120]
+
+
+@pytest.mark.parametrize("value", [0, -1, 1.5, True, None, "NaN", "Infinity", 86401])
+def test_invalid_user_duration_is_rejected(value: object) -> None:
+    with pytest.raises(ValueError):
+        build_plan(
+            [{**step(1), "servings": 3}], [], [], kitchen(), duration_estimates=[estimate(1, value)]
+        )
+
+
+def test_manual_estimate_cannot_override_another_mode_or_unknown_step() -> None:
+    with pytest.raises(ValueError, match="手動"):
+        build_plan(
+            [{**step(1), "scaling_mode": "linear"}],
+            [],
+            [],
+            kitchen(),
+            duration_estimates=[estimate(1)],
+        )
+    with pytest.raises(ValueError, match="含まれない"):
+        build_plan([step(1)], [], [], kitchen(), duration_estimates=[estimate(2)])
+    with pytest.raises(ValueError, match="重複"):
+        build_plan([step(1)], [], [], kitchen(), duration_estimates=[estimate(1), estimate(1)])
+
+
+def test_confirmed_time_cannot_bypass_serving_limit_or_known_capacity() -> None:
+    with pytest.raises(ValueError, match="人数.*範囲"):
+        build_plan(
+            [{**step(1), "servings": 13}], [], [], kitchen(), duration_estimates=[estimate(1)]
+        )
+    with pytest.raises(ValueError, match="容量"):
+        build_plan(
+            [{**step(1), "servings": 3}],
+            [],
+            [requirement(1, capacity=3000)],
+            kitchen(),
+            duration_estimates=[estimate(1)],
+        )
+
+
+def test_each_changed_manual_step_requires_confirmation() -> None:
+    with pytest.raises(ValueError, match="未確認"):
+        build_plan(
+            [{**step(1), "servings": 3}, {**step(2), "servings": 3}],
+            [],
+            [],
+            kitchen(),
+            duration_estimates=[estimate(1)],
+        )

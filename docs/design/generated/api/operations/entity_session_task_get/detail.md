@@ -29,16 +29,16 @@
 |---|---|---|
 | recipeweave.cooking_session | R | id: 不変の行識別子; menu_id: 対象献立 |
 | recipeweave.menu | R | id: 不変の行識別子; user_id: 所有者 |
-| recipeweave.session_task | R | id: 不変の行識別子; created_at: 作成日時（UTC）; session_id: 実行; menu_item_id: 料理; step_id: 元工程; batch_no: 容量分割した回; planned_start_s: 開始相対秒; planned_end_s: 終了相対秒; status: 進捗; actual_start_at: 実開始; actual_end_at: 実完了; timer_started_at: 稼働中タイマーの開始日時; timer_duration_s: 利用者が設定したタイマー秒数 |
+| recipeweave.session_task | R | id: 不変の行識別子; created_at: 作成日時（UTC）; session_id: 実行; menu_item_id: 料理; step_id: 元工程; batch_no: 容量分割した回; planned_start_s: 開始相対秒; planned_end_s: 終了相対秒; status: 進捗; actual_start_at: 実開始; actual_end_at: 実完了; timer_started_at: 稼働中タイマーの開始日時; timer_duration_s: 利用者が設定したタイマー秒数; duration_source: 計画時間の根拠。料理の時間規則または利用者が確認した見積り; confirmed_duration_s: 利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない |
 
 対象条件: `WHERE t.id = %(row_id)s AND EXISTS(SELECT owner_0.id FROM recipeweave.cooking_session AS owner_0 WHERE owner_0.id = t.session_id AND EXISTS(SELECT owner_1.id FROM recipeweave.menu AS owner_1 WHERE owner_1.id = owner_0.menu_id AND owner_1.user_id = %(actor_id)s))`
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| actor_id | self.identity.user_id (backend/src/app/core/entity_service.py:66) / self.identity.user_id (backend/src/app/core/entity_service.py:86) / self.identity.user_id (backend/src/app/core/entity_service.py:140) / self.identity.user_id (backend/src/app/core/entity_service.py:148) |
-| row_id | row_id (backend/src/app/apis/entities/session_task_get/functions.py:11) / row_id or uuid4() (backend/src/app/core/entity_service.py:65) / uuid4() (backend/src/app/core/entity_service.py:139) / uuid4() (backend/src/app/core/entity_service.py:148) / uuid4() (backend/src/app/core/entity_service.py:154) |
+| actor_id | self.identity.user_id (backend/src/app/core/entity_service.py:67) / self.identity.user_id (backend/src/app/core/entity_service.py:87) / self.identity.user_id (backend/src/app/core/entity_service.py:141) / self.identity.user_id (backend/src/app/core/entity_service.py:149) |
+| row_id | row_id (backend/src/app/apis/entities/session_task_get/functions.py:11) / row_id or uuid4() (backend/src/app/core/entity_service.py:66) / uuid4() (backend/src/app/core/entity_service.py:140) / uuid4() (backend/src/app/core/entity_service.py:149) / uuid4() (backend/src/app/core/entity_service.py:155) |
 
-代入・選択式: `t.id; t.created_at; t.session_id; t.menu_item_id; t.step_id; t.batch_no; t.planned_start_s; t.planned_end_s; t.status; t.actual_start_at; t.actual_end_at; t.timer_started_at; t.timer_duration_s; CAST(t.xmin AS TEXT) AS etag`
+代入・選択式: `t.id; t.created_at; t.session_id; t.menu_item_id; t.step_id; t.batch_no; t.planned_start_s; t.planned_end_s; t.status; t.actual_start_at; t.actual_end_at; t.timer_started_at; t.timer_duration_s; t.duration_source; t.confirmed_duration_s; CAST(t.xmin AS TEXT) AS etag`
 
 ### `backend/src/app/apis/auth/get_me/sql/q001_set_identity.sql`
 
@@ -148,15 +148,15 @@
 
 | 判定条件 | 例外・応答 | 定義元 |
 |---|---|---|
-| value is None | HTTPException(status_code=428, detail='If-Matchが必要です') | backend/src/app/core/entity_service.py:22 |
-| re.fullmatch('"[0-9]+"', value) is None | HTTPException(status_code=422, detail='If-Matchの形式が不正です') | backend/src/app/core/entity_service.py:22 |
-| not spec.owned and self.identity.role != 'admin' | HTTPException(status_code=403, detail='管理者権限が必要です') | backend/src/app/core/entity_service.py:38 |
-| not 1 &lt;= limit &lt;= 100 | HTTPException(status_code=422, detail='取得件数は1から100です') | backend/src/app/core/entity_service.py:38 |
-| set(values) != set(spec.input_columns) | HTTPException(status_code=422, detail='入力項目が操作契約と一致しません') | backend/src/app/core/entity_service.py:38 |
-| spec.table == 'app_user' and values.get('auth_subject', self.identity.subject) != self.identity.subject | HTTPException(status_code=403, detail='認証主体は変更できません') | backend/src/app/core/entity_service.py:38 |
-| 'user_id' in values and str(values['user_id']) != str(self.identity.user_id) | HTTPException(status_code=403, detail='別の利用者を指定できません') | backend/src/app/core/entity_service.py:38 |
-| not rows and spec.action in {'get', 'update', 'delete'} | HTTPException(status_code=status, detail='対象がないか行の版が変わりました') | backend/src/app/core/entity_service.py:38 |
-| value is not None and (not query(self.connection, {'reference_id': value, 'actor_id': self.identity.user_id, 'preview': local_auth_enabled()})) | HTTPException(status_code=403, detail='参照先を利用できません') | backend/src/app/core/entity_service.py:38 |
+| value is None | HTTPException(status_code=428, detail='If-Matchが必要です') | backend/src/app/core/entity_service.py:23 |
+| re.fullmatch('"[0-9]+"', value) is None | HTTPException(status_code=422, detail='If-Matchの形式が不正です') | backend/src/app/core/entity_service.py:23 |
+| not spec.owned and self.identity.role != 'admin' | HTTPException(status_code=403, detail='管理者権限が必要です') | backend/src/app/core/entity_service.py:39 |
+| not 1 &lt;= limit &lt;= 100 | HTTPException(status_code=422, detail='取得件数は1から100です') | backend/src/app/core/entity_service.py:39 |
+| set(values) != set(spec.input_columns) | HTTPException(status_code=422, detail='入力項目が操作契約と一致しません') | backend/src/app/core/entity_service.py:39 |
+| spec.table == 'app_user' and values.get('auth_subject', self.identity.subject) != self.identity.subject | HTTPException(status_code=403, detail='認証主体は変更できません') | backend/src/app/core/entity_service.py:39 |
+| 'user_id' in values and str(values['user_id']) != str(self.identity.user_id) | HTTPException(status_code=403, detail='別の利用者を指定できません') | backend/src/app/core/entity_service.py:39 |
+| not rows and spec.action in {'get', 'update', 'delete'} | HTTPException(status_code=status, detail='対象がないか行の版が変わりました') | backend/src/app/core/entity_service.py:39 |
+| value is not None and (not query(self.connection, {'reference_id': value, 'actor_id': self.identity.user_id, 'preview': catalog_preview_enabled()})) | HTTPException(status_code=403, detail='参照先を利用できません') | backend/src/app/core/entity_service.py:39 |
 
 ## 出力
 
@@ -164,8 +164,8 @@
 |---|---|---|
 | handle | result | backend/src/app/apis/entities/session_task_get/router.py:31 |
 | execute | SessionTaskRow.model_validate(rows[0]) | backend/src/app/apis/entities/session_task_get/functions.py:9 |
-| parse_etag | value[1:-1] | backend/src/app/core/entity_service.py:22 |
-| EntityService.execute | rows | backend/src/app/core/entity_service.py:38 |
+| parse_etag | value[1:-1] | backend/src/app/core/entity_service.py:23 |
+| EntityService.execute | rows | backend/src/app/core/entity_service.py:39 |
 
 APIとして返す型・status・headerは [インターフェース](interface.md) の実OpenAPIを参照。
 
@@ -175,8 +175,8 @@ APIとして返す型・status・headerは [インターフェース](interface.
 |---|---|---|
 | handle | 展開済み工程の取得。認証情報は依存から取得し、本人所有または管理者権限を検査する。 | backend/src/app/apis/entities/session_task_get/router.py:31 |
 | execute | 展開済み工程の取得を固定操作契約で実行し、DB行を専用応答型へ検証する。 | backend/src/app/apis/entities/session_task_get/functions.py:9 |
-| parse_etag | ワイルドカードや複数指定を拒否し、読取り時の行版を必須にする。 | backend/src/app/core/entity_service.py:22 |
-| EntityService.execute | 本人の行を絞り込み、更新前の版と親所有権を検証して実行する。 | backend/src/app/core/entity_service.py:38 |
-| EntityService.record_change | 本文を複製せず、行キーのハッシュと操作種別だけを監査へ残す。 | backend/src/app/core/entity_service.py:130 |
+| parse_etag | ワイルドカードや複数指定を拒否し、読取り時の行版を必須にする。 | backend/src/app/core/entity_service.py:23 |
+| EntityService.execute | 本人の行を絞り込み、更新前の版と親所有権を検証して実行する。 | backend/src/app/core/entity_service.py:39 |
+| EntityService.record_change | 本文を複製せず、行キーのハッシュと操作種別だけを監査へ残す。 | backend/src/app/core/entity_service.py:131 |
 
 [SQL](queries.md) / [シーケンス](sequence.md) / [ログ](messages.md) / [要因別テスト](tests.md)

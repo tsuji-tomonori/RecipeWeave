@@ -2,6 +2,28 @@
   "schemaVersion": 1,
   "generators": [
     {
+      "name": "relational-backup-types-and-sql",
+      "category": "codegen",
+      "command": "uv run --locked python tools/generate_backup_api.py",
+      "summary": "本人の34表について全列の厳密な復元型と固定の読み取り・置換SQLをDDLから生成する",
+      "inputs": [
+        "database/schema_catalog.json",
+        "tools/generate_entity_apis.py",
+        "tools/generate_backup_api.py"
+      ],
+      "outputs": [
+        "backend/src/app/backup/models.py",
+        "backend/src/app/backup/inventory.py",
+        "backend/src/app/apis/backup/*/sql/q010_export_tables.sql",
+        "backend/src/app/apis/backup/*/sql/q100_*.sql",
+        "backend/src/app/apis/backup/*/sql/q200_*.sql",
+        "backend/src/app/apis/backup/*/sql/q300_*.sql"
+      ],
+      "dependencies": [],
+      "check": true,
+      "ciSafe": true
+    },
+    {
       "name": "api-sql-and-openapi",
       "category": "codegen",
       "command": "uv run --locked --package recipeweave-api app-docs",

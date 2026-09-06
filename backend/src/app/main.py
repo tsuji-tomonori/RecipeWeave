@@ -14,6 +14,7 @@ from app.apis.recipes.get_recipe.router import router as get_recipe_router
 from app.apis.recipes.list_recipes.router import router as list_recipes_router
 from app.apis.recipes.random_recipe.router import router as random_recipe_router
 from app.apis.workspace.routes import register_workspace_routes
+from app.backup.routes import register_backup_routes
 from app.core.dependencies import get_settings
 from app.core.errors import AuthenticationError, ServiceUnavailableError, StateConflictError
 from app.core.middleware import BodySizeLimit
@@ -68,7 +69,15 @@ def create_app() -> FastAPI:
         version="0.2.0",
         description="食品・料理・工程・利用者操作を正規化したPostgreSQLから提供するAPI。",
     )
-    application.add_middleware(BodySizeLimit, max_bytes=settings.max_request_bytes)
+    application.add_middleware(
+        BodySizeLimit,
+        max_bytes=settings.max_request_bytes,
+        path_limits={
+            "/api/backups/export": 5 * 1024 * 1024,
+            "/api/backups/preview": 5 * 1024 * 1024,
+            "/api/backups/restore": 5 * 1024 * 1024,
+        },
+    )
     origins = [origin.strip() for origin in settings.allowed_origins.split(",") if origin.strip()]
     if origins:
         application.add_middleware(
@@ -88,6 +97,7 @@ def create_app() -> FastAPI:
     application.include_router(me_router)
     register_workspace_routes(application)
     register_entity_routes(application)
+    register_backup_routes(application)
 
     application.add_exception_handler(AuthenticationError, authentication_error)
     application.add_exception_handler(ServiceUnavailableError, service_error)

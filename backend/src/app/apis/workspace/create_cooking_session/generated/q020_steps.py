@@ -1,5 +1,5 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: 538011a969d0478da16b2d27681bb617bb40d0ab4119967f502a0ab577564072
+# SQLのSHA256: 82003254031f8b26ae85bf7f8156528aef4c1319662f8143db2e30b974c50974
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
@@ -20,8 +20,20 @@ SELECT
     st.attention,
     sc.mode AS scaling_mode,
     sc.batch_capacity,
-    sc.min_servings,
-    sc.max_servings
+    GREATEST(sc.min_servings, (
+        SELECT MAX(ingredient_rule.min_servings)
+        FROM recipeweave.recipe_ingredient AS ingredient
+        INNER JOIN recipeweave.scaling_rule AS ingredient_rule
+            ON ingredient.scaling_rule_id = ingredient_rule.id
+        WHERE ingredient.recipe_version_id = rv.id
+    )) AS min_servings,
+    LEAST(sc.max_servings, (
+        SELECT MIN(ingredient_rule.max_servings)
+        FROM recipeweave.recipe_ingredient AS ingredient
+        INNER JOIN recipeweave.scaling_rule AS ingredient_rule
+            ON ingredient.scaling_rule_id = ingredient_rule.id
+        WHERE ingredient.recipe_version_id = rv.id
+    )) AS max_servings
 FROM recipeweave.menu_item AS mi
 INNER JOIN recipeweave.recipe_version AS rv ON mi.recipe_version_id = rv.id
 INNER JOIN recipeweave.recipe_step AS st ON rv.id = st.recipe_version_id

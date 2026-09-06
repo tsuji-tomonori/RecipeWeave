@@ -56,6 +56,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_ingredient_total.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_ingredient_total.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_ingredient_total.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_ingredient_total.sql |
 | entity_ingredient_total_get | R | backend/src/app/apis/entities/ingredient_total_get/sql/001_get.sql |
 | entity_ingredient_total_list | R | backend/src/app/apis/entities/ingredient_total_list/sql/001_list.sql |
 | entity_shopping_item_create | R | backend/src/app/apis/entities/shopping_item_create/sql/003_reference_total_id.sql |
@@ -64,6 +71,7 @@
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | update_cooking_session | R | backend/src/app/apis/workspace/update_cooking_session/sql/q006_totals.sql |
 | update_cooking_session | U | backend/src/app/apis/workspace/update_cooking_session/sql/q010_outcome.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |

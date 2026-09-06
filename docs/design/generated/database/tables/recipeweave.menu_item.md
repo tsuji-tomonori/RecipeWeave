@@ -46,6 +46,15 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_menu_ingredient_override.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_menu_item.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_menu_item.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_menu_ingredient_override.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_menu_item.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_menu_item.sql |
 | entity_menu_ingredient_override_create | R | backend/src/app/apis/entities/menu_ingredient_override_create/sql/002_reference_menu_item_id.sql |
 | entity_menu_ingredient_override_delete | R | backend/src/app/apis/entities/menu_ingredient_override_delete/sql/001_delete.sql |
 | entity_menu_ingredient_override_get | R | backend/src/app/apis/entities/menu_ingredient_override_get/sql/001_get.sql |
@@ -75,6 +84,9 @@
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |
 | update_menu_item | D | backend/src/app/apis/workspace/update_menu_item/sql/q001_delete_item.sql |
 | update_menu_item | C,R | backend/src/app/apis/workspace/update_menu_item/sql/q013_insert_item.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q005_menu.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q005_menu.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |

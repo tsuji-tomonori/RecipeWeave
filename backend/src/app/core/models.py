@@ -52,6 +52,9 @@ class RecipeIngredient(WireModel):
 
 
 class RecipeStep(WireModel):
+    time_scaling_mode: Literal[
+        "linear", "fixed_batch", "capacity_batch", "validated_curve", "manual"
+    ] = "manual"
     id: Identifier
     title: ShortText
     instruction: Annotated[str, Field(max_length=5000)]
@@ -128,7 +131,15 @@ class ShoppingCheck(WireModel):
     archived: bool
 
 
+class DurationEstimate(WireModel):
+    meal_item_id: Identifier
+    step_id: Identifier
+    duration_seconds: Annotated[int, Field(ge=1, le=86400)]
+
+
 class PlannedStep(RecipeStep):
+    duration_source: Literal["recipe_rule", "user_estimate"] = "recipe_rule"
+    confirmed_duration_seconds: Annotated[int, Field(ge=1, le=86400)] | None = None
     key: ShortText
     meal_item_id: Identifier
     recipe_id: Identifier

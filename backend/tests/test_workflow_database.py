@@ -6,7 +6,7 @@ import secrets
 import time
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any, Protocol, cast
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import httpx
 import jwt
@@ -237,10 +237,22 @@ def test_recipe_cooking_is_planned_from_db_and_consumed_once(
     assert len({line["ingredientId"] for line in recipe["ingredients"]}) == len(
         recipe["ingredients"]
     )
+    requested_servings = 3
+    scaled_amounts = {
+        line["ingredientId"]: {
+            "value": line["quantity"]["value"] * requested_servings / recipe["servings"],
+            "unit": line["quantity"]["unit"],
+        }
+        for line in recipe["ingredients"]
+    }
     current = workspace(workflow_client, "bob")
     created_lots: list[str] = []
     for ingredient in recipe["ingredients"]:
-        body = stock_body(current["version"], ingredient["foodId"], ingredient["quantity"]["value"])
+        body = stock_body(
+            current["version"],
+            ingredient["foodId"],
+            scaled_amounts[ingredient["ingredientId"]]["value"],
+        )
         body["quantity"]["unit"] = ingredient["quantity"]["unit"]
         response = workflow_client.post("/api/pantry-lots", headers=auth, json=body)
         assert response.status_code == 200, response.text
@@ -253,10 +265,8 @@ def test_recipe_cooking_is_planned_from_db_and_consumed_once(
                 "id": str(uuid4()),
                 "recipeId": recipe["id"],
                 "recipeVersionId": recipe["versionId"],
-                "servings": recipe["servings"],
-                "amounts": {
-                    line["ingredientId"]: line["quantity"] for line in recipe["ingredients"]
-                },
+                "servings": requested_servings,
+                "amounts": scaled_amounts,
                 "adjusted": False,
             }
         ],
@@ -267,10 +277,42 @@ def test_recipe_cooking_is_planned_from_db_and_consumed_once(
         "status": "active",
         "consumptionResults": [],
     }
-    started = workflow_client.post(
+    estimates = [
+        {
+            "mealItemId": session["mealSnapshot"][0]["id"],
+            "stepId": step["id"],
+            "durationSeconds": int(step["minutes"] * 60 + 30),
+        }
+        for step in recipe["steps"]
+    ]
+    before = workspace(workflow_client, "bob")
+    rejected = workflow_client.post(
         "/api/cooking-sessions",
         headers=auth,
         json={"expectedVersion": current["version"], "session": session, "deduct": False},
+    )
+    assert rejected.status_code == 422, rejected.text
+    assert workspace(workflow_client, "bob") == before
+    unconfirmed = workflow_client.post(
+        "/api/cooking-plan", headers=auth, json={"items": session["mealSnapshot"]}
+    )
+    assert unconfirmed.status_code == 422
+    preview = workflow_client.post(
+        "/api/cooking-plan",
+        headers=auth,
+        json={"items": session["mealSnapshot"], "durationEstimates": estimates},
+    )
+    assert preview.status_code == 200, preview.text
+    assert all(task["durationSource"] == "user_estimate" for task in preview.json()["plan"])
+    started = workflow_client.post(
+        "/api/cooking-sessions",
+        headers=auth,
+        json={
+            "expectedVersion": current["version"],
+            "session": session,
+            "deduct": False,
+            "durationEstimates": estimates,
+        },
     )
     assert started.status_code == 200, started.text
     cooking = started.json()["cooking"]
@@ -292,6 +334,27 @@ def test_recipe_cooking_is_planned_from_db_and_consumed_once(
     assert len(roles) == 1
     assert roles[0]["role_option_id"] == roles[0]["recipe_role_id"]
     assert roles[0]["label"] == "主菜"
+    with psycopg.Connection[dict[str, Any]].connect(
+        os.environ["TEST_DATABASE_URL"], row_factory=dict_row
+    ) as connection:
+        connection.execute("SELECT set_config('recipeweave.role', 'admin', true)")
+        with pytest.raises(psycopg.IntegrityError):
+            connection.execute(
+                "UPDATE recipeweave.session_task "
+                "SET confirmed_duration_s = confirmed_duration_s + 1 "
+                "WHERE session_id = %s",
+                (UUID(session["id"]),),
+            )
+    assert cooking["mealSnapshot"][0]["servings"] == 3
+    assert all(task["durationSource"] == "user_estimate" for task in cooking["plan"])
+    expected_times = {row["stepId"]: row["durationSeconds"] for row in estimates}
+    assert {
+        task["id"]: task["confirmedDurationSeconds"] for task in cooking["plan"]
+    } == expected_times
+    assert workspace(workflow_client, "bob")["cooking"]["plan"] == cooking["plan"]
+    assert [(row["id"], row["minutes"]) for row in cooking["plan"]] == [
+        (row["id"], row["minutes"]) for row in preview.json()["plan"]
+    ]
     assert cooking["mealSnapshot"][0]["recipeVersionId"] == recipe["versionId"]
     assert set(cooking["mealSnapshot"][0]["amounts"]) == {
         line["ingredientId"] for line in recipe["ingredients"]

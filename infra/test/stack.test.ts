@@ -11,6 +11,7 @@ const data = new DataStack(app, "TestData", { env });
 const service = new ServiceStack(app, "TestService", {
   env,
   data,
+  stage: "production",
   repositoryRoot: fileURLToPath(new URL("../../", import.meta.url)),
 });
 const dataTemplate = Template.fromStack(data);
@@ -66,6 +67,7 @@ test("全APIをFastAPIの認証・所有権判定へ転送し本番local認証�
       Variables: Match.objectLike({
         AUTH_MODE: "cognito",
         ENVIRONMENT: "production",
+        ALLOW_CATALOG_PREVIEW: "false",
         DATABASE_SSLMODE: "require",
       }),
     },
@@ -161,4 +163,30 @@ test("limits API load and avoids identity, tokens, images and request bodies in 
   template.allResourcesProperties("AWS::Logs::LogGroup", {
     RetentionInDays: 30,
   });
+});
+
+test("明示したdevだけで認証後の未公開レシピ試用を許可する", () => {
+  for (const stage of ["dev", "production", "dev-preview"]) {
+    const previewApp = new App();
+    const previewData = new DataStack(previewApp, `Data-${stage}`, { env });
+    const previewService = new ServiceStack(previewApp, `Service-${stage}`, {
+      env,
+      data: previewData,
+      stage,
+      repositoryRoot: fileURLToPath(new URL("../../", import.meta.url)),
+    });
+    Template.fromStack(previewService).hasResourceProperties(
+      "AWS::Lambda::Function",
+      {
+        Handler: "app.handler.handler",
+        Environment: {
+          Variables: Match.objectLike({
+            AUTH_MODE: "cognito",
+            ENVIRONMENT: stage === "dev" ? "dev" : "production",
+            ALLOW_CATALOG_PREVIEW: stage === "dev" ? "true" : "false",
+          }),
+        },
+      },
+    );
+  }
 });

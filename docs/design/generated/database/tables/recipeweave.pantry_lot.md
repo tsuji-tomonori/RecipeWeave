@@ -69,6 +69,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_pantry_lot.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_pantry_lot.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_pantry_lot.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_pantry_lot.sql |
 | entity_pantry_lot_create | C | backend/src/app/apis/entities/pantry_lot_create/sql/001_create.sql |
 | entity_pantry_lot_delete | D | backend/src/app/apis/entities/pantry_lot_delete/sql/001_delete.sql |
 | entity_pantry_lot_get | R | backend/src/app/apis/entities/pantry_lot_get/sql/001_get.sql |
@@ -85,6 +92,8 @@
 | update_cooking_session | R | backend/src/app/apis/workspace/update_cooking_session/sql/q007_available.sql |
 | update_cooking_session | U | backend/src/app/apis/workspace/update_cooking_session/sql/q008_consume.sql |
 | update_pantry_lot | U | backend/src/app/apis/workspace/update_pantry_lot/sql/q002_update_lot.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q002_lots.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q002_lots.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q002_lots.sql |

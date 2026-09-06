@@ -4,7 +4,7 @@
 
 実装から自動生成。手編集禁止。`uv run python tools/generate_service_design.py` で更新。
 
-対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。
+対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。ローカル関数は字句スコープ付きの別図にし、関数定義と本文の実行を区別する。エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。
 
 ### router.py: `handle`
 
@@ -49,7 +49,7 @@ sequenceDiagram
 
 ### entity_service.py: `parse_etag`
 
-定義元: `backend/src/app/core/entity_service.py:22`
+定義元: `backend/src/app/core/entity_service.py:23`
 
 ```mermaid
 sequenceDiagram
@@ -80,7 +80,7 @@ sequenceDiagram
 
 ### entity_service.py: `execute`
 
-定義元: `backend/src/app/core/entity_service.py:38`
+定義元: `backend/src/app/core/entity_service.py:39`
 
 ```mermaid
 sequenceDiagram
@@ -168,8 +168,8 @@ sequenceDiagram
             Function->>Callee: values.get(column)
             Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
             Note over Function: value = values.get(column)
-            Note over Function: 条件付き式を評価: value is not None and (not query(self.connection, {#39;reference_id#39;: value, #39;actor_id#39;: self.identity.user_id, #39;preview#39;: local_auth_enabled()}))
-            alt value is not None and (not query(self.connection, {#39;reference_id#39;: value, #39;actor_id#39;: self.identity.user_id, #39;preview#39;: local_auth_enabled()}))
+            Note over Function: 条件付き式を評価: value is not None and (not query(self.connection, {#39;reference_id#39;: value, #39;actor_id#39;: self.identity.user_id, #39;preview#39;: catalog_preview_enabled()}))
+            alt value is not None and (not query(self.connection, {#39;reference_id#39;: value, #39;actor_id#39;: self.identity.user_id, #39;preview#39;: catalog_preview_enabled()}))
                 Function->>Callee: HTTPException(status_code=403, detail=#39;参照先を利用できません#39;)
                 Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
                 break この経路の関数終了: raise
@@ -247,7 +247,7 @@ sequenceDiagram
 
 ### entity_service.py: `record_change`
 
-定義元: `backend/src/app/core/entity_service.py:130`
+定義元: `backend/src/app/core/entity_service.py:131`
 
 ```mermaid
 sequenceDiagram

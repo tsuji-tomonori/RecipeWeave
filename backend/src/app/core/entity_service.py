@@ -13,8 +13,9 @@ from psycopg import Connection, errors
 from psycopg.types.json import Jsonb
 from pydantic_core import to_jsonable_python
 
+from app.core.catalog_preview import catalog_preview_enabled
 from app.core.entity_contracts import OperationSpec, Row
-from app.core.identity import Identity, local_auth_enabled
+from app.core.identity import Identity
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ class EntityService:
                         {
                             "reference_id": value,
                             "actor_id": self.identity.user_id,
-                            "preview": local_auth_enabled(),
+                            "preview": catalog_preview_enabled(),
                         },
                     ):
                         raise HTTPException(status_code=403, detail="参照先を利用できません")

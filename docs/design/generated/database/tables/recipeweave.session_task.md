@@ -14,13 +14,15 @@
 | menu_item_id | uuid | 不可 | なし | なし | 料理 |
 | step_id | uuid | 不可 | なし | なし | 元工程 |
 | batch_no | integer | 不可 | なし | batch_no &gt; 0 | 容量分割した回 |
-| planned_start_s | integer | 不可 | なし | planned_start_s &gt;= 0; planned_end_s &gt;= planned_start_s | 開始相対秒 |
-| planned_end_s | integer | 不可 | なし | planned_end_s &gt;= planned_start_s | 終了相対秒 |
+| planned_start_s | integer | 不可 | なし | planned_start_s &gt;= 0; planned_end_s &gt;= planned_start_s;  (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL) OR ( duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL AND planned_end_s - planned_start_s = confirmed_duration_s )  | 開始相対秒 |
+| planned_end_s | integer | 不可 | なし | planned_end_s &gt;= planned_start_s;  (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL) OR ( duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL AND planned_end_s - planned_start_s = confirmed_duration_s )  | 終了相対秒 |
 | status | text | 不可 | なし | LENGTH(BTRIM(status)) BETWEEN 1 AND 20000; status IN ('pending', 'running', 'completed', 'skipped') | 進捗 |
 | actual_start_at | timestamptz | 可 | なし | actual_end_at IS NULL OR (actual_start_at IS NOT NULL AND actual_end_at &gt;= actual_start_at) | 実開始 |
 | actual_end_at | timestamptz | 可 | なし | actual_end_at IS NULL OR (actual_start_at IS NOT NULL AND actual_end_at &gt;= actual_start_at) | 実完了 |
 | timer_started_at | timestamptz | 可 | なし |  timer_started_at IS NULL OR timer_duration_s IS NOT NULL  | 稼働中タイマーの開始日時 |
 | timer_duration_s | integer | 可 | なし |  timer_duration_s IS NULL OR timer_duration_s &gt;= 0 ;  timer_started_at IS NULL OR timer_duration_s IS NOT NULL  | 利用者が設定したタイマー秒数 |
+| duration_source | text | 不可 | 'recipe_rule' | duration_source IN ('recipe_rule', 'user_estimate');  (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL) OR ( duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL AND planned_end_s - planned_start_s = confirmed_duration_s )  | 計画時間の根拠。料理の時間規則または利用者が確認した見積り |
+| confirmed_duration_s | integer | 可 | なし | confirmed_duration_s IS NULL OR confirmed_duration_s BETWEEN 1 AND 86400;  (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL) OR ( duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL AND planned_end_s - planned_start_s = confirmed_duration_s )  | 利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない |
 
 ## 表制約
 
@@ -32,6 +34,9 @@
 - `CHECK (status IN ('pending', 'running', 'completed', 'skipped'))`
 - `CHECK ( timer_duration_s IS NULL OR timer_duration_s >= 0 )`
 - `CHECK ( timer_started_at IS NULL OR timer_duration_s IS NOT NULL )`
+- `CHECK (duration_source IN ('recipe_rule', 'user_estimate'))`
+- `CHECK (confirmed_duration_s IS NULL OR confirmed_duration_s BETWEEN 1 AND 86400)`
+- `CHECK ( (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL) OR ( duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL AND planned_end_s - planned_start_s = confirmed_duration_s ) )`
 - `UNIQUE (session_id, menu_item_id, step_id, batch_no)`
 - `PRIMARY KEY (id)`
 
@@ -58,6 +63,17 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_resource_reservation.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_session_task.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_task_dependency.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_session_task.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_resource_reservation.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_session_task.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_task_dependency.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_session_task.sql |
 | entity_resource_reservation_create | R | backend/src/app/apis/entities/resource_reservation_create/sql/002_reference_task_id.sql |
 | entity_resource_reservation_delete | R | backend/src/app/apis/entities/resource_reservation_delete/sql/001_delete.sql |
 | entity_resource_reservation_get | R | backend/src/app/apis/entities/resource_reservation_get/sql/001_get.sql |
@@ -83,6 +99,8 @@
 | update_cooking_session | R | backend/src/app/apis/workspace/update_cooking_session/sql/q002_tasks.sql |
 | update_cooking_session | U | backend/src/app/apis/workspace/update_cooking_session/sql/q004_complete_task.sql |
 | update_cooking_session | U | backend/src/app/apis/workspace/update_cooking_session/sql/q005_timer.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |

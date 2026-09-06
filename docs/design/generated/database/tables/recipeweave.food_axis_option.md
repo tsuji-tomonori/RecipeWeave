@@ -38,6 +38,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_food_axis_option.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_food_axis_option.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_food_axis_option.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_food_axis_option.sql |
 | entity_food_axis_option_create | C | backend/src/app/apis/entities/food_axis_option_create/sql/001_create.sql |
 | entity_food_axis_option_get | R | backend/src/app/apis/entities/food_axis_option_get/sql/001_get.sql |
 | entity_food_axis_option_list | R | backend/src/app/apis/entities/food_axis_option_list/sql/001_list.sql |

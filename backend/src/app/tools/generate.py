@@ -19,6 +19,21 @@ def read_query(path: Path) -> str:
     from sqlglot import exp
 
     text = path.read_text()
+    if not text.lstrip().startswith("--"):
+        raise ValueError(f"missing SQL processing summary: {path}")
+    executable = re.sub(r"--[^\n]*", "", text).strip()
+    if executable.upper().startswith("SET CONSTRAINTS"):
+        from pglast import ast as postgres_ast
+        from pglast import parse_sql
+
+        parsed = parse_sql(text)
+        if (
+            len(parsed) != 1
+            or not isinstance(parsed[0].stmt, postgres_ast.ConstraintsSetStmt)
+            or parsed[0].stmt.constraints is not None
+        ):
+            raise ValueError(f"only one SET CONSTRAINTS ALL statement is supported: {path}")
+        return text
     statements = sqlglot.parse(text, read="postgres")
     if len(statements) != 1 or statements[0] is None:
         raise ValueError(f"expected one SQL statement: {path}")
@@ -26,8 +41,6 @@ def read_query(path: Path) -> str:
         raise ValueError(f"wildcard projection forbidden: {path}")
     if statements[0].find(exp.Command):
         raise ValueError(f"unsupported SQL statement: {path}")
-    if not text.lstrip().startswith("--"):
-        raise ValueError(f"missing SQL processing summary: {path}")
     return text
 
 

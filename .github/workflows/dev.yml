@@ -74,6 +74,7 @@ jobs:
         env:
           VITE_API_BASE_URL: ${{ vars.DEV_API_BASE_URL }}
           VITE_AUTH_MODE: cognito
+          VITE_CATALOG_PREVIEW: "true"
           VITE_COGNITO_DOMAIN: ${{ vars.DEV_COGNITO_DOMAIN }}
           VITE_COGNITO_CLIENT_ID: ${{ vars.DEV_COGNITO_CLIENT_ID }}
           AWS_DEPLOY_CONFIGURED: ${{ vars.AWS_DEPLOY_ROLE_ARN != '' }}
@@ -101,19 +102,22 @@ jobs:
         id: e2e
         continue-on-error: true
         run: npm --prefix frontend run test:e2e
+      - name: ブラウザ失敗のAPIと画面状態を安全に記録する
+        if: always() && !cancelled() && (failure() || steps.e2e.outcome == 'failure')
+        run: uv run --locked python tools/browser_diagnostics.py
       - name: 証跡付き品質レポート
         id: report
-        if: always()
+        if: always() && !cancelled()
         continue-on-error: true
         run: uv run --locked python tools/report.py
       - name: 検索可能な設計書とSwagger
         id: documentation
-        if: always()
+        if: always() && !cancelled()
         continue-on-error: true
         run: uv run --locked python tools/docs_site.py
       - name: 品質サイトの表示・検索・図・画像拡大を確認する
         id: report_ui
-        if: always()
+        if: always() && !cancelled()
         continue-on-error: true
         env:
           QUALITY_BASE_URL: http://127.0.0.1:4174/RecipeWeave/quality
@@ -123,7 +127,7 @@ jobs:
           python -m http.server 4174 --bind 127.0.0.1 --directory build/report-preview > reports/report-server.log 2>&1 &
           npm --prefix frontend run test:quality
       - name: 品質サイトの検証結果をレポートへ反映する
-        if: always()
+        if: always() && !cancelled()
         run: uv run --locked python tools/report.py
       - name: 成果物と品質証跡を保存する
         if: always()

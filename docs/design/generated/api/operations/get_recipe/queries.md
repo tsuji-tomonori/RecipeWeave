@@ -19,9 +19,10 @@
 | recipeweave.recipe | R | id, status, title, withdrawal_reason |
 | recipeweave.recipe_ingredient | R | amount, form_id, id, line_no, note, product_version_id, recipe_version_id, unit_id |
 | recipeweave.recipe_option | R | option_id, recipe_version_id |
-| recipeweave.recipe_step | R | attention, duration_max_s, id, instruction, operation_id, recipe_version_id, step_no, title |
+| recipeweave.recipe_step | R | attention, duration_max_s, id, instruction, operation_id, recipe_version_id, scaling_rule_id, step_no, title |
 | recipeweave.recipe_version | R | base_servings, description, id, recipe_id, status, validation, version |
 | recipeweave.resource_type | R | code, id, name |
+| recipeweave.scaling_rule | R | id, mode |
 | recipeweave.step_resource | R | resource_type_id, step_id |
 | recipeweave.unit | R | code, id |
 | recipeweave.user_recipe_event | R | recipe_version_id, user_id |
@@ -214,6 +215,7 @@ payloads AS (
                     JSONB_AGG(JSONB_BUILD_OBJECT(
                         'id', step.id::TEXT, 'title', step.title, 'instruction', step.instruction,
                         'minutes', step.duration_max_s / 60.0, 'mode', step.attention,
+                        'timeScalingMode', time_rule.mode,
                         'equipment', COALESCE((
                             SELECT JSONB_AGG(resource_kind.name ORDER BY resource_kind.name)
                             FROM recipeweave.step_resource AS resource_usage
@@ -232,6 +234,9 @@ payloads AS (
                 INNER JOIN
                     recipeweave.operation AS cook_operation
                     ON step.operation_id = cook_operation.id
+                INNER JOIN
+                    recipeweave.scaling_rule AS time_rule
+                    ON step.scaling_rule_id = time_rule.id
                 WHERE step.recipe_version_id = page.version_id
             ), '[]'::JSONB),
             'arrangementIds', '[]'::JSONB,

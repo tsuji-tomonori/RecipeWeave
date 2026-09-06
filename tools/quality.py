@@ -30,6 +30,7 @@ def checks() -> list[tuple[str, list[str]]]:
                 "tools/wait_services.py",
                 "tools/deployment_readiness.py",
                 "tools/prepare_e2e_database.py",
+                "tools/browser_diagnostics.py",
             ],
         ),
         (
@@ -50,6 +51,7 @@ def checks() -> list[tuple[str, list[str]]]:
                 "tools/wait_services.py",
                 "tools/deployment_readiness.py",
                 "tools/prepare_e2e_database.py",
+                "tools/browser_diagnostics.py",
             ],
         ),
         ("SQLFluff・SQL構造", UV + ["--package", "recipeweave-api", "app-sql-lint"]),

@@ -23,6 +23,7 @@
 | 入力 | 型 | 必須 | 制約 | 意味 |
 |---|---|---|---|---|
 | deduct | boolean | 任意 | default=false | Deduct |
+| durationEstimates | array&lt;DurationEstimate&gt; | 任意 | maxItems=500 | Durationestimates |
 | expectedVersion | integer | 必須 | minimum=0.0; maximum=9007199254740990.0 | Expectedversion |
 | session | CookingSession | 必須 | 追加制約なし |  |
 
@@ -41,7 +42,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `s.id; s.menu_id; s.status; s.current_task_index`
 
@@ -97,9 +98,9 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
 | name | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 変更する列とSQL式
 
@@ -125,10 +126,10 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
 | role_option_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
-| row_id | task_id (backend/src/app/core/cooking_service.py:187) / uuid4() (backend/src/app/core/cooking_service.py:207) / uuid4() (backend/src/app/core/cooking_service.py:221) / uuid4() (backend/src/app/core/cooking_service.py:197) |
-| servings | row['servings'] (backend/src/app/core/cooking_service.py:147) |
+| row_id | task_id (backend/src/app/core/cooking_service.py:204) / uuid4() (backend/src/app/core/cooking_service.py:226) / uuid4() (backend/src/app/core/cooking_service.py:240) / uuid4() (backend/src/app/core/cooking_service.py:216) |
+| servings | row['servings'] (backend/src/app/core/cooking_service.py:164) |
 | version_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
 
 変更する列とSQL式
@@ -154,10 +155,10 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| amount | amount (backend/src/app/core/cooking_service.py:221) / r['amount'] (backend/src/app/core/cooking_service.py:158) |
+| amount | amount (backend/src/app/core/cooking_service.py:240) / r['amount'] (backend/src/app/core/cooking_service.py:175) |
 | ingredient_id | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
-| item_id | task.item_id (backend/src/app/core/cooking_service.py:187) |
-| row_id | task_id (backend/src/app/core/cooking_service.py:187) / uuid4() (backend/src/app/core/cooking_service.py:207) / uuid4() (backend/src/app/core/cooking_service.py:221) / uuid4() (backend/src/app/core/cooking_service.py:197) |
+| item_id | task.item_id (backend/src/app/core/cooking_service.py:204) |
+| row_id | task_id (backend/src/app/core/cooking_service.py:204) / uuid4() (backend/src/app/core/cooking_service.py:226) / uuid4() (backend/src/app/core/cooking_service.py:240) / uuid4() (backend/src/app/core/cooking_service.py:216) |
 | selected | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
 
 変更する列とSQL式
@@ -184,8 +185,8 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 変更する列とSQL式
 
@@ -202,6 +203,7 @@
 | 物理テーブル | 操作 | 対象列と意味 |
 |---|---|---|
 | recipeweave.menu_item | R | id: 不変の行識別子; menu_id: 献立; recipe_version_id: 固定レシピ版; servings: その料理を作る人数; position: 表示順 |
+| recipeweave.recipe_ingredient | R | recipe_version_id: 親版; scaling_rule_id: 人数変換規則 |
 | recipeweave.recipe_step | R | id: 不変の行識別子; recipe_version_id: 所属版; step_no: 表示順（依存順とは別）; attention: 作業者拘束; duration_max_s: 所要秒上限; scaling_rule_id: 時間の人数変更規則 |
 | recipeweave.recipe_version | R | id: 不変の行識別子; recipe_id: 所属レシピ; base_servings: 登録分量が何人前か |
 | recipeweave.scaling_rule | R | id: 不変の行識別子; mode: 比例・バッチ等; min_servings: 検証済み人数下限; max_servings: 検証済み人数上限; batch_capacity: 1バッチ上限 |
@@ -210,9 +212,9 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
 
-代入・選択式: `mi.id AS item_id; mi.position; mi.servings; rv.base_servings; rv.recipe_id; st.id AS step_id; st.step_no; st.duration_max_s; st.attention; sc.mode AS scaling_mode; sc.batch_capacity; sc.min_servings; sc.max_servings`
+代入・選択式: `mi.id AS item_id; mi.position; mi.servings; rv.base_servings; rv.recipe_id; st.id AS step_id; st.step_no; st.duration_max_s; st.attention; sc.mode AS scaling_mode; sc.batch_capacity; GREATEST(sc.min_servings, (SELECT MAX(ingredient_rule.min_servings) FROM recipeweave.recipe_ingredient AS ingredient INNER JOIN recipeweave.scaling_rule AS ingredient_rule ON ingredient.scaling_rule_id = ingredient_rule.id WHERE ingredient.recipe_version_id = rv.id)) AS min_servings; LEAST(sc.max_servings, (SELECT MIN(ingredient_rule.max_servings) FROM recipeweave.recipe_ingredient AS ingredient INNER JOIN recipeweave.scaling_rule AS ingredient_rule ON ingredient.scaling_rule_id = ingredient_rule.id WHERE ingredient.recipe_version_id = rv.id)) AS max_servings`
 
 ### `backend/src/app/apis/workspace/create_cooking_session/sql/q021_dependencies.sql`
 
@@ -228,7 +230,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `mi.id AS item_id; d.before_step_id; d.after_step_id; d.min_lag_s; d.max_lag_s; d.kind`
 
@@ -247,7 +249,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `sr.step_id; sr.resource_type_id; sr.quantity; sr.capacity_min; sr.exclusive; rt.name; rt.code`
 
@@ -264,7 +266,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `k.id; k.resource_type_id; k.name; k.quantity; k.capacity; rt.code`
 
@@ -283,7 +285,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `ri.id AS ingredient_id; ri.form_id; ri.product_version_id; ri.unit_id; ri.conversion_id; mi.id AS item_id; rv.id AS recipe_version_id; mi.servings; COALESCE(ov.amount, ri.amount * mi.servings / rv.base_servings) AS amount`
 
@@ -299,11 +301,11 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| hash | hashlib.sha256(encoded.encode()).hexdigest() (backend/src/app/core/cooking_service.py:175) |
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
-| revision | revision (backend/src/app/core/cooking_service.py:175) |
-| session_id | session_id (backend/src/app/core/cooking_service.py:175) / session_id (backend/src/app/core/cooking_service.py:187) / session_id (backend/src/app/core/cooking_service.py:221) |
-| snapshot | Jsonb(snapshot.model_dump(mode='json')) (backend/src/app/core/cooking_service.py:175) |
+| hash | hashlib.sha256(encoded.encode()).hexdigest() (backend/src/app/core/cooking_service.py:192) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
+| revision | revision (backend/src/app/core/cooking_service.py:192) |
+| session_id | session_id (backend/src/app/core/cooking_service.py:192) / session_id (backend/src/app/core/cooking_service.py:204) / session_id (backend/src/app/core/cooking_service.py:240) |
+| snapshot | Jsonb(snapshot.model_dump(mode='json')) (backend/src/app/core/cooking_service.py:192) |
 
 変更する列とSQL式
 
@@ -324,18 +326,20 @@
 
 | 物理テーブル | 操作 | 対象列と意味 |
 |---|---|---|
-| recipeweave.session_task | C | id: 不変の行識別子; session_id: 実行; menu_item_id: 料理; step_id: 元工程; batch_no: 容量分割した回; planned_start_s: 開始相対秒; planned_end_s: 終了相対秒; status: 進捗 |
+| recipeweave.session_task | C | id: 不変の行識別子; session_id: 実行; menu_item_id: 料理; step_id: 元工程; batch_no: 容量分割した回; planned_start_s: 開始相対秒; planned_end_s: 終了相対秒; status: 進捗; duration_source: 計画時間の根拠。料理の時間規則または利用者が確認した見積り; confirmed_duration_s: 利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない |
 
 対象条件: `SQL上の絞り込みなし`
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| end | task.end (backend/src/app/core/cooking_service.py:187) / task.end (backend/src/app/core/cooking_service.py:197) |
-| item_id | task.item_id (backend/src/app/core/cooking_service.py:187) |
-| row_id | task_id (backend/src/app/core/cooking_service.py:187) / uuid4() (backend/src/app/core/cooking_service.py:207) / uuid4() (backend/src/app/core/cooking_service.py:221) / uuid4() (backend/src/app/core/cooking_service.py:197) |
-| session_id | session_id (backend/src/app/core/cooking_service.py:175) / session_id (backend/src/app/core/cooking_service.py:187) / session_id (backend/src/app/core/cooking_service.py:221) |
-| start | task.start (backend/src/app/core/cooking_service.py:187) / task.start (backend/src/app/core/cooking_service.py:197) |
-| step_id | task.step_id (backend/src/app/core/cooking_service.py:187) |
+| confirmed_duration_s | task.confirmed_duration_s (backend/src/app/core/cooking_service.py:204) |
+| duration_source | task.duration_source (backend/src/app/core/cooking_service.py:204) |
+| end | task.end (backend/src/app/core/cooking_service.py:204) / task.end (backend/src/app/core/cooking_service.py:216) |
+| item_id | task.item_id (backend/src/app/core/cooking_service.py:204) |
+| row_id | task_id (backend/src/app/core/cooking_service.py:204) / uuid4() (backend/src/app/core/cooking_service.py:226) / uuid4() (backend/src/app/core/cooking_service.py:240) / uuid4() (backend/src/app/core/cooking_service.py:216) |
+| session_id | session_id (backend/src/app/core/cooking_service.py:192) / session_id (backend/src/app/core/cooking_service.py:204) / session_id (backend/src/app/core/cooking_service.py:240) |
+| start | task.start (backend/src/app/core/cooking_service.py:204) / task.start (backend/src/app/core/cooking_service.py:216) |
+| step_id | task.step_id (backend/src/app/core/cooking_service.py:204) |
 
 変更する列とSQL式
 
@@ -349,6 +353,8 @@
 | planned_start_s | %(start)s |
 | planned_end_s | %(end)s |
 | status | 'pending' |
+| duration_source | %(duration_source)s |
+| confirmed_duration_s | %(confirmed_duration_s)s |
 
 ### `backend/src/app/apis/workspace/create_cooking_session/sql/q027_dependency.sql`
 
@@ -362,12 +368,12 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| after_id | task_ids[dependency['item_id'], dependency['after_step_id']] (backend/src/app/core/cooking_service.py:207) |
-| before_id | task_ids[dependency['item_id'], dependency['before_step_id']] (backend/src/app/core/cooking_service.py:207) |
-| max_lag | dependency['max_lag_s'] (backend/src/app/core/cooking_service.py:207) |
-| min_lag | dependency['min_lag_s'] (backend/src/app/core/cooking_service.py:207) |
-| reason | dependency['kind'] (backend/src/app/core/cooking_service.py:207) |
-| row_id | task_id (backend/src/app/core/cooking_service.py:187) / uuid4() (backend/src/app/core/cooking_service.py:207) / uuid4() (backend/src/app/core/cooking_service.py:221) / uuid4() (backend/src/app/core/cooking_service.py:197) |
+| after_id | task_ids[dependency['item_id'], dependency['after_step_id']] (backend/src/app/core/cooking_service.py:226) |
+| before_id | task_ids[dependency['item_id'], dependency['before_step_id']] (backend/src/app/core/cooking_service.py:226) |
+| max_lag | dependency['max_lag_s'] (backend/src/app/core/cooking_service.py:226) |
+| min_lag | dependency['min_lag_s'] (backend/src/app/core/cooking_service.py:226) |
+| reason | dependency['kind'] (backend/src/app/core/cooking_service.py:226) |
+| row_id | task_id (backend/src/app/core/cooking_service.py:204) / uuid4() (backend/src/app/core/cooking_service.py:226) / uuid4() (backend/src/app/core/cooking_service.py:240) / uuid4() (backend/src/app/core/cooking_service.py:216) |
 
 変更する列とSQL式
 
@@ -392,12 +398,12 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| end | task.end (backend/src/app/core/cooking_service.py:187) / task.end (backend/src/app/core/cooking_service.py:197) |
-| quantity | count (backend/src/app/core/cooking_service.py:197) |
-| resource_id | resource_id (backend/src/app/core/cooking_service.py:197) |
-| row_id | task_id (backend/src/app/core/cooking_service.py:187) / uuid4() (backend/src/app/core/cooking_service.py:207) / uuid4() (backend/src/app/core/cooking_service.py:221) / uuid4() (backend/src/app/core/cooking_service.py:197) |
-| start | task.start (backend/src/app/core/cooking_service.py:187) / task.start (backend/src/app/core/cooking_service.py:197) |
-| task_id | task_id (backend/src/app/core/cooking_service.py:197) |
+| end | task.end (backend/src/app/core/cooking_service.py:204) / task.end (backend/src/app/core/cooking_service.py:216) |
+| quantity | count (backend/src/app/core/cooking_service.py:216) |
+| resource_id | resource_id (backend/src/app/core/cooking_service.py:216) |
+| row_id | task_id (backend/src/app/core/cooking_service.py:204) / uuid4() (backend/src/app/core/cooking_service.py:226) / uuid4() (backend/src/app/core/cooking_service.py:240) / uuid4() (backend/src/app/core/cooking_service.py:216) |
+| start | task.start (backend/src/app/core/cooking_service.py:204) / task.start (backend/src/app/core/cooking_service.py:216) |
+| task_id | task_id (backend/src/app/core/cooking_service.py:216) |
 
 変更する列とSQL式
 
@@ -422,12 +428,12 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| amount | amount (backend/src/app/core/cooking_service.py:221) / r['amount'] (backend/src/app/core/cooking_service.py:158) |
-| form_id | form_id (backend/src/app/core/cooking_service.py:221) / r['form_id'] (backend/src/app/core/cooking_service.py:157) |
-| product_id | product_id (backend/src/app/core/cooking_service.py:221) |
-| row_id | task_id (backend/src/app/core/cooking_service.py:187) / uuid4() (backend/src/app/core/cooking_service.py:207) / uuid4() (backend/src/app/core/cooking_service.py:221) / uuid4() (backend/src/app/core/cooking_service.py:197) |
-| session_id | session_id (backend/src/app/core/cooking_service.py:175) / session_id (backend/src/app/core/cooking_service.py:187) / session_id (backend/src/app/core/cooking_service.py:221) |
-| unit_id | unit_id (backend/src/app/core/cooking_service.py:221) / r['unit_id'] (backend/src/app/core/cooking_service.py:159) |
+| amount | amount (backend/src/app/core/cooking_service.py:240) / r['amount'] (backend/src/app/core/cooking_service.py:175) |
+| form_id | form_id (backend/src/app/core/cooking_service.py:240) / r['form_id'] (backend/src/app/core/cooking_service.py:174) |
+| product_id | product_id (backend/src/app/core/cooking_service.py:240) |
+| row_id | task_id (backend/src/app/core/cooking_service.py:204) / uuid4() (backend/src/app/core/cooking_service.py:226) / uuid4() (backend/src/app/core/cooking_service.py:240) / uuid4() (backend/src/app/core/cooking_service.py:216) |
+| session_id | session_id (backend/src/app/core/cooking_service.py:192) / session_id (backend/src/app/core/cooking_service.py:204) / session_id (backend/src/app/core/cooking_service.py:240) |
+| unit_id | unit_id (backend/src/app/core/cooking_service.py:240) / r['unit_id'] (backend/src/app/core/cooking_service.py:176) |
 
 変更する列とSQL式
 
@@ -454,8 +460,8 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `revision`
 
@@ -473,7 +479,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `revision`
 
@@ -489,7 +495,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 変更する列とSQL式
 
@@ -513,8 +519,8 @@
 |---|---|
 | action | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
 | key_hash | 型付きクエリの引数。呼出元のSQL仕様を参照。 |
-| row_id | task_id (backend/src/app/core/cooking_service.py:187) / uuid4() (backend/src/app/core/cooking_service.py:207) / uuid4() (backend/src/app/core/cooking_service.py:221) / uuid4() (backend/src/app/core/cooking_service.py:197) |
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| row_id | task_id (backend/src/app/core/cooking_service.py:204) / uuid4() (backend/src/app/core/cooking_service.py:226) / uuid4() (backend/src/app/core/cooking_service.py:240) / uuid4() (backend/src/app/core/cooking_service.py:216) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 変更する列とSQL式
 
@@ -542,7 +548,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `revision`
 
@@ -560,7 +566,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `p.id; f.food_id; f.name AS form; p.amount; u.code AS unit; p.original_amount; p.location; p.priority; p.expires_on; p.created_at; p.updated_at; p.source_import_id; p.status; p.edited; COALESCE(ofm.food_id, f.food_id) AS original_food_id; COALESCE(ou.code, u.code) AS original_unit`
 
@@ -577,7 +583,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `c.lot_id; c.amount; u.code AS unit; c.session_id`
 
@@ -593,7 +599,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `r.id; r.file_sha256; r.idempotency_key; r.created_at; r.status; r.reverted_at`
 
@@ -611,8 +617,8 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `mi.id; rv.recipe_id; mi.servings; mi.recipe_version_id; m.revision`
 
@@ -634,8 +640,8 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| menu_id | menu_id (backend/src/app/core/cooking_service.py:123) / menu_id (backend/src/app/core/cooking_service.py:124) / menu_id (backend/src/app/core/cooking_service.py:125) / menu_id (backend/src/app/core/cooking_service.py:131) / menu_id (backend/src/app/core/cooking_service.py:175) / menu_id (backend/src/app/core/cooking_service.py:141) |
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| menu_id | menu_id (backend/src/app/core/cooking_service.py:128) / menu_id (backend/src/app/core/cooking_service.py:129) / menu_id (backend/src/app/core/cooking_service.py:130) / menu_id (backend/src/app/core/cooking_service.py:148) / menu_id (backend/src/app/core/cooking_service.py:192) / menu_id (backend/src/app/core/cooking_service.py:158) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `mi.id AS menu_item_id; f.food_id; f.name AS form; ri.id AS ingredient_id; u.code AS unit; ov.id AS override_id; CASE WHEN ov.selected = FALSE THEN 0 ELSE ov.amount END AS override_amount; ri.amount * mi.servings / rv.base_servings AS scaled_amount`
 
@@ -652,7 +658,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `ranked.recipe_id`
 
@@ -671,7 +677,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 ### `backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql`
 
@@ -688,7 +694,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `f.id; f.name; u.code AS unit`
 
@@ -705,7 +711,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `c.key AS client_key; c.signature; c.food_id; c.amount; u.code AS unit; c.checked_at; c.archived`
 
@@ -722,7 +728,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| user_id | self.user_id (backend/src/app/core/cooking_service.py:113) / self.user_id (backend/src/app/core/cooking_service.py:126) / self.user_id (backend/src/app/core/cooking_service.py:141) |
+| user_id | self.user_id (backend/src/app/core/cooking_service.py:116) / self.user_id (backend/src/app/core/cooking_service.py:131) / self.user_id (backend/src/app/core/cooking_service.py:158) |
 
 代入・選択式: `s.id; s.menu_id; s.status; s.current_task_index; s.input_snapshot`
 
@@ -734,17 +740,18 @@
 |---|---|---|
 | recipeweave.menu_item | R | id: 不変の行識別子; recipe_version_id: 固定レシピ版; position: 表示順 |
 | recipeweave.recipe | R | id: 不変の行識別子; title: 代表名 |
-| recipeweave.recipe_step | R | id: 不変の行識別子; step_no: 表示順（依存順とは別）; instruction: 個別補足; attention: 作業者拘束; duration_max_s: 所要秒上限; title: 工程の短い見出し |
+| recipeweave.recipe_step | R | id: 不変の行識別子; step_no: 表示順（依存順とは別）; instruction: 個別補足; attention: 作業者拘束; duration_max_s: 所要秒上限; scaling_rule_id: 時間の人数変更規則; title: 工程の短い見出し |
 | recipeweave.recipe_version | R | id: 不変の行識別子; recipe_id: 所属レシピ |
-| recipeweave.session_task | R | id: 不変の行識別子; session_id: 実行; menu_item_id: 料理; step_id: 元工程; planned_start_s: 開始相対秒; planned_end_s: 終了相対秒; status: 進捗; timer_started_at: 稼働中タイマーの開始日時; timer_duration_s: 利用者が設定したタイマー秒数 |
+| recipeweave.scaling_rule | R | id: 不変の行識別子; mode: 比例・バッチ等 |
+| recipeweave.session_task | R | id: 不変の行識別子; session_id: 実行; menu_item_id: 料理; step_id: 元工程; planned_start_s: 開始相対秒; planned_end_s: 終了相対秒; status: 進捗; timer_started_at: 稼働中タイマーの開始日時; timer_duration_s: 利用者が設定したタイマー秒数; duration_source: 計画時間の根拠。料理の時間規則または利用者が確認した見積り; confirmed_duration_s: 利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない |
 
 対象条件: `WHERE t.session_id = %(session_id)s`
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| session_id | session_id (backend/src/app/core/cooking_service.py:175) / session_id (backend/src/app/core/cooking_service.py:187) / session_id (backend/src/app/core/cooking_service.py:221) |
+| session_id | session_id (backend/src/app/core/cooking_service.py:192) / session_id (backend/src/app/core/cooking_service.py:204) / session_id (backend/src/app/core/cooking_service.py:240) |
 
-代入・選択式: `t.id; t.menu_item_id; t.step_id; t.planned_start_s; t.planned_end_s; t.status; t.timer_started_at; t.timer_duration_s; rv.recipe_id; r.title AS recipe_name; st.title; st.instruction; st.attention; st.duration_max_s`
+代入・選択式: `t.id; t.menu_item_id; t.step_id; t.planned_start_s; t.planned_end_s; t.duration_source; t.confirmed_duration_s; t.status; t.timer_started_at; t.timer_duration_s; rv.recipe_id; r.title AS recipe_name; st.title; st.instruction; st.attention; st.duration_max_s; scaling.mode AS scaling_mode`
 
 ### `backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql`
 
@@ -760,7 +767,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| session_id | session_id (backend/src/app/core/cooking_service.py:175) / session_id (backend/src/app/core/cooking_service.py:187) / session_id (backend/src/app/core/cooking_service.py:221) |
+| session_id | session_id (backend/src/app/core/cooking_service.py:192) / session_id (backend/src/app/core/cooking_service.py:204) / session_id (backend/src/app/core/cooking_service.py:240) |
 
 代入・選択式: `t.id AS task_id; r.name`
 
@@ -780,7 +787,7 @@
 
 | SQLバインド | 実装上の値の出所 |
 |---|---|
-| session_id | session_id (backend/src/app/core/cooking_service.py:175) / session_id (backend/src/app/core/cooking_service.py:187) / session_id (backend/src/app/core/cooking_service.py:221) |
+| session_id | session_id (backend/src/app/core/cooking_service.py:192) / session_id (backend/src/app/core/cooking_service.py:204) / session_id (backend/src/app/core/cooking_service.py:240) |
 
 代入・選択式: `total.id; fm.food_id; fm.name AS form; total.required_amount; total.actual_amount; total.consumption_outcome; u.code AS unit; COALESCE(SUM(c.amount), 0) AS consumed_amount; ARRAY_AGG(c.lot_id) FILTER(WHERE c.id IS NOT NULL) AS lot_ids`
 
@@ -892,10 +899,11 @@
 
 | 判定条件 | 例外・応答 | 定義元 |
 |---|---|---|
-| q.run('q001_current', user_id=self.user_id) | HTTPException(409, '調理中の料理を再開するか、完了してから始めてください') | backend/src/app/core/cooking_service.py:108 |
-| not request.session.meal_snapshot | HTTPException(422, '調理する料理を選んでください') | backend/src/app/core/cooking_service.py:108 |
-| any((r['amount'] is None for r in ingredients)) | HTTPException(422, '調理前に材料の量を確定してください') | backend/src/app/core/cooking_service.py:108 |
-| any((len(values) &gt; 1 for values in identities.values())) | HTTPException(422, '同じ食材の複数商品は、商品版ごとの調理APIで指定してください') | backend/src/app/core/cooking_service.py:108 |
+| q.run('q001_current', user_id=self.user_id) | HTTPException(409, '調理中の料理を再開するか、完了してから始めてください') | backend/src/app/core/cooking_service.py:111 |
+| not request.session.meal_snapshot | HTTPException(422, '調理する料理を選んでください') | backend/src/app/core/cooking_service.py:111 |
+| any((r['amount'] is None for r in ingredients)) | HTTPException(422, '調理前に材料の量を確定してください') | backend/src/app/core/cooking_service.py:111 |
+| any((len(values) &gt; 1 for values in identities.values())) | HTTPException(422, '同じ食材の複数商品は、商品版ごとの調理APIで指定してください') | backend/src/app/core/cooking_service.py:111 |
+| estimate.meal_item_id not in frozen_ids | ValueError('この献立に含まれない工程の見積りが指定されています。') | backend/src/app/core/cooking_service.py:111 |
 
 ## 出力
 
@@ -903,8 +911,8 @@
 |---|---|---|
 | handle | execute(WorkspaceService(database, identity), request) | backend/src/app/apis/workspace/create_cooking_session/router.py:22 |
 | execute | service.create_cooking_session(request) | backend/src/app/apis/workspace/create_cooking_session/functions.py:6 |
-| WorkspaceService.create_cooking_session | CookingService(self).create(request) | backend/src/app/core/workspace_service.py:490 |
-| CookingService.create | self.workspace.finish(q) | backend/src/app/core/cooking_service.py:108 |
+| WorkspaceService.create_cooking_session | CookingService(self).create(request) | backend/src/app/core/workspace_service.py:491 |
+| CookingService.create | self.workspace.finish(q) | backend/src/app/core/cooking_service.py:111 |
 
 APIとして返す型・status・headerは [インターフェース](interface.md) の実OpenAPIを参照。
 
@@ -914,7 +922,7 @@ APIとして返す型・status・headerは [インターフェース](interface.
 |---|---|---|
 | handle | 調理計画を確定して開始する。呼出元が送った利用者IDは使用しない。 | backend/src/app/apis/workspace/create_cooking_session/router.py:22 |
 | execute | 調理計画を確定して開始する。永続値は業務サービスが検証し、同一トランザクションで扱う。 | backend/src/app/apis/workspace/create_cooking_session/functions.py:6 |
-| WorkspaceService.create_cooking_session | DBの料理と材料から調理計画を構築する。 | backend/src/app/core/workspace_service.py:490 |
-| CookingService.create | 画面から送られた計画を信用せず、DBのDAGと設備で再計画する。 | backend/src/app/core/cooking_service.py:108 |
+| WorkspaceService.create_cooking_session | DBの料理と材料から調理計画を構築する。 | backend/src/app/core/workspace_service.py:491 |
+| CookingService.create | 画面から送られた計画を信用せず、DBのDAGと設備で再計画する。 | backend/src/app/core/cooking_service.py:111 |
 
 [SQL](queries.md) / [シーケンス](sequence.md) / [ログ](messages.md) / [要因別テスト](tests.md)

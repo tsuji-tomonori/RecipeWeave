@@ -48,6 +48,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_shopping_check.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_shopping_check.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_shopping_check.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_shopping_check.sql |
 | entity_user_shopping_check_create | C | backend/src/app/apis/entities/user_shopping_check_create/sql/001_create.sql |
 | entity_user_shopping_check_delete | D | backend/src/app/apis/entities/user_shopping_check_delete/sql/001_delete.sql |
 | entity_user_shopping_check_get | R | backend/src/app/apis/entities/user_shopping_check_get/sql/001_get.sql |
@@ -56,6 +63,7 @@
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q010_shopping.sql |
 | put_shopping_checks | D | backend/src/app/apis/workspace/put_shopping_checks/sql/q001_clear.sql |
 | put_shopping_checks | C | backend/src/app/apis/workspace/put_shopping_checks/sql/q002_insert.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q010_shopping.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q010_shopping.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q010_shopping.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q010_shopping.sql |

@@ -5,6 +5,9 @@
 | operationId | HTTP | パス | 要約 | 認証 | 応答 |
 |---|---|---|---|---|---|
 | [local_login](operations/local_login/interface.md) | POST | /api/auth/local-login | 開発環境へログインする | public; 開発環境限定。本文の資格情報を検証 | 200, 401, 404, 422, 503 |
+| [export_backup](operations/export_backup/interface.md) | POST | /api/backups/export | バックアップを書き出す | 検証済みBearerトークンと本人所有権 | 200, 401, 403, 409, 413, 422, 503 |
+| [preview_backup](operations/preview_backup/interface.md) | POST | /api/backups/preview | バックアップの全置換内容を検証する | 検証済みBearerトークンと本人所有権 | 200, 401, 403, 409, 413, 422, 503 |
+| [restore_backup](operations/restore_backup/interface.md) | POST | /api/backups/restore | 確認したバックアップで本人のデータを全置換する | 検証済みBearerトークンと本人所有権 | 200, 401, 403, 409, 413, 422, 503 |
 | [preview_cooking_plan](operations/preview_cooking_plan/interface.md) | POST | /api/cooking-plan | 保存せずに調理の段取りを確認する | 検証済みBearerトークンと本人所有権 | 200, 401, 403, 404, 422, 503 |
 | [create_cooking_session](operations/create_cooking_session/interface.md) | POST | /api/cooking-sessions | 調理計画を確定して開始する | 検証済みBearerトークンと本人所有権 | 200, 401, 403, 404, 409, 422, 503 |
 | [update_cooking_session](operations/update_cooking_session/interface.md) | PATCH | /api/cooking-sessions/{row_id} | 工程・タイマー・調理完了を記録する | 検証済みBearerトークンと本人所有権 | 200, 401, 403, 404, 409, 422, 503 |
@@ -25,6 +28,10 @@
 | [entity_axis_option_create](operations/entity_axis_option_create/interface.md) | POST | /api/entities/axis_option | 軸候補値の作成 | bearer | 201, 401, 403, 409, 422, 503 |
 | [entity_axis_option_get](operations/entity_axis_option_get/interface.md) | GET | /api/entities/axis_option/{row_id} | 軸候補値の取得 | bearer | 200, 401, 403, 404, 409, 422, 503 |
 | [entity_axis_option_update](operations/entity_axis_option_update/interface.md) | PUT | /api/entities/axis_option/{row_id} | 軸候補値の更新 | bearer | 200, 401, 403, 409, 422, 428, 503 |
+| [entity_backup_artifact_list](operations/entity_backup_artifact_list/interface.md) | GET | /api/entities/backup_artifact | 本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持するの一覧 | bearer | 200, 401, 403, 409, 422, 503 |
+| [entity_backup_artifact_get](operations/entity_backup_artifact_get/interface.md) | GET | /api/entities/backup_artifact/{row_id} | 本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持するの取得 | bearer | 200, 401, 403, 404, 409, 422, 503 |
+| [entity_backup_restore_intent_list](operations/entity_backup_restore_intent_list/interface.md) | GET | /api/entities/backup_restore_intent | 復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費するの一覧 | bearer | 200, 401, 403, 409, 422, 503 |
+| [entity_backup_restore_intent_get](operations/entity_backup_restore_intent_get/interface.md) | GET | /api/entities/backup_restore_intent/{row_id} | 復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費するの取得 | bearer | 200, 401, 403, 404, 409, 422, 503 |
 | [entity_candidate_attempt_list](operations/entity_candidate_attempt_list/interface.md) | GET | /api/entities/candidate_attempt | 試行済み設計点の台帳の一覧 | bearer | 200, 401, 403, 409, 422, 503 |
 | [entity_candidate_attempt_create](operations/entity_candidate_attempt_create/interface.md) | POST | /api/entities/candidate_attempt | 試行済み設計点の台帳の作成 | bearer | 201, 401, 403, 409, 422, 503 |
 | [entity_candidate_attempt_get](operations/entity_candidate_attempt_get/interface.md) | GET | /api/entities/candidate_attempt/{row_id} | 試行済み設計点の台帳の取得 | bearer | 200, 401, 403, 404, 409, 422, 503 |

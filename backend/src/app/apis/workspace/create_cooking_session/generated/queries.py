@@ -1,5 +1,5 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: cbb867a3857cbf705931b42675fdb59eb7cf232cc9da130a19c40fa99ae79ca0
+# SQLのSHA256: 61b2aa64e704cdac40a09e208e8d9804de75299a3faeaf9a5356695637f6b8d9
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
@@ -109,8 +109,20 @@ SELECT
     st.attention,
     sc.mode AS scaling_mode,
     sc.batch_capacity,
-    sc.min_servings,
-    sc.max_servings
+    GREATEST(sc.min_servings, (
+        SELECT MAX(ingredient_rule.min_servings)
+        FROM recipeweave.recipe_ingredient AS ingredient
+        INNER JOIN recipeweave.scaling_rule AS ingredient_rule
+            ON ingredient.scaling_rule_id = ingredient_rule.id
+        WHERE ingredient.recipe_version_id = rv.id
+    )) AS min_servings,
+    LEAST(sc.max_servings, (
+        SELECT MIN(ingredient_rule.max_servings)
+        FROM recipeweave.recipe_ingredient AS ingredient
+        INNER JOIN recipeweave.scaling_rule AS ingredient_rule
+            ON ingredient.scaling_rule_id = ingredient_rule.id
+        WHERE ingredient.recipe_version_id = rv.id
+    )) AS max_servings
 FROM recipeweave.menu_item AS mi
 INNER JOIN recipeweave.recipe_version AS rv ON mi.recipe_version_id = rv.id
 INNER JOIN recipeweave.recipe_step AS st ON rv.id = st.recipe_version_id
@@ -208,8 +220,14 @@ VALUES (
     "q026_task": """\
 -- 計画済み工程を独立したタスク行へ保存する。
 INSERT INTO recipeweave.session_task
-(id, session_id, menu_item_id, step_id, batch_no, planned_start_s, planned_end_s, status)
-VALUES (%(row_id)s, %(session_id)s, %(item_id)s, %(step_id)s, 1, %(start)s, %(end)s, 'pending');
+(
+    id, session_id, menu_item_id, step_id, batch_no, planned_start_s, planned_end_s, status,
+    duration_source, confirmed_duration_s
+)
+VALUES (
+    %(row_id)s, %(session_id)s, %(item_id)s, %(step_id)s, 1, %(start)s, %(end)s, 'pending',
+    %(duration_source)s, %(confirmed_duration_s)s
+);
 """,
     "q027_dependency": """\
 -- 工程の先行条件を具体的なタスク間に移す。
@@ -287,7 +305,16 @@ PARAMETERS: dict[str, tuple[str, ...]] = {
     "q023_resources": ("user_id",),
     "q024_ingredients": ("menu_id",),
     "q025_session": ("hash", "menu_id", "revision", "session_id", "snapshot"),
-    "q026_task": ("end", "item_id", "row_id", "session_id", "start", "step_id"),
+    "q026_task": (
+        "confirmed_duration_s",
+        "duration_source",
+        "end",
+        "item_id",
+        "row_id",
+        "session_id",
+        "start",
+        "step_id",
+    ),
     "q027_dependency": ("after_id", "before_id", "max_lag", "min_lag", "reason", "row_id"),
     "q028_reservation": ("end", "quantity", "resource_id", "row_id", "start", "task_id"),
     "q029_total": ("amount", "form_id", "product_id", "row_id", "session_id", "unit_id"),

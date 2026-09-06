@@ -1,8 +1,10 @@
 # RecipeWeave API
 
-Python 3.12 / FastAPI / psycopgによる、PostgreSQL 16とpgvectorを使うAPIです。元スプレッドシートの71テーブルをすべて実装し、レシート・私有食材・在庫消費などの追加7テーブルも扱います。食品、料理版、材料、工程、献立、在庫を正規化した行へ保存します。初期JSONはDBへのseed入力専用で、APIは実行時にDBを検索します。
+Python 3.12 / FastAPI / psycopgによる、PostgreSQL 16とpgvectorを使うAPIです。元スプレッドシートの71テーブルをすべて実装し、レシート・私有食材・在庫消費などの追加9テーブルも扱います。食品、料理版、材料、工程、献立、在庫を正規化した行へ保存します。初期JSONはDBへのseed入力専用で、APIは実行時にDBを検索します。
 
 要件正本は[requirements.qnt](../spec/requirements/requirements.qnt)、DB正本と移行手順は[database/README.md](../database/README.md)です。利用者向けの説明は[マニュアル](../docs/service/manual.md)と[Q&A](../docs/service/faq.md)、現在の配備・検証状況は[Dev検証記録](../docs/verification/service-dev.md)を参照してください。
+
+追加9表は業務補完7表とバックアップ用台帳2表です。旧互換表と移行台帳を含め、物理表は82表です。
 
 ## APIの使い分け
 
@@ -14,12 +16,13 @@ Python 3.12 / FastAPI / psycopgによる、PostgreSQL 16とpgvectorを使うAPI�
 | 利用者の操作 | `/api/workspace`、在庫・献立・保存・設定の個別API | 本人の関係データを取得・変更 |
 | レシート | `/api/receipts/commit`、`/api/receipts/{row_id}/undo` | 確認済み明細の在庫登録、再送検出、取消 |
 | 調理 | `/api/cooking-plan`、`/api/cooking-sessions` | 読取専用の段取り確認、計画確定、進行・タイマー保存 |
+| バックアップ | `/api/backups/export`、`/api/backups/preview`、`/api/backups/restore` | 本人の34表と表示設定を出力し、全制約の確認後に原子的に全置換 |
 | 正規化データ | `/api/entities/{table}`、`/api/entities/{table}/{row_id}` | 登録済みの固定ルートで、全表に必要な型付き操作を提供 |
 | 生成ワーカー | `/api/generation/shards/claim`ほか | リース取得・延長、フェンストークン付き進捗更新 |
 
 正確なメソッド、経路、全入力・応答は[生成API一覧](../docs/design/generated/api/README.md)と[OpenAPI](openapi.gen.json)から確認できます。テーブル名や任意SQLを受け取って動的に操作を組み立てるAPIではありません。
 
-人数・分量は料理を選んだ後で変更するため検索条件に含めません。通常の料理検索は公開・審査済み版を返します。初期8品は未試作の下書きとしてDBへ投入し、署名済み認証と明示したローカル設定がある場合だけ試用できます。取下げ版は既存の本人履歴から参照でき、新規履歴の後付けで閲覧権限を取得することはできません。
+人数・分量は料理を選んだ後で変更するため検索条件に含めません。通常の料理検索は公開・審査済み版を返します。初期8品は未試作の下書きとしてDBへ投入し、試用を許可した開発環境で署名検証済みの本人だけが閲覧できます。`ENVIRONMENT` が `dev/local/test` で、`ALLOW_CATALOG_PREVIEW=true` または既存の開発用認証設定が有効な場合に限ります。Cognitoを使うDevではフラグが必須です。`production` はフラグを有効にしても常に拒否します。取下げ版は既存の本人履歴から参照でき、新規履歴の後付けで閲覧権限を取得することはできません。
 
 利用者の表は、子行から親へたどる所有権まで確認します。カタログ編集と生成運用は管理者権限が必要です。公開後の内容版、監査、outbox、派生集計には保持規則を適用し、無制約の更新・削除を公開しません。
 
@@ -65,6 +68,7 @@ DB操作の正本は `src/app/apis/<resource>/<operation>/sql/*.sql` です。OR
 ```bash
 uv run --locked python database/schema_catalog.py
 uv run --locked python tools/generate_entity_apis.py
+uv run --locked python tools/generate_backup_api.py
 uv run --locked --package recipeweave-api app-docs
 uv run --locked python tools/generate_service_design.py
 ```
@@ -72,6 +76,7 @@ uv run --locked python tools/generate_service_design.py
 最初にDDLから列・制約を抽出し、全表のモデルと操作SQLを生成します。`app-docs`は各操作の型付きクエリと実ルートのOpenAPIを生成します。設計生成はDDL・SQL・OpenAPI・Pythonの実装からテーブル仕様、ER図、API仕様、CRUD対応、シーケンス、試験対応を作ります。インフラ設計を含む最終生成には、同じ版のCDK合成結果も必要です。
 
 生成ファイルを手編集せず、入力を修正して再生成してください。`--check`は差分を検出し、ファイルを書き換えません。SQLGlotは構文と単文・明示列を検査し、SQLFluffはAPI別SQLと移行DDLを検査します。
+復元の制約検証に使う固定の `SET CONSTRAINTS ALL IMMEDIATE/DEFERRED` はpglastで単文と対象を検証し、設計には制約の検証タイミングとして記録します。
 
 ## 検査とエビデンス
 
@@ -97,3 +102,11 @@ uv run --locked --package recipeweave-api python backend/tools/package_lambda.py
 ```
 
 Pagesは静的画面・設計・検証結果の配信です。Cognito、API Gateway、Lambda、PostgreSQLの実配備と接続確認は別の受入事項として、Dev検証記録に残します。
+
+## DBバックアップの確認と復元
+
+設定画面で取得する形式2のファイルは、本人の34表について元ID・全列・過去の調理・在庫消費・私有食品を保持します。数値列を十進文字列で出力し、JavaScriptの浮動小数点を経由しません。最大5,000,000バイトです。共有食品・公開料理版は参照を保持し、アカウントの認証情報・監査・outbox・現在版を古い内容へ置き換えません。
+
+復元はファイル確認、サーバーで全制約を検証するプレビュー、利用者の最終確認、の順です。プレビューの試験書込みはすべてロールバックします。15分間・本人・本文ハッシュ・現在版に結び付いた確認を単回消費し、全34表の置換・版更新・監査追記を同一トランザクションで確定します。改竄・別人のファイル・旧形式・参照不整合・同時更新は拒否されます。確認取消しや処理途中の失敗では本人の現在データを保持します。
+
+発行証跡と復元確認の2表には本文を保存せず、利用者が任意に作成・更新・削除する汎用操作も提供しません。失われた共有参照や外部から採用された私有定義がある場合は409で全体を戻します。`backend/tests/test_backup_database.py`で実DBの往復・所有権・精度・競合・全体取消しを検証します。

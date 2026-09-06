@@ -20,6 +20,18 @@ from app.apis.entities.axis_option_update.generated.queries import (
     execute as entity_axis_option_update,
 )
 from app.apis.entities.axis_update.generated.queries import execute as entity_axis_update
+from app.apis.entities.backup_artifact_get.generated.queries import (
+    execute as entity_backup_artifact_get,
+)
+from app.apis.entities.backup_artifact_list.generated.queries import (
+    execute as entity_backup_artifact_list,
+)
+from app.apis.entities.backup_restore_intent_get.generated.queries import (
+    execute as entity_backup_restore_intent_get,
+)
+from app.apis.entities.backup_restore_intent_list.generated.queries import (
+    execute as entity_backup_restore_intent_list,
+)
 from app.apis.entities.candidate_attempt_create.generated.queries import (
     execute as entity_candidate_attempt_create,
 )
@@ -3723,6 +3735,8 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
             "actual_end_at",
             "timer_started_at",
             "timer_duration_s",
+            "duration_source",
+            "confirmed_duration_s",
         ),
         json_columns=(),
         bigint_columns=(),
@@ -3750,6 +3764,8 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
             "actual_end_at",
             "timer_started_at",
             "timer_duration_s",
+            "duration_source",
+            "confirmed_duration_s",
         ),
         json_columns=(),
         bigint_columns=(),
@@ -4997,6 +5013,54 @@ SPECIFICATIONS: dict[str, OperationSpec] = {
         bigint_columns=(),
         immutable=False,
         query=entity_user_shopping_check_delete,
+        reference_queries=(),
+    ),
+    "entity_backup_artifact_list": OperationSpec(
+        operation_id="entity_backup_artifact_list",
+        table="backup_artifact",
+        action="list",
+        owned=True,
+        input_columns=(),
+        json_columns=(),
+        bigint_columns=(),
+        immutable=False,
+        query=entity_backup_artifact_list,
+        reference_queries=(),
+    ),
+    "entity_backup_artifact_get": OperationSpec(
+        operation_id="entity_backup_artifact_get",
+        table="backup_artifact",
+        action="get",
+        owned=True,
+        input_columns=(),
+        json_columns=(),
+        bigint_columns=(),
+        immutable=False,
+        query=entity_backup_artifact_get,
+        reference_queries=(),
+    ),
+    "entity_backup_restore_intent_list": OperationSpec(
+        operation_id="entity_backup_restore_intent_list",
+        table="backup_restore_intent",
+        action="list",
+        owned=True,
+        input_columns=(),
+        json_columns=(),
+        bigint_columns=("current_revision",),
+        immutable=False,
+        query=entity_backup_restore_intent_list,
+        reference_queries=(),
+    ),
+    "entity_backup_restore_intent_get": OperationSpec(
+        operation_id="entity_backup_restore_intent_get",
+        table="backup_restore_intent",
+        action="get",
+        owned=True,
+        input_columns=(),
+        json_columns=(),
+        bigint_columns=("current_revision",),
+        immutable=False,
+        query=entity_backup_restore_intent_get,
         reference_queries=(),
     ),
 }

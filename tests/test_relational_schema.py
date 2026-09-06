@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 from collections.abc import Iterator
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 from uuid import UUID, uuid4
@@ -74,6 +75,26 @@ def test_sql_split_preserves_function_and_quoted_separators() -> None:
     ]
 
 
+def test_backup_evidence_is_generated_from_ddl_and_kept_out_of_replacement() -> None:
+    tables = {table["name"]: table for table in extract()["tables"]}
+    for name in ("backup_artifact", "backup_restore_intent"):
+        table = tables[name]
+        assert table["retention"] == "audit"
+        assert table["owner_path"] == ["user_id"]
+        assert table["source"]["file"].endswith("004_backup_restore.sql")
+        assert all(column["description"] for column in table["columns"])
+        assert not any(column["type"] in {"json", "jsonb"} for column in table["columns"])
+        owner = next(fk for fk in table["foreign_keys"] if fk["columns"] == ["user_id"])
+        assert owner["referenced_table"] == "app_user"
+        assert owner["on_delete"] == "SET NULL"
+    names_from_ddl = {
+        table["name"]
+        for table in tables.values()
+        if table["source"]["file"].endswith("004_backup_restore.sql")
+    }
+    assert names_from_ddl == {"backup_artifact", "backup_restore_intent"}
+
+
 @pytest.fixture(scope="module")
 def migrated_url() -> str:
     value = (
@@ -109,6 +130,436 @@ def insert(connection: psycopg.Connection[Any], table: str, **values: Any) -> UU
         list(values.values()),
     )
     return identity
+
+
+@pytest.fixture
+def backup_evidence(connection: psycopg.Connection[Any]) -> dict[str, UUID]:
+    user = insert(
+        connection,
+        "app_user",
+        auth_subject=str(uuid4()),
+        state="active",
+        locale="ja-JP",
+        timezone="Asia/Tokyo",
+    )
+    workspace = insert(connection, "workspace_revision", user_id=user, revision=7)
+    artifact = insert(
+        connection, "backup_artifact", user_id=user, body_sha256="a" * 64, format_version=2
+    )
+    intent = insert(
+        connection,
+        "backup_restore_intent",
+        user_id=user,
+        artifact_id=artifact,
+        body_sha256="a" * 64,
+        current_revision=7,
+        expires_at=datetime.now(UTC) + timedelta(minutes=10),
+    )
+    connection.execute("SET CONSTRAINTS ALL IMMEDIATE")
+    return dict(user=user, workspace=workspace, artifact=artifact, intent=intent)
+
+
+@pytest.mark.parametrize("action", ["digest", "created_at", "delete"])
+def test_backup_artifact_is_append_only(
+    connection: psycopg.Connection[Any], backup_evidence: dict[str, UUID], action: str
+) -> None:
+    statements = {
+        "digest": "UPDATE recipeweave.backup_artifact SET body_sha256=%s WHERE id=%s",
+        "created_at": "UPDATE recipeweave.backup_artifact SET created_at=%s WHERE id=%s",
+        "delete": "DELETE FROM recipeweave.backup_artifact WHERE id=%s",
+    }
+    parameters: tuple[object, ...] = (backup_evidence["artifact"],)
+    if action == "digest":
+        parameters = ("b" * 64, backup_evidence["artifact"])
+    elif action == "created_at":
+        parameters = (datetime.now(UTC) - timedelta(days=1), backup_evidence["artifact"])
+    with pytest.raises(psycopg.errors.CheckViolation):
+        connection.execute(statements[action], parameters)
+
+
+@pytest.mark.parametrize("fault", ["digest", "owner", "revision", "expired", "consumed"])
+def test_backup_intent_rejects_untrusted_or_stale_preview(
+    connection: psycopg.Connection[Any], backup_evidence: dict[str, UUID], fault: str
+) -> None:
+    values: dict[str, Any] = dict(
+        user_id=backup_evidence["user"],
+        artifact_id=backup_evidence["artifact"],
+        body_sha256="a" * 64,
+        current_revision=7,
+        expires_at=datetime.now(UTC) + timedelta(minutes=10),
+    )
+    if fault == "digest":
+        values["body_sha256"] = "b" * 64
+    elif fault == "owner":
+        values["user_id"] = insert(
+            connection,
+            "app_user",
+            auth_subject=str(uuid4()),
+            state="active",
+            locale="ja-JP",
+            timezone="Asia/Tokyo",
+        )
+    elif fault == "revision":
+        values["current_revision"] = 6
+    elif fault == "expired":
+        values["created_at"] = datetime.now(UTC) - timedelta(minutes=10)
+        values["expires_at"] = datetime.now(UTC) - timedelta(minutes=1)
+    else:
+        values["consumed_at"] = datetime.now(UTC)
+    with pytest.raises(psycopg.errors.CheckViolation):
+        insert(connection, "backup_restore_intent", **values)
+
+
+def test_backup_intent_is_consumed_once_and_rollback_restores_the_confirmation(
+    connection: psycopg.Connection[Any], backup_evidence: dict[str, UUID]
+) -> None:
+    update = "UPDATE recipeweave.backup_restore_intent SET consumed_at=now() WHERE id=%s"
+    connection.execute("SAVEPOINT restore_attempt")
+    connection.execute(update, (backup_evidence["intent"],))
+    connection.execute("ROLLBACK TO SAVEPOINT restore_attempt")
+    row = connection.execute(
+        "SELECT consumed_at FROM recipeweave.backup_restore_intent WHERE id=%s",
+        (backup_evidence["intent"],),
+    ).fetchone()
+    assert row is not None and row[0] is None
+    connection.execute(update, (backup_evidence["intent"],))
+    with pytest.raises(psycopg.errors.CheckViolation):
+        connection.execute(update, (backup_evidence["intent"],))
+
+
+def test_backup_intent_rejects_changes_after_preview(
+    connection: psycopg.Connection[Any], backup_evidence: dict[str, UUID]
+) -> None:
+    connection.execute(
+        "UPDATE recipeweave.workspace_revision SET revision=revision+1 WHERE id=%s",
+        (backup_evidence["workspace"],),
+    )
+    with pytest.raises(psycopg.errors.CheckViolation):
+        connection.execute(
+            "UPDATE recipeweave.backup_restore_intent SET consumed_at=now() WHERE id=%s",
+            (backup_evidence["intent"],),
+        )
+
+
+@pytest.mark.parametrize("action", ["delete", "extend", "clear"])
+def test_backup_intent_cannot_be_deleted_extended_or_reused(
+    connection: psycopg.Connection[Any], backup_evidence: dict[str, UUID], action: str
+) -> None:
+    connection.execute(
+        "UPDATE recipeweave.backup_restore_intent SET consumed_at=now() WHERE id=%s",
+        (backup_evidence["intent"],),
+    )
+    statements = {
+        "delete": "DELETE FROM recipeweave.backup_restore_intent WHERE id=%s",
+        "extend": "UPDATE recipeweave.backup_restore_intent "
+        "SET expires_at=expires_at+interval '1 minute' WHERE id=%s",
+        "clear": "UPDATE recipeweave.backup_restore_intent SET consumed_at=NULL WHERE id=%s",
+    }
+    with pytest.raises(psycopg.errors.CheckViolation):
+        connection.execute(statements[action], (backup_evidence["intent"],))
+
+
+def test_backup_evidence_is_anonymized_when_account_is_erased(
+    connection: psycopg.Connection[Any], backup_evidence: dict[str, UUID]
+) -> None:
+    connection.execute("DELETE FROM recipeweave.app_user WHERE id=%s", (backup_evidence["user"],))
+    for table, key in (("backup_artifact", "artifact"), ("backup_restore_intent", "intent")):
+        row = connection.execute(
+            sql.SQL("SELECT user_id, body_sha256 FROM recipeweave.{} WHERE id=%s").format(
+                sql.Identifier(table)
+            ),
+            (backup_evidence[key],),
+        ).fetchone()
+        assert row == (None, "a" * 64)
+
+
+def test_backup_evidence_rls_hides_other_owner_and_rejects_forged_issue(
+    connection: psycopg.Connection[Any], backup_evidence: dict[str, UUID]
+) -> None:
+    other = insert(
+        connection,
+        "app_user",
+        auth_subject=str(uuid4()),
+        state="active",
+        locale="ja-JP",
+        timezone="Asia/Tokyo",
+    )
+    role = sql.Identifier("recipeweave_backup_test_" + uuid4().hex)
+    connection.execute(sql.SQL("CREATE ROLE {} NOLOGIN NOSUPERUSER NOBYPASSRLS").format(role))
+    connection.execute(sql.SQL("GRANT USAGE ON SCHEMA recipeweave TO {}").format(role))
+    connection.execute(
+        sql.SQL(
+            "GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA recipeweave TO {}"
+        ).format(role)
+    )
+    connection.execute(sql.SQL("SET LOCAL ROLE {}").format(role))
+    connection.execute(
+        "SELECT set_config('recipeweave.role', 'user', true), "
+        "set_config('recipeweave.user_id', %s, true)",
+        (str(other),),
+    )
+    for table in ("backup_artifact", "backup_restore_intent"):
+        rows = connection.execute(
+            sql.SQL("SELECT id FROM recipeweave.{} WHERE user_id=%s").format(sql.Identifier(table)),
+            (backup_evidence["user"],),
+        ).fetchall()
+        assert rows == []
+    with pytest.raises(psycopg.errors.InsufficientPrivilege):
+        insert(
+            connection,
+            "backup_artifact",
+            user_id=backup_evidence["user"],
+            body_sha256="b" * 64,
+            format_version=2,
+        )
+
+
+@pytest.fixture
+def task_context(connection: psycopg.Connection[Any], recipe: dict[str, UUID]) -> dict[str, Any]:
+    manual_rule = insert(
+        connection,
+        "scaling_rule",
+        name="時間の手動確認",
+        mode="manual",
+        min_servings=1,
+        max_servings=1000,
+        round_mode="none",
+        round_increment=1,
+    )
+    connection.execute(
+        "UPDATE recipeweave.recipe_step SET scaling_rule_id=%s WHERE id=%s",
+        (manual_rule, recipe["step"]),
+    )
+    user = insert(
+        connection,
+        "app_user",
+        auth_subject=str(uuid4()),
+        state="active",
+        locale="ja-JP",
+        timezone="Asia/Tokyo",
+    )
+    menu = insert(connection, "menu", user_id=user, name="調理時間試験", servings=2, revision=1)
+    item = insert(
+        connection,
+        "menu_item",
+        menu_id=menu,
+        recipe_version_id=recipe["version"],
+        servings=2,
+        position=1,
+    )
+    session = insert(
+        connection,
+        "cooking_session",
+        menu_id=menu,
+        menu_revision=1,
+        status="planned",
+        planner_version="duration-test",
+        input_hash="1" * 64,
+        input_snapshot='{"schema_version":1,"menu_revision":1,"items":[],"ingredients":[],"resources":[],"planner_config":{}}',
+    )
+    return dict(
+        session_id=session,
+        menu_item_id=item,
+        step_id=recipe["step"],
+        batch_no=1,
+        planned_start_s=0,
+        planned_end_s=60,
+        status="pending",
+    )
+
+
+@pytest.mark.parametrize(
+    ("source", "confirmed", "end"),
+    [
+        ("user_estimate", None, 60),
+        ("user_estimate", 59, 60),
+        ("user_estimate", 0, 0),
+        ("user_estimate", 86401, 86401),
+        ("recipe_rule", 60, 60),
+    ],
+)
+def test_task_duration_requires_consistent_user_confirmation(
+    connection: psycopg.Connection[Any],
+    task_context: dict[str, Any],
+    source: str,
+    confirmed: int | None,
+    end: int,
+) -> None:
+    task_context.update(duration_source=source, confirmed_duration_s=confirmed, planned_end_s=end)
+    with pytest.raises(psycopg.errors.CheckViolation):
+        insert(connection, "session_task", **task_context)
+
+
+def test_user_time_estimate_is_only_valid_for_manual_steps(
+    connection: psycopg.Connection[Any], recipe: dict[str, UUID], task_context: dict[str, Any]
+) -> None:
+    connection.execute(
+        "UPDATE recipeweave.recipe_step SET scaling_rule_id=%s WHERE id=%s",
+        (recipe["rule"], recipe["step"]),
+    )
+    with pytest.raises(psycopg.errors.CheckViolation):
+        insert(
+            connection,
+            "session_task",
+            **task_context,
+            duration_source="user_estimate",
+            confirmed_duration_s=60,
+        )
+
+
+@pytest.mark.parametrize("column", ["step_id", "menu_item_id", "session_id", "batch_no"])
+def test_user_confirmed_task_cannot_be_reassigned(
+    connection: psycopg.Connection[Any], task_context: dict[str, Any], column: str
+) -> None:
+    task = insert(
+        connection,
+        "session_task",
+        **task_context,
+        duration_source="user_estimate",
+        confirmed_duration_s=60,
+    )
+    value: UUID | int = 2 if column == "batch_no" else uuid4()
+    with pytest.raises(psycopg.errors.CheckViolation):
+        connection.execute(
+            sql.SQL("UPDATE recipeweave.session_task SET {}=%s WHERE id=%s").format(
+                sql.Identifier(column)
+            ),
+            (value, task),
+        )
+
+
+@pytest.mark.parametrize(
+    "column", ["duration_source", "confirmed_duration_s", "planned_start_s", "planned_end_s"]
+)
+def test_confirmed_task_plan_is_immutable_while_progress_can_change(
+    connection: psycopg.Connection[Any],
+    task_context: dict[str, Any],
+    column: str,
+) -> None:
+    task = insert(
+        connection,
+        "session_task",
+        **task_context,
+        duration_source="user_estimate",
+        confirmed_duration_s=60,
+    )
+    connection.execute("SET CONSTRAINTS ALL IMMEDIATE")
+    value: str | int = "recipe_rule" if column == "duration_source" else 30
+    with pytest.raises(psycopg.errors.CheckViolation), connection.transaction():
+        connection.execute(
+            sql.SQL("UPDATE recipeweave.session_task SET {}=%s WHERE id=%s").format(
+                sql.Identifier(column)
+            ),
+            (value, task),
+        )
+    connection.execute(
+        "UPDATE recipeweave.session_task SET status='running', actual_start_at=now(), "
+        "timer_started_at=now(), timer_duration_s=60 WHERE id=%s",
+        (task,),
+    )
+    row = connection.execute(
+        "SELECT status, duration_source, confirmed_duration_s "
+        "FROM recipeweave.session_task WHERE id=%s",
+        (task,),
+    ).fetchone()
+    assert row == ("running", "user_estimate", 60)
+
+
+def test_seed_duration_upgrade_keeps_adopted_old_rule_and_changes_only_target_draft(
+    connection: psycopg.Connection[Any], recipe: dict[str, UUID]
+) -> None:
+    source_id = UUID("9decf898-19cd-5c03-b3e2-947d838c06bd")
+    old_rule = UUID("aa59a90d-0a79-5f69-95a9-7857ffe94fad")
+    new_rule = UUID("9b2b5a4c-18db-5694-b175-96f9f2717e7c")
+    target = UUID("fcb0b2fa-f387-5a51-8bed-0b8f0a539e36")
+    if not connection.execute(
+        "SELECT id FROM recipeweave.source_record WHERE id=%s", (source_id,)
+    ).fetchone():
+        insert(
+            connection,
+            "source_record",
+            id=source_id,
+            title="旧seed移行試験",
+            locator="移行試験",
+            retrieved_at=datetime.now(UTC),
+            content_hash="1" * 64,
+            license_note="調理試作なしの試験資料",
+        )
+    if not connection.execute(
+        "SELECT id FROM recipeweave.scaling_rule WHERE id=%s", (old_rule,)
+    ).fetchone():
+        insert(
+            connection,
+            "scaling_rule",
+            id=old_rule,
+            name="工程時間は人数変更時に再確認",
+            mode="manual",
+            min_servings=1,
+            max_servings=2,
+            round_mode="none",
+            round_increment="0.01",
+            source_id=source_id,
+        )
+    if not connection.execute(
+        "SELECT id FROM recipeweave.recipe_version WHERE id=%s", (target,)
+    ).fetchone():
+        insert(
+            connection,
+            "recipe_version",
+            id=target,
+            recipe_id=recipe["recipe"],
+            version=2,
+            release_id=recipe["release"],
+            base_servings=2,
+            output_amount=100,
+            output_unit_id=recipe["unit"],
+            status="draft",
+            validation="pending",
+            content_hash="2" * 64,
+        )
+    existing = connection.execute(
+        "SELECT id FROM recipeweave.recipe_step WHERE recipe_version_id=%s "
+        "ORDER BY step_no LIMIT 1",
+        (target,),
+    ).fetchone()
+    if existing:
+        step = existing[0]
+        connection.execute(
+            "UPDATE recipeweave.recipe_step SET scaling_rule_id=%s WHERE id=%s", (old_rule, step)
+        )
+    else:
+        step = insert(
+            connection,
+            "recipe_step",
+            recipe_version_id=target,
+            step_no=1,
+            operation_id=recipe["operation"],
+            instruction="移行試験",
+            attention="active",
+            duration_min_s=30,
+            duration_max_s=60,
+            scaling_rule_id=old_rule,
+            completion_cue="切り終わり",
+        )
+    migration = next(
+        statement
+        for statement in split_sql(
+            (ROOT / "database/migrations/005_manual_duration.sql").read_text()
+        )
+        if "DO $$" in statement
+    )
+    connection.execute(migration)
+    connection.execute(migration)
+    connection.execute("SET CONSTRAINTS ALL IMMEDIATE")
+    assert connection.execute(
+        "SELECT scaling_rule_id FROM recipeweave.recipe_step WHERE id=%s", (step,)
+    ).fetchone() == (new_rule,)
+    assert connection.execute(
+        "SELECT max_servings FROM recipeweave.scaling_rule WHERE id=%s", (old_rule,)
+    ).fetchone() == (2,)
+    assert connection.execute(
+        "SELECT scaling_rule_id FROM recipeweave.recipe_step WHERE id=%s", (recipe["step"],)
+    ).fetchone() == (recipe["rule"],)
 
 
 @pytest.fixture

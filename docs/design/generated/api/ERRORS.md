@@ -61,14 +61,22 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 
 class BodySizeLimit:
-    def __init__(self, app: ASGIApp, max_bytes: int) -> None:
+    def __init__(
+        self, app: ASGIApp, max_bytes: int, path_limits: dict[str, int] | None = None
+    ) -> None:
         self.app = app
         self.max_bytes = max_bytes
+        self.path_limits = dict(path_limits or {})
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http" or scope["method"] not in {"PUT", "POST", "PATCH"}:
             await self.app(scope, receive, send)
             return
+        limit = (
+            self.path_limits.get(scope["path"], self.max_bytes)
+            if scope["method"] == "POST"
+            else self.max_bytes
+        )
         chunks: list[bytes] = []
         size = 0
         while True:
@@ -77,10 +85,10 @@ class BodySizeLimit:
                 return
             body = message.get("body", b"")
             size += len(body)
-            if size > self.max_bytes:
-                await JSONResponse({"detail": "request too large"}, status_code=413)(
-                    scope, receive, send
-                )
+            if size > limit:
+                await JSONResponse(
+                    {"detail": "送信データの容量が上限を超えています"}, status_code=413
+                )(scope, receive, send)
                 return
             chunks.append(body)
             if not message.get("more_body", False):

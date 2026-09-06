@@ -36,6 +36,8 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q300_reference_nutrient.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q300_reference_nutrient.sql |
 | entity_nutrient_create | C | backend/src/app/apis/entities/nutrient_create/sql/001_create.sql |
 | entity_nutrient_get | R | backend/src/app/apis/entities/nutrient_get/sql/001_get.sql |
 | entity_nutrient_list | R | backend/src/app/apis/entities/nutrient_list/sql/001_list.sql |

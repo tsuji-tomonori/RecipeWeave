@@ -37,6 +37,7 @@ CDK合成と実OpenAPI・SQL呼出しの生成を先に完了する。
 ```sh
 uv run python database/schema_catalog.py --check
 uv run python tools/generate_entity_apis.py --check
+uv run python tools/generate_backup_api.py --check
 uv run app-sql-lint
 uv run app-docs
 npm --prefix infra run synth
@@ -65,6 +66,10 @@ CTE・副問い合わせ・集約・表関数の派生列はSQLGlotのscopeで�
 PostgreSQLの `xmin` は競合判定用のシステム列として認識する。
 `ON CONFLICT DO UPDATE` は新規作成と更新の両方へ投影し、競合キーと更新式を残す。
 `FOR SHARE OF` 等のロック別名は同じ問い合わせの表と照合してから列解析し、SQL仕様には元の句を残す。
+復元候補の制約検証に使う `SET CONSTRAINTS ALL IMMEDIATE/DEFERRED` はpglastで単文・対象ALLを検証し、
+CRUDを追加せず検証タイミングの変更として詳細設計へ記載する。他のSET文や複数文は許可しない。
+バックアップの挿入値は型付き本文の各表・各列から実装上の行展開と型変換まで追跡し、保存済みの行IDを新規発行IDと混同しない。
+要因別試験は `backend/tests/*_test_contracts.json` を全件読み、実在する試験関数と対応づける。
 更新と同じトランザクションで行う監査・アウトボックスへのINSERTも各操作のCRUDへ含める。
 実装とSQLの列集合が不一致、未定義表、不正な列参照、未対応の複合DMLは生成を停止する。
 

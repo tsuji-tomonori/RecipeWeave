@@ -10,6 +10,8 @@ export default defineConfig({
   use: {
     baseURL: `${(process.env.QUALITY_BASE_URL || "http://127.0.0.1:4174").replace(/\/$/, "")}/`,
     locale: "ja-JP",
+    actionTimeout: 15000,
+    navigationTimeout: 30000,
     screenshot: "only-on-failure",
     ...(process.env.PW_CHROMIUM
       ? { launchOptions: { executablePath: process.env.PW_CHROMIUM } }

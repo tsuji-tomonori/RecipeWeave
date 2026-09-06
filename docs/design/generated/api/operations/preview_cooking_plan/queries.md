@@ -10,6 +10,7 @@
 
 | 対象表 | CRUD | 参照・書込列 |
 |---|---|---|
+| recipeweave.recipe_ingredient | R | recipe_version_id, scaling_rule_id |
 | recipeweave.recipe_step | R | attention, duration_max_s, id, recipe_version_id, scaling_rule_id, step_no |
 | recipeweave.recipe_version | R | base_servings, id, recipe_id |
 | recipeweave.scaling_rule | R | batch_capacity, id, max_servings, min_servings, mode |
@@ -30,8 +31,20 @@ SELECT
     st.attention,
     sc.mode AS scaling_mode,
     sc.batch_capacity,
-    sc.min_servings,
-    sc.max_servings
+    GREATEST(sc.min_servings, (
+        SELECT MAX(ingredient_rule.min_servings)
+        FROM recipeweave.recipe_ingredient AS ingredient
+        INNER JOIN recipeweave.scaling_rule AS ingredient_rule
+            ON ingredient.scaling_rule_id = ingredient_rule.id
+        WHERE ingredient.recipe_version_id = rv.id
+    )) AS min_servings,
+    LEAST(sc.max_servings, (
+        SELECT MIN(ingredient_rule.max_servings)
+        FROM recipeweave.recipe_ingredient AS ingredient
+        INNER JOIN recipeweave.scaling_rule AS ingredient_rule
+            ON ingredient.scaling_rule_id = ingredient_rule.id
+        WHERE ingredient.recipe_version_id = rv.id
+    )) AS max_servings
 FROM recipeweave.recipe_version AS rv
 INNER JOIN recipeweave.recipe_step AS st ON rv.id = st.recipe_version_id
 INNER JOIN recipeweave.scaling_rule AS sc ON st.scaling_rule_id = sc.id
@@ -135,9 +148,10 @@ ORDER BY rt.code, k.id;
 | recipeweave.recipe | R | id, status, title, withdrawal_reason |
 | recipeweave.recipe_ingredient | R | amount, form_id, id, line_no, note, product_version_id, recipe_version_id, unit_id |
 | recipeweave.recipe_option | R | option_id, recipe_version_id |
-| recipeweave.recipe_step | R | attention, duration_max_s, id, instruction, operation_id, recipe_version_id, step_no, title |
+| recipeweave.recipe_step | R | attention, duration_max_s, id, instruction, operation_id, recipe_version_id, scaling_rule_id, step_no, title |
 | recipeweave.recipe_version | R | base_servings, description, id, recipe_id, status, validation, version |
 | recipeweave.resource_type | R | code, id, name |
+| recipeweave.scaling_rule | R | id, mode |
 | recipeweave.step_resource | R | resource_type_id, step_id |
 | recipeweave.unit | R | code, id |
 | recipeweave.user_recipe_event | R | recipe_version_id, user_id |
@@ -330,6 +344,7 @@ payloads AS (
                     JSONB_AGG(JSONB_BUILD_OBJECT(
                         'id', step.id::TEXT, 'title', step.title, 'instruction', step.instruction,
                         'minutes', step.duration_max_s / 60.0, 'mode', step.attention,
+                        'timeScalingMode', time_rule.mode,
                         'equipment', COALESCE((
                             SELECT JSONB_AGG(resource_kind.name ORDER BY resource_kind.name)
                             FROM recipeweave.step_resource AS resource_usage
@@ -348,6 +363,9 @@ payloads AS (
                 INNER JOIN
                     recipeweave.operation AS cook_operation
                     ON step.operation_id = cook_operation.id
+                INNER JOIN
+                    recipeweave.scaling_rule AS time_rule
+                    ON step.scaling_rule_id = time_rule.id
                 WHERE step.recipe_version_id = page.version_id
             ), '[]'::JSONB),
             'arrangementIds', '[]'::JSONB,

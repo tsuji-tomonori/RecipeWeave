@@ -381,6 +381,15 @@ export function validateAppState(value: unknown): AppState {
         "recipeName",
         "startMinute",
         "endMinute",
+        ...(record(value).timeScalingMode !== undefined
+          ? ["timeScalingMode"]
+          : []),
+        ...(record(value).durationSource !== undefined
+          ? ["durationSource"]
+          : []),
+        ...(record(value).confirmedDurationSeconds !== undefined
+          ? ["confirmedDurationSeconds"]
+          : []),
       ]);
       const key = str(step.key);
       const itemId = str(step.mealItemId);
@@ -403,6 +412,25 @@ export function validateAppState(value: unknown): AppState {
       strings(step.equipment);
       nullable(step.guide, str);
       oneOf(step.mode, ["active", "passive", "monitored"]);
+      if (step.timeScalingMode !== undefined)
+        oneOf(step.timeScalingMode, [
+          "linear",
+          "fixed_batch",
+          "capacity_batch",
+          "validated_curve",
+          "manual",
+        ]);
+      if (step.durationSource !== undefined)
+        oneOf(step.durationSource, ["recipe_rule", "user_estimate"]);
+      if (step.confirmedDurationSeconds !== undefined)
+        nullable(step.confirmedDurationSeconds, num);
+      if (
+        step.durationSource === "user_estimate" &&
+        (step.confirmedDurationSeconds === null ||
+          step.confirmedDurationSeconds === undefined ||
+          num(step.confirmedDurationSeconds) <= 0)
+      )
+        fail();
       const minutes = num(step.minutes);
       const start = num(step.startMinute);
       const end = num(step.endMinute);

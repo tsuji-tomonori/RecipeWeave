@@ -57,6 +57,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_receipt_line.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_receipt_line.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_receipt_line.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_receipt_line.sql |
 | entity_receipt_line_create | C | backend/src/app/apis/entities/receipt_line_create/sql/001_create.sql |
 | entity_receipt_line_delete | D | backend/src/app/apis/entities/receipt_line_delete/sql/001_delete.sql |
 | entity_receipt_line_get | R | backend/src/app/apis/entities/receipt_line_get/sql/001_get.sql |

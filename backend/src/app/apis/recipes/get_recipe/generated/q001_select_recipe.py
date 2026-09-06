@@ -1,5 +1,5 @@
 # app-docs による自動生成。直接編集しない。
-# SQLのSHA256: b011d3174810decc63a329dfa153353ce017a53e8ecb9fa7f7e5ae98d630dc68
+# SQLのSHA256: 1c59e45b6a3bb79ea02939835475817cbde5bce45d684c5c795d98adac5ae2c7
 from collections.abc import Mapping
 from typing import Any, LiteralString
 
@@ -191,6 +191,7 @@ payloads AS (
                     JSONB_AGG(JSONB_BUILD_OBJECT(
                         'id', step.id::TEXT, 'title', step.title, 'instruction', step.instruction,
                         'minutes', step.duration_max_s / 60.0, 'mode', step.attention,
+                        'timeScalingMode', time_rule.mode,
                         'equipment', COALESCE((
                             SELECT JSONB_AGG(resource_kind.name ORDER BY resource_kind.name)
                             FROM recipeweave.step_resource AS resource_usage
@@ -209,6 +210,9 @@ payloads AS (
                 INNER JOIN
                     recipeweave.operation AS cook_operation
                     ON step.operation_id = cook_operation.id
+                INNER JOIN
+                    recipeweave.scaling_rule AS time_rule
+                    ON step.scaling_rule_id = time_rule.id
                 WHERE step.recipe_version_id = page.version_id
             ), '[]'::JSONB),
             'arrangementIds', '[]'::JSONB,

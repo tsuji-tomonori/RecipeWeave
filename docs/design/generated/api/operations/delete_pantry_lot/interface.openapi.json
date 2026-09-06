@@ -427,6 +427,28 @@
       "PlannedStep": {
         "additionalProperties": false,
         "properties": {
+          "confirmedDurationSeconds": {
+            "anyOf": [
+              {
+                "maximum": 86400.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmeddurationseconds"
+          },
+          "durationSource": {
+            "default": "recipe_rule",
+            "enum": [
+              "recipe_rule",
+              "user_estimate"
+            ],
+            "title": "Durationsource",
+            "type": "string"
+          },
           "endMinute": {
             "maximum": 1000000.0,
             "minimum": 0.0,
@@ -507,6 +529,18 @@
             "minimum": 0.0,
             "title": "Startminute",
             "type": "number"
+          },
+          "timeScalingMode": {
+            "default": "manual",
+            "enum": [
+              "linear",
+              "fixed_batch",
+              "capacity_batch",
+              "validated_curve",
+              "manual"
+            ],
+            "title": "Timescalingmode",
+            "type": "string"
           },
           "title": {
             "maxLength": 500,

@@ -8,15 +8,33 @@ async function step(
   action: () => Promise<void>,
 ) {
   await test.step(`${kind}: ${description}`, async () => {
+    let actionFailed = false;
     try {
       await action();
+    } catch (cause) {
+      actionFailed = true;
+      throw cause;
     } finally {
-      const path = info.outputPath(`${kind}-${info.attachments.length}.png`);
-      await page.screenshot({ path, fullPage: false });
-      await info.attach(`${kind}: ${description}`, {
-        path,
-        contentType: "image/png",
-      });
+      try {
+        if (page.isClosed())
+          throw new Error("証跡撮影前にページが閉じられました。");
+        const path = info.outputPath(`${kind}-${info.attachments.length}.png`);
+        await page.screenshot({ path, fullPage: false, timeout: 5000 });
+        await info.attach(`${kind}: ${description}`, {
+          path,
+          contentType: "image/png",
+        });
+      } catch (captureError) {
+        info.annotations.push({
+          type: "証跡取得失敗",
+          description:
+            captureError instanceof Error
+              ? captureError.message
+              : String(captureError),
+        });
+        // 操作が先に失敗した場合、その原因を撮影エラーで置き換えない。
+        if (!actionFailed) throw captureError;
+      }
     }
   });
 }
@@ -81,11 +99,19 @@ test("生成設計を全文検索し、関連するAPI仕様へ移動できる",
     "When",
     "全文検索でレシピに関する設計を探す",
     async () => {
-      await page.getByRole("button", { name: /検索/ }).first().click();
-      await page.locator('input[type="search"]').fill("recipe");
+      const search = page.locator("site-search");
+      const open = search.getByRole("button", { name: "検索", exact: true });
+      await expect(open).toBeEnabled();
+      await open.click();
+      const dialog = search.getByRole("dialog", { name: "検索", exact: true });
+      await expect(dialog).toBeVisible();
+      // Pagefind UI は type=text の入力を生成する。実際の検索コンポーネントへ限定する。
+      const input = dialog.locator("input.pagefind-ui__search-input");
+      await expect(input).toBeVisible({ timeout: 15000 });
+      await input.fill("recipe");
       await expect(
-        page.locator(".pagefind-ui__result-link").first(),
-      ).toBeVisible();
+        dialog.locator(".pagefind-ui__result-link").first(),
+      ).toBeVisible({ timeout: 15000 });
     },
   );
   await step(

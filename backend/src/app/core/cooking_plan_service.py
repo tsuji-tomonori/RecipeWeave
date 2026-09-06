@@ -7,9 +7,10 @@ from fastapi import HTTPException
 from psycopg import Connection
 from pydantic import Field
 
+from app.core.catalog_preview import catalog_preview_enabled
 from app.core.cooking_planner import build_plan
-from app.core.identity import Identity, local_auth_enabled
-from app.core.models import MealItem, PlannedStep, Recipe, WireModel
+from app.core.identity import Identity
+from app.core.models import DurationEstimate, MealItem, PlannedStep, Recipe, WireModel
 from app.core.operation_queries import OperationQueries
 from app.integrations.catalog.postgres_provider import PostgresCatalog
 
@@ -18,6 +19,9 @@ class PlanRequest(WireModel):
     """未保存の分量調整も、明示した料理版の材料行だけへ適用する。"""
 
     items: Annotated[list[MealItem], Field(min_length=1, max_length=50)]
+    duration_estimates: Annotated[list[DurationEstimate], Field(max_length=500)] = Field(
+        default_factory=list[DurationEstimate]
+    )
 
 
 class PlanResponse(WireModel):
@@ -70,7 +74,7 @@ class CookingPlanService:
                 recipe_id=_uuid(item.recipe_id),
                 version_id=_uuid(item.recipe_version_id),
                 owner_id=self.identity.user_id,
-                preview=local_auth_enabled(),
+                preview=catalog_preview_enabled(),
             )
             if not recipe_rows:
                 raise HTTPException(404, "この料理版は利用できません")
@@ -94,7 +98,15 @@ class CookingPlanService:
                 requirements[(row["step_id"], row["resource_type_id"])] = row
         resources = queries.run("q004_resources", user_id=self.identity.user_id)
         try:
-            tasks = build_plan(steps, dependencies, list(requirements.values()), resources)
+            tasks = build_plan(
+                steps,
+                dependencies,
+                list(requirements.values()),
+                resources,
+                duration_estimates=[
+                    estimate.model_dump() for estimate in request.duration_estimates
+                ],
+            )
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc
         resource_names = {row["id"]: row["name"] for row in resources}
@@ -110,6 +122,8 @@ class CookingPlanService:
                         "meal_item_id": str(task.item_id),
                         "recipe_id": recipe.id,
                         "recipe_name": recipe.name,
+                        "duration_source": task.duration_source,
+                        "confirmed_duration_seconds": task.confirmed_duration_s,
                         "minutes": (task.end - task.start) / 60,
                         "start_minute": task.start / 60,
                         "end_minute": task.end / 60,

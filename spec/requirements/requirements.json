@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 8,
+  "catalog_revision": 9,
   "product": "RecipeWeave",
   "requirements": [
     {
@@ -809,23 +809,23 @@
           "given": "冷蔵庫・献立・しおり・分量下書き・調理状態を変更した",
           "id": "AC-REQ-SVC-LOCAL-001-1",
           "then": "最後に確定したデータから利用を続けられる。保存に失敗したときは成功表示を出さない。",
-          "when": "同じ端末の同じブラウザで開き直す"
+          "when": "同じ利用者で再認証して開き直す"
         },
         {
-          "given": "端末保存を使用している",
+          "given": "APIとDBへ接続している",
           "id": "AC-REQ-SVC-LOCAL-001-2",
-          "then": "別端末や別ブラウザへの自動同期を行わないことと、バックアップなしの消失はサービス側で復元できないことが分かる。",
-          "when": "保存先の説明を確認する"
+          "then": "サーバーで確定した本人データを取得する。他人のデータを表示せず、未接続や保存失敗を成功として扱わない。",
+          "when": "別端末または別ブラウザで本人としてログインする"
         }
       ],
       "action": "maintain",
       "category": "functional",
       "id": "REQ-SVC-LOCAL-001",
-      "last_changed_by": "trace:2026-09-06:dev-v0.1",
-      "object": "冷蔵庫・献立・しおり・調理状態の端末内データ",
-      "rationale": "ログインなしで途中から使え、保存範囲を誤認しないようにする。",
+      "last_changed_by": "user:2026-09-06:full-relational-service",
+      "object": "冷蔵庫・献立・しおり・調理状態の正規化された本人データ",
+      "rationale": "保存と所有権をAPIとDBで一貫させ、端末を変えても本人の確定データから利用を続ける。",
       "retirement_reason": "",
-      "revision": 2,
+      "revision": 3,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -835,7 +835,7 @@
       "status": "active",
       "subject": "Dev公開版",
       "superseded_by": "",
-      "title": "試用データを同じブラウザで継続利用する",
+      "title": "本人の保存データを認証後に継続利用する",
       "traces": {
         "design": [
           "docs/service/manual.md",
@@ -843,11 +843,11 @@
         ],
         "implementation": [
           "frontend/src/App.svelte",
-          "frontend/src/lib/persistence.ts"
+          "backend/src/app/core/workspace_service.py"
         ],
         "standards": [],
         "tests": [
-          "frontend/src/lib/domain.test.ts",
+          "backend/tests/test_workflow_database.py",
           "frontend/src/App.test.ts"
         ]
       },
@@ -1524,18 +1524,18 @@
         {
           "given": "料理または人数・器具条件を変更した",
           "id": "AC-REQ-SVC-COOK-PLAN-001-2",
-          "then": "変更後の条件で順番を再提示し、確定した段取りから調理を始められる。",
+          "then": "変更後の条件で順番を再提示し、確定した段取りから調理を始められる。人数変更で時間の確認が必要な工程は利用者が正の目安秒数を確認する。人数比例による検証済み時間とは扱わず、選んだ人数・材料量と確認した工程・時間を調理記録へ保存する。",
           "when": "段取りを確認する"
         }
       ],
       "action": "provide",
       "category": "functional",
       "id": "REQ-SVC-COOK-PLAN-001",
-      "last_changed_by": "trace:2026-09-06:dev-v0.1",
+      "last_changed_by": "user:2026-09-06:full-relational-service",
       "object": "確定した料理工程の実行順",
       "rationale": "複数料理を作るときに手順や器具の衝突を利用者へ押し付けないようにする。",
       "retirement_reason": "",
-      "revision": 2,
+      "revision": 3,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
@@ -1553,12 +1553,15 @@
         ],
         "implementation": [
           "frontend/src/App.svelte",
-          "frontend/src/lib/domain.ts"
+          "backend/src/app/core/cooking_planner.py",
+          "backend/src/app/core/cooking_service.py",
+          "database/migrations/005_manual_duration.sql"
         ],
         "standards": [],
         "tests": [
-          "frontend/src/lib/domain.test.ts",
-          "frontend/src/App.test.ts"
+          "backend/tests/test_cooking_planner.py",
+          "backend/tests/test_workflow_database.py",
+          "frontend/e2e/workspace.spec.ts"
         ]
       },
       "type": "functional",
@@ -1786,36 +1789,37 @@
     {
       "acceptance_criteria": [
         {
-          "given": "このブラウザの利用データがある",
+          "given": "サーバーに本人の利用データがある",
           "id": "AC-REQ-SVC-BACKUP-001-1",
-          "then": "対応するJSONバックアップを保存でき、持ち出す内容と復元の方法が分かる。",
+          "then": "サーバーの確定した本人データを対応する版の型付きJSONとして書き出し、数量・料理版・消費台帳等の関係を保持する。対象内容と復元方法を表示する。",
           "when": "設定からデータを書き出す"
         },
         {
           "given": "バックアップを選択した",
           "id": "AC-REQ-SVC-BACKUP-001-2",
-          "then": "形式・版・参照関係・数量を検証し、件数と置換対象を表示して確認後に全置換する。合算しない。不正ファイルや確認キャンセルでは現在データを変更しない。",
+          "then": "形式・版・所有者・参照関係・数量を検証し、件数と本人の置換対象を表示して確認後に全置換する。共有カタログと監査記録は維持する。不正ファイル、別利用者、確認キャンセル、確認後の競合では現在データを変更せず、復元全体を1トランザクションで確定する。",
           "when": "データを読み込む"
         }
       ],
       "action": "enable",
       "category": "functional",
       "id": "REQ-SVC-BACKUP-001",
-      "last_changed_by": "trace:2026-09-06:dev-v0.1",
+      "last_changed_by": "user:2026-09-06:full-relational-service",
       "object": "利用者が指定したバックアップ内容による現在データの置換",
-      "rationale": "同期のない試用版でも持ち出しと復元を行い、不正ファイルによるデータ消失を防ぐ。",
+      "rationale": "正規化された本人データを参照関係ごと持ち出し、不正ファイルや競合によるデータ消失を防ぎながら確認後に復元する。",
       "retirement_reason": "",
-      "revision": 2,
+      "revision": 3,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",
+        "user:2026-09-06:full-relational-service",
         "docs/service/manual.md",
         "docs/service/faq.md"
       ],
       "status": "active",
       "subject": "データ管理",
       "superseded_by": "",
-      "title": "検証したバックアップで端末データを復元する",
+      "title": "検証したバックアップで本人の業務データを復元する",
       "traces": {
         "design": [
           "docs/service/manual.md",
@@ -1823,12 +1827,16 @@
         ],
         "implementation": [
           "frontend/src/App.svelte",
-          "frontend/src/lib/persistence.ts"
+          "frontend/src/lib/backup.ts",
+          "backend/src/app/core/backup_service.py",
+          "database/migrations/004_backup_restore.sql"
         ],
         "standards": [],
         "tests": [
-          "frontend/src/lib/domain.test.ts",
-          "frontend/src/App.test.ts"
+          "frontend/src/lib/backup.test.ts",
+          "frontend/e2e/backup.spec.ts",
+          "backend/tests/test_backup_api.py",
+          "backend/tests/test_backup_database.py"
         ]
       },
       "type": "functional",
@@ -1849,17 +1857,17 @@
           "given": "登録履歴と保存データを確認する",
           "id": "AC-REQ-SVC-PRIVACY-001-2",
           "then": "食材・数量・単位・登録日時・登録ID・画像ハッシュ・購入内容署名・必要な状態履歴だけを保存し、元画像や全文を復元できる形で保持しない。",
-          "when": "端末内の永続データを検査する"
+          "when": "サーバーの本人データと書き出し内容を検査する"
         }
       ],
       "action": "constrain",
       "category": "nonfunctional",
       "id": "REQ-SVC-PRIVACY-001",
-      "last_changed_by": "trace:2026-09-06:dev-v0.1",
+      "last_changed_by": "user:2026-09-06:full-relational-service",
       "object": "確認のため一時的に保持した画像とOCR全文の保存期間",
       "rationale": "レシートの個人情報を在庫登録に不要な形で残さないようにする。",
       "retirement_reason": "",
-      "revision": 2,
+      "revision": 3,
       "scope": "product",
       "source_refs": [
         "user:2026-09-05:recipeweave-service",

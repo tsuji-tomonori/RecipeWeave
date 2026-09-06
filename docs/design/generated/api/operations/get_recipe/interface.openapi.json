@@ -317,6 +317,18 @@
             "title": "Mode",
             "type": "string"
           },
+          "timeScalingMode": {
+            "default": "manual",
+            "enum": [
+              "linear",
+              "fixed_batch",
+              "capacity_batch",
+              "validated_curve",
+              "manual"
+            ],
+            "title": "Timescalingmode",
+            "type": "string"
+          },
           "title": {
             "maxLength": 500,
             "title": "Title",

@@ -18,6 +18,9 @@
 | Method | Path | operationId | 認証定義 | 応答 |
 |---|---|---|---|---|
 | POST | `/api/auth/local-login` | `local_login` | 公開 | 200, 401, 404, 422, 503 |
+| POST | `/api/backups/export` | `export_backup` | HTTPBearer | 200, 401, 403, 409, 413, 422, 503 |
+| POST | `/api/backups/preview` | `preview_backup` | HTTPBearer | 200, 401, 403, 409, 413, 422, 503 |
+| POST | `/api/backups/restore` | `restore_backup` | HTTPBearer | 200, 401, 403, 409, 413, 422, 503 |
 | POST | `/api/cooking-plan` | `preview_cooking_plan` | HTTPBearer | 200, 401, 403, 404, 422, 503 |
 | POST | `/api/cooking-sessions` | `create_cooking_session` | HTTPBearer | 200, 401, 403, 404, 409, 422, 503 |
 | PATCH | `/api/cooking-sessions/{row_id}` | `update_cooking_session` | HTTPBearer | 200, 401, 403, 404, 409, 422, 503 |
@@ -38,6 +41,10 @@
 | POST | `/api/entities/axis_option` | `entity_axis_option_create` | HTTPBearer | 201, 401, 403, 409, 422, 503 |
 | GET | `/api/entities/axis_option/{row_id}` | `entity_axis_option_get` | HTTPBearer | 200, 401, 403, 404, 409, 422, 503 |
 | PUT | `/api/entities/axis_option/{row_id}` | `entity_axis_option_update` | HTTPBearer | 200, 401, 403, 409, 422, 428, 503 |
+| GET | `/api/entities/backup_artifact` | `entity_backup_artifact_list` | HTTPBearer | 200, 401, 403, 409, 422, 503 |
+| GET | `/api/entities/backup_artifact/{row_id}` | `entity_backup_artifact_get` | HTTPBearer | 200, 401, 403, 404, 409, 422, 503 |
+| GET | `/api/entities/backup_restore_intent` | `entity_backup_restore_intent_list` | HTTPBearer | 200, 401, 403, 409, 422, 503 |
+| GET | `/api/entities/backup_restore_intent/{row_id}` | `entity_backup_restore_intent_get` | HTTPBearer | 200, 401, 403, 404, 409, 422, 503 |
 | GET | `/api/entities/candidate_attempt` | `entity_candidate_attempt_list` | HTTPBearer | 200, 401, 403, 409, 422, 503 |
 | POST | `/api/entities/candidate_attempt` | `entity_candidate_attempt_create` | HTTPBearer | 201, 401, 403, 409, 422, 503 |
 | GET | `/api/entities/candidate_attempt/{row_id}` | `entity_candidate_attempt_get` | HTTPBearer | 200, 401, 403, 404, 409, 422, 503 |
@@ -345,21 +352,23 @@
 
 | ファイル | 公開要素 | SHA-256 |
 |---|---|---|
-| `frontend/src/App.test.ts` | 検証コード | `6b32effd2998c09e1ec5c129adea57d032965d87b8461cbf4d313949af3df8c0` |
-| `frontend/src/lib/api-contract.ts` | `WorkspaceResponse`, `RevisionRequest`, `WorkspaceMutationResponse`, `CreatePantryLotRequest`, `UpdatePantryLotRequest`, `CommitReceiptRequest`, `AddMenuItemRequest`, `PutSettingsRequest`, `PutShoppingChecksRequest`, `CreateCookingSessionRequest`, `UpdateCookingSessionRequest`, `PreviewCookingPlanRequest`, `PreviewCookingPlanResponse`, `CreateCustomFoodRequest` | `0d2b0299ac7e28e6b3b3acc770970f266a43f126b48f091fdbbce5a7bf566e68` |
-| `frontend/src/lib/api.test.ts` | 検証コード | `bde1193b862e022ef2344a69432a9aca40091c07eeb14f743d4598f1572d82d2` |
-| `frontend/src/lib/api.ts` | `User`, `StateEnvelope`, `RecipePage`, `ApiError`, `request`, `localLogin`, `currentUser`, `loadFoods`, `findRecipes`, `randomRecipe`, `loadRecipe`, `loadState`, `saveState`, `completeCooking`, `commitReceipt`, `previewCookingPlan` | `c5e3bd11936b188a4c6bf2c941378cce1a0c922d5582ad01fb78be213c2ef30e` |
+| `frontend/src/App.test.ts` | 検証コード | `237e51869d611439a320ce6321f67075231ea1508049405805522b1933b6b2dd` |
+| `frontend/src/lib/api-contract.ts` | `WorkspaceResponse`, `RevisionRequest`, `WorkspaceMutationResponse`, `CreatePantryLotRequest`, `UpdatePantryLotRequest`, `CommitReceiptRequest`, `AddMenuItemRequest`, `PutSettingsRequest`, `PutShoppingChecksRequest`, `CreateCookingSessionRequest`, `UpdateCookingSessionRequest`, `PreviewCookingPlanRequest`, `PreviewCookingPlanResponse`, `CreateCustomFoodRequest` | `cd1a70967466360896a5767d90a7bfaacf364d53439bd0e2ed1c9124880602d3` |
+| `frontend/src/lib/api.test.ts` | 検証コード | `f79deb83ab65135519619059aa7bee75abac74d352038f80c2112af9c8edff44` |
+| `frontend/src/lib/api.ts` | `User`, `StateEnvelope`, `RecipePage`, `ApiError`, `request`, `localLogin`, `currentUser`, `loadFoods`, `findRecipes`, `randomRecipe`, `loadRecipe`, `loadState`, `saveState`, `completeCooking`, `commitReceipt`, `previewCookingPlan`, `exportDatabaseBackup`, `previewDatabaseBackup`, `restoreDatabaseBackup` | `3ce0a37a0ab3d59c1362eb3c8cd3cbb5f173a463d64c428d7aa34e84529f2457` |
 | `frontend/src/lib/auth.test.ts` | 検証コード | `007954eb06b22ad583e0f707501254830bb19c2f471ecb027091de90d258e586` |
 | `frontend/src/lib/auth.ts` | `localMode`, `getToken`, `setToken`, `clearToken`, `loginCognito`, `completeLogin`, `logout` | `1beef8d3417207cc4b5a8723dde17df38408e5b7072529cc5e7c5d98eac74a69` |
+| `frontend/src/lib/backup.test.ts` | 検証コード | `77efde125939de9173ad9b6c0edafb0fbf86b2ac441d7b55cdf88455c35be9f7` |
+| `frontend/src/lib/backup.ts` | `MAX_BACKUP_BYTES`, `BackupInput`, `BackupPreview`, `readBackupFile` | `1f548e6fd07931468623f1135f91ac72b9cd553273dcadf4aecb7c2074e615aa` |
 | `frontend/src/lib/domain.test.ts` | 検証コード | `05077452f7c0ef12e476e084678f3db16e96811fe19a30181d10a045eda8353e` |
 | `frontend/src/lib/domain.ts` | `FOODS`, `RECIPES`, `setCatalog`, `cacheRecipes`, `DomainError`, `newId`, `validateQuantity`, `createInitialState`, `allFoods`, `getFood`, `getRecipe`, `quantityText`, `ingredientKey`, `getDraft`, `scaleDraft`, `setDraftAmount`, `saveDraft`, `resetDraft`, `addToMeal`, `updateMeal`, `removeFromMeal`, `toggleSaved`, `addCustomFood`, `addStock`, `updateStock`, `deleteStock`, `restoreStock`, `duplicateImports`, `commitReceipt`, `previewUndoImport`, `undoImport`, `requiredQuantities`, `shoppingList`, `toggleShoppingCheck`, `searchRecipes`, `randomRecipe`, `arrangements`, `buildCookingPlan`, `startCooking`, `moveCooking`, `pauseCooking`, `resumeCooking`, `startTimer`, `timerRemaining`, `previewConsumption`, `completeCooking` | `146af9c0a7f055e52243e9e0965d84face2aeb8372e6d5331b15601a0b8e3c23` |
 | `frontend/src/lib/ocr.ts` | `OcrTask`, `validateReceiptImage`, `recognizeReceipt` | `e017bc1ff238edf30fe43b440752cd66c70d45172ad73bf3f9687b37947efeab` |
-| `frontend/src/lib/persistence.ts` | `STORAGE_KEY`, `StorageLike`, `LockManagerLike`, `RecoverySnapshot`, `validateAppState`, `parseBackup`, `loadState`, `inspectRecovery`, `transact`, `exportBackup`, `restoreBackup`, `recoverBackup` | `10455e9182e71680716f739002c373fc7b0b0e9bcb3af9e7d3631107694e8eaa` |
+| `frontend/src/lib/persistence.ts` | `STORAGE_KEY`, `StorageLike`, `LockManagerLike`, `RecoverySnapshot`, `validateAppState`, `parseBackup`, `loadState`, `inspectRecovery`, `transact`, `exportBackup`, `restoreBackup`, `recoverBackup` | `38e94de450ae9f4f6a2f972eca49e4cbf050df3988c88294bfc1e31f117db338` |
 | `frontend/src/lib/receipt.ts` | `parseReceipt`, `receiptSignature`, `validateReceiptFile`, `hashImage` | `293c705dfc2f47b9657deffb4123bcb00a4056693520648ef75df5f9ed3e4c53` |
-| `frontend/src/lib/types.ts` | `UNITS`, `Unit`, `StorageLocation`, `Quantity`, `Food`, `RecipeIngredient`, `RecipeStep`, `Recipe`, `RecipeDraft`, `MealItem`, `StockLot`, `ReceiptImport`, `ReceiptCandidate`, `ReceiptCommit`, `ShoppingCheck`, `ShoppingRow`, `ShoppingList`, `PlannedStep`, `CookingTimer`, `ConsumptionRequest`, `ConsumptionResult`, `CookingSession`, `Settings`, `SearchFilters`, `AppState`, `StockInput`, `UndoPreview` | `b3479a60f23927a4b0ac091d1c8dfbea21ecfcab00c403d5d8f77e735550b4ff` |
+| `frontend/src/lib/types.ts` | `UNITS`, `Unit`, `StorageLocation`, `Quantity`, `Food`, `RecipeIngredient`, `TimeScalingMode`, `DurationEstimate`, `RecipeStep`, `Recipe`, `RecipeDraft`, `MealItem`, `StockLot`, `ReceiptImport`, `ReceiptCandidate`, `ReceiptCommit`, `ShoppingCheck`, `ShoppingRow`, `ShoppingList`, `PlannedStep`, `CookingTimer`, `ConsumptionRequest`, `ConsumptionResult`, `CookingSession`, `Settings`, `SearchFilters`, `AppState`, `StockInput`, `UndoPreview` | `bc07fc8746fe109e30c585bc2b53256442c70d9972e5e81bfa22ce336444ffc2` |
 | `frontend/src/main.ts` | 画面コンポーネント／起動処理 | `ec315a1d373f5470b11a7dcaa0d972ab81e3f513113325bd18aea471c1ce2d62` |
 | `frontend/src/test-fixtures.ts` | `fixtureFoods`, `fixtureRecipes` | `7898608c422027651efb2521013d31dfdeb59d78cd50cd7a53bd90853a45e178` |
-| `frontend/src/App.svelte` | 画面コンポーネント／起動処理 | `bf7b3bb1cdc6353e67480223f598e6ef1ed40121633f09c013a82c0e1dd4492b` |
+| `frontend/src/App.svelte` | 画面コンポーネント／起動処理 | `c98f83119326734501f2630c2893af787b29fb9181138a7aedc6b2f19f319698` |
 | `frontend/src/lib/FoodTile.svelte` | 画面コンポーネント／起動処理 | `8be1fc4f7ab1b54c026a7ff77fa74f67e479f8b09a7cf25c944807da71024333` |
 | `frontend/src/lib/RecipeCard.svelte` | 画面コンポーネント／起動処理 | `04bb0c6df673eacfba6aeeba92df6092dd54ec1f09af471114cf53186c7a6ace` |
 
@@ -372,6 +381,196 @@
 | `backend/src/app/apis/auth/get_me/sql/q003_select_user.sql` | `4ded63ca08f484bd5b5cbcac75da9a9426efefd31bb870bb67d887d586a703e3` |
 | `backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql` | `321b6f7464e8c8f4e14763b26a0d39b5bb98394e03543170bf2fd574ee86067f` |
 | `backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql` | `c89b36ed13995b8e6de523b856446e6b79917067b9c940e5fbf5efd9ae1620b4` |
+| `backend/src/app/apis/backup/export_backup/sql/q001_lock_revision.sql` | `28c2f7fec63fdc8a39f44e0e25d68b8eaa0e0ddb7d99a918e04af3234143ef0e` |
+| `backend/src/app/apis/backup/export_backup/sql/q002_profile.sql` | `49f6e17337f7645e036792de082a441de70b9cba6ef89f80229e5f4e72852ad5` |
+| `backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql` | `703a6c33c9a8598c3c37c5b39cf22ff286c28ca50b82dac89c9a7571d0ae89a4` |
+| `backend/src/app/apis/backup/export_backup/sql/q021_issue_artifact.sql` | `5fd3d30092889c82af9b6dff50a7d93242b9a6464be0b765d6917625fa4ea7bb` |
+| `backend/src/app/apis/backup/preview_backup/sql/q001_lock_revision.sql` | `28c2f7fec63fdc8a39f44e0e25d68b8eaa0e0ddb7d99a918e04af3234143ef0e` |
+| `backend/src/app/apis/backup/preview_backup/sql/q002_profile.sql` | `49f6e17337f7645e036792de082a441de70b9cba6ef89f80229e5f4e72852ad5` |
+| `backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql` | `703a6c33c9a8598c3c37c5b39cf22ff286c28ca50b82dac89c9a7571d0ae89a4` |
+| `backend/src/app/apis/backup/preview_backup/sql/q020_artifact.sql` | `b9c8654dc89a48abfcefb7739c1e61d0ba399e82ff618c4f89cc25ea62716066` |
+| `backend/src/app/apis/backup/preview_backup/sql/q022_issue_intent.sql` | `cfc6818fceac6db3aff49e4b81f3f443a85249cf507e827524887f4bdbbc32f8` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_catalog_release.sql` | `788fe9694659105cd7b588769f5a8ba6862f5de0604b10721f10d87025f4c336` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_conversion.sql` | `2516b98959e3210c4d77616794b738b423001e4864f647c5345c140efce370d2` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_cooking_session.sql` | `e4c418e253845c782b4eb5772c94ba4fd3a3d9a7be76f2059bb696398f1ab633` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_food.sql` | `e9a343d27f6b16090d78cffc070593b32a6917b7fb7132d9b4858ca02d4fa10b` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_food_alias.sql` | `76f6f6044cdef4be3eb8ba91cc956f3346e7f987a820c59bee74621bc58aa3b0` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_food_allergen.sql` | `202d65291f9a1e9fa01eceb8de32e47ea448463545f296d385aca5b17b5ead4f` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_food_axis_option.sql` | `006d271d9c423fdd0c37edd6ecdbd8c97b15e8cfe46c66c95663e0869c6f016a` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_food_form.sql` | `f04b7465cf8ebbac28e7b706445178dc284933b2758661630fd05e72c71e8170` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_form_yield.sql` | `af108757889088ab842e5054118836464d81dd5da5c1f6d7b804d88bf9930e78` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_ingredient_total.sql` | `7363d86e7820182d4b7f3ea6a572a8faed8c291db93a6dc605ee6d0374ea3aed` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_kitchen_resource.sql` | `ac62a77fe15bc324ba70014344bd3d8a5195f1663f08d7239cd034958a3f0a63` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_menu.sql` | `60d9ff3ddf5d79ff32375683030a8b6250c86b48b75eab96553fe830a039ae77` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_menu_ingredient_override.sql` | `be4cc85b407ed4a6af2865a3d8f485407568f28578949bd39902ca63889a0c33` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_menu_item.sql` | `9b5e1b93cbed61140e86c5d3a04c9a26bdb66a3f1b7c2d14040abcfaf8ae224a` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_nutrition_fact.sql` | `87ca137f255f586bd1ce4b1d1177a4165d44d8f02b0157c5dfbaa82b2117182c` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_pantry_consumption.sql` | `ebeb195f39ba31e57b9467248210e05bc188f48880e7d06e5a59de6b4e60e6df` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_pantry_lot.sql` | `f921c2830d9357c08133f2a9ae03e3e766e165e004512a99478afc758976ef33` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_product.sql` | `2e865c898fef1379cb0fc82c3b637ba957a6322bcccb42b049eb3886514ea801` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_product_allergen.sql` | `ba2b3415f02205c1f51a19d98a1cbff187c4dfb3f35577cf57548fe0767e0367` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_product_component.sql` | `2f916276269a6ee05f44926ea784267836abc1f1575e583082f1f1dad6faea9e` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_product_preparation_rule.sql` | `078fdb27cc7cdf3e19b7a716076b59dcfe1d080aba0f01cf0b7cdb0ae132cdfd` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_product_version.sql` | `6cfc27ac259e1c0d0e74ef7fc69248c4b41d746225789f43c56f8d916875f046` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_receipt_import.sql` | `c848381ee7747c602bd757c29d3e4f12f0e2eca70adf8d405f031cbf92d74717` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_receipt_line.sql` | `3bc87b431b8a29e2c586a2f44afa7d1b2828c6c711bc9c43619c47b5529dd586` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_resource_reservation.sql` | `4640a373130076eaa621ce59b410b01730c13575c0e1031d8820b36bd0d2910f` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_session_task.sql` | `851e7575e5b72a1b45a014e9812f6eaa5a5ef1e96a5cdafc3367223e0c9f804b` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_shopping_item.sql` | `56d08128e320d50c9aadffe0b74734f67068a14e38b37aa00693781b4db0cc62` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_task_dependency.sql` | `8157207df1ff85c0f600177ef8dbb367369b47a1b6d52a02a18e1f9327599175` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_exclusion.sql` | `2964224c329b3533669afa23b957c329da4ee069664a999f1efea0065bc1253c` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_food.sql` | `921a4cbbf72531bde25180066e67bd7050deafb69ccc55e917168e662c69664a` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_pantry_food.sql` | `6278d4a828b1d2b9c9515bdd100336dcdc9738181412871c3045d6a583bdb101` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_preference.sql` | `17b30d4baa5717188a88947d0a280186f9ad9da1a52ebf601fc74f098e041beb` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_recipe_event.sql` | `70e16a4f267c48b48c2edc74326d982827e307aba1e1a3876dbc7ad8bdb9831e` |
+| `backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_shopping_check.sql` | `b6e692637d7bfa0d1bfa9f0d195a6783e01b67583eaf1c0a116d5b94ac0e6ea2` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_catalog_release.sql` | `1f5222a09e4a70b71a23b52c188a945e254db08e50c417de076c8a4bcd8cdfe1` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_conversion.sql` | `cc7e8e2dc6b4dccbdccde79df89ea34c4434a0c77d482155086a3a9445b29224` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_cooking_session.sql` | `7259c2c2e35b584f332510c5e5ba01dd637f349154bd064b20c8872b0150b9a1` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_food.sql` | `ad70bf20fe116835c5fc9969893156918077695a618a0b69e2ed9fba5656e2dc` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_food_alias.sql` | `55a379b5eb0b50d277c1c4c79c2f3aaf7b34ca8f913e4ff82663125ee38c1b3d` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_food_allergen.sql` | `14f3b992c02eced61448184d7ae6bbb669101137264c7cc1b9b0e8ef59b03a1a` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_food_axis_option.sql` | `a24e3bb094def0d08b21aa15e7d2bc71394b01b69ab07b768aba0714c6a08a3a` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_food_form.sql` | `e5a35d8dc2d7e28f80ccf56043b671d79f700d3176b6e1ef316ebca1183932a1` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_form_yield.sql` | `dd79fdde086814b1b2f7e4c6b63b71dca95f0454200be41aceba7f33881bb4e6` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_ingredient_total.sql` | `70780a34840e7dbc4e6afc9027ab53853b36bee1202ebb5e9e9a7f9c3e6e320a` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_kitchen_resource.sql` | `971bce45db5ac8434c49945e86a9d5b8e3075650f8be49316c8f555f7231b22e` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_menu.sql` | `02ed6d8da195820324e78100c93a4d3a6f9b8eb897454c78f2640cf99d570e9e` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_menu_ingredient_override.sql` | `9929e63497ce75ba24b99fbcb80ad91d757a64ff558a98da4eb3e2d04ce75f7a` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_menu_item.sql` | `b6e70b517aaa1232ad887aadb37c3475439e3a9c820353640816851a46de14be` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_nutrition_fact.sql` | `6398d7736ad91430d3fc169cb2daefe6f5d437382e5e7303f59a07db6a69ba57` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_pantry_consumption.sql` | `016dea80bb179b36f08dce4ab92c94c7108cf5841529820fa7de70e944003aff` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_pantry_lot.sql` | `734629f0d3495d28399e1cc2478e01d000a39462ce262f3cf4e93a0735fd7a31` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_product.sql` | `2a9c4834b712d82c0be6e6a1691d26de88903873442aff4a9eecc79a98feee45` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_product_allergen.sql` | `5e8414ff1cb91fb1c7db95680a1f920839ebf34899635c4e13190259ecb245ef` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_product_component.sql` | `5ea2333d0e787a8106b6b2b73835659e3ef6702eeb16d780c8f3b6b758cf33c0` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_product_preparation_rule.sql` | `d6f4516420ae7edd3ca867bcaf69b6b291d0b3835a654cf4a36b67694efa3afb` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_product_version.sql` | `f00ce29801482be5cde208a41ae0cb11e84d26e98da73514c26d14e918007823` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_receipt_import.sql` | `d4c8776ffc8a32fe0a45d1bcbfb86f1be69c4ce90f6208731e842c2ee1afd694` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_receipt_line.sql` | `38b5decf1176dc6834e9b184d78d3821da39cd8e9a7f7a9267315f736641994d` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_resource_reservation.sql` | `cb98c239c7b3a3a4489edd1cc187123f1fb331ac7156905a33b291c07586d823` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_session_task.sql` | `4e2e98a536c6b1959811ecbd84ab08125f90567355826ad1ea275e508c19ea2f` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_shopping_item.sql` | `9a3ce297734d5c68e7fa233916faaf3d14b2ce6f8b5bc609404eedd3dc25ff25` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_task_dependency.sql` | `b43accae305854ac7f73e98129b91f6d9eda58aac7027734b27df2e8eca2ce2e` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_exclusion.sql` | `10cd7434d6262ef711c0019f6a13f6b02e944d0de5d04bbe4455ebfd1bc2a7cc` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_food.sql` | `413e056710325779644f9b82157b7b360fef45939c93d075f6049c41645d9d1f` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_pantry_food.sql` | `d476da8f6d450e9cf156870017d5bc1cc2b8c8a8db9f5317d24a5e1a82e9affc` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_preference.sql` | `f59939725d1999d158c70fbf795e141e8a8528721e59540005913f491947f824` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_recipe_event.sql` | `cbabe82ebbd9099e5410e4f5e8df98f33df6b87703e1be2e55dccd0bfa524d9c` |
+| `backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_shopping_check.sql` | `bfa815ee6e75d46f3b0754fa7edf178538337f3ebc54bd88633879926d29a680` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_allergen.sql` | `0ea865de5e1030261ae49250e80e5b491133d6f6974797254e31d22969e03f06` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_axis_option.sql` | `5c3620522bf248a6110ed627129fcf4958f226b4864d74f538f384bed69b2c57` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_catalog_release.sql` | `7aa1f69952b3a989c73f60eb5cd33203010fb3844fa607add6abeaf80994a447` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_food.sql` | `8205cc440da87cdb976aa23bd80064b74e4e837b9c5bab71f71377862af726f1` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_food_form.sql` | `ad1204b842ea11d5727840da19f826cc6f3fe17c5961590cea020d237fde3ae2` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_nutrient.sql` | `0af389ce46200bd40171d0e1094856dd50f87ed96e3784c36f9cd383a7496dfb` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_operation.sql` | `5f6a0d5ee9343b66bcf51f99482cba62f54230600bc97d0ee86516c3a1ed2f31` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_product.sql` | `917dc766b9143fc2fa8aed141f9e45832022f895b8496a7ccbb9cbd51fc3ca7e` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_product_version.sql` | `ebdcf039be11f2e29dd8951a32c9e8d8d676f4acfa577320489bd8e2de0ff956` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_recipe_ingredient.sql` | `ea26158b889928f33f41d304e7668768b2c82535349b0f5626dbc74436657c5a` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_recipe_step.sql` | `c5ab20c6d493a8889f1b5a0b975753efe535aa1f2bdab2f39a4c0ec6b72e1bd4` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_recipe_version.sql` | `1bc6d936ecf91d411d50749451bc016c78e4a95d672f2d3609b7801a7eb44a73` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_resource_type.sql` | `17c2deb1cdfecd510e7d9e4e0ba9c83bcda1338b29256e319767b6e18c6ae445` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_source_record.sql` | `17a5f3941f09d29c395a4ef0d279e89e51e76844221eb5af79692e7ab1b9e7a7` |
+| `backend/src/app/apis/backup/preview_backup/sql/q300_reference_unit.sql` | `8caa1a6fed36239bd2d7bd22672cd255fcd9d328393ff0d567b413d8b4d523c3` |
+| `backend/src/app/apis/backup/preview_backup/sql/q800_constraints_immediate.sql` | `7c03c4ffbec4374e7c2b6fb317040181c3e3b08eea057b86940d70102fa34ade` |
+| `backend/src/app/apis/backup/preview_backup/sql/q801_constraints_deferred.sql` | `92e4ce672420ff25733c0c7fa902dedb804a5b5353abc712d8fd96dba4b5a478` |
+| `backend/src/app/apis/backup/preview_backup/sql/q802_restore_profile.sql` | `b0e15aa8ed17d26d29be7eae1a11d6f8d5b5e0750e075697605b72e3a90910a9` |
+| `backend/src/app/apis/backup/restore_backup/sql/q001_lock_revision.sql` | `28c2f7fec63fdc8a39f44e0e25d68b8eaa0e0ddb7d99a918e04af3234143ef0e` |
+| `backend/src/app/apis/backup/restore_backup/sql/q002_profile.sql` | `49f6e17337f7645e036792de082a441de70b9cba6ef89f80229e5f4e72852ad5` |
+| `backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql` | `703a6c33c9a8598c3c37c5b39cf22ff286c28ca50b82dac89c9a7571d0ae89a4` |
+| `backend/src/app/apis/backup/restore_backup/sql/q020_artifact.sql` | `b9c8654dc89a48abfcefb7739c1e61d0ba399e82ff618c4f89cc25ea62716066` |
+| `backend/src/app/apis/backup/restore_backup/sql/q023_lock_intent.sql` | `4e2f2bfb2fc095626d1c50bd7de2f7be5cb8ec3ed0a3bfe059b4703b961ea126` |
+| `backend/src/app/apis/backup/restore_backup/sql/q024_consume_intent.sql` | `a82460c8ee631fd6c036207fd13263c4159995cf6dd7501b48a99dc23ccad882` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_catalog_release.sql` | `788fe9694659105cd7b588769f5a8ba6862f5de0604b10721f10d87025f4c336` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_conversion.sql` | `2516b98959e3210c4d77616794b738b423001e4864f647c5345c140efce370d2` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_cooking_session.sql` | `e4c418e253845c782b4eb5772c94ba4fd3a3d9a7be76f2059bb696398f1ab633` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_food.sql` | `e9a343d27f6b16090d78cffc070593b32a6917b7fb7132d9b4858ca02d4fa10b` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_food_alias.sql` | `76f6f6044cdef4be3eb8ba91cc956f3346e7f987a820c59bee74621bc58aa3b0` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_food_allergen.sql` | `202d65291f9a1e9fa01eceb8de32e47ea448463545f296d385aca5b17b5ead4f` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_food_axis_option.sql` | `006d271d9c423fdd0c37edd6ecdbd8c97b15e8cfe46c66c95663e0869c6f016a` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_food_form.sql` | `f04b7465cf8ebbac28e7b706445178dc284933b2758661630fd05e72c71e8170` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_form_yield.sql` | `af108757889088ab842e5054118836464d81dd5da5c1f6d7b804d88bf9930e78` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_ingredient_total.sql` | `7363d86e7820182d4b7f3ea6a572a8faed8c291db93a6dc605ee6d0374ea3aed` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_kitchen_resource.sql` | `ac62a77fe15bc324ba70014344bd3d8a5195f1663f08d7239cd034958a3f0a63` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_menu.sql` | `60d9ff3ddf5d79ff32375683030a8b6250c86b48b75eab96553fe830a039ae77` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_menu_ingredient_override.sql` | `be4cc85b407ed4a6af2865a3d8f485407568f28578949bd39902ca63889a0c33` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_menu_item.sql` | `9b5e1b93cbed61140e86c5d3a04c9a26bdb66a3f1b7c2d14040abcfaf8ae224a` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_nutrition_fact.sql` | `87ca137f255f586bd1ce4b1d1177a4165d44d8f02b0157c5dfbaa82b2117182c` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_pantry_consumption.sql` | `ebeb195f39ba31e57b9467248210e05bc188f48880e7d06e5a59de6b4e60e6df` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_pantry_lot.sql` | `f921c2830d9357c08133f2a9ae03e3e766e165e004512a99478afc758976ef33` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_product.sql` | `2e865c898fef1379cb0fc82c3b637ba957a6322bcccb42b049eb3886514ea801` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_product_allergen.sql` | `ba2b3415f02205c1f51a19d98a1cbff187c4dfb3f35577cf57548fe0767e0367` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_product_component.sql` | `2f916276269a6ee05f44926ea784267836abc1f1575e583082f1f1dad6faea9e` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_product_preparation_rule.sql` | `078fdb27cc7cdf3e19b7a716076b59dcfe1d080aba0f01cf0b7cdb0ae132cdfd` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_product_version.sql` | `6cfc27ac259e1c0d0e74ef7fc69248c4b41d746225789f43c56f8d916875f046` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_receipt_import.sql` | `c848381ee7747c602bd757c29d3e4f12f0e2eca70adf8d405f031cbf92d74717` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_receipt_line.sql` | `3bc87b431b8a29e2c586a2f44afa7d1b2828c6c711bc9c43619c47b5529dd586` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_resource_reservation.sql` | `4640a373130076eaa621ce59b410b01730c13575c0e1031d8820b36bd0d2910f` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_session_task.sql` | `851e7575e5b72a1b45a014e9812f6eaa5a5ef1e96a5cdafc3367223e0c9f804b` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_shopping_item.sql` | `56d08128e320d50c9aadffe0b74734f67068a14e38b37aa00693781b4db0cc62` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_task_dependency.sql` | `8157207df1ff85c0f600177ef8dbb367369b47a1b6d52a02a18e1f9327599175` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_exclusion.sql` | `2964224c329b3533669afa23b957c329da4ee069664a999f1efea0065bc1253c` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_food.sql` | `921a4cbbf72531bde25180066e67bd7050deafb69ccc55e917168e662c69664a` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_pantry_food.sql` | `6278d4a828b1d2b9c9515bdd100336dcdc9738181412871c3045d6a583bdb101` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_preference.sql` | `17b30d4baa5717188a88947d0a280186f9ad9da1a52ebf601fc74f098e041beb` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_recipe_event.sql` | `70e16a4f267c48b48c2edc74326d982827e307aba1e1a3876dbc7ad8bdb9831e` |
+| `backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_shopping_check.sql` | `b6e692637d7bfa0d1bfa9f0d195a6783e01b67583eaf1c0a116d5b94ac0e6ea2` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_catalog_release.sql` | `1f5222a09e4a70b71a23b52c188a945e254db08e50c417de076c8a4bcd8cdfe1` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_conversion.sql` | `cc7e8e2dc6b4dccbdccde79df89ea34c4434a0c77d482155086a3a9445b29224` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_cooking_session.sql` | `7259c2c2e35b584f332510c5e5ba01dd637f349154bd064b20c8872b0150b9a1` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_food.sql` | `ad70bf20fe116835c5fc9969893156918077695a618a0b69e2ed9fba5656e2dc` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_food_alias.sql` | `55a379b5eb0b50d277c1c4c79c2f3aaf7b34ca8f913e4ff82663125ee38c1b3d` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_food_allergen.sql` | `14f3b992c02eced61448184d7ae6bbb669101137264c7cc1b9b0e8ef59b03a1a` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_food_axis_option.sql` | `a24e3bb094def0d08b21aa15e7d2bc71394b01b69ab07b768aba0714c6a08a3a` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_food_form.sql` | `e5a35d8dc2d7e28f80ccf56043b671d79f700d3176b6e1ef316ebca1183932a1` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_form_yield.sql` | `dd79fdde086814b1b2f7e4c6b63b71dca95f0454200be41aceba7f33881bb4e6` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_ingredient_total.sql` | `70780a34840e7dbc4e6afc9027ab53853b36bee1202ebb5e9e9a7f9c3e6e320a` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_kitchen_resource.sql` | `971bce45db5ac8434c49945e86a9d5b8e3075650f8be49316c8f555f7231b22e` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_menu.sql` | `02ed6d8da195820324e78100c93a4d3a6f9b8eb897454c78f2640cf99d570e9e` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_menu_ingredient_override.sql` | `9929e63497ce75ba24b99fbcb80ad91d757a64ff558a98da4eb3e2d04ce75f7a` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_menu_item.sql` | `b6e70b517aaa1232ad887aadb37c3475439e3a9c820353640816851a46de14be` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_nutrition_fact.sql` | `6398d7736ad91430d3fc169cb2daefe6f5d437382e5e7303f59a07db6a69ba57` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_pantry_consumption.sql` | `016dea80bb179b36f08dce4ab92c94c7108cf5841529820fa7de70e944003aff` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_pantry_lot.sql` | `734629f0d3495d28399e1cc2478e01d000a39462ce262f3cf4e93a0735fd7a31` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_product.sql` | `2a9c4834b712d82c0be6e6a1691d26de88903873442aff4a9eecc79a98feee45` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_product_allergen.sql` | `5e8414ff1cb91fb1c7db95680a1f920839ebf34899635c4e13190259ecb245ef` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_product_component.sql` | `5ea2333d0e787a8106b6b2b73835659e3ef6702eeb16d780c8f3b6b758cf33c0` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_product_preparation_rule.sql` | `d6f4516420ae7edd3ca867bcaf69b6b291d0b3835a654cf4a36b67694efa3afb` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_product_version.sql` | `f00ce29801482be5cde208a41ae0cb11e84d26e98da73514c26d14e918007823` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_receipt_import.sql` | `d4c8776ffc8a32fe0a45d1bcbfb86f1be69c4ce90f6208731e842c2ee1afd694` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_receipt_line.sql` | `38b5decf1176dc6834e9b184d78d3821da39cd8e9a7f7a9267315f736641994d` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_resource_reservation.sql` | `cb98c239c7b3a3a4489edd1cc187123f1fb331ac7156905a33b291c07586d823` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_session_task.sql` | `4e2e98a536c6b1959811ecbd84ab08125f90567355826ad1ea275e508c19ea2f` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_shopping_item.sql` | `9a3ce297734d5c68e7fa233916faaf3d14b2ce6f8b5bc609404eedd3dc25ff25` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_task_dependency.sql` | `b43accae305854ac7f73e98129b91f6d9eda58aac7027734b27df2e8eca2ce2e` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_exclusion.sql` | `10cd7434d6262ef711c0019f6a13f6b02e944d0de5d04bbe4455ebfd1bc2a7cc` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_food.sql` | `413e056710325779644f9b82157b7b360fef45939c93d075f6049c41645d9d1f` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_pantry_food.sql` | `d476da8f6d450e9cf156870017d5bc1cc2b8c8a8db9f5317d24a5e1a82e9affc` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_preference.sql` | `f59939725d1999d158c70fbf795e141e8a8528721e59540005913f491947f824` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_recipe_event.sql` | `cbabe82ebbd9099e5410e4f5e8df98f33df6b87703e1be2e55dccd0bfa524d9c` |
+| `backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_shopping_check.sql` | `bfa815ee6e75d46f3b0754fa7edf178538337f3ebc54bd88633879926d29a680` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_allergen.sql` | `0ea865de5e1030261ae49250e80e5b491133d6f6974797254e31d22969e03f06` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_axis_option.sql` | `5c3620522bf248a6110ed627129fcf4958f226b4864d74f538f384bed69b2c57` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_catalog_release.sql` | `7aa1f69952b3a989c73f60eb5cd33203010fb3844fa607add6abeaf80994a447` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_food.sql` | `8205cc440da87cdb976aa23bd80064b74e4e837b9c5bab71f71377862af726f1` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_food_form.sql` | `ad1204b842ea11d5727840da19f826cc6f3fe17c5961590cea020d237fde3ae2` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_nutrient.sql` | `0af389ce46200bd40171d0e1094856dd50f87ed96e3784c36f9cd383a7496dfb` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_operation.sql` | `5f6a0d5ee9343b66bcf51f99482cba62f54230600bc97d0ee86516c3a1ed2f31` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_product.sql` | `917dc766b9143fc2fa8aed141f9e45832022f895b8496a7ccbb9cbd51fc3ca7e` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_product_version.sql` | `ebdcf039be11f2e29dd8951a32c9e8d8d676f4acfa577320489bd8e2de0ff956` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_recipe_ingredient.sql` | `ea26158b889928f33f41d304e7668768b2c82535349b0f5626dbc74436657c5a` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_recipe_step.sql` | `c5ab20c6d493a8889f1b5a0b975753efe535aa1f2bdab2f39a4c0ec6b72e1bd4` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_recipe_version.sql` | `1bc6d936ecf91d411d50749451bc016c78e4a95d672f2d3609b7801a7eb44a73` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_resource_type.sql` | `17c2deb1cdfecd510e7d9e4e0ba9c83bcda1338b29256e319767b6e18c6ae445` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_source_record.sql` | `17a5f3941f09d29c395a4ef0d279e89e51e76844221eb5af79692e7ab1b9e7a7` |
+| `backend/src/app/apis/backup/restore_backup/sql/q300_reference_unit.sql` | `8caa1a6fed36239bd2d7bd22672cd255fcd9d328393ff0d567b413d8b4d523c3` |
+| `backend/src/app/apis/backup/restore_backup/sql/q800_constraints_immediate.sql` | `7c03c4ffbec4374e7c2b6fb317040181c3e3b08eea057b86940d70102fa34ade` |
+| `backend/src/app/apis/backup/restore_backup/sql/q801_constraints_deferred.sql` | `92e4ce672420ff25733c0c7fa902dedb804a5b5353abc712d8fd96dba4b5a478` |
+| `backend/src/app/apis/backup/restore_backup/sql/q802_restore_profile.sql` | `b0e15aa8ed17d26d29be7eae1a11d6f8d5b5e0750e075697605b72e3a90910a9` |
+| `backend/src/app/apis/backup/restore_backup/sql/q901_advance_revision.sql` | `5f267cc7121b5045dcf1579940e66fc94765ea6bcb57422efc6c6e390c360962` |
+| `backend/src/app/apis/backup/restore_backup/sql/q902_append_audit.sql` | `e585649a91c22f7a5f9004996ebce89f3c27b4f55be635e6bd022f1013c5dcf4` |
+| `backend/src/app/apis/backup/restore_backup/sql/q903_append_outbox.sql` | `f36d4334935d2601817088aadec9cd24c73302016072ee5f99afe6934952b1e9` |
 | `backend/src/app/apis/entities/allergen_create/sql/001_create.sql` | `9be89c330b838df864aff99560f4810a2979b5ebcf2c150b8526592e4188d26c` |
 | `backend/src/app/apis/entities/allergen_get/sql/001_get.sql` | `13ab79f5ec0b92f38a56c24f9a8b45f6503605671408b27bdddfc32cc2f9949c` |
 | `backend/src/app/apis/entities/allergen_list/sql/001_list.sql` | `c025c7c212cc6d99b68d840cf0f56f0a1e0e5a073e0a124c328f9f78273488c3` |
@@ -389,6 +588,10 @@
 | `backend/src/app/apis/entities/axis_option_list/sql/001_list.sql` | `bde17af8420b61b743e23b6ba0109e9fb180027180a22c208cf3ada42a99bd9c` |
 | `backend/src/app/apis/entities/axis_option_update/sql/001_update.sql` | `704f2a7a510bae4ee384ac38965321b2f365f7e2f2ed463c3f1209b9f6c05f26` |
 | `backend/src/app/apis/entities/axis_update/sql/001_update.sql` | `255f1c463de5727dea61003bf6167edd594f1a0499bbbf5e9bf15696fa3332fa` |
+| `backend/src/app/apis/entities/backup_artifact_get/sql/001_get.sql` | `cb3aee6959076ccdcd89e05a8a11866bccb7962869bed83132e81c4e4c2a0c68` |
+| `backend/src/app/apis/entities/backup_artifact_list/sql/001_list.sql` | `3ce39417bf2fa051b9a8801dd22336c4d7ba802765555771decb5449c2a606ac` |
+| `backend/src/app/apis/entities/backup_restore_intent_get/sql/001_get.sql` | `d052dfc311e00e00865df1434ffb2a21519fdb8eb4eb280dc5eb36d94beba5ac` |
+| `backend/src/app/apis/entities/backup_restore_intent_list/sql/001_list.sql` | `752221da7f2ff49e6cef9c132fe75ecac3880375254871d02e5039c066922574` |
 | `backend/src/app/apis/entities/candidate_attempt_create/sql/001_create.sql` | `daab30be027ded51ae2b511503fed624101fb568fb1edaabe82dd8494bba9cbe` |
 | `backend/src/app/apis/entities/candidate_attempt_get/sql/001_get.sql` | `b0e6dfc372cf72cb8d02d5bf1a9af0445edae8ee6d8e1df220123000564fa8ff` |
 | `backend/src/app/apis/entities/candidate_attempt_list/sql/001_list.sql` | `b5b56b5aee6c3b4cec548770a3121bc9c73f66999e85b8ff6763b5d8ff3bf708` |
@@ -621,13 +824,13 @@
 | `backend/src/app/apis/entities/scaling_rule_create/sql/001_create.sql` | `d146f6cf770d0d869fcb7d86366cceb94a4f967d00db38ad48cdad015bf45b95` |
 | `backend/src/app/apis/entities/scaling_rule_get/sql/001_get.sql` | `35a24ded5382bba53ddc9d3a2f483bedec35a2446ac3d469a1ecafe79d508c0b` |
 | `backend/src/app/apis/entities/scaling_rule_list/sql/001_list.sql` | `31a824f845fa786f6dce6aaecfd76ecba1c8a1a6b644b4b7aa8c55c789958828` |
-| `backend/src/app/apis/entities/session_task_create/sql/001_create.sql` | `7a87852f4f5d791de1f0952572f2bc9eba25f6a7863b913ec68f6506cb9ffa30` |
+| `backend/src/app/apis/entities/session_task_create/sql/001_create.sql` | `9a6fac339b236f1881835966047a0640e9cf92d52a66e3bf3b60e2addd6fc84e` |
 | `backend/src/app/apis/entities/session_task_create/sql/002_reference_session_id.sql` | `73a5b96119235ec47105b6d918874a63ddb723cf98434dab7e722384f3456467` |
 | `backend/src/app/apis/entities/session_task_create/sql/003_reference_menu_item_id.sql` | `42657c3b816bba623f330c373d35b2480ebafbb4a16ec449a0c244269aa8d465` |
-| `backend/src/app/apis/entities/session_task_delete/sql/001_delete.sql` | `decfefb8723214f1b78bffe2da1afabdcf6c84f4cb9efaa69ba8ebbe3551c28f` |
-| `backend/src/app/apis/entities/session_task_get/sql/001_get.sql` | `87419a5b16cf6c0d1ce08d9a54544fe7f159daf6d6207e1b438e4e651eb7bae2` |
-| `backend/src/app/apis/entities/session_task_list/sql/001_list.sql` | `484ba3687bcc65b6d166adf717a180a4144746e5e5864182c73698b73e3c82a4` |
-| `backend/src/app/apis/entities/session_task_update/sql/001_update.sql` | `0ce172d124efbc325508bdb9491f89b9cea7b603aada16b5a8495be130155103` |
+| `backend/src/app/apis/entities/session_task_delete/sql/001_delete.sql` | `b13897c5bfd198e38bdc96ee86a2184e2ac60334650be1a9ac0bec37dacda7b5` |
+| `backend/src/app/apis/entities/session_task_get/sql/001_get.sql` | `b0205c3c2b8f8c5515bab5b7ccd11c86e74373df9ca6bacae43199eea5a44d67` |
+| `backend/src/app/apis/entities/session_task_list/sql/001_list.sql` | `226b7d1074fa82969a5ce2e050981cf134b27d82981c038d578acdc1034129ad` |
+| `backend/src/app/apis/entities/session_task_update/sql/001_update.sql` | `2b0680a617d11c258276c0739433fdc7c2b3d52cbc3201f7b193e350fbe59760` |
 | `backend/src/app/apis/entities/session_task_update/sql/002_reference_session_id.sql` | `73a5b96119235ec47105b6d918874a63ddb723cf98434dab7e722384f3456467` |
 | `backend/src/app/apis/entities/session_task_update/sql/003_reference_menu_item_id.sql` | `42657c3b816bba623f330c373d35b2480ebafbb4a16ec449a0c244269aa8d465` |
 | `backend/src/app/apis/entities/shopping_item_create/sql/001_create.sql` | `be2667e82206b84dd9528d7fcae73c9d20d75f37b40d6cbdc2d4878a101f3ae6` |
@@ -726,9 +929,9 @@
 | `backend/src/app/apis/generation/advance_shard/sql/001_execute.sql` | `4b1ced2272ecb5a40179c943f7faa1669eaaafd5b8e571c54e9684afa106a3fc` |
 | `backend/src/app/apis/generation/claim_shard/sql/001_execute.sql` | `dbe6301db87dd66ad68a1fd7e673f43ad5146a44f12cf19c55dfef839ef625b8` |
 | `backend/src/app/apis/generation/renew_shard/sql/001_execute.sql` | `4d26a593cbe54b19e502877ce997c2603bdf52c84155d09019b7ad9520633628` |
-| `backend/src/app/apis/recipes/get_recipe/sql/001_select_recipe.sql` | `b011d3174810decc63a329dfa153353ce017a53e8ecb9fa7f7e5ae98d630dc68` |
-| `backend/src/app/apis/recipes/list_recipes/sql/001_select_recipes.sql` | `6ecd4c9e7e96d929c9968f298a87a180ee60cd462cf10c6b92c6980f674e9622` |
-| `backend/src/app/apis/recipes/random_recipe/sql/001_random_recipe.sql` | `35f000bab482c9f33c3b4dbcd972ba25e843f7efc7cb1746faf8cd0c5d674eb5` |
+| `backend/src/app/apis/recipes/get_recipe/sql/001_select_recipe.sql` | `1c59e45b6a3bb79ea02939835475817cbde5bce45d684c5c795d98adac5ae2c7` |
+| `backend/src/app/apis/recipes/list_recipes/sql/001_select_recipes.sql` | `a6fc413af317bd340c6e57c41b4eb55a394b060170ff048eed3b5c53b3a512f9` |
+| `backend/src/app/apis/recipes/random_recipe/sql/001_random_recipe.sql` | `96a100378f3b04b7265b1c0d3eb6efd1dd20e9b77c7e500f8cec658cc68fb3ec` |
 | `backend/src/app/apis/workspace/add_menu_item/sql/q010_recipe.sql` | `6dc9a8255dfd42bf4b88dbd7a52b0a0c2a5ad640ebd1ed213546c968a3e2b10b` |
 | `backend/src/app/apis/workspace/add_menu_item/sql/q011_ingredients.sql` | `d070a791fb8b735b33e7837f9be4c78e35547d7c5d44934f6771fc6b79d0feae` |
 | `backend/src/app/apis/workspace/add_menu_item/sql/q012_menu.sql` | `6eee3b93a52dc8ad30be9b0ddba407b44e0c80a99999616ef69f600801adabe7` |
@@ -757,13 +960,13 @@
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q013_insert_item.sql` | `c80accf722ff53d66e4ba7e320e165d6b9110ee2cdda67b0066a224676df8b83` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q014_override.sql` | `063c035974dddd3b6a6520c02a39d23acee182fd7d6764586fd5013b2d51944f` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q015_advance_menu.sql` | `1917adb8a95a88eac63653140294a92e33ab1099358814644f1ceb514e9a4730` |
-| `backend/src/app/apis/workspace/create_cooking_session/sql/q020_steps.sql` | `538011a969d0478da16b2d27681bb617bb40d0ab4119967f502a0ab577564072` |
+| `backend/src/app/apis/workspace/create_cooking_session/sql/q020_steps.sql` | `82003254031f8b26ae85bf7f8156528aef4c1319662f8143db2e30b974c50974` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q021_dependencies.sql` | `a98e864a40b465f7c483f5bd5b2bfbda8869ee588a307027b5e0f04f1460bba9` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q022_requirements.sql` | `9ffcd4fa296263a0fd7d5e2ef11a1ad34693ddc5589fbbdb9d152ad48cd16fd8` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q023_resources.sql` | `60dfff0563457c003fc06f4e425f889644c6db1cea8fe9884a8f610be0e140cf` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q024_ingredients.sql` | `f317f8008baab20827a26737068c88e7142daab26a0eb2978daa1c8331d70794` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q025_session.sql` | `00781c3bdc066d31fd235d397d3d4d2055742e55d14bf50227f217a9e4aaa1c7` |
-| `backend/src/app/apis/workspace/create_cooking_session/sql/q026_task.sql` | `3ac4ca1eb9f15e246ab40315ac9974c1c3138468f133f496182b5becf0bf3574` |
+| `backend/src/app/apis/workspace/create_cooking_session/sql/q026_task.sql` | `1613d24fee8aa4b61c34dd04ed01cd52b67c1e681eb0f7faa924c3c4cd0aae6c` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q027_dependency.sql` | `d987f7e62f97e3867f0ab965c76c3c2022abe45d5e1647c6fe2ef022c5139cb5` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q028_reservation.sql` | `21e1f4ae93406eff2d65350346f26b4d33df7813f3620e94e06ba20df95f34ed` |
 | `backend/src/app/apis/workspace/create_cooking_session/sql/q029_total.sql` | `28975352341b96bb0f5591d63b55e5388f7504c0bb240c332288a03f3dcb2c97` |
@@ -802,10 +1005,10 @@
 | `backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql` | `9b9912f58fd1b54f8e991d3ffaa82011a371ead2f47fb0b8305e642485baa66d` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q010_shopping.sql` | `8501e5fb67600ef7dd7c34111f2f1c86a32c93a30b1d73cff7dbaa826cc2506e` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q011_session.sql` | `e1ca7f77863c8b79c88437d0e646bc3c7138247439875df88bb1479f4af34624` |
-| `backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql` | `befc8078ff189010fe5c1c226fbd5d3b3ee19ec08b00ce91ed2603c06e4ee9f6` |
+| `backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql` | `0f474bd79716f319c05be3e7288aa47617d77065fa55e33465a2a13d3b92f718` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql` | `f6ed366fa2ff15dd7147993529dec399ed1a7defe21a012681df4966070026a7` |
 | `backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql` | `8528c1829f25064d89f9dbe2bc6684bed3678504a9c06afb4d5f876fa101417e` |
-| `backend/src/app/apis/workspace/preview_cooking_plan/sql/q001_steps.sql` | `6cbc70cf6c65d289fd016ea19d28363a3cfe62865fdd9f298dc4f51d32a0a8ea` |
+| `backend/src/app/apis/workspace/preview_cooking_plan/sql/q001_steps.sql` | `b4efabef703588c6d2d52d127fb7ac9df80a7e1c0945f51c14a4c8db517f4c88` |
 | `backend/src/app/apis/workspace/preview_cooking_plan/sql/q002_dependencies.sql` | `c2c8ab551635ef2b559ac4971956800919e9dcf5924d17205ffaa53586104533` |
 | `backend/src/app/apis/workspace/preview_cooking_plan/sql/q003_requirements.sql` | `5fc4046c89f9c1f496de07207a322e5a0fb332e1ec2ce9cf8ec265dced7a96dc` |
 | `backend/src/app/apis/workspace/preview_cooking_plan/sql/q004_resources.sql` | `60dfff0563457c003fc06f4e425f889644c6db1cea8fe9884a8f610be0e140cf` |
@@ -874,6 +1077,8 @@
 | `database/migrations/001_user_state.sql` | `4f085833e9d63238900f9b3a7be1356fe5bb05e56bc93b276ffa32a139cc20f4` |
 | `database/migrations/002_relational_schema.sql` | `200d0fafcf31fd09850298d735df4af06b6556b3f6df4c5ba2c8636a8d39cb90` |
 | `database/migrations/003_service_operations.sql` | `4797f6c116c7872f52f96a5f05ecab70a5386b10603c662877d1988bc947015a` |
+| `database/migrations/004_backup_restore.sql` | `5e07c5e123f78fa1721647635dbb56af318d9c9948b46d8ae3019edf6a54ebca` |
+| `database/migrations/005_manual_duration.sql` | `4c42721e70692842d3ba14abbaea7e75b26d1e01314f2fbf2730f543c5102e6c` |
 
 ## CDK合成資源
 

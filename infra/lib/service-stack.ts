@@ -21,6 +21,7 @@ import type { DataStack } from "./data-stack.js";
 
 export interface ServiceStackProps extends StackProps {
   readonly data: DataStack;
+  readonly stage: string;
   readonly repositoryRoot: string;
 }
 
@@ -83,7 +84,8 @@ export class ServiceStack extends Stack {
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
       securityGroups: [data.clientSecurityGroup],
       environment: {
-        ENVIRONMENT: "production",
+        ENVIRONMENT: props.stage === "dev" ? "dev" : "production",
+        ALLOW_CATALOG_PREVIEW: props.stage === "dev" ? "true" : "false",
         AUTH_MODE: "cognito",
         ALLOWED_ORIGINS: "https://tsuji-tomonori.github.io",
         DATABASE_HOST: data.cluster.clusterEndpoint.hostname,

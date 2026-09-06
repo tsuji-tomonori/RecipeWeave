@@ -15,6 +15,10 @@ import {
   findRecipes,
   commitReceipt,
   loadState,
+  exportDatabaseBackup,
+  previewDatabaseBackup,
+  restoreDatabaseBackup,
+  previewCookingPlan,
 } from "./api";
 import { getToken, setToken } from "./auth";
 import { fixtureFoods, fixtureRecipes } from "../test-fixtures";
@@ -26,9 +30,95 @@ beforeEach(() => {
 });
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
 });
 
 describe("実APIへの要求と失敗時の扱い", () => {
+  it("本人が確認した時間は段取りと調理開始に送り、開始後の進捗更新では変更しない", async () => {
+    const current = createInitialState();
+    const next = startCooking(current, [
+      { ...getDraft(current, "eggplant-egg"), id: "meal-1" },
+    ]);
+    const estimates = [
+      {
+        mealItemId: "meal-1",
+        stepId: next.cooking!.plan[0].id,
+        durationSeconds: 420,
+      },
+    ];
+    const fetcher = vi.fn(
+      async (url: string, _options?: RequestInit) =>
+        new Response(
+          JSON.stringify(
+            url.includes("/api/recipes/")
+              ? fixtureRecipes.find((recipe) => recipe.id === "eggplant-egg")
+              : url === "/api/cooking-plan"
+                ? { plan: next.cooking!.plan }
+                : next,
+          ),
+        ),
+    );
+    vi.stubGlobal("fetch", fetcher);
+    await previewCookingPlan(next.cooking!.mealSnapshot, estimates);
+    await saveState(current, next, estimates);
+    const paused = structuredClone(next);
+    paused.cooking!.status = "paused";
+    await saveState(next, paused, estimates);
+    const writes = fetcher.mock.calls.filter(([, options]) => options?.method);
+    expect(writes.map(([, options]) => options?.method)).toEqual([
+      "POST",
+      "POST",
+      "PATCH",
+    ]);
+    expect(JSON.parse(String(writes[0][1]?.body)).durationEstimates).toEqual(
+      estimates,
+    );
+    expect(JSON.parse(String(writes[1][1]?.body)).durationEstimates).toEqual(
+      estimates,
+    );
+    expect(JSON.parse(String(writes[2][1]?.body))).not.toHaveProperty(
+      "durationEstimates",
+    );
+  });
+
+  it("最新DBのバックアップ本文を保持し、復元は確認したintentと版を一度だけ送る", async () => {
+    const raw =
+      '{"format":"recipeweave-relational","formatVersion":2,"tables":{"ledger":[9007199254740993]}}';
+    const preview = {
+      intentId: "intent",
+      expiresAt: "2026-09-06T00:15:00Z",
+      expectedVersion: 7,
+      backupSha256: "hash",
+      sourceVersion: 3,
+      counts: [],
+      replaceTargets: [],
+      preservedTargets: [],
+    };
+    const fetcher = vi.fn(
+      async (url: string, _options?: RequestInit) =>
+        new Response(
+          url.endsWith("/export")
+            ? raw
+            : JSON.stringify(
+                url.endsWith("/preview") ? preview : createInitialState(),
+              ),
+        ),
+    );
+    vi.stubGlobal("fetch", fetcher);
+    expect(await exportDatabaseBackup()).toBe(raw);
+    const inspected = await previewDatabaseBackup(raw);
+    await restoreDatabaseBackup(raw, inspected);
+    const bodies = fetcher.mock.calls.map(([, options]) => options?.body);
+    expect(bodies[1]).toBe(`{"backup":${raw}}`);
+    expect(String(bodies[2])).toContain("9007199254740993");
+    expect(JSON.parse(String(bodies[2]))).toMatchObject({
+      intentId: "intent",
+      expectedVersion: 7,
+      confirmed: true,
+    });
+    expect(fetcher).toHaveBeenCalledTimes(3);
+  });
+
   it("サーバーの待ち時間を含む工程計画を維持し、工程の重複や不正な時間は拒否する", () => {
     const state = startCooking(createInitialState(), [
       { ...getDraft(createInitialState(), "eggplant-egg"), id: "meal-1" },
@@ -177,6 +267,32 @@ describe("実APIへの要求と失敗時の扱い", () => {
     await expect(request("/api/workspace")).rejects.toMatchObject({
       status: 0,
     });
+  });
+
+  it("Dev配信で明示許可しても認証前は試用レシピを要求しない", async () => {
+    vi.stubEnv("VITE_CATALOG_PREVIEW", "true");
+    const fetcher = vi.fn(
+      async (_input: RequestInfo | URL) =>
+        new Response(
+          JSON.stringify({ items: [], total: 0, offset: 0, limit: 50 }),
+        ),
+    );
+    vi.stubGlobal("fetch", fetcher);
+    await findRecipes();
+    expect(
+      new URL(
+        String(fetcher.mock.calls[0]?.[0]),
+        "http://localhost",
+      ).searchParams.has("preview"),
+    ).toBe(false);
+    setToken("authenticated");
+    await findRecipes();
+    expect(
+      new URL(
+        String(fetcher.mock.calls[1]?.[0]),
+        "http://localhost",
+      ).searchParams.get("preview"),
+    ).toBe("true");
   });
 
   it("食材検索のAPIパラメータに人数を入れず、ページ位置を送る", async () => {

@@ -38,6 +38,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_pantry_food.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_pantry_food.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_pantry_food.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_pantry_food.sql |
 | entity_user_pantry_food_create | C | backend/src/app/apis/entities/user_pantry_food_create/sql/001_create.sql |
 | entity_user_pantry_food_delete | D | backend/src/app/apis/entities/user_pantry_food_delete/sql/001_delete.sql |
 | entity_user_pantry_food_get | R | backend/src/app/apis/entities/user_pantry_food_get/sql/001_get.sql |
@@ -46,6 +53,7 @@
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | put_settings | D | backend/src/app/apis/workspace/put_settings/sql/q002_clear_pantry.sql |
 | put_settings | C | backend/src/app/apis/workspace/put_settings/sql/q005_pantry.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |

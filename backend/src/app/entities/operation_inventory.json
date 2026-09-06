@@ -3297,7 +3297,9 @@
         "actual_start_at",
         "actual_end_at",
         "timer_started_at",
-        "timer_duration_s"
+        "timer_duration_s",
+        "duration_source",
+        "confirmed_duration_s"
       ],
       "json_columns": [],
       "key": "session_task_create",
@@ -3330,7 +3332,9 @@
         "actual_start_at",
         "actual_end_at",
         "timer_started_at",
-        "timer_duration_s"
+        "timer_duration_s",
+        "duration_source",
+        "confirmed_duration_s"
       ],
       "json_columns": [],
       "key": "session_task_update",
@@ -4790,6 +4794,58 @@
       "owned": true,
       "references": [],
       "table": "user_shopping_check"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "backup_artifact_list",
+      "operation_id": "entity_backup_artifact_list",
+      "owned": true,
+      "references": [],
+      "table": "backup_artifact"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "backup_artifact_get",
+      "operation_id": "entity_backup_artifact_get",
+      "owned": true,
+      "references": [],
+      "table": "backup_artifact"
+    },
+    {
+      "action": "list",
+      "bigint_columns": [
+        "current_revision"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "backup_restore_intent_list",
+      "operation_id": "entity_backup_restore_intent_list",
+      "owned": true,
+      "references": [],
+      "table": "backup_restore_intent"
+    },
+    {
+      "action": "get",
+      "bigint_columns": [
+        "current_revision"
+      ],
+      "immutable": false,
+      "input_columns": [],
+      "json_columns": [],
+      "key": "backup_restore_intent_get",
+      "operation_id": "entity_backup_restore_intent_get",
+      "owned": true,
+      "references": [],
+      "table": "backup_restore_intent"
     }
   ],
   "schemaVersion": 1,
@@ -5635,6 +5691,24 @@
       "name": "user_shopping_check",
       "retention": "owned",
       "rule": "調理前の購入確認。本人内安定キーで冪等化"
+    },
+    {
+      "actions": [
+        "list",
+        "get"
+      ],
+      "name": "backup_artifact",
+      "retention": "audit",
+      "rule": "本人への発行事実を本文なしで保持する。汎用APIは読取りのみ。更新・削除は禁止し、本人消去時の匿名化だけを許可する。"
+    },
+    {
+      "actions": [
+        "list",
+        "get"
+      ],
+      "name": "backup_restore_intent",
+      "retention": "audit",
+      "rule": "確認済みの本人・本文・現在版・期限は不変。専用の復元処理で一度だけ使用し、全置換と同じトランザクションで確定する。汎用APIは読取りのみ。"
     }
   ]
 }

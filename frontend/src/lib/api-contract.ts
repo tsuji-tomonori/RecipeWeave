@@ -1,6 +1,7 @@
 import type {
   AppState,
   CookingSession,
+  DurationEstimate,
   Food,
   MealItem,
   PlannedStep,
@@ -38,6 +39,7 @@ export interface PutShoppingChecksRequest extends RevisionRequest {
 }
 export interface CreateCookingSessionRequest extends RevisionRequest {
   session: CookingSession;
+  durationEstimates?: DurationEstimate[];
 }
 export interface UpdateCookingSessionRequest extends RevisionRequest {
   session: CookingSession;
@@ -46,6 +48,7 @@ export interface UpdateCookingSessionRequest extends RevisionRequest {
 /** 段取りの確認は読取専用で、ワークスペースの版を進めない。 */
 export interface PreviewCookingPlanRequest {
   items: MealItem[];
+  durationEstimates?: DurationEstimate[];
 }
 export interface PreviewCookingPlanResponse {
   plan: PlannedStep[];

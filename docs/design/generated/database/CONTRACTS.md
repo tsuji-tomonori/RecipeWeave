@@ -792,6 +792,33 @@
 | database/migrations/003_service_operations.sql:statement-285 | AlterTableStmt |
 | database/migrations/003_service_operations.sql:statement-286 | AlterTableStmt |
 | database/migrations/003_service_operations.sql:statement-287 | AlterTableStmt |
+| database/migrations/004_backup_restore.sql:statement-1 | CreateStmt |
+| database/migrations/004_backup_restore.sql:statement-8 | AlterTableStmt |
+| database/migrations/004_backup_restore.sql:statement-9 | IndexStmt |
+| database/migrations/004_backup_restore.sql:statement-10 | CreateStmt |
+| database/migrations/004_backup_restore.sql:statement-20 | AlterTableStmt |
+| database/migrations/004_backup_restore.sql:statement-21 | AlterTableStmt |
+| database/migrations/004_backup_restore.sql:statement-22 | IndexStmt |
+| database/migrations/004_backup_restore.sql:statement-23 | IndexStmt |
+| database/migrations/004_backup_restore.sql:statement-24 | IndexStmt |
+| database/migrations/004_backup_restore.sql:statement-25 | CreateFunctionStmt |
+| database/migrations/004_backup_restore.sql:statement-26 | CreateFunctionStmt |
+| database/migrations/004_backup_restore.sql:statement-27 | CreateTrigStmt |
+| database/migrations/004_backup_restore.sql:statement-28 | CreateTrigStmt |
+| database/migrations/004_backup_restore.sql:statement-29 | AlterTableStmt |
+| database/migrations/004_backup_restore.sql:statement-30 | AlterTableStmt |
+| database/migrations/004_backup_restore.sql:statement-31 | CreatePolicyStmt |
+| database/migrations/004_backup_restore.sql:statement-32 | AlterTableStmt |
+| database/migrations/004_backup_restore.sql:statement-33 | AlterTableStmt |
+| database/migrations/004_backup_restore.sql:statement-34 | CreatePolicyStmt |
+| database/migrations/005_manual_duration.sql:statement-1 | AlterTableStmt |
+| database/migrations/005_manual_duration.sql:statement-3 | AlterTableStmt |
+| database/migrations/005_manual_duration.sql:statement-5 | AlterTableStmt |
+| database/migrations/005_manual_duration.sql:statement-6 | AlterTableStmt |
+| database/migrations/005_manual_duration.sql:statement-7 | AlterTableStmt |
+| database/migrations/005_manual_duration.sql:statement-8 | CreateFunctionStmt |
+| database/migrations/005_manual_duration.sql:statement-9 | CreateTrigStmt |
+| database/migrations/005_manual_duration.sql:statement-10 | DoStmt |
 
 ## database/migrations/002_relational_schema.sql:statement-1
 
@@ -5543,4 +5570,286 @@ ADD CONSTRAINT resource_type_name_wire_length CHECK (CHAR_LENGTH(name) <= 500)
 ```sql
 ALTER TABLE recipeweave.axis_option
 ADD CONSTRAINT axis_option_label_wire_length CHECK (CHAR_LENGTH(label) <= 500)
+```
+
+## database/migrations/004_backup_restore.sql:statement-8
+
+```sql
+ALTER TABLE recipeweave.backup_artifact ADD CONSTRAINT fk_backup_artifact_user_id
+FOREIGN KEY (user_id) REFERENCES recipeweave.app_user (id)
+ON DELETE SET NULL ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED
+```
+
+## database/migrations/004_backup_restore.sql:statement-20
+
+```sql
+ALTER TABLE recipeweave.backup_restore_intent ADD CONSTRAINT fk_backup_restore_intent_user_id
+FOREIGN KEY (user_id) REFERENCES recipeweave.app_user (id)
+ON DELETE SET NULL ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED
+```
+
+## database/migrations/004_backup_restore.sql:statement-21
+
+```sql
+ALTER TABLE recipeweave.backup_restore_intent ADD CONSTRAINT fk_backup_restore_intent_artifact_id
+FOREIGN KEY (artifact_id) REFERENCES recipeweave.backup_artifact (id)
+ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED
+```
+
+## database/migrations/004_backup_restore.sql:statement-25
+
+```sql
+CREATE FUNCTION recipeweave.guard_backup_artifact() RETURNS TRIGGER
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        IF NEW.user_id IS NULL THEN
+            RAISE EXCEPTION 'バックアップの発行先を省略できません' USING ERRCODE = '23514';
+        END IF;
+        RETURN NEW;
+    END IF;
+    IF TG_OP = 'UPDATE' AND OLD.user_id IS NOT NULL AND NEW.user_id IS NULL
+       AND (to_jsonb(NEW) - 'user_id') = (to_jsonb(OLD) - 'user_id')
+       AND NOT EXISTS (SELECT 1 FROM recipeweave.app_user WHERE id = OLD.user_id) THEN
+        RETURN NEW;
+    END IF;
+    RAISE EXCEPTION 'バックアップ発行記録は追記専用です' USING ERRCODE = '23514';
+END;
+$$
+```
+
+## database/migrations/004_backup_restore.sql:statement-26
+
+```sql
+CREATE FUNCTION recipeweave.guard_backup_restore_intent() RETURNS TRIGGER
+LANGUAGE plpgsql AS $$
+DECLARE
+    issued recipeweave.backup_artifact%ROWTYPE;
+    workspace_revision bigint;
+BEGIN
+    IF TG_OP = 'DELETE' THEN
+        RAISE EXCEPTION '復元確認記録は削除できません' USING ERRCODE = '23514';
+    END IF;
+    IF TG_OP = 'UPDATE' AND OLD.user_id IS NOT NULL AND NEW.user_id IS NULL
+       AND (to_jsonb(NEW) - 'user_id') = (to_jsonb(OLD) - 'user_id')
+       AND NOT EXISTS (SELECT 1 FROM recipeweave.app_user WHERE id = OLD.user_id) THEN
+        RETURN NEW;
+    END IF;
+    IF NEW.user_id IS NULL THEN
+        RAISE EXCEPTION '復元する本人を省略できません' USING ERRCODE = '23514';
+    END IF;
+    SELECT * INTO issued FROM recipeweave.backup_artifact WHERE id = NEW.artifact_id FOR KEY SHARE;
+    IF NOT FOUND OR issued.user_id IS DISTINCT FROM NEW.user_id
+       OR issued.body_sha256 <> NEW.body_sha256 THEN
+        RAISE EXCEPTION 'バックアップの本人または本文が発行記録と一致しません' USING ERRCODE = '23514';
+    END IF;
+    SELECT revision INTO workspace_revision FROM recipeweave.workspace_revision
+    WHERE user_id = NEW.user_id FOR UPDATE;
+    IF NOT FOUND OR workspace_revision <> NEW.current_revision THEN
+        RAISE EXCEPTION '確認後に現在データが変更されています。もう一度確認してください' USING ERRCODE = '23514';
+    END IF;
+    IF clock_timestamp() >= NEW.expires_at THEN
+        RAISE EXCEPTION '復元確認の有効期限が切れています' USING ERRCODE = '23514';
+    END IF;
+    IF TG_OP = 'INSERT' THEN
+        IF NEW.consumed_at IS NOT NULL THEN
+            RAISE EXCEPTION '復元確認を使用済みとして発行できません' USING ERRCODE = '23514';
+        END IF;
+        RETURN NEW;
+    END IF;
+    IF OLD.consumed_at IS NOT NULL OR NEW.consumed_at IS NULL
+       OR NEW.consumed_at > clock_timestamp()
+       OR (to_jsonb(NEW) - 'consumed_at') <> (to_jsonb(OLD) - 'consumed_at') THEN
+        RAISE EXCEPTION '復元確認は変更できず、一度だけ使用できます' USING ERRCODE = '23514';
+    END IF;
+    RETURN NEW;
+END;
+$$
+```
+
+## database/migrations/004_backup_restore.sql:statement-27
+
+```sql
+CREATE TRIGGER backup_artifact_append_only BEFORE INSERT OR UPDATE OR DELETE
+ON recipeweave.backup_artifact
+FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_backup_artifact()
+```
+
+## database/migrations/004_backup_restore.sql:statement-28
+
+```sql
+CREATE TRIGGER backup_intent_single_use BEFORE INSERT OR UPDATE OR DELETE
+ON recipeweave.backup_restore_intent
+FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_backup_restore_intent()
+```
+
+## database/migrations/004_backup_restore.sql:statement-29
+
+```sql
+ALTER TABLE recipeweave.backup_artifact ENABLE ROW LEVEL SECURITY
+```
+
+## database/migrations/004_backup_restore.sql:statement-30
+
+```sql
+ALTER TABLE recipeweave.backup_artifact FORCE ROW LEVEL SECURITY
+```
+
+## database/migrations/004_backup_restore.sql:statement-31
+
+```sql
+CREATE POLICY backup_evidence_owner ON recipeweave.backup_artifact
+USING (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
+) WITH CHECK (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
+)
+```
+
+## database/migrations/004_backup_restore.sql:statement-32
+
+```sql
+ALTER TABLE recipeweave.backup_restore_intent ENABLE ROW LEVEL SECURITY
+```
+
+## database/migrations/004_backup_restore.sql:statement-33
+
+```sql
+ALTER TABLE recipeweave.backup_restore_intent FORCE ROW LEVEL SECURITY
+```
+
+## database/migrations/004_backup_restore.sql:statement-34
+
+```sql
+CREATE POLICY backup_evidence_owner ON recipeweave.backup_restore_intent
+USING (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
+) WITH CHECK (
+    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'
+    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID
+)
+```
+
+## database/migrations/005_manual_duration.sql:statement-1
+
+```sql
+ALTER TABLE recipeweave.session_task
+ADD COLUMN duration_source TEXT NOT NULL DEFAULT 'recipe_rule'
+```
+
+## database/migrations/005_manual_duration.sql:statement-3
+
+```sql
+ALTER TABLE recipeweave.session_task ADD COLUMN confirmed_duration_s INTEGER
+```
+
+## database/migrations/005_manual_duration.sql:statement-5
+
+```sql
+ALTER TABLE recipeweave.session_task ADD CONSTRAINT duration_source_values
+CHECK (duration_source IN ('recipe_rule', 'user_estimate'))
+```
+
+## database/migrations/005_manual_duration.sql:statement-6
+
+```sql
+ALTER TABLE recipeweave.session_task ADD CONSTRAINT confirmed_duration_bounds
+CHECK (confirmed_duration_s IS NULL OR confirmed_duration_s BETWEEN 1 AND 86400)
+```
+
+## database/migrations/005_manual_duration.sql:statement-7
+
+```sql
+ALTER TABLE recipeweave.session_task ADD CONSTRAINT duration_confirmation_matches_plan
+CHECK (
+    (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL)
+    OR (
+        duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL
+        AND planned_end_s - planned_start_s = confirmed_duration_s
+    )
+)
+```
+
+## database/migrations/005_manual_duration.sql:statement-8
+
+```sql
+CREATE FUNCTION recipeweave.guard_confirmed_task_plan() RETURNS TRIGGER
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF NEW.duration_source = 'user_estimate' AND NOT EXISTS (
+        SELECT 1 FROM recipeweave.recipe_step step
+        JOIN recipeweave.scaling_rule rule ON rule.id = step.scaling_rule_id
+        WHERE step.id = NEW.step_id AND rule.mode = 'manual'
+    ) THEN
+        RAISE EXCEPTION '利用者の時間見積りは手動確認が必要な工程だけに指定できます' USING ERRCODE = '23514';
+    END IF;
+    IF TG_OP = 'UPDATE' THEN
+        IF NEW.duration_source IS DISTINCT FROM OLD.duration_source
+           OR NEW.confirmed_duration_s IS DISTINCT FROM OLD.confirmed_duration_s
+           OR NEW.planned_start_s IS DISTINCT FROM OLD.planned_start_s
+           OR NEW.planned_end_s IS DISTINCT FROM OLD.planned_end_s THEN
+            RAISE EXCEPTION '確定した工程の時間根拠・見積り・計画時刻は変更できません' USING ERRCODE = '23514';
+        END IF;
+        IF OLD.duration_source = 'user_estimate' AND (
+            NEW.step_id <> OLD.step_id OR NEW.menu_item_id <> OLD.menu_item_id
+            OR NEW.session_id <> OLD.session_id OR NEW.batch_no <> OLD.batch_no
+        ) THEN
+            RAISE EXCEPTION '時間を確認した工程・献立・実行・バッチは変更できません' USING ERRCODE = '23514';
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$
+```
+
+## database/migrations/005_manual_duration.sql:statement-9
+
+```sql
+CREATE TRIGGER confirmed_task_plan_immutable BEFORE INSERT OR UPDATE ON recipeweave.session_task
+FOR EACH ROW EXECUTE FUNCTION recipeweave.guard_confirmed_task_plan()
+```
+
+## database/migrations/005_manual_duration.sql:statement-10
+
+```sql
+DO $$
+DECLARE
+    v_source_id uuid := '9decf898-19cd-5c03-b3e2-947d838c06bd';
+    new_rule_id uuid := '9b2b5a4c-18db-5694-b175-96f9f2717e7c';
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM recipeweave.source_record WHERE id = v_source_id) THEN
+        RETURN;
+    END IF;
+    INSERT INTO recipeweave.scaling_rule (
+        id, name, mode, min_servings, max_servings, batch_capacity,
+        round_mode, round_increment, source_id
+    ) VALUES (
+        new_rule_id,
+        '人数変更時は利用者の時間見積りが必要（1〜1000は入力範囲・物理容量は別途確認）',
+        'manual', 1, 1000, NULL, 'none', 0.01, v_source_id
+    ) ON CONFLICT (id) DO NOTHING;
+    IF NOT EXISTS (
+        SELECT 1 FROM recipeweave.scaling_rule r
+        WHERE r.id = new_rule_id AND r.mode = 'manual'
+        AND r.name = '人数変更時は利用者の時間見積りが必要（1〜1000は入力範囲・物理容量は別途確認）'
+        AND r.min_servings = 1 AND r.max_servings = 1000 AND r.batch_capacity IS NULL
+        AND r.round_mode = 'none' AND r.round_increment = 0.01 AND r.source_id = v_source_id
+    ) THEN
+        RAISE EXCEPTION '移行先の時間規則IDに異なる定義があります' USING ERRCODE = '23514';
+    END IF;
+    UPDATE recipeweave.recipe_step step SET scaling_rule_id = new_rule_id
+    FROM recipeweave.recipe_version version
+    WHERE step.recipe_version_id = version.id AND version.status = 'draft'
+    AND step.scaling_rule_id = 'aa59a90d-0a79-5f69-95a9-7857ffe94fad'
+    AND version.id IN (
+        'fcb0b2fa-f387-5a51-8bed-0b8f0a539e36', '0f3cb194-c9ef-5025-a738-227a3e712b0b',
+        'bdcd3054-68c1-58f2-b544-bce1eda0b005', '5f21b805-9f20-508f-a7ca-a9cb7e4e1107',
+        'f29a4fca-63ba-57be-8b93-a55e87132917', '519749b7-2259-56f0-ae91-840f24558453',
+        '30509788-f24f-564e-8e32-70ced25efd69', '9a8ba1c3-7df7-5a7f-87dd-043538c39d37'
+    );
+END;
+$$
 ```

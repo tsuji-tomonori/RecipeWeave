@@ -2,7 +2,7 @@
 
 実装から自動生成。手編集禁止。`uv run python tools/generate_service_design.py` で更新。
 
-80 テーブル・323 API・504 SQLファイルを対象とする。共有呼出しを含むAPIとSQLの対応は 2593 件。
+82 テーブル・330 API・698 SQLファイルを対象とする。共有呼出しを含むAPIとSQLの対応は 2836 件。
 
 [原設計との対応](database/SOURCE-MAPPING.md) / [テーブル一覧](database/README.md) / [ER図](database/ER.md) / [API一覧](api/README.md) / [CRUD](api/CRUD.md)
 

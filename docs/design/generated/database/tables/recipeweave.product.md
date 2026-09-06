@@ -43,6 +43,27 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_nutrition_fact.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_product.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_product_allergen.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_product_component.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_product_preparation_rule.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_product_version.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_product.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q300_reference_product.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q300_reference_product_version.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_nutrition_fact.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_product.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_product_allergen.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_product_component.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_product_preparation_rule.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_product_version.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_product.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q300_reference_product.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q300_reference_product_version.sql |
 | entity_product_create | C | backend/src/app/apis/entities/product_create/sql/001_create.sql |
 | entity_product_get | R | backend/src/app/apis/entities/product_get/sql/001_get.sql |
 | entity_product_list | R | backend/src/app/apis/entities/product_list/sql/001_list.sql |

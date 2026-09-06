@@ -4,7 +4,7 @@
 
 実装から自動生成。手編集禁止。`uv run python tools/generate_service_design.py` で更新。
 
-対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。
+対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。ローカル関数は字句スコープ付きの別図にし、関数定義と本文の実行を区別する。エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。
 
 ### router.py: `handle`
 
@@ -44,7 +44,7 @@ sequenceDiagram
 
 ### cooking_plan_service.py: `_uuid`
 
-定義元: `backend/src/app/core/cooking_plan_service.py:29`
+定義元: `backend/src/app/core/cooking_plan_service.py:33`
 
 ```mermaid
 sequenceDiagram
@@ -70,7 +70,7 @@ sequenceDiagram
 
 ### cooking_plan_service.py: `validate_item`
 
-定義元: `backend/src/app/core/cooking_plan_service.py:36`
+定義元: `backend/src/app/core/cooking_plan_service.py:40`
 
 ```mermaid
 sequenceDiagram
@@ -110,7 +110,7 @@ sequenceDiagram
 
 ### cooking_plan_service.py: `preview`
 
-定義元: `backend/src/app/core/cooking_plan_service.py:56`
+定義元: `backend/src/app/core/cooking_plan_service.py:60`
 
 ```mermaid
 sequenceDiagram
@@ -145,11 +145,11 @@ sequenceDiagram
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
         Function->>Callee: _uuid(item.recipe_version_id)
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-        Function->>Callee: local_auth_enabled()
+        Function->>Callee: catalog_preview_enabled()
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-        Function->>Callee: catalog.recipes(operation=#39;get_recipe#39;, recipe_id=_uuid(item.recipe_id), version_id=_uuid(item.recipe_version_id), owner_id=self.identity.user_id, preview=local_auth_enabled())
+        Function->>Callee: catalog.recipes(operation=#39;get_recipe#39;, recipe_id=_uuid(item.recipe_id), version_id=_uuid(item.recipe_version_id), owner_id=self.identity.user_id, preview=catalog_preview_enabled())
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-        Note over Function: recipe_rows, _ = catalog.recipes(operation=#39;get_recipe#39;, recipe_id=_uuid(item.recipe_id), version_id=_uuid(item.recipe_version_id), owner_id=self.identity.user_id, preview=local_auth_enabled())
+        Note over Function: recipe_rows, _ = catalog.recipes(operation=#39;get_recipe#39;, recipe_id=_uuid(item.recipe_id), version_id=_uuid(item.recipe_version_id), owner_id=self.identity.user_id, preview=catalog_preview_enabled())
         alt not recipe_rows
             Function->>Callee: HTTPException(404, #39;この料理版は利用できません#39;)
             Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
@@ -183,13 +183,8 @@ sequenceDiagram
     Note over Function: resources = queries.run(#39;q004_resources#39;, user_id=self.identity.user_id)
     rect rgb(244, 247, 246)
     Note over Function: try: 例外発生時は一致するexceptへ移る
-        Function->>Callee: requirements.values()
-        Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-        Function->>Callee: list(requirements.values())
-        Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-        Function->>Callee: build_plan(steps, dependencies, list(requirements.values()), resources)
-        Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-        Note over Function: tasks = build_plan(steps, dependencies, list(requirements.values()), resources)
+        Note over Function: 条件付き式を評価: build_plan(steps, dependencies, list(requirements.values()), resources, duration_estimates=[estimate.model_dump() for estimate in request.duration_estimates])
+        Note over Function: tasks = build_plan(steps, dependencies, list(requirements.values()), resources, duration_estimates=[estimate.model_dump() for estimate in request.duration_estimates])
     end
     opt 例外: ValueError
         Function->>Callee: str(exc)
@@ -207,7 +202,7 @@ sequenceDiagram
         Note over Function: recipe = recipes[task.item_id]
         Note over Function: 条件付き式を評価: next((step for step in recipe.steps if step.id == str(task.step_id)))
         Note over Function: step = next((step for step in recipe.steps if step.id == str(task.step_id)))
-        Note over Function: 条件付き式を評価: result.append(PlannedStep.model_validate({**step.model_dump(), #39;key#39;: f#39;{task.item_id}:{task.step_id}#39;, #39;meal_item_id#39;: str(task.item_id), #39;recipe_id#39;: recipe.id, #39;recipe_name#39;: recipe.name, #39;minutes#39;: (task.end - task.start) / 60, #39;start_minute#39;: task.start / 60, #39;end_minute#39;: task.end / 60, #39;equipment#39;: [resource_names[resource_id] for resource_id, _ in task.reservations]}))
+        Note over Function: 条件付き式を評価: result.append(PlannedStep.model_validate({**step.model_dump(), #39;key#39;: f#39;{task.item_id}:{task.step_id}#39;, #39;meal_item_id#39;: str(task.item_id), #39;recipe_id#39;: recipe.id, #39;recipe_name#39;: recipe.name, #39;duration_source#39;: task.duration_source, #39;confirmed_duration_seconds#39;: task.confirmed_duration_s, #39;minutes#39;: (task.end - task.start) / 60, #39;start_minute#39;: task.start / 60, #39;end_minute#39;: task.end / 60, #39;equipment#39;: [resource_names[resource_id] for resource_id, _ in task.reservations]}))
     end
     Function->>Callee: PlanResponse(plan=result)
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）

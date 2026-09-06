@@ -1,5 +1,6 @@
 import type {
   AppState,
+  DurationEstimate,
   MealItem,
   PlannedStep,
   Food,
@@ -12,6 +13,7 @@ import type {
 import { cacheRecipes } from "./domain";
 import { validateAppState } from "./persistence";
 import { clearToken, getToken, setToken, localMode } from "./auth";
+import type { BackupPreview } from "./backup";
 
 export interface User {
   id: string;
@@ -47,6 +49,7 @@ const API_ROOT =
 export async function request<T>(
   path: string,
   options: RequestInit = {},
+  responseFormat: "json" | "text" = "json",
 ): Promise<T> {
   const headers = new Headers(options.headers);
   const token = getToken();
@@ -104,7 +107,12 @@ export async function request<T>(
           : "処理を完了できませんでした。入力内容を確認してください。"),
     );
   }
-  const result = response.status === 204 ? undefined : await response.json();
+  const result =
+    response.status === 204
+      ? undefined
+      : responseFormat === "text"
+        ? await response.text()
+        : await response.json();
   if (getToken() !== token)
     throw new ApiError(
       409,
@@ -134,13 +142,18 @@ export async function loadFoods(): Promise<Food[]> {
   const result = await request<{ items: Food[]; total: number }>("/api/foods");
   return result.items;
 }
+/** 試用データの要求は明示した配信環境と認証がそろう場合だけ。公開可否はAPIが判定する。 */
+const requestCatalogPreview = (): boolean =>
+  Boolean(getToken()) &&
+  (localMode || import.meta.env.VITE_CATALOG_PREVIEW === "true");
+
 export async function findRecipes(
   filters?: SearchFilters,
   excludedFoodIds: string[] = [],
   offset = 0,
 ): Promise<RecipePage> {
   const params = new URLSearchParams({ limit: "50", offset: String(offset) });
-  if (localMode && getToken()) params.set("preview", "true");
+  if (requestCatalogPreview()) params.set("preview", "true");
   if (filters) {
     for (const id of filters.selectedFoodIds)
       params.append("selectedFoodIds", id);
@@ -160,7 +173,7 @@ export async function randomRecipe(
   previousId = "",
 ): Promise<Recipe> {
   const params = new URLSearchParams();
-  if (localMode && getToken()) params.set("preview", "true");
+  if (requestCatalogPreview()) params.set("preview", "true");
   if (previousId) params.set("excludeId", previousId);
   for (const id of excludedFoodIds) params.append("excludedFoodIds", id);
   const recipe = await request<Recipe>(`/api/recipes/random?${params}`);
@@ -172,7 +185,7 @@ export async function loadRecipe(
   versionId?: string,
 ): Promise<Recipe> {
   const params = new URLSearchParams();
-  if (localMode && getToken()) params.set("preview", "true");
+  if (requestCatalogPreview()) params.set("preview", "true");
   if (versionId) params.set("versionId", versionId);
   const recipe = await request<Recipe>(
     `/api/recipes/${encodeURIComponent(id)}?${params}`,
@@ -220,6 +233,7 @@ const stockInput = (lot: StockLot) => ({
 export async function saveState(
   current: AppState,
   next: AppState,
+  durationEstimates: DurationEstimate[] = [],
 ): Promise<AppState> {
   let result = current;
   const mutate = async (path: string, method: string, body: object = {}) => {
@@ -300,7 +314,12 @@ export async function saveState(
         ? `/api/cooking-sessions/${encodeURIComponent(next.cooking.id)}`
         : "/api/cooking-sessions",
       current.cooking?.id === next.cooking.id ? "PATCH" : "POST",
-      { session: next.cooking },
+      {
+        session: next.cooking,
+        ...(current.cooking?.id !== next.cooking.id && durationEstimates.length
+          ? { durationEstimates }
+          : {}),
+      },
     );
   // 検索条件と料理選択前の分量調整は、この画面だけの一時状態。
   return {
@@ -378,9 +397,38 @@ export async function commitReceipt(
 /** 調理開始と同じ規則で、書き込みを行わず段取りだけを確認する。 */
 export async function previewCookingPlan(
   items: MealItem[],
+  durationEstimates: DurationEstimate[] = [],
 ): Promise<{ plan: PlannedStep[] }> {
   return request("/api/cooking-plan", {
     method: "POST",
-    body: JSON.stringify({ items }),
+    body: JSON.stringify({ items, durationEstimates }),
   });
+}
+
+/** DBの数値精度を維持するため、バックアップだけは応答本文をそのまま保存する。 */
+export async function exportDatabaseBackup(): Promise<string> {
+  return request<string>("/api/backups/export", { method: "POST" }, "text");
+}
+export async function previewDatabaseBackup(
+  backupText: string,
+): Promise<BackupPreview> {
+  return request("/api/backups/preview", {
+    method: "POST",
+    body: `{"backup":${backupText}}`,
+  });
+}
+export async function restoreDatabaseBackup(
+  backupText: string,
+  preview: BackupPreview,
+): Promise<AppState> {
+  const confirmation = JSON.stringify({
+    intentId: preview.intentId,
+    expectedVersion: preview.expectedVersion,
+    confirmed: true,
+  });
+  const result = await request<AppState>("/api/backups/restore", {
+    method: "POST",
+    body: `{"backup":${backupText},${confirmation.slice(1)}`,
+  });
+  return hydrateWorkspace(result);
 }

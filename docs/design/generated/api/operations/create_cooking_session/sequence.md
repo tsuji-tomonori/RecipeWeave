@@ -4,7 +4,7 @@
 
 実装から自動生成。手編集禁止。`uv run python tools/generate_service_design.py` で更新。
 
-対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。
+対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。ローカル関数は字句スコープ付きの別図にし、関数定義と本文の実行を区別する。エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。
 
 ### router.py: `handle`
 
@@ -44,7 +44,7 @@ sequenceDiagram
 
 ### workspace_service.py: `create_cooking_session`
 
-定義元: `backend/src/app/core/workspace_service.py:490`
+定義元: `backend/src/app/core/workspace_service.py:491`
 
 ```mermaid
 sequenceDiagram
@@ -64,7 +64,7 @@ sequenceDiagram
 
 ### cooking_service.py: `create`
 
-定義元: `backend/src/app/core/cooking_service.py:108`
+定義元: `backend/src/app/core/cooking_service.py:111`
 
 ```mermaid
 sequenceDiagram
@@ -98,6 +98,7 @@ sequenceDiagram
     Function->>Callee: uuid5(session_id, #39;frozen-menu#39;)
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Note over Function: menu_id = uuid5(session_id, #39;frozen-menu#39;)
+    Note over Function: frozen_ids: dict[str, UUID] = {}
     loop item in request.session.meal_snapshot
         Function->>Callee: uuid5(session_id, #39;item:#39; + item.id)
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
@@ -106,6 +107,9 @@ sequenceDiagram
         Function->>Callee: item.model_copy(update={#39;id#39;: str(uuid5(session_id, #39;item:#39; + item.id))})
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
         Note over Function: frozen = item.model_copy(update={#39;id#39;: str(uuid5(session_id, #39;item:#39; + item.id))})
+        Function->>Callee: identifier(frozen.id)
+        Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
+        Note over Function: frozen_ids[item.id] = identifier(frozen.id)
         Function->>Callee: self.workspace.add_item(q, frozen, menu_id, #39;調理開始時の献立#39;)
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     end
@@ -123,9 +127,23 @@ sequenceDiagram
     Note over Function: resources = q.run(#39;q023_resources#39;, user_id=self.user_id)
     rect rgb(244, 247, 246)
     Note over Function: try: 例外発生時は一致するexceptへ移る
-        Function->>Callee: build_plan(steps, dependencies, requirements, resources)
+        Note over Function: estimates: list[dict[str, Any]] = []
+        loop estimate in request.duration_estimates
+            alt estimate.meal_item_id not in frozen_ids
+                Function->>Callee: ValueError(#39;この献立に含まれない工程の見積りが指定されています。#39;)
+                Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
+                break この経路の関数終了: raise
+                    Function-->>Caller: ValueError(#39;この献立に含まれない工程の見積りが指定されています。#39;)
+                end
+            end
+            Function->>Callee: estimate.model_dump()
+            Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
+            Function->>Callee: estimates.append({**estimate.model_dump(), #39;meal_item_id#39;: frozen_ids[estimate.meal_item_id]})
+            Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
+        end
+        Function->>Callee: build_plan(steps, dependencies, requirements, resources, duration_estimates=estimates)
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-        Note over Function: plan = build_plan(steps, dependencies, requirements, resources)
+        Note over Function: plan = build_plan(steps, dependencies, requirements, resources, duration_estimates=estimates)
     end
     opt 例外: ValueError
         Function->>Callee: str(exc)
@@ -169,8 +187,8 @@ sequenceDiagram
     loop row in ingredients
         Note over Function: item_values[row[#39;item_id#39;]] = {#39;id#39;: row[#39;item_id#39;], #39;recipe_version_id#39;: row[#39;recipe_version_id#39;], #39;servings#39;: row[#39;servings#39;]}
     end
-    Note over Function: 条件付き式を評価: CookingInput.model_validate({#39;schema_version#39;: 1, #39;menu_revision#39;: revision, #39;items#39;: list(item_values.values()), #39;ingredients#39;: [{#39;id#39;: r[#39;ingredient_id#39;], #39;form_id#39;: r[#39;form_id#39;], #39;amount#39;: r[#39;amount#39;], #39;unit_id#39;: r[#39;unit_id#39;], #39;conversion_id#39;: r[#39;conversion_id#39;]} for r in ingredients], #39;resources#39;: [{key: r[key] for key in [#39;id#39;, #39;resource_type_id#39;, #39;quantity#39;, #39;capacity#39;]} for r in resources], #39;planner_config#39;: {#39;planner_version#39;: #39;dag-resource-v1#39;, #39;concurrent_active_tasks#39;: 1}})
-    Note over Function: snapshot = CookingInput.model_validate({#39;schema_version#39;: 1, #39;menu_revision#39;: revision, #39;items#39;: list(item_values.values()), #39;ingredients#39;: [{#39;id#39;: r[#39;ingredient_id#39;], #39;form_id#39;: r[#39;form_id#39;], #39;amount#39;: r[#39;amount#39;], #39;unit_id#39;: r[#39;unit_id#39;], #39;conversion_id#39;: r[#39;conversion_id#39;]} for r in ingredients], #39;resources#39;: [{key: r[key] for key in [#39;id#39;, #39;resource_type_id#39;, #39;quantity#39;, #39;capacity#39;]} for r in resources], #39;planner_config#39;: {#39;planner_version#39;: #39;dag-resource-v1#39;, #39;concurrent_active_tasks#39;: 1}})
+    Note over Function: 条件付き式を評価: CookingInput.model_validate({#39;schema_version#39;: 1, #39;menu_revision#39;: revision, #39;items#39;: list(item_values.values()), #39;ingredients#39;: [{#39;id#39;: r[#39;ingredient_id#39;], #39;form_id#39;: r[#39;form_id#39;], #39;amount#39;: r[#39;amount#39;], #39;unit_id#39;: r[#39;unit_id#39;], #39;conversion_id#39;: r[#39;conversion_id#39;]} for r in ingredients], #39;resources#39;: [{key: r[key] for key in [#39;id#39;, #39;resource_type_id#39;, #39;quantity#39;, #39;capacity#39;]} for r in resources], #39;planner_config#39;: {#39;planner_version#39;: #39;dag-resource-manual-v2#39;, #39;concurrent_active_tasks#39;: 1}})
+    Note over Function: snapshot = CookingInput.model_validate({#39;schema_version#39;: 1, #39;menu_revision#39;: revision, #39;items#39;: list(item_values.values()), #39;ingredients#39;: [{#39;id#39;: r[#39;ingredient_id#39;], #39;form_id#39;: r[#39;form_id#39;], #39;amount#39;: r[#39;amount#39;], #39;unit_id#39;: r[#39;unit_id#39;], #39;conversion_id#39;: r[#39;conversion_id#39;]} for r in ingredients], #39;resources#39;: [{key: r[key] for key in [#39;id#39;, #39;resource_type_id#39;, #39;quantity#39;, #39;capacity#39;]} for r in resources], #39;planner_config#39;: {#39;planner_version#39;: #39;dag-resource-manual-v2#39;, #39;concurrent_active_tasks#39;: 1}})
     Function->>Callee: snapshot.model_dump_json()
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Note over Function: encoded = snapshot.model_dump_json()
@@ -192,7 +210,7 @@ sequenceDiagram
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
         Note over Function: task_id = uuid5(session_id, f#39;task:{task.item_id}:{task.step_id}#39;)
         Note over Function: task_ids[task.item_id, task.step_id] = task_id
-        Function->>Callee: q.run(#39;q026_task#39;, row_id=task_id, session_id=session_id, item_id=task.item_id, step_id=task.step_id, start=task.start, end=task.end)
+        Function->>Callee: q.run(#39;q026_task#39;, row_id=task_id, session_id=session_id, item_id=task.item_id, step_id=task.step_id, start=task.start, end=task.end, duration_source=task.duration_source, confirmed_duration_s=task.confirmed_duration_s)
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
         loop (resource_id, count) in task.reservations
             Function->>Callee: uuid4()

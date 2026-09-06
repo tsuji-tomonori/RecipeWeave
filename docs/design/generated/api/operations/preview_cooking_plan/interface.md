@@ -24,6 +24,7 @@
 
 | 項目 | 型 | 必須性 | 制約 | 説明 |
 |---|---|---|---|---|
+| durationEstimates | array&lt;DurationEstimate&gt; | 任意 | maxItems=500 | Durationestimates |
 | items | array&lt;MealItem&gt; | 必須 | minItems=1; maxItems=50 | Items |
 
 ## レスポンス

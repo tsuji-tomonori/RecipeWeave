@@ -4,7 +4,7 @@
 
 実装から自動生成。手編集禁止。`uv run python tools/generate_service_design.py` で更新。
 
-対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。
+対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。ローカル関数は字句スコープ付きの別図にし、関数定義と本文の実行を区別する。エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。
 
 ### router.py: `handle`
 
@@ -44,7 +44,7 @@ sequenceDiagram
 
 ### workspace_service.py: `update_cooking_session`
 
-定義元: `backend/src/app/core/workspace_service.py:496`
+定義元: `backend/src/app/core/workspace_service.py:497`
 
 ```mermaid
 sequenceDiagram
@@ -64,7 +64,7 @@ sequenceDiagram
 
 ### cooking_service.py: `update`
 
-定義元: `backend/src/app/core/cooking_service.py:232`
+定義元: `backend/src/app/core/cooking_service.py:251`
 
 ```mermaid
 sequenceDiagram
@@ -72,6 +72,13 @@ sequenceDiagram
     participant Function as update
     participant Callee as 呼出先
     Caller->>Function: self, request: CookingRequest, row_id: UUID
+    alt request.duration_estimates
+        Function->>Callee: HTTPException(422, #39;開始後の見積り時間は変更できません。新しい調理として計画してください#39;)
+        Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
+        break この経路の関数終了: raise
+            Function-->>Caller: HTTPException(422, #39;開始後の見積り時間は変更できません。新しい調理として計画してください#39;)
+        end
+    end
     Function->>Callee: self.workspace.begin(#39;update_cooking_session#39;, request)
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Note over Function: q = self.workspace.begin(#39;update_cooking_session#39;, request)
@@ -160,7 +167,7 @@ sequenceDiagram
 
 ### cooking_service.py: `_consume`
 
-定義元: `backend/src/app/core/cooking_service.py:276`
+定義元: `backend/src/app/core/cooking_service.py:299`
 
 ```mermaid
 sequenceDiagram

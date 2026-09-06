@@ -21,6 +21,7 @@ const data = new DataStack(
 new ServiceStack(app, `RecipeWeave-${config.stage}-Service`, {
   ...stackProps(),
   data,
+  stage: config.stage,
   repositoryRoot: fileURLToPath(new URL("../../", import.meta.url)),
 });
 if (config.githubOidcProviderArn !== undefined) {

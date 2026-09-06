@@ -48,6 +48,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_menu_ingredient_override.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_menu_ingredient_override.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_menu_ingredient_override.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_menu_ingredient_override.sql |
 | entity_menu_ingredient_override_create | C | backend/src/app/apis/entities/menu_ingredient_override_create/sql/001_create.sql |
 | entity_menu_ingredient_override_delete | D | backend/src/app/apis/entities/menu_ingredient_override_delete/sql/001_delete.sql |
 | entity_menu_ingredient_override_get | R | backend/src/app/apis/entities/menu_ingredient_override_get/sql/001_get.sql |
@@ -58,6 +65,7 @@
 | create_cooking_session | R | backend/src/app/apis/workspace/create_cooking_session/sql/q024_ingredients.sql |
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | update_menu_item | C | backend/src/app/apis/workspace/update_menu_item/sql/q014_override.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |

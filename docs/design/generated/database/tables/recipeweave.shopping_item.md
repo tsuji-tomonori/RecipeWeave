@@ -52,6 +52,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_shopping_item.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_shopping_item.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_shopping_item.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_shopping_item.sql |
 | entity_shopping_item_create | C | backend/src/app/apis/entities/shopping_item_create/sql/001_create.sql |
 | entity_shopping_item_delete | D | backend/src/app/apis/entities/shopping_item_delete/sql/001_delete.sql |
 | entity_shopping_item_get | R | backend/src/app/apis/entities/shopping_item_get/sql/001_get.sql |

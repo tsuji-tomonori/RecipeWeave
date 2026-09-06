@@ -17,9 +17,10 @@
 | recipeweave.recipe | R | id, status, title, withdrawal_reason |
 | recipeweave.recipe_ingredient | R | amount, form_id, id, line_no, note, product_version_id, recipe_version_id, unit_id |
 | recipeweave.recipe_option | R | option_id, recipe_version_id |
-| recipeweave.recipe_step | R | attention, duration_max_s, id, instruction, operation_id, recipe_version_id, step_no, title |
+| recipeweave.recipe_step | R | attention, duration_max_s, id, instruction, operation_id, recipe_version_id, scaling_rule_id, step_no, title |
 | recipeweave.recipe_version | R | base_servings, description, id, recipe_id, status, validation, version |
 | recipeweave.resource_type | R | code, id, name |
+| recipeweave.scaling_rule | R | id, mode |
 | recipeweave.step_resource | R | resource_type_id, step_id |
 | recipeweave.unit | R | code, id |
 | recipeweave.validation_result | R | recipe_version_id, rule_id, state |
@@ -190,6 +191,7 @@ payloads AS (
                     JSONB_AGG(JSONB_BUILD_OBJECT(
                         'id', step.id::TEXT, 'title', step.title, 'instruction', step.instruction,
                         'minutes', step.duration_max_s / 60.0, 'mode', step.attention,
+                        'timeScalingMode', time_rule.mode,
                         'equipment', COALESCE((
                             SELECT JSONB_AGG(resource_kind.name ORDER BY resource_kind.name)
                             FROM recipeweave.step_resource AS resource_usage
@@ -208,6 +210,9 @@ payloads AS (
                 INNER JOIN
                     recipeweave.operation AS cook_operation
                     ON step.operation_id = cook_operation.id
+                INNER JOIN
+                    recipeweave.scaling_rule AS time_rule
+                    ON step.scaling_rule_id = time_rule.id
                 WHERE step.recipe_version_id = page.version_id
             ), '[]'::JSONB),
             'arrangementIds', '[]'::JSONB,
@@ -245,7 +250,7 @@ FROM payloads;
 
 ## backend/src/app/apis/auth/get_me/sql/q001_set_identity.sql
 
-実行条件: preview=trueで開発用認証を行う場合のみ。通常の公開検索では実行しない。
+実行条件: 試用を許可した開発環境でpreview=trueとして認証する場合のみ。通常の公開検索では実行しない。
 
 | 対象表 | CRUD | 参照・書込列 |
 |---|---|---|
@@ -261,7 +266,7 @@ SELECT
 
 ## backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql
 
-実行条件: preview=trueで開発用認証を行う場合のみ。通常の公開検索では実行しない。
+実行条件: 試用を許可した開発環境でpreview=trueとして認証する場合のみ。通常の公開検索では実行しない。
 
 | 対象表 | CRUD | 参照・書込列 |
 |---|---|---|
@@ -279,7 +284,7 @@ RETURNING id;
 
 ## backend/src/app/apis/auth/get_me/sql/q003_select_user.sql
 
-実行条件: preview=trueで開発用認証を行う場合のみ。通常の公開検索では実行しない。
+実行条件: 試用を許可した開発環境でpreview=trueとして認証する場合のみ。通常の公開検索では実行しない。
 
 | 対象表 | CRUD | 参照・書込列 |
 |---|---|---|
@@ -298,7 +303,7 @@ WHERE id = %(user_id)s AND auth_subject = %(subject)s;
 
 ## backend/src/app/apis/auth/get_me/sql/q004_initialize_revision.sql
 
-実行条件: preview=trueで開発用認証を行う場合のみ。通常の公開検索では実行しない。
+実行条件: 試用を許可した開発環境でpreview=trueとして認証する場合のみ。通常の公開検索では実行しない。
 
 | 対象表 | CRUD | 参照・書込列 |
 |---|---|---|
@@ -314,7 +319,7 @@ VALUES (%(row_id)s, %(user_id)s, 0) ON CONFLICT (user_id) DO NOTHING;
 
 ## backend/src/app/apis/auth/get_me/sql/q005_initialize_internal_resource.sql
 
-実行条件: preview=trueで開発用認証を行う場合のみ。通常の公開検索では実行しない。
+実行条件: 試用を許可した開発環境でpreview=trueとして認証する場合のみ。通常の公開検索では実行しない。
 
 | 対象表 | CRUD | 参照・書込列 |
 |---|---|---|

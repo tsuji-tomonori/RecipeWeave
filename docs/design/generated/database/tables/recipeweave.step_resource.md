@@ -54,6 +54,7 @@
 | create_cooking_session | R | backend/src/app/apis/workspace/create_cooking_session/sql/q022_requirements.sql |
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql |
 | preview_cooking_plan | R | backend/src/app/apis/workspace/preview_cooking_plan/sql/q003_requirements.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q013_task_resources.sql |

@@ -47,12 +47,21 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_pantry_consumption.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_pantry_consumption.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_pantry_consumption.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_pantry_consumption.sql |
 | entity_pantry_consumption_get | R | backend/src/app/apis/entities/pantry_consumption_get/sql/001_get.sql |
 | entity_pantry_consumption_list | R | backend/src/app/apis/entities/pantry_consumption_list/sql/001_list.sql |
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q003_consumption.sql |
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | undo_receipt | R | backend/src/app/apis/workspace/undo_receipt/sql/q002_eligible_lots.sql |
 | update_cooking_session | C | backend/src/app/apis/workspace/update_cooking_session/sql/q009_ledger.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q003_consumption.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q003_consumption.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q003_consumption.sql |

@@ -12,6 +12,8 @@ class Parameters(TypedDict):
     actual_end_at: datetime | None
     actual_start_at: datetime | None
     batch_no: int
+    confirmed_duration_s: int | None
+    duration_source: str
     expected_etag: str
     menu_item_id: UUID
     planned_end_s: int
@@ -38,7 +40,9 @@ SET
     actual_start_at = %(actual_start_at)s,
     actual_end_at = %(actual_end_at)s,
     timer_started_at = %(timer_started_at)s,
-    timer_duration_s = %(timer_duration_s)s
+    timer_duration_s = %(timer_duration_s)s,
+    duration_source = %(duration_source)s,
+    confirmed_duration_s = %(confirmed_duration_s)s
 WHERE
     t.id = %(row_id)s
     AND t.xmin::TEXT = %(expected_etag)s
@@ -69,6 +73,8 @@ RETURNING
     t.actual_end_at,
     t.timer_started_at,
     t.timer_duration_s,
+    t.duration_source,
+    t.confirmed_duration_s,
     t.xmin::TEXT AS etag;
 """
 
@@ -82,6 +88,8 @@ def execute(
         "actual_end_at": values["actual_end_at"],
         "actual_start_at": values["actual_start_at"],
         "batch_no": values["batch_no"],
+        "confirmed_duration_s": values["confirmed_duration_s"],
+        "duration_source": values["duration_source"],
         "expected_etag": values["expected_etag"],
         "menu_item_id": values["menu_item_id"],
         "planned_end_s": values["planned_end_s"],

@@ -18,6 +18,18 @@
       "file": "003_service_operations.sql",
       "kind": "transaction",
       "verify": "SELECT count(*) = 7 FROM information_schema.tables WHERE table_schema = 'recipeweave' AND table_name IN ('receipt_import', 'receipt_line', 'workspace_revision', 'user_food', 'user_pantry_food', 'pantry_consumption', 'user_shopping_check')"
+    },
+    {
+      "id": "004_backup_restore",
+      "file": "004_backup_restore.sql",
+      "kind": "transaction",
+      "verify": "SELECT count(*) = 2 FROM information_schema.tables WHERE table_schema = 'recipeweave' AND table_name IN ('backup_artifact', 'backup_restore_intent')"
+    },
+    {
+      "id": "005_manual_duration",
+      "file": "005_manual_duration.sql",
+      "kind": "transaction",
+      "verify": "SELECT count(*) = 2 FROM information_schema.columns WHERE table_schema = 'recipeweave' AND table_name = 'session_task' AND column_name IN ('duration_source', 'confirmed_duration_s')"
     }
   ]
 }

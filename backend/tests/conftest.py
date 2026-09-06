@@ -72,6 +72,14 @@ class HttpTestClient(Protocol):
         json: object = None,
     ) -> httpx.Response: ...
 
+    def patch(
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json: object = None,
+    ) -> httpx.Response: ...
+
     def delete(
         self,
         url: str,

@@ -44,6 +44,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_user_exclusion.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_user_exclusion.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_user_exclusion.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_user_exclusion.sql |
 | entity_user_exclusion_create | C | backend/src/app/apis/entities/user_exclusion_create/sql/001_create.sql |
 | entity_user_exclusion_delete | D | backend/src/app/apis/entities/user_exclusion_delete/sql/001_delete.sql |
 | entity_user_exclusion_get | R | backend/src/app/apis/entities/user_exclusion_get/sql/001_get.sql |
@@ -52,6 +59,7 @@
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | put_settings | D | backend/src/app/apis/workspace/put_settings/sql/q001_clear_exclusion.sql |
 | put_settings | C | backend/src/app/apis/workspace/put_settings/sql/q004_exclusion.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q008_settings.sql |

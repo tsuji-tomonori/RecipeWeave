@@ -58,6 +58,7 @@
 | save_recipe | R | backend/src/app/apis/workspace/save_recipe/sql/q001_recipe.sql |
 | unsave_recipe | R | backend/src/app/apis/workspace/unsave_recipe/sql/q001_recipe.sql |
 | update_menu_item | R | backend/src/app/apis/workspace/update_menu_item/sql/q010_recipe.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |

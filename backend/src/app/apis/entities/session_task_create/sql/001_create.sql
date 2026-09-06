@@ -12,7 +12,9 @@ INSERT INTO recipeweave.session_task AS t (
     actual_start_at,
     actual_end_at,
     timer_started_at,
-    timer_duration_s
+    timer_duration_s,
+    duration_source,
+    confirmed_duration_s
 )
 VALUES (
     %(row_id)s,
@@ -26,7 +28,9 @@ VALUES (
     %(actual_start_at)s,
     %(actual_end_at)s,
     %(timer_started_at)s,
-    %(timer_duration_s)s
+    %(timer_duration_s)s,
+    %(duration_source)s,
+    %(confirmed_duration_s)s
 )
 RETURNING
     t.id,
@@ -42,4 +46,6 @@ RETURNING
     t.actual_end_at,
     t.timer_started_at,
     t.timer_duration_s,
+    t.duration_source,
+    t.confirmed_duration_s,
     t.xmin::TEXT AS etag;

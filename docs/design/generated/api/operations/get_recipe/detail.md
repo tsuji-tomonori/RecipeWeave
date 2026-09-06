@@ -38,9 +38,10 @@
 | recipeweave.recipe | R | id: 不変の行識別子; title: 代表名; status: 公開状態; withdrawal_reason: 取下げ理由 |
 | recipeweave.recipe_ingredient | R | id: 不変の行識別子; recipe_version_id: 親版; line_no: 表示順; form_id: 使用形態; product_version_id: 商品指定時の仕様版; amount: 確定値または範囲下限; unit_id: 登録単位; note: 材料の補足 |
 | recipeweave.recipe_option | R | recipe_version_id: 対象版; option_id: 特徴値 |
-| recipeweave.recipe_step | R | id: 不変の行識別子; recipe_version_id: 所属版; step_no: 表示順（依存順とは別）; operation_id: 標準動作; instruction: 個別補足; attention: 作業者拘束; duration_max_s: 所要秒上限; title: 工程の短い見出し |
+| recipeweave.recipe_step | R | id: 不変の行識別子; recipe_version_id: 所属版; step_no: 表示順（依存順とは別）; operation_id: 標準動作; instruction: 個別補足; attention: 作業者拘束; duration_max_s: 所要秒上限; scaling_rule_id: 時間の人数変更規則; title: 工程の短い見出し |
 | recipeweave.recipe_version | R | id: 不変の行識別子; recipe_id: 所属レシピ; version: 版番号; base_servings: 登録分量が何人前か; status: 版の状態; validation: 公開審査; description: 料理の紹介文 |
 | recipeweave.resource_type | R | id: 不変の行識別子; code: burner/pan/person等; name: 道具名 |
+| recipeweave.scaling_rule | R | id: 不変の行識別子; mode: 比例・バッチ等 |
 | recipeweave.step_resource | R | step_id: 対象工程; resource_type_id: 要求種別 |
 | recipeweave.unit | R | id: 不変の行識別子; code: 単位コード |
 | recipeweave.user_recipe_event | R | user_id: 利用者; recipe_version_id: 提案版 |

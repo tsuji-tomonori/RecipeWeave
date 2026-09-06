@@ -525,9 +525,10 @@ LIMIT 1;
 |---|---|---|
 | recipeweave.menu_item | R | id, position, recipe_version_id |
 | recipeweave.recipe | R | id, title |
-| recipeweave.recipe_step | R | attention, duration_max_s, id, instruction, step_no, title |
+| recipeweave.recipe_step | R | attention, duration_max_s, id, instruction, scaling_rule_id, step_no, title |
 | recipeweave.recipe_version | R | id, recipe_id |
-| recipeweave.session_task | R | id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id, timer_duration_s, timer_started_at |
+| recipeweave.scaling_rule | R | id, mode |
+| recipeweave.session_task | R | confirmed_duration_s, duration_source, id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id, timer_duration_s, timer_started_at |
 
 バインド変数: session_id
 
@@ -539,6 +540,8 @@ SELECT
     t.step_id,
     t.planned_start_s,
     t.planned_end_s,
+    t.duration_source,
+    t.confirmed_duration_s,
     t.status,
     t.timer_started_at,
     t.timer_duration_s,
@@ -547,11 +550,13 @@ SELECT
     st.title,
     st.instruction,
     st.attention,
-    st.duration_max_s
+    st.duration_max_s,
+    scaling.mode AS scaling_mode
 FROM recipeweave.session_task AS t INNER JOIN recipeweave.menu_item AS mi ON t.menu_item_id = mi.id
 INNER JOIN recipeweave.recipe_version AS rv ON mi.recipe_version_id = rv.id
 INNER JOIN recipeweave.recipe AS r ON rv.recipe_id = r.id
 INNER JOIN recipeweave.recipe_step AS st ON t.step_id = st.id
+INNER JOIN recipeweave.scaling_rule AS scaling ON st.scaling_rule_id = scaling.id
 WHERE t.session_id = %(session_id)s
 ORDER BY t.planned_start_s, mi.position, st.step_no, t.id;
 ```

@@ -37,6 +37,8 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q300_reference_source_record.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q300_reference_source_record.sql |
 | entity_source_record_create | C | backend/src/app/apis/entities/source_record_create/sql/001_create.sql |
 | entity_source_record_get | R | backend/src/app/apis/entities/source_record_get/sql/001_get.sql |
 | entity_source_record_list | R | backend/src/app/apis/entities/source_record_list/sql/001_list.sql |

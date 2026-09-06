@@ -2,7 +2,7 @@
 # RecipeWeave 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 8
+- カタログ版: 9
 - Product(JSON): <code>"RecipeWeave"</code>
 - 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -26,7 +26,7 @@
 | <code>"REQ-SVC-SAMPLE-001"</code> | 3 | 有効 | 機能 | Dev公開版は、試用可能と明示した初期料理セットを**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-SCALE-001"</code> | 2 | 有効 | 機能 | 料理詳細は、確定分量に対する人数比の材料量を**導出する**（<code>"derive"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-AMOUNT-001"</code> | 2 | 有効 | 機能 | 料理詳細は、利用者が個別調整した材料分量を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-LOCAL-001"</code> | 2 | 有効 | 機能 | Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内データを**維持する**（<code>"maintain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-LOCAL-001"</code> | 3 | 有効 | 機能 | Dev公開版は、冷蔵庫・献立・しおり・調理状態の正規化された本人データを**維持する**（<code>"maintain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-OCR-001"</code> | 2 | 有効 | 機能 | レシート読取は、画像内の日本語から得た登録候補を**生成する**（<code>"generate"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-RECEIPT-INPUT-001"</code> | 2 | 有効 | 機能 | レシート入力は、撮影または画像選択で渡された画像を**妥当性確認する**（<code>"validate"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-RECEIPT-REVIEW-001"</code> | 2 | 有効 | 機能 | 読取確認画面は、選択する食品候補と除外した行を**実現する**（<code>"enable"</code>） | 対応する受入条件の自動検査と画面操作確認 |
@@ -39,13 +39,13 @@
 | <code>"REQ-SVC-MEAL-001"</code> | 2 | 有効 | 機能 | 献立は、選んだ各料理と独立した人数・分量を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-MEAL-QUANTITY-001"</code> | 2 | 有効 | 機能 | 献立の材料集計は、各料理の確定した原材料必要量を**導出する**（<code>"derive"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-SHOPPING-001"</code> | 2 | 有効 | 機能 | 買い物リストは、購入チェックと変更後の必要量を**維持する**（<code>"maintain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-COOK-PLAN-001"</code> | 2 | 有効 | 機能 | 調理の段取りは、確定した料理工程の実行順を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-COOK-PLAN-001"</code> | 3 | 有効 | 機能 | 調理の段取りは、確定した料理工程の実行順を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-COOK-RESUME-001"</code> | 2 | 有効 | 機能 | 調理画面は、選んだ料理の工程位置と完了状態を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-COOK-TIMER-001"</code> | 2 | 有効 | 機能 | 調理タイマーは、起動したタイマーとその経過状態を**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-STOCK-CONSENT-001"</code> | 2 | 有効 | 機能 | 調理完了は、同単位で量が足りる在庫への確認済み使用量の反映を**制約する**（<code>"constrain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-EXCLUSION-001"</code> | 2 | 有効 | 機能 | 候補選定は、利用者が指定した食べられない食材の条件を**強制する**（<code>"enforce"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-BACKUP-001"</code> | 2 | 有効 | 機能 | データ管理は、利用者が指定したバックアップ内容による現在データの置換を**実現する**（<code>"enable"</code>） | 対応する受入条件の自動検査と画面操作確認 |
-| <code>"REQ-SVC-PRIVACY-001"</code> | 2 | 有効 | データ | レシートデータ管理は、確認のため一時的に保持した画像とOCR全文の保存期間を**制約する**（<code>"constrain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-BACKUP-001"</code> | 3 | 有効 | 機能 | データ管理は、利用者が指定したバックアップ内容による現在データの置換を**実現する**（<code>"enable"</code>） | 対応する受入条件の自動検査と画面操作確認 |
+| <code>"REQ-SVC-PRIVACY-001"</code> | 3 | 有効 | データ | レシートデータ管理は、確認のため一時的に保持した画像とOCR全文の保存期間を**制約する**（<code>"constrain"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-BOOKMARK-001"</code> | 2 | 有効 | 機能 | 保存機能は、料理IDに対するしおりを**維持する**（<code>"preserve"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-GUIDE-001"</code> | 2 | 有効 | 機能 | 技法ガイドは、調理工程で参照した切り方を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-CAPABILITY-001"</code> | 3 | 有効 | 品質 | 提供状態表示は、実際に利用できる機能と未提供機能を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
@@ -589,27 +589,27 @@ Dev公開版は、試用可能と明示した初期料理セットを**提供す
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
 
-## REQ-SVC-LOCAL-001: 試用データを同じブラウザで継続利用する
+## REQ-SVC-LOCAL-001: 本人の保存データを認証後に継続利用する
 
 要件ID(JSON): <code>"REQ-SVC-LOCAL-001"</code>
-タイトル(JSON): <code>"試用データを同じブラウザで継続利用する"</code>
+タイトル(JSON): <code>"本人の保存データを認証後に継続利用する"</code>
 主体(JSON): <code>"Dev公開版"</code>
-対象(JSON): <code>"冷蔵庫・献立・しおり・調理状態の端末内データ"</code>
-Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内データを**維持する**。
+対象(JSON): <code>"冷蔵庫・献立・しおり・調理状態の正規化された本人データ"</code>
+Dev公開版は、冷蔵庫・献立・しおり・調理状態の正規化された本人データを**維持する**。
 行為enum: <code>"maintain"</code>
 
-根拠: ログインなしで途中から使え、保存範囲を誤認しないようにする。
-根拠(JSON): <code>"ログインなしで途中から使え、保存範囲を誤認しないようにする。"</code>
+根拠: 保存と所有権をAPIとDBで一貫させ、端末を変えても本人の確定データから利用を続ける。
+根拠(JSON): <code>"保存と所有権をAPIとDBで一貫させ、端末を変えても本人の確定データから利用を続ける。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
+項目版: 3 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
-- <code>"AC-REQ-SVC-LOCAL-001-1"</code> 前提: 冷蔵庫・献立・しおり・分量下書き・調理状態を変更した。条件: 同じ端末の同じブラウザで開き直す。期待結果: 最後に確定したデータから利用を続けられる。保存に失敗したときは成功表示を出さない。。
-  - criterion(JSON Object): <code>{"given":"冷蔵庫・献立・しおり・分量下書き・調理状態を変更した","id":"AC-REQ-SVC-LOCAL-001-1","then":"最後に確定したデータから利用を続けられる。保存に失敗したときは成功表示を出さない。","when":"同じ端末の同じブラウザで開き直す"}</code>
-- <code>"AC-REQ-SVC-LOCAL-001-2"</code> 前提: 端末保存を使用している。条件: 保存先の説明を確認する。期待結果: 別端末や別ブラウザへの自動同期を行わないことと、バックアップなしの消失はサービス側で復元できないことが分かる。。
-  - criterion(JSON Object): <code>{"given":"端末保存を使用している","id":"AC-REQ-SVC-LOCAL-001-2","then":"別端末や別ブラウザへの自動同期を行わないことと、バックアップなしの消失はサービス側で復元できないことが分かる。","when":"保存先の説明を確認する"}</code>
+- <code>"AC-REQ-SVC-LOCAL-001-1"</code> 前提: 冷蔵庫・献立・しおり・分量下書き・調理状態を変更した。条件: 同じ利用者で再認証して開き直す。期待結果: 最後に確定したデータから利用を続けられる。保存に失敗したときは成功表示を出さない。。
+  - criterion(JSON Object): <code>{"given":"冷蔵庫・献立・しおり・分量下書き・調理状態を変更した","id":"AC-REQ-SVC-LOCAL-001-1","then":"最後に確定したデータから利用を続けられる。保存に失敗したときは成功表示を出さない。","when":"同じ利用者で再認証して開き直す"}</code>
+- <code>"AC-REQ-SVC-LOCAL-001-2"</code> 前提: APIとDBへ接続している。条件: 別端末または別ブラウザで本人としてログインする。期待結果: サーバーで確定した本人データを取得する。他人のデータを表示せず、未接続や保存失敗を成功として扱わない。。
+  - criterion(JSON Object): <code>{"given":"APIとDBへ接続している","id":"AC-REQ-SVC-LOCAL-001-2","then":"サーバーで確定した本人データを取得する。他人のデータを表示せず、未接続や保存失敗を成功として扱わない。","when":"別端末または別ブラウザで本人としてログインする"}</code>
 
 要求源(JSON List): <code>["user:2026-09-05:recipeweave-service","docs/service/manual.md","docs/service/faq.md"]</code>
 検証方法: 対応する受入条件の自動検査と画面操作確認
@@ -617,8 +617,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/persistence.ts"]</code>
-- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
+- 実装: <code>["frontend/src/App.svelte","backend/src/app/core/workspace_service.py"]</code>
+- テスト: <code>["backend/tests/test_workflow_database.py","frontend/src/App.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1047,15 +1047,15 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: 複数料理を作るときに手順や器具の衝突を利用者へ押し付けないようにする。
 根拠(JSON): <code>"複数料理を作るときに手順や器具の衝突を利用者へ押し付けないようにする。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
+項目版: 3 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
 - <code>"AC-REQ-SVC-COOK-PLAN-001-1"</code> 前提: 複数料理と使う器具の条件がある。条件: 段取りを見るを押す。期待結果: 材料量と各工程の依存順を守った調理順を提示し、同時使用できない器具や一人で両立しない作業を同時実行として指示しない。。
   - criterion(JSON Object): <code>{"given":"複数料理と使う器具の条件がある","id":"AC-REQ-SVC-COOK-PLAN-001-1","then":"材料量と各工程の依存順を守った調理順を提示し、同時使用できない器具や一人で両立しない作業を同時実行として指示しない。","when":"段取りを見るを押す"}</code>
-- <code>"AC-REQ-SVC-COOK-PLAN-001-2"</code> 前提: 料理または人数・器具条件を変更した。条件: 段取りを確認する。期待結果: 変更後の条件で順番を再提示し、確定した段取りから調理を始められる。。
-  - criterion(JSON Object): <code>{"given":"料理または人数・器具条件を変更した","id":"AC-REQ-SVC-COOK-PLAN-001-2","then":"変更後の条件で順番を再提示し、確定した段取りから調理を始められる。","when":"段取りを確認する"}</code>
+- <code>"AC-REQ-SVC-COOK-PLAN-001-2"</code> 前提: 料理または人数・器具条件を変更した。条件: 段取りを確認する。期待結果: 変更後の条件で順番を再提示し、確定した段取りから調理を始められる。人数変更で時間の確認が必要な工程は利用者が正の目安秒数を確認する。人数比例による検証済み時間とは扱わず、選んだ人数・材料量と確認した工程・時間を調理記録へ保存する。。
+  - criterion(JSON Object): <code>{"given":"料理または人数・器具条件を変更した","id":"AC-REQ-SVC-COOK-PLAN-001-2","then":"変更後の条件で順番を再提示し、確定した段取りから調理を始められる。人数変更で時間の確認が必要な工程は利用者が正の目安秒数を確認する。人数比例による検証済み時間とは扱わず、選んだ人数・材料量と確認した工程・時間を調理記録へ保存する。","when":"段取りを確認する"}</code>
 
 要求源(JSON List): <code>["user:2026-09-05:recipeweave-service","docs/service/manual.md","docs/service/faq.md"]</code>
 検証方法: 対応する受入条件の自動検査と画面操作確認
@@ -1063,8 +1063,8 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/domain.ts"]</code>
-- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
+- 実装: <code>["frontend/src/App.svelte","backend/src/app/core/cooking_planner.py","backend/src/app/core/cooking_service.py","database/migrations/005_manual_duration.sql"]</code>
+- テスト: <code>["backend/tests/test_cooking_planner.py","backend/tests/test_workflow_database.py","frontend/e2e/workspace.spec.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1205,36 +1205,36 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
 
-## REQ-SVC-BACKUP-001: 検証したバックアップで端末データを復元する
+## REQ-SVC-BACKUP-001: 検証したバックアップで本人の業務データを復元する
 
 要件ID(JSON): <code>"REQ-SVC-BACKUP-001"</code>
-タイトル(JSON): <code>"検証したバックアップで端末データを復元する"</code>
+タイトル(JSON): <code>"検証したバックアップで本人の業務データを復元する"</code>
 主体(JSON): <code>"データ管理"</code>
 対象(JSON): <code>"利用者が指定したバックアップ内容による現在データの置換"</code>
 データ管理は、利用者が指定したバックアップ内容による現在データの置換を**実現する**。
 行為enum: <code>"enable"</code>
 
-根拠: 同期のない試用版でも持ち出しと復元を行い、不正ファイルによるデータ消失を防ぐ。
-根拠(JSON): <code>"同期のない試用版でも持ち出しと復元を行い、不正ファイルによるデータ消失を防ぐ。"</code>
+根拠: 正規化された本人データを参照関係ごと持ち出し、不正ファイルや競合によるデータ消失を防ぎながら確認後に復元する。
+根拠(JSON): <code>"正規化された本人データを参照関係ごと持ち出し、不正ファイルや競合によるデータ消失を防ぎながら確認後に復元する。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `functional`
-変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
+項目版: 3 / 状態: `active` / 種別: `functional`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
 分類: scope=<code>"product"</code> / category=<code>"functional"</code>
 
 受入条件:
-- <code>"AC-REQ-SVC-BACKUP-001-1"</code> 前提: このブラウザの利用データがある。条件: 設定からデータを書き出す。期待結果: 対応するJSONバックアップを保存でき、持ち出す内容と復元の方法が分かる。。
-  - criterion(JSON Object): <code>{"given":"このブラウザの利用データがある","id":"AC-REQ-SVC-BACKUP-001-1","then":"対応するJSONバックアップを保存でき、持ち出す内容と復元の方法が分かる。","when":"設定からデータを書き出す"}</code>
-- <code>"AC-REQ-SVC-BACKUP-001-2"</code> 前提: バックアップを選択した。条件: データを読み込む。期待結果: 形式・版・参照関係・数量を検証し、件数と置換対象を表示して確認後に全置換する。合算しない。不正ファイルや確認キャンセルでは現在データを変更しない。。
-  - criterion(JSON Object): <code>{"given":"バックアップを選択した","id":"AC-REQ-SVC-BACKUP-001-2","then":"形式・版・参照関係・数量を検証し、件数と置換対象を表示して確認後に全置換する。合算しない。不正ファイルや確認キャンセルでは現在データを変更しない。","when":"データを読み込む"}</code>
+- <code>"AC-REQ-SVC-BACKUP-001-1"</code> 前提: サーバーに本人の利用データがある。条件: 設定からデータを書き出す。期待結果: サーバーの確定した本人データを対応する版の型付きJSONとして書き出し、数量・料理版・消費台帳等の関係を保持する。対象内容と復元方法を表示する。。
+  - criterion(JSON Object): <code>{"given":"サーバーに本人の利用データがある","id":"AC-REQ-SVC-BACKUP-001-1","then":"サーバーの確定した本人データを対応する版の型付きJSONとして書き出し、数量・料理版・消費台帳等の関係を保持する。対象内容と復元方法を表示する。","when":"設定からデータを書き出す"}</code>
+- <code>"AC-REQ-SVC-BACKUP-001-2"</code> 前提: バックアップを選択した。条件: データを読み込む。期待結果: 形式・版・所有者・参照関係・数量を検証し、件数と本人の置換対象を表示して確認後に全置換する。共有カタログと監査記録は維持する。不正ファイル、別利用者、確認キャンセル、確認後の競合では現在データを変更せず、復元全体を1トランザクションで確定する。。
+  - criterion(JSON Object): <code>{"given":"バックアップを選択した","id":"AC-REQ-SVC-BACKUP-001-2","then":"形式・版・所有者・参照関係・数量を検証し、件数と本人の置換対象を表示して確認後に全置換する。共有カタログと監査記録は維持する。不正ファイル、別利用者、確認キャンセル、確認後の競合では現在データを変更せず、復元全体を1トランザクションで確定する。","when":"データを読み込む"}</code>
 
-要求源(JSON List): <code>["user:2026-09-05:recipeweave-service","docs/service/manual.md","docs/service/faq.md"]</code>
+要求源(JSON List): <code>["user:2026-09-05:recipeweave-service","user:2026-09-06:full-relational-service","docs/service/manual.md","docs/service/faq.md"]</code>
 検証方法: 対応する受入条件の自動検査と画面操作確認
 検証証跡: docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。
 検証(JSON Object): <code>{"evidence":"docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。","method":"対応する受入条件の自動検査と画面操作確認"}</code>
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/service/manual.md","docs/service/screens-and-flows.md"]</code>
-- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/persistence.ts"]</code>
-- テスト: <code>["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"]</code>
+- 実装: <code>["frontend/src/App.svelte","frontend/src/lib/backup.ts","backend/src/app/core/backup_service.py","database/migrations/004_backup_restore.sql"]</code>
+- テスト: <code>["frontend/src/lib/backup.test.ts","frontend/e2e/backup.spec.ts","backend/tests/test_backup_api.py","backend/tests/test_backup_database.py"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
@@ -1251,15 +1251,15 @@ Dev公開版は、冷蔵庫・献立・しおり・調理状態の端末内デ�
 根拠: レシートの個人情報を在庫登録に不要な形で残さないようにする。
 根拠(JSON): <code>"レシートの個人情報を在庫登録に不要な形で残さないようにする。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `data`
-変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
+項目版: 3 / 状態: `active` / 種別: `data`
+変更識別子: <code>"user:2026-09-06:full-relational-service"</code>
 分類: scope=<code>"product"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
 - <code>"AC-REQ-SVC-PRIVACY-001-1"</code> 前提: レシートを読み取っている。条件: 登録・キャンセル・画面終了が完了する。期待結果: 画像とOCR全文をメモリから破棄し、店舗名・レシート上の購入日時を永続保存しない。選択前から端末にある写真は削除しない。。
   - criterion(JSON Object): <code>{"given":"レシートを読み取っている","id":"AC-REQ-SVC-PRIVACY-001-1","then":"画像とOCR全文をメモリから破棄し、店舗名・レシート上の購入日時を永続保存しない。選択前から端末にある写真は削除しない。","when":"登録・キャンセル・画面終了が完了する"}</code>
-- <code>"AC-REQ-SVC-PRIVACY-001-2"</code> 前提: 登録履歴と保存データを確認する。条件: 端末内の永続データを検査する。期待結果: 食材・数量・単位・登録日時・登録ID・画像ハッシュ・購入内容署名・必要な状態履歴だけを保存し、元画像や全文を復元できる形で保持しない。。
-  - criterion(JSON Object): <code>{"given":"登録履歴と保存データを確認する","id":"AC-REQ-SVC-PRIVACY-001-2","then":"食材・数量・単位・登録日時・登録ID・画像ハッシュ・購入内容署名・必要な状態履歴だけを保存し、元画像や全文を復元できる形で保持しない。","when":"端末内の永続データを検査する"}</code>
+- <code>"AC-REQ-SVC-PRIVACY-001-2"</code> 前提: 登録履歴と保存データを確認する。条件: サーバーの本人データと書き出し内容を検査する。期待結果: 食材・数量・単位・登録日時・登録ID・画像ハッシュ・購入内容署名・必要な状態履歴だけを保存し、元画像や全文を復元できる形で保持しない。。
+  - criterion(JSON Object): <code>{"given":"登録履歴と保存データを確認する","id":"AC-REQ-SVC-PRIVACY-001-2","then":"食材・数量・単位・登録日時・登録ID・画像ハッシュ・購入内容署名・必要な状態履歴だけを保存し、元画像や全文を復元できる形で保持しない。","when":"サーバーの本人データと書き出し内容を検査する"}</code>
 
 要求源(JSON List): <code>["user:2026-09-05:recipeweave-service","docs/service/manual.md","docs/service/faq.md"]</code>
 検証方法: 対応する受入条件の自動検査と画面操作確認

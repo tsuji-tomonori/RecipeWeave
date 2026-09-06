@@ -54,6 +54,26 @@ erDiagram
     }
     recipeweave_axis ||--o{ recipeweave_axis_option : "axis_id"
     recipeweave_axis_option |o--o{ recipeweave_axis_option : "parent_id"
+    recipeweave_backup_artifact {
+        uuid id PK
+        timestamptz created_at
+        uuid user_id
+        text body_sha256
+        integer format_version
+    }
+    recipeweave_app_user |o--o{ recipeweave_backup_artifact : "user_id"
+    recipeweave_backup_restore_intent {
+        uuid id PK
+        timestamptz created_at
+        uuid user_id
+        uuid artifact_id
+        text body_sha256
+        bigint current_revision
+        timestamptz expires_at
+        timestamptz consumed_at
+    }
+    recipeweave_app_user |o--o{ recipeweave_backup_restore_intent : "user_id"
+    recipeweave_backup_artifact ||--o{ recipeweave_backup_restore_intent : "artifact_id"
     recipeweave_candidate_attempt {
         uuid id PK
         timestamptz created_at
@@ -773,6 +793,8 @@ erDiagram
         timestamptz actual_end_at
         timestamptz timer_started_at
         integer timer_duration_s
+        text duration_source
+        integer confirmed_duration_s
     }
     recipeweave_cooking_session ||--o{ recipeweave_session_task : "session_id"
     recipeweave_menu_item ||--o{ recipeweave_session_task : "menu_item_id"

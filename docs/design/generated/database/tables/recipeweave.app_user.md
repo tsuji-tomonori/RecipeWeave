@@ -41,6 +41,11 @@
 |---|---|---|
 | get_me | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
 | get_me | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q002_profile.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q002_profile.sql |
+| preview_backup | U | backend/src/app/apis/backup/preview_backup/sql/q802_restore_profile.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q002_profile.sql |
+| restore_backup | U | backend/src/app/apis/backup/restore_backup/sql/q802_restore_profile.sql |
 | entity_app_user_get | R | backend/src/app/apis/entities/app_user_get/sql/001_get.sql |
 | entity_app_user_list | R | backend/src/app/apis/entities/app_user_list/sql/001_list.sql |
 | entity_app_user_update | U | backend/src/app/apis/entities/app_user_update/sql/001_update.sql |
@@ -67,6 +72,12 @@
 | entity_user_recipe_event_create | R | backend/src/app/apis/entities/user_recipe_event_create/sql/002_reference_user_id.sql |
 | entity_user_shopping_check_create | R | backend/src/app/apis/entities/user_shopping_check_create/sql/002_reference_user_id.sql |
 | entity_user_shopping_check_update | R | backend/src/app/apis/entities/user_shopping_check_update/sql/002_reference_user_id.sql |
+| export_backup | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
+| export_backup | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
+| preview_backup | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
+| preview_backup | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
+| restore_backup | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
+| restore_backup | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
 | entity_allergen_create | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
 | entity_allergen_create | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
 | entity_allergen_get | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
@@ -101,6 +112,14 @@
 | entity_axis_option_update | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
 | entity_axis_update | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
 | entity_axis_update | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
+| entity_backup_artifact_get | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
+| entity_backup_artifact_get | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
+| entity_backup_artifact_list | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
+| entity_backup_artifact_list | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
+| entity_backup_restore_intent_get | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
+| entity_backup_restore_intent_get | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
+| entity_backup_restore_intent_list | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
+| entity_backup_restore_intent_list | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
 | entity_candidate_attempt_create | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |
 | entity_candidate_attempt_create | R | backend/src/app/apis/auth/get_me/sql/q003_select_user.sql |
 | entity_candidate_attempt_get | C | backend/src/app/apis/auth/get_me/sql/q002_initialize_user.sql |

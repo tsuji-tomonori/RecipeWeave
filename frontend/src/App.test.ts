@@ -12,11 +12,19 @@ import { webcrypto } from "node:crypto";
 import App from "./App.svelte";
 import { createInitialState, getDraft, startCooking } from "./lib/domain";
 import * as D from "./lib/domain";
-import type { AppState, SearchFilters, ReceiptCommit, Food } from "./lib/types";
+import type {
+  AppState,
+  SearchFilters,
+  ReceiptCommit,
+  Food,
+  DurationEstimate,
+} from "./lib/types";
 import { fixtureFoods, fixtureRecipes } from "./test-fixtures";
 const backend = vi.hoisted(() => ({
   state: null as AppState | null,
   failLoad: false,
+  manualTimes: false,
+  estimates: [] as DurationEstimate[],
 }));
 vi.mock("./lib/auth", () => ({
   completeLogin: async () => {},
@@ -33,17 +41,31 @@ vi.mock("./lib/api", async () => ({
     display_name: "Alice",
     role: "user",
   }),
-  previewCookingPlan: async (items: AppState["meal"]) => ({
-    plan: D.buildCookingPlan(items, backend.state!.settings.equipment),
-  }),
+  previewCookingPlan: async (
+    items: AppState["meal"],
+    estimates: DurationEstimate[] = [],
+  ) => {
+    backend.estimates = structuredClone(estimates);
+    return {
+      plan: D.buildCookingPlan(items, backend.state!.settings.equipment),
+    };
+  },
   loadFoods: async () => {
     if (backend.failLoad) throw new Error("サーバーに接続できません");
     return fixtureFoods;
   },
   findRecipes: async (filters?: SearchFilters) => {
-    const items = filters
+    let items = filters
       ? D.searchRecipes(backend.state!, filters)
       : fixtureRecipes;
+    if (backend.manualTimes)
+      items = items.map((item) => ({
+        ...item,
+        steps: item.steps.map((step) => ({
+          ...step,
+          timeScalingMode: "manual" as const,
+        })),
+      }));
     D.cacheRecipes(items);
     return { items, total: items.length, offset: 0, limit: 50 };
   },
@@ -92,6 +114,8 @@ beforeEach(() => {
   D.setCatalog(fixtureFoods, fixtureRecipes);
   backend.state = createInitialState();
   backend.failLoad = false;
+  backend.manualTimes = false;
+  backend.estimates = [];
   window.history.replaceState(null, "", "#/home");
   Object.defineProperty(globalThis, "crypto", {
     value: webcrypto,
@@ -151,6 +175,48 @@ async function readReceipt() {
 }
 
 describe("service flows through mounted Svelte UI (simulated DOM)", () => {
+  it("ブラウザのhashchange通知がなくてもアプリ内の遷移先と表示を一致させる", async () => {
+    const suppressHash = (event: Event) => event.stopImmediatePropagation();
+    window.addEventListener("hashchange", suppressHash, { capture: true });
+    try {
+      page("home");
+      await click("なすを選ぶ");
+      await click("この1つで探す");
+      await screen.findByRole("heading", { name: "こんな一品、どう？" });
+      expect(window.location.hash).toBe("#/results");
+      await click("RecipeWeave ホーム");
+      await screen.findByRole("heading", { name: "今日の一品、ここから。" });
+      expect(window.location.hash).toBe("#/home");
+    } finally {
+      window.removeEventListener("hashchange", suppressHash, { capture: true });
+    }
+  });
+  it("人数を変えた工程の時間を確認してから、同じ人数の調理へ進む", async () => {
+    backend.manualTimes = true;
+    backend.state!.meal = [
+      {
+        ...D.scaleDraft(getDraft(backend.state!, "eggplant-egg"), 3),
+        id: "manual-meal",
+      },
+    ];
+    page("plan");
+    await screen.findByRole("heading", { name: "この人数の目安時間を確認" });
+    expect(screen.queryByRole("button", { name: "調理を始める" })).toBeNull();
+    const input = document.querySelector<HTMLInputElement>(
+      "[data-duration-estimate]",
+    )!;
+    await fireEvent.input(input, { target: { value: "7" } });
+    await click("この目安時間で段取りを作る");
+    await screen.findByRole("button", { name: "調理を始める" });
+    expect(backend.estimates[0]).toMatchObject({
+      mealItemId: "manual-meal",
+      durationSeconds: 420,
+    });
+    await click("調理を始める");
+    await waitFor(() =>
+      expect(saved().cooking?.mealSnapshot[0].servings).toBe(3),
+    );
+  });
   it("selects full ingredient cards, keeps selected ingredients on return, and omits servings from search", async () => {
     page("home");
     await click("なすを選ぶ");

@@ -36,6 +36,7 @@
   import RecipeCard from "./lib/RecipeCard.svelte";
   import type {
     PlannedStep,
+    DurationEstimate,
     AppState,
     Food,
     Recipe,
@@ -50,7 +51,11 @@
   } from "./lib/types";
   import { UNITS } from "./lib/types";
   import * as D from "./lib/domain";
-  import { exportBackup } from "./lib/persistence";
+  import {
+    readBackupFile,
+    type BackupInput,
+    type BackupPreview,
+  } from "./lib/backup";
   import * as API from "./lib/api";
   import { completeLogin, localMode, loginCognito, logout } from "./lib/auth";
   import {
@@ -79,6 +84,10 @@
   let resultOffset = $state(0);
   let afterLogin = { route: "home", id: "", versionId: "" };
   let storageIssue = $state("");
+  let backupInput = $state<HTMLInputElement>();
+  let selectedBackup = $state.raw<BackupInput | null>(null);
+  let backupPreview = $state.raw<BackupPreview | null>(null);
+  let backupBusy = $state(false);
   let route = $state("home");
   let routeId = $state("");
   let routeVersion = $state("");
@@ -206,15 +215,85 @@
     error: string;
     loading: boolean;
   }>({ steps: [], error: "", loading: false });
+  let singlePlanItems = $state.raw<MealItem[] | null>(null);
+  const planItems = $derived(singlePlanItems ?? appState.meal);
+  const planSignature = $derived(JSON.stringify(planItems));
+  const manualTimeRows = $derived(
+    planItems.flatMap((item) => {
+      const recipe = catalogRecipes.find(
+        (candidate) =>
+          candidate.id === item.recipeId &&
+          (!item.recipeVersionId ||
+            candidate.versionId === item.recipeVersionId),
+      );
+      if (!recipe || item.servings === recipe.servings) return [];
+      return recipe.steps
+        .filter((step) => step.timeScalingMode === "manual")
+        .map((step) => ({
+          key: `${item.id}:${step.id}`,
+          itemId: item.id,
+          stepId: step.id,
+          recipeName: recipe.name,
+          title: step.title,
+          baseMinutes: step.minutes,
+          baseServings: recipe.servings,
+          servings: item.servings,
+        }));
+    }),
+  );
+  let manualMinutes = $state<Record<string, string>>({});
+  let confirmedPlanSignature = $state("");
+  let confirmedDurations = $state.raw<DurationEstimate[]>([]);
+  const manualNeedsConfirmation = $derived(
+    manualTimeRows.length > 0 && confirmedPlanSignature !== planSignature,
+  );
+  $effect(() => {
+    const signature = planSignature;
+    const rows = manualTimeRows;
+    if (signature) {
+      manualMinutes = Object.fromEntries(
+        rows.map((row) => [row.key, String(row.baseMinutes)]),
+      );
+      confirmedPlanSignature = "";
+      confirmedDurations = [];
+    }
+  });
+  function confirmManualTimes() {
+    try {
+      confirmedDurations = manualTimeRows.map((row) => {
+        const seconds = Math.round(Number(manualMinutes[row.key]) * 60);
+        if (!Number.isFinite(seconds) || seconds < 1 || seconds > 86400)
+          throw new Error(
+            "各工程の目安時間を1秒〜24時間の範囲で確認してください。",
+          );
+        return {
+          mealItemId: row.itemId,
+          stepId: row.stepId,
+          durationSeconds: seconds,
+        };
+      });
+      confirmedPlanSignature = planSignature;
+      error = "";
+    } catch (cause) {
+      error =
+        cause instanceof Error ? cause.message : "目安時間を確認してください。";
+    }
+  }
   const planEquipmentIssue = $derived(/器具|設備|容量/.test(planned.error));
   $effect(() => {
     if (route !== "plan") return;
-    const items = appState.meal;
+    const items = planItems;
+    const estimates = confirmedDurations;
+    const needsConfirmation = manualNeedsConfirmation;
     const revision = appState.version;
     let cancelled = false;
-    planned = { steps: [], error: "", loading: items.length > 0 };
-    if (items.length)
-      void API.previewCookingPlan(items)
+    planned = {
+      steps: [],
+      error: "",
+      loading: items.length > 0 && !needsConfirmation,
+    };
+    if (items.length && !needsConfirmation)
+      void API.previewCookingPlan(items, estimates)
         .then((result) => {
           if (!cancelled && appState.version === revision)
             planned = { steps: result.plan, error: "", loading: false };
@@ -277,6 +356,7 @@
   function change(
     mutator: (s: AppState) => AppState,
     message?: string,
+    durationEstimates: DurationEstimate[] = [],
   ): Promise<boolean> {
     const work = writeQueue.then(async () => {
       try {
@@ -295,7 +375,7 @@
           appState = next;
         } else {
           busy = true;
-          appState = await API.saveState(appState, next);
+          appState = await API.saveState(appState, next, durationEstimates);
         }
         catalogRecipes = [...D.RECIPES];
         error = "";
@@ -320,6 +400,7 @@
   const scrollPositions = new Map<string, number>();
   const recipeOrigins = new Map<string, { route: string; id: string }>();
   let activeRouteKey = "";
+  let activeRouteHash = "";
   let pendingScrollMode: ScrollMode | null = null;
   let navigationEpoch = 0;
   function rememberScroll() {
@@ -345,8 +426,14 @@
     rememberScroll();
     pendingScrollMode = scrollMode;
     const hash = `#/${to}${id ? "/" + id : ""}${versionId ? "/" + versionId : ""}`;
-    if (window.location.hash === hash) readRoute();
-    else window.location.hash = hash;
+    // URLだけ先に変えてイベントを待つと、遷移先と表示中の画面がずれる。
+    // アプリ内の遷移は履歴と画面状態を同じ操作で確定する。
+    if (window.location.hash !== hash) window.history.pushState(null, "", hash);
+    readRoute();
+  }
+  function handleHistoryChange() {
+    // 戻る・進むでpopstateとhashchangeが続いても、読取や画面初期化は一度だけ。
+    if (window.location.hash !== activeRouteHash) readRoute();
   }
   function readRoute() {
     const parts = window.location.hash.replace(/^#\/?/, "").split("/");
@@ -382,6 +469,7 @@
     rememberScroll();
     if (scrollMode === "top") scrollPositions.set(nextKey, 0);
     activeRouteKey = nextKey;
+    activeRouteHash = window.location.hash;
     const scrollTop = scrollPositions.get(nextKey) ?? 0;
     const epoch = ++navigationEpoch;
     if (route === "receipt" && next !== "receipt") {
@@ -860,7 +948,7 @@
   }
   async function startMealCooking() {
     await writeQueue;
-    await startCooking(appState.meal);
+    await startCooking(planItems);
   }
   async function startCooking(items: MealItem[]) {
     await writeQueue;
@@ -870,7 +958,13 @@
       navigate("cooking");
       return;
     }
-    if (await change((s) => D.startCooking(s, items))) {
+    if (
+      await change(
+        (s) => D.startCooking(s, items),
+        undefined,
+        confirmedDurations,
+      )
+    ) {
       deduct = false;
       completedMessage = false;
       navigate("cooking");
@@ -880,12 +974,20 @@
     const recipeId = currentRecipe?.id;
     if (!recipeId) return;
     await writeQueue;
-    startCooking([
+    const items = [
       {
         ...D.getDraft(appState, recipeId, currentRecipe?.versionId),
         id: crypto.randomUUID(),
       },
-    ]);
+    ];
+    if (
+      currentRecipe &&
+      items[0].servings !== currentRecipe.servings &&
+      currentRecipe.steps.some((step) => step.timeScalingMode === "manual")
+    ) {
+      singlePlanItems = items;
+      navigate("plan");
+    } else await startCooking(items);
   }
   function nextStep() {
     if (!appState.cooking) return;
@@ -965,23 +1067,105 @@
   function toggleList(list: string[], id: string) {
     return list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
   }
-  function downloadBackup() {
+  async function downloadBackup() {
+    await writeQueue;
+    backupBusy = true;
+    busy = true;
+    error = "";
     try {
-      if (storageIssue)
-        throw new Error(
-          "保存データを正常に読めないため、現在のデータとして書き出せません。通信状態を確認して再読み込みしてください。",
-        );
-      const blob = new Blob([exportBackup(appState)], {
-        type: "application/json",
-      });
+      const text = await API.exportDatabaseBackup();
+      const blob = new Blob([text], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `recipeweave-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `recipeweave-backup-v2-${new Date().toISOString().slice(0, 10)}.json`;
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-    } catch (e) {
-      error = e instanceof Error ? e.message : "書き出しできませんでした。";
+      notify("最新の保存データを書き出しました。");
+    } catch (cause) {
+      error =
+        cause instanceof Error ? cause.message : "書き出しできませんでした。";
+      if (cause instanceof API.ApiError && cause.status === 401)
+        expireSession();
+    } finally {
+      backupBusy = false;
+      busy = false;
+    }
+  }
+  async function chooseBackup(file: File | undefined) {
+    if (!file) return;
+    error = "";
+    backupPreview = null;
+    selectedBackup = null;
+    try {
+      selectedBackup = await readBackupFile(file);
+      modal = "backup-review";
+      await inspectBackup();
+    } catch (cause) {
+      error =
+        cause instanceof Error
+          ? cause.message
+          : "バックアップを読み込めませんでした。";
+    }
+  }
+  async function inspectBackup() {
+    if (!selectedBackup) return;
+    await writeQueue;
+    backupBusy = true;
+    busy = true;
+    backupPreview = null;
+    error = "";
+    try {
+      backupPreview = await API.previewDatabaseBackup(selectedBackup.text);
+      modal = "backup-review";
+    } catch (cause) {
+      error =
+        cause instanceof Error
+          ? cause.message
+          : "復元する内容を確認できませんでした。";
+      if (cause instanceof API.ApiError && cause.status === 401)
+        expireSession();
+    } finally {
+      backupBusy = false;
+      busy = false;
+    }
+  }
+  function cancelBackup() {
+    if (backupBusy) return;
+    selectedBackup = null;
+    backupPreview = null;
+    modal = "";
+    error = "";
+  }
+  async function confirmBackupRestore() {
+    if (!selectedBackup || !backupPreview) return;
+    await writeQueue;
+    backupBusy = true;
+    busy = true;
+    error = "";
+    try {
+      appState = await API.restoreDatabaseBackup(
+        selectedBackup.text,
+        backupPreview,
+      );
+      selectedBackup = null;
+      backupPreview = null;
+      modal = "";
+      await initialize();
+      notify("バックアップの内容に復元しました。");
+      navigate("settings");
+    } catch (cause) {
+      error =
+        cause instanceof Error
+          ? cause.message
+          : "復元できませんでした。内容を再確認してください。";
+      backupPreview = null;
+      modal = "backup-review";
+      if (cause instanceof API.ApiError && cause.status === 401)
+        expireSession();
+    } finally {
+      backupBusy = false;
+      busy = false;
     }
   }
   async function refreshWorkspace() {
@@ -1037,6 +1221,11 @@
     resultTotal = 0;
     randomId = "";
     modal = "";
+    singlePlanItems = null;
+    selectedBackup = null;
+    backupPreview = null;
+    confirmedDurations = [];
+    confirmedPlanSignature = "";
   }
   function expireSession() {
     afterLogin = { route, id: routeId, versionId: routeVersion };
@@ -1091,6 +1280,11 @@
     );
     const handle = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        if (activeModal.startsWith("backup-")) {
+          event.preventDefault();
+          cancelBackup();
+          return;
+        }
         modal = activeModal === "duplicate-history" ? "duplicate" : "";
         return;
       }
@@ -1126,14 +1320,12 @@
     const previousRestoration = window.history.scrollRestoration;
     window.history.scrollRestoration = "manual";
     readRoute();
-    window.addEventListener("hashchange", readRoute);
     window.addEventListener("scroll", rememberScroll, { passive: true });
     const timer = setInterval(() => {
       now = Date.now();
     }, 1000);
     return () => {
       window.removeEventListener("focus", onFocus);
-      window.removeEventListener("hashchange", readRoute);
       window.removeEventListener("scroll", rememberScroll);
       window.history.scrollRestoration = previousRestoration;
       navigationEpoch += 1;
@@ -1143,6 +1335,10 @@
   });
 </script>
 
+<svelte:window
+  onhashchange={handleHistoryChange}
+  onpopstate={handleHistoryChange}
+/>
 <svelte:head
   ><title
     >{route === "home" ? "今日の一品、ここから。" : "RecipeWeave"} — RecipeWeave</title
@@ -1702,9 +1898,7 @@
         {:else}<div class="panel" style="text-align:center">
             <div class="success-icon">✓</div>
             <h2>買った食材が、次の一品に。</h2>
-            <p class="subtitle">
-              選んだ食材を、このブラウザの冷蔵庫に登録しました。
-            </p>
+            <p class="subtitle">選んだ食材を、あなたの冷蔵庫に登録しました。</p>
             <div class="list gap-top" style="text-align:left">
               {#each appState.lots.filter((l) => l.sourceImportId === lastImportId && l.status === "active") as lot}<div
                   class="row between"
@@ -2086,8 +2280,10 @@
                 ><ShoppingBasket size={19} />買い物リスト</button
               ><button
                 class="primary wide gap-top"
-                onclick={() => navigate("plan")}
-                ><CookingPot size={19} />段取りを見る</button
+                onclick={() => {
+                  singlePlanItems = null;
+                  navigate("plan");
+                }}><CookingPot size={19} />段取りを見る</button
               >
             </div>
             <p class="check-note">
@@ -2182,8 +2378,20 @@
     {:else if route === "plan"}
       {@const plan = planned.steps}
       <div class="desktop-narrow">
-        <button class="back" onclick={() => navigate("meal", "", "restore")}
-          ><ArrowLeft size={16} />献立へ</button
+        <button
+          class="back"
+          onclick={() =>
+            singlePlanItems
+              ? navigate(
+                  "detail",
+                  singlePlanItems[0].recipeId,
+                  "restore",
+                  singlePlanItems[0].recipeVersionId,
+                )
+              : navigate("meal", "", "restore")}
+          ><ArrowLeft size={16} />{singlePlanItems
+            ? "料理へ"
+            : "献立へ"}</button
         >
         <div class="page-header">
           <div>
@@ -2194,7 +2402,39 @@
             </p>
           </div>
         </div>
-        {#if planned.loading}<p class="notice" role="status">
+        {#if manualNeedsConfirmation}
+          <section class="panel">
+            <h2>この人数の目安時間を確認</h2>
+            <p class="notice warning gap-top">
+              変更した人数の工程時間は未確認です。基準の時間を参考に、今回の目安を入力・確認してください。試作済みの時間にはなりません。
+            </p>
+            <div class="stack gap-top">
+              {#each manualTimeRows as row}<label class="field"
+                  ><span
+                    >{row.recipeName} · {row.title}<small
+                      class="muted"
+                      style="display:block"
+                      >基準{row.baseServings}人分：{row.baseMinutes}分 ／ 今回{row.servings}人分</small
+                    ></span
+                  ><input
+                    type="number"
+                    min="0.0167"
+                    max="1440"
+                    step="any"
+                    data-duration-estimate
+                    aria-label={`${row.recipeName}・${row.title}の目安時間（分）`}
+                    bind:value={manualMinutes[row.key]}
+                  /><span class="muted">分</span></label
+                >{/each}
+            </div>
+            <p class="check-note gap-top">
+              時間は調理の目安です。タイマー終了だけで加熱完了を判断せず、料理の状態を確認します。
+            </p>
+            <button class="primary wide gap-top" onclick={confirmManualTimes}
+              >この目安時間で段取りを作る</button
+            >
+          </section>
+        {:else if planned.loading}<p class="notice" role="status">
             段取りを確認しています…
           </p>{:else if plan.length}<div class="panel">
             {#each plan as step}<article class="plan-step">
@@ -2204,6 +2444,9 @@
                 <div>
                   <span class="eyebrow">{step.recipeName}</span>
                   <h3>{step.title}</h3>
+                  {#if step.durationSource === "user_estimate"}<span
+                      class="badge warning">確認した目安時間</span
+                    >{/if}
                   <p class="subtitle">{step.instruction}</p>
                   <span class="badge"
                     >{step.equipment.join("・") || "手作業"}</span
@@ -2211,6 +2454,11 @@
                 </div>
               </article>{/each}
           </div>
+          {#if manualTimeRows.length}<button
+              class="text-button gap-top"
+              onclick={() => (confirmedPlanSignature = "")}
+              >目安時間を修正する</button
+            >{/if}
           <button class="primary wide gap-top" onclick={startMealCooking}
             ><Play size={18} />調理を始める</button
           >{:else}<p class="notice warning">
@@ -2249,6 +2497,11 @@
             >STEP {String(appState.cooking.index + 1).padStart(2, "0")}</span
           >
           <h1>{currentStep.title}</h1>
+          {#if currentStep.durationSource === "user_estimate"}<p
+              class="notice warning"
+            >
+              確認した目安時間で進めています。料理の状態を確かめ、必要に応じて時間を延ばしてください。
+            </p>{/if}
           <p>{currentStep.instruction}</p>
           {#if currentStep.mode === "monitored"}<p class="notice warning">
               火元を見守る工程です。調理場所を離れないでください。
@@ -2439,12 +2692,32 @@
               冷蔵庫・保存・献立・調理状況をアカウントに保存します。別の端末でも、同じアカウントで続きから使えます。
             </p>
             <div class="row wrap gap-top">
-              <button class="secondary" onclick={downloadBackup}
+              <button
+                class="secondary"
+                onclick={downloadBackup}
+                disabled={busy || backupBusy}
                 ><Download size={18} />データを書き出す</button
               >
+              <button
+                class="secondary"
+                onclick={() => backupInput?.click()}
+                disabled={busy || backupBusy}
+                ><Upload size={18} />バックアップから復元</button
+              >
+              <input
+                hidden
+                bind:this={backupInput}
+                type="file"
+                accept="application/json,.json"
+                aria-label="復元するバックアップファイル"
+                onchange={(event) => {
+                  void chooseBackup(event.currentTarget.files?.[0]);
+                  event.currentTarget.value = "";
+                }}
+              />
             </div>
             <p class="check-note gap-top">
-              食材や献立の変更はサーバーに保存されます。通信に失敗した場合は内容を確認して再操作してください。同時に更新された場合は上書きせず、最新の内容を読み込みます。
+              書き出しは最新の保存データを取得します。復元は本人の対応するバックアップだけを使用し、内容確認後に全置換します。公開レシピや監査記録は保持します。旧ブラウザ保存形式には対応していません。ファイル上限は5,000,000バイトです。
             </p>
           </section>
           <button class="secondary" onclick={() => navigate("help")}
@@ -2509,7 +2782,7 @@
       </div>{/if}
     <footer class="footer-note">
       <span>RecipeWeave · 食材から、まだ知らない一品へ。</span><span
-        >Dev 0.1 · このブラウザに保存</span
+        >アカウントに保存</span
       >
     </footer>
   </main>
@@ -2563,34 +2836,119 @@
                     ? "登録履歴を照合する"
                     : modal === "undo-import"
                       ? "今回の登録を取り消す"
-                      : modal === "backup"
-                        ? "データを置き換えますか？"
-                        : modal === "erase"
-                          ? "この端末のデータを消去"
-                          : modal === "cancel-receipt"
-                            ? "読み取りをやめますか？"
-                            : modal === "guide"
-                              ? "切り方ガイド"
-                              : "確認"}
+                      : modal === "backup-review"
+                        ? "復元する内容を確認"
+                        : modal === "backup-confirm"
+                          ? "現在のデータを置き換えますか？"
+                          : modal === "erase"
+                            ? "この端末のデータを消去"
+                            : modal === "cancel-receipt"
+                              ? "読み取りをやめますか？"
+                              : modal === "guide"
+                                ? "切り方ガイド"
+                                : "確認"}
         </h2>
         <button
           class="icon-button"
           aria-label="閉じる"
+          disabled={backupBusy}
           onclick={() => {
+            if (modal.startsWith("backup-")) {
+              cancelBackup();
+              return;
+            }
             modal = modal === "duplicate-history" ? "duplicate" : "";
             error = "";
           }}><X size={18} /></button
         >
       </div>
-      {#if error}<p class="notice error gap-bottom" role="alert">
-          {error}
-        </p>{/if}
       {#if error}<div class="notice error gap-bottom" role="alert">
           {error}<button class="text-button" onclick={refreshWorkspace}
             >最新の内容を読み込む</button
           >
         </div>{/if}
-      {#if modal === "stock" || modal === "candidate"}
+      {#if modal === "backup-review" || modal === "backup-confirm"}
+        {#if selectedBackup}<p class="subtitle gap-top">
+            ファイル：{selectedBackup.name}<br />書き出し日時：{new Date(
+              selectedBackup.exportedAt,
+            ).toLocaleString("ja-JP")}
+          </p>{/if}
+        {#if backupBusy}<p class="notice gap-top" role="status">
+            {modal === "backup-confirm"
+              ? "復元しています…"
+              : "内容を確認しています…"}
+          </p>{/if}
+        {#if backupPreview && modal === "backup-review"}
+          <p class="notice warning gap-top">
+            このアカウントの現在のデータを、バックアップの内容に置き換えます。合算しません。現在の内容を残したい場合は、先に書き出してください。
+          </p>
+          <div style="max-height:42vh;overflow:auto" class="gap-top">
+            <table class="shopping-table" aria-label="復元するデータの件数">
+              <thead><tr><th>データ</th><th>現在</th><th>復元後</th></tr></thead
+              ><tbody
+                >{#each backupPreview.counts as row}<tr
+                    ><th scope="row">{row.label}</th><td
+                      >{row.currentCount}件</td
+                    ><td>{row.restoreCount}件</td></tr
+                  >{/each}</tbody
+              >
+            </table>
+          </div>
+          <p class="check-note gap-top">
+            置き換える対象：{backupPreview.replaceTargets.join("、")}<br
+            />保持する対象：{backupPreview.preservedTargets.join("、")}
+          </p>
+          <p class="muted gap-top">
+            確認の有効期限：{new Date(backupPreview.expiresAt).toLocaleString(
+              "ja-JP",
+            )}
+          </p>
+          {#if now >= Date.parse(backupPreview.expiresAt)}<p
+              class="notice warning"
+            >
+              確認の期限を過ぎました。内容を再確認してください。
+            </p>{/if}
+          <div class="row wrap gap-top">
+            <button
+              class="primary"
+              disabled={backupBusy ||
+                now >= Date.parse(backupPreview.expiresAt)}
+              onclick={() => (modal = "backup-confirm")}>確認して次へ</button
+            ><button
+              class="secondary"
+              disabled={backupBusy}
+              onclick={inspectBackup}>内容を再確認</button
+            >
+          </div>
+        {:else if backupPreview && modal === "backup-confirm"}
+          <p class="notice warning gap-top">
+            現在の冷蔵庫・献立・保存・調理履歴などを、確認したバックアップの内容に全置換します。この操作を取り消すには、置換前に書き出したバックアップが必要です。
+          </p>
+          <p class="check-note gap-top">
+            保持する対象：{backupPreview.preservedTargets.join("、")}
+          </p>
+          <div class="row wrap gap-top">
+            <button
+              class="primary"
+              disabled={backupBusy ||
+                now >= Date.parse(backupPreview.expiresAt)}
+              onclick={confirmBackupRestore}>全置換して復元</button
+            ><button
+              class="secondary"
+              disabled={backupBusy}
+              onclick={() => (modal = "backup-review")}>内容の確認へ戻る</button
+            >
+          </div>
+        {:else if selectedBackup && !backupBusy}<button
+            class="secondary gap-top"
+            onclick={inspectBackup}>内容を再確認</button
+          >{/if}
+        <button
+          class="text-button gap-top"
+          disabled={backupBusy}
+          onclick={cancelBackup}>キャンセル</button
+        >
+      {:else if modal === "stock" || modal === "candidate"}
         {#if modal === "candidate"}<p class="notice gap-bottom">
             読取原文：{candidates.find((c) => c.id === editCandidate)?.rawText}
           </p>{/if}

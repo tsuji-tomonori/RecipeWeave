@@ -44,6 +44,7 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q902_append_audit.sql |
 | entity_audit_event_get | R | backend/src/app/apis/entities/audit_event_get/sql/001_get.sql |
 | entity_audit_event_list | R | backend/src/app/apis/entities/audit_event_list/sql/001_list.sql |
 | add_menu_item | C | backend/src/app/apis/workspace/add_menu_item/sql/q902_append_audit.sql |

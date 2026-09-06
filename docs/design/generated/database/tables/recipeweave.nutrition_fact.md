@@ -55,6 +55,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_nutrition_fact.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_nutrition_fact.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_nutrition_fact.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_nutrition_fact.sql |
 | entity_nutrition_fact_create | C | backend/src/app/apis/entities/nutrition_fact_create/sql/001_create.sql |
 | entity_nutrition_fact_get | R | backend/src/app/apis/entities/nutrition_fact_get/sql/001_get.sql |
 | entity_nutrition_fact_list | R | backend/src/app/apis/entities/nutrition_fact_list/sql/001_list.sql |

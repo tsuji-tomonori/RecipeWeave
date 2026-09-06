@@ -4,6 +4,7 @@ import ast
 import copy
 import shutil
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from app.main import create_app
@@ -11,7 +12,8 @@ from app.main import create_app
 from tools.design.api import load_operations, restrictions, schema_rows, validate_references
 from tools.design.common import DesignError
 from tools.design.database import load_tables, parse_one, project_table, query_projection
-from tools.design.flow import block, render_expression, validate_tree
+from tools.design.details import backup_row_origins
+from tools.design.flow import block, function_sections, render_expression, validate_tree
 from tools.design.storage import synchronize
 from tools.generate_service_design import ROOT, build_outputs
 
@@ -19,6 +21,45 @@ from tools.generate_service_design import ROOT, build_outputs
 @pytest.fixture
 def openapi() -> dict:
     return create_app().openapi()
+
+
+def test_restore_column_origins_preserve_original_row_ids_and_json(tmp_path: Path) -> None:
+    op = SimpleNamespace(slug="backup/restore_backup")
+    origins = backup_row_origins(ROOT, op)
+    assert "request.backup.tables.pantry_lot の各行.id" in origins["pantry_lot"]["id"]
+    assert "uuid4" not in origins["pantry_lot"]["id"]
+    assert "Jsonb(to_jsonable_python" in origins["cooking_session"]["input_snapshot"]
+    for relative in (
+        "backend/src/app/core/backup_service.py",
+        "backend/src/app/backup/inventory.py",
+    ):
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / relative, target)
+    path = tmp_path / "backend/src/app/core/backup_service.py"
+    path.write_text(path.read_text().replace("values = dict(row)", "values = {}"))
+    with pytest.raises(DesignError, match="代入経路"):
+        backup_row_origins(tmp_path, op)
+
+
+def test_local_function_body_has_scoped_sequence_and_is_not_executed_at_definition(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "functions.py"
+    path.write_text(
+        "def execute(value):\n"
+        "    def require_reference(target):\n"
+        "        database.lookup(target)\n"
+        "    require_reference(value)\n"
+    )
+    diagrams, functions = function_sections(path, tmp_path)
+    assert [row[0] for row in functions] == ["execute", "execute.require_reference"]
+    assert "定義しただけでは実行しない" in diagrams[0]
+    assert "database.lookup" not in diagrams[0]
+    assert "database.lookup" in diagrams[1]
+    path.write_text("def execute():\n    def nested(value=database.lookup()):\n        pass\n")
+    with pytest.raises(DesignError, match="定義時評価"):
+        function_sections(path, tmp_path)
 
 
 def test_actual_inventory_and_all_operation_documents(openapi: dict) -> None:
@@ -114,6 +155,30 @@ def test_crud_distinguishes_write_target_and_read_source() -> None:
     )
     assert update.actions == {"recipeweave.user_state": {"U"}}
     assert update.parameters == ["revision", "subject"]
+
+
+@pytest.mark.parametrize("mode", ["IMMEDIATE", "DEFERRED"])
+def test_constraint_mode_has_transaction_semantics_without_fake_crud(mode: str) -> None:
+    query = query_projection(
+        f"-- 復元候補の制約検証\nSET CONSTRAINTS ALL {mode};", "fixture", "test", {}
+    )
+    assert not query.actions and not query.columns and not query.parameters
+    assert query.transaction_effect
+    assert ("終了まで遅延" in query.transaction_effect) == (mode == "DEFERRED")
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "SET CONSTRAINTS one_constraint IMMEDIATE;",
+        "SET CONSTRAINTS ALL IMMEDIATE; DELETE FROM recipeweave.user_state;",
+        "SET ROLE recipeweave_owner;",
+        "SET CONSTRAINTS ALL UNKNOWN;",
+    ],
+)
+def test_constraint_mode_does_not_allow_other_control_or_hidden_writes(text: str) -> None:
+    with pytest.raises(DesignError):
+        query_projection(text, "fixture", "test", {})
 
 
 @pytest.mark.parametrize("mutation", ["path", "error", "authentication", "id", "reference"])
@@ -235,6 +300,7 @@ def test_manifest_output_hashes_and_relative_links() -> None:
 
     outputs = build_outputs()
     manifest = outputs["MANIFEST.md"]
+    assert "backend/tests/entity_test_contracts.json" in manifest
     for name, content in outputs.items():
         if name != "MANIFEST.md":
             assert hashlib.sha256(content.encode()).hexdigest() in manifest
@@ -375,3 +441,31 @@ def test_openapi_json_is_managed_without_deleting_unrelated_json(tmp_path: Path)
     synchronize(tmp_path, outputs, check=True)
     with pytest.raises(DesignError, match="管理対象外"):
         synchronize(tmp_path, {"api/arbitrary.json": "{}"}, check=False)
+
+
+def test_factor_documents_collect_each_contract_file_and_validate_real_test_nodes(
+    tmp_path: Path,
+) -> None:
+    import json
+    from types import SimpleNamespace
+
+    from tools.design.test_contracts import factor_rows
+
+    target = tmp_path / "backend/tests"
+    target.mkdir(parents=True)
+    (target / "test_backup.py").write_text("def test_owned():\n    assert True\n")
+    for name, factor in [("entity", "本人"), ("backup", "全置換")]:
+        entry = {
+            "operation_ids": ["restore_backup"],
+            "test_node": "backend/tests/test_backup.py::test_owned",
+            "factor": factor,
+            "given": "本人のバックアップ",
+            "when": "復元する",
+            "then": "本人のデータだけを変更",
+        }
+        (target / f"{name}_test_contracts.json").write_text(json.dumps({"tests": [entry]}))
+    operation = SimpleNamespace(id="restore_backup", slug="backup/restore_backup")
+    assert {row[0] for row in factor_rows(tmp_path, operation)} == {"本人", "全置換"}
+    (target / "test_backup.py").write_text("def renamed():\n    assert True\n")
+    with pytest.raises(DesignError, match="関数がありません"):
+        factor_rows(tmp_path, operation)

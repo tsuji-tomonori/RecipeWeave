@@ -1,5 +1,7 @@
 # RecipeWeaveの実DB基盤と検証・公開
 
+明示的な `stage=dev` だけ `ALLOW_CATALOG_PREVIEW=true` を設定し、認証済み利用者が初期レシピを試用できます。`production` とその他のstageは無効です。未試作レシピのdraft状態や検証記録は変更せず、一般公開済みとして扱いません。
+
 通常のアプリは PostgreSQL に保存した食品・レシピ・材料・工程・利用者データをAPIから操作します。ブラウザの固定レシピを検索結果として返す配布形態は終了しました。ローカルとCIで同じ実DBを使い、単体試験・DB統合・ブラウザE2Eの証跡を公開します。
 
 ## ローカル実行
@@ -43,6 +45,8 @@ uv run --locked python tools/quality.py
 | `/RecipeWeave/quality/design/` | 検索可能な実装由来設計、ER・API・SQL・シーケンス・Swagger    |
 
 Pagesは静的ホストなので、PostgreSQLやFastAPI自体は実行できません。アプリのAPI接続先はGitHub変数 `DEV_API_BASE_URL` を `VITE_API_BASE_URL` に渡してビルドします。認証は `DEV_COGNITO_DOMAIN` と `DEV_COGNITO_CLIENT_ID` をビルド時に渡します。接続先未配備時は接続不能を表示し、固定サンプルを本物のDB結果に見せません。CIのE2Eでは同じrevisionのFastAPIとPostgreSQLへ接続します。単体・DB統合試験でcommitしたデータがブラウザE2Eへ混ざらないよう、E2E専用の新規DBへ同じ移行と初期データを適用します。
+
+[browser.yml](../.github/workflows/browser.yml) は独立した実DBでPC・モバイルのブラウザシナリオだけを先行実行します。全体品質ゲートは維持します。ブラウザ失敗時は、合成データ専用のCIに限ってAPIログと画面のerror-contextを認証情報を除去してActionsログへも残し、artifactの取得に失敗しても原因を確認できます。
 
 `reports/deployment-readiness.json` は公開接続の設定有無だけを保存し、実APIへの到達やAWS配備成功とは区別します。
 

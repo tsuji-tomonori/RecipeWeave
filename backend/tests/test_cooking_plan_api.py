@@ -67,3 +67,39 @@ def test_preview_rejects_inconsistent_inputs_without_saving(
     response = workflow_client.post("/api/cooking-plan", headers=headers(), json={"items": items})
     assert response.status_code == expected, response.text
     assert workspace(workflow_client) == before
+
+
+@pytest.mark.parametrize("invalid", ["zero", "fraction", "missing", "duplicate", "wrong_step"])
+def test_manual_time_confirmation_rejects_bad_input_without_saving(
+    workflow_client: WorkflowClient, invalid: str
+) -> None:
+    """人数変更の見積りは、各料理版・献立行の整数秒として明示確認する。"""
+    before = workspace(workflow_client)
+    item = menu_item(workflow_client)
+    recipe = workflow_client.get(
+        "/api/recipes/" + item["recipeId"],
+        headers=headers(),
+        params={"preview": "true", "versionId": item["recipeVersionId"]},
+    ).json()
+    item["servings"] = 3
+    estimates = [
+        {"mealItemId": item["id"], "stepId": step["id"], "durationSeconds": 90}
+        for step in recipe["steps"]
+    ]
+    if invalid == "zero":
+        estimates[0]["durationSeconds"] = 0
+    elif invalid == "fraction":
+        estimates[0]["durationSeconds"] = 0.5
+    elif invalid == "missing":
+        estimates.pop()
+    elif invalid == "duplicate":
+        estimates.append(estimates[0])
+    else:
+        estimates[0]["stepId"] = str(uuid4())
+    response = workflow_client.post(
+        "/api/cooking-plan",
+        headers=headers(),
+        json={"items": [item], "durationEstimates": estimates},
+    )
+    assert response.status_code == 422, response.text
+    assert workspace(workflow_client) == before

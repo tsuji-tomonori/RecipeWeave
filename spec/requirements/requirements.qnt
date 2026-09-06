@@ -62,7 +62,7 @@ module requirements {
 
   pure val requirementsSource: Catalog = {
     schemaVersion: 1,
-    catalogRevision: 8,
+    catalogRevision: 9,
     product: "RecipeWeave",
     updatedAt: "2026-09-06",
     requirements: [
@@ -507,27 +507,27 @@ module requirements {
       },
       {
         id: "REQ-SVC-LOCAL-001",
-        revision: 2,
+        revision: 3,
         status: "active",
         kind: "functional",
-        title: "試用データを同じブラウザで継続利用する",
+        title: "本人の保存データを認証後に継続利用する",
         subject: "Dev公開版",
         actionName: "maintain",
-        objectName: "冷蔵庫・献立・しおり・調理状態の端末内データ",
-        rationale: "ログインなしで途中から使え、保存範囲を誤認しないようにする。",
+        objectName: "冷蔵庫・献立・しおり・調理状態の正規化された本人データ",
+        rationale: "保存と所有権をAPIとDBで一貫させ、端末を変えても本人の確定データから利用を続ける。",
         sourceRefs: ["user:2026-09-05:recipeweave-service", "docs/service/manual.md", "docs/service/faq.md"],
         acceptanceCriteria: [
-          { id: "AC-REQ-SVC-LOCAL-001-1", given: "冷蔵庫・献立・しおり・分量下書き・調理状態を変更した", when_: "同じ端末の同じブラウザで開き直す", expected: "最後に確定したデータから利用を続けられる。保存に失敗したときは成功表示を出さない。" },
-          { id: "AC-REQ-SVC-LOCAL-001-2", given: "端末保存を使用している", when_: "保存先の説明を確認する", expected: "別端末や別ブラウザへの自動同期を行わないことと、バックアップなしの消失はサービス側で復元できないことが分かる。" }
+          { id: "AC-REQ-SVC-LOCAL-001-1", given: "冷蔵庫・献立・しおり・分量下書き・調理状態を変更した", when_: "同じ利用者で再認証して開き直す", expected: "最後に確定したデータから利用を続けられる。保存に失敗したときは成功表示を出さない。" },
+          { id: "AC-REQ-SVC-LOCAL-001-2", given: "APIとDBへ接続している", when_: "別端末または別ブラウザで本人としてログインする", expected: "サーバーで確定した本人データを取得する。他人のデータを表示せず、未接続や保存失敗を成功として扱わない。" }
         ],
         verification: { method: "対応する受入条件の自動検査と画面操作確認", evidence: "docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。" },
         traces: {
           design: ["docs/service/manual.md", "docs/service/screens-and-flows.md"],
-          implementation: ["frontend/src/App.svelte","frontend/src/lib/persistence.ts"],
-          tests: ["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"],
+          implementation: ["frontend/src/App.svelte","backend/src/app/core/workspace_service.py"],
+          tests: ["backend/tests/test_workflow_database.py","frontend/src/App.test.ts"],
           standards: [],
         },
-        lastChangedBy: "trace:2026-09-06:dev-v0.1",
+        lastChangedBy: "user:2026-09-06:full-relational-service",
         retirementReason: "",
         supersededBy: "",
         scopeName: "product",
@@ -873,7 +873,7 @@ module requirements {
       },
       {
         id: "REQ-SVC-COOK-PLAN-001",
-        revision: 2,
+        revision: 3,
         status: "active",
         kind: "functional",
         title: "作業可能な献立の段取りを示す",
@@ -884,16 +884,16 @@ module requirements {
         sourceRefs: ["user:2026-09-05:recipeweave-service", "docs/service/manual.md", "docs/service/faq.md"],
         acceptanceCriteria: [
           { id: "AC-REQ-SVC-COOK-PLAN-001-1", given: "複数料理と使う器具の条件がある", when_: "段取りを見るを押す", expected: "材料量と各工程の依存順を守った調理順を提示し、同時使用できない器具や一人で両立しない作業を同時実行として指示しない。" },
-          { id: "AC-REQ-SVC-COOK-PLAN-001-2", given: "料理または人数・器具条件を変更した", when_: "段取りを確認する", expected: "変更後の条件で順番を再提示し、確定した段取りから調理を始められる。" }
+          { id: "AC-REQ-SVC-COOK-PLAN-001-2", given: "料理または人数・器具条件を変更した", when_: "段取りを確認する", expected: "変更後の条件で順番を再提示し、確定した段取りから調理を始められる。人数変更で時間の確認が必要な工程は利用者が正の目安秒数を確認する。人数比例による検証済み時間とは扱わず、選んだ人数・材料量と確認した工程・時間を調理記録へ保存する。" }
         ],
         verification: { method: "対応する受入条件の自動検査と画面操作確認", evidence: "docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。" },
         traces: {
           design: ["docs/service/manual.md", "docs/service/screens-and-flows.md"],
-          implementation: ["frontend/src/App.svelte","frontend/src/lib/domain.ts"],
-          tests: ["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"],
+          implementation: ["frontend/src/App.svelte", "backend/src/app/core/cooking_planner.py", "backend/src/app/core/cooking_service.py", "database/migrations/005_manual_duration.sql"],
+          tests: ["backend/tests/test_cooking_planner.py", "backend/tests/test_workflow_database.py", "frontend/e2e/workspace.spec.ts"],
           standards: [],
         },
-        lastChangedBy: "trace:2026-09-06:dev-v0.1",
+        lastChangedBy: "user:2026-09-06:full-relational-service",
         retirementReason: "",
         supersededBy: "",
         scopeName: "product",
@@ -1013,27 +1013,27 @@ module requirements {
       },
       {
         id: "REQ-SVC-BACKUP-001",
-        revision: 2,
+        revision: 3,
         status: "active",
         kind: "functional",
-        title: "検証したバックアップで端末データを復元する",
+        title: "検証したバックアップで本人の業務データを復元する",
         subject: "データ管理",
         actionName: "enable",
         objectName: "利用者が指定したバックアップ内容による現在データの置換",
-        rationale: "同期のない試用版でも持ち出しと復元を行い、不正ファイルによるデータ消失を防ぐ。",
-        sourceRefs: ["user:2026-09-05:recipeweave-service", "docs/service/manual.md", "docs/service/faq.md"],
+        rationale: "正規化された本人データを参照関係ごと持ち出し、不正ファイルや競合によるデータ消失を防ぎながら確認後に復元する。",
+        sourceRefs: ["user:2026-09-05:recipeweave-service", "user:2026-09-06:full-relational-service", "docs/service/manual.md", "docs/service/faq.md"],
         acceptanceCriteria: [
-          { id: "AC-REQ-SVC-BACKUP-001-1", given: "このブラウザの利用データがある", when_: "設定からデータを書き出す", expected: "対応するJSONバックアップを保存でき、持ち出す内容と復元の方法が分かる。" },
-          { id: "AC-REQ-SVC-BACKUP-001-2", given: "バックアップを選択した", when_: "データを読み込む", expected: "形式・版・参照関係・数量を検証し、件数と置換対象を表示して確認後に全置換する。合算しない。不正ファイルや確認キャンセルでは現在データを変更しない。" }
+          { id: "AC-REQ-SVC-BACKUP-001-1", given: "サーバーに本人の利用データがある", when_: "設定からデータを書き出す", expected: "サーバーの確定した本人データを対応する版の型付きJSONとして書き出し、数量・料理版・消費台帳等の関係を保持する。対象内容と復元方法を表示する。" },
+          { id: "AC-REQ-SVC-BACKUP-001-2", given: "バックアップを選択した", when_: "データを読み込む", expected: "形式・版・所有者・参照関係・数量を検証し、件数と本人の置換対象を表示して確認後に全置換する。共有カタログと監査記録は維持する。不正ファイル、別利用者、確認キャンセル、確認後の競合では現在データを変更せず、復元全体を1トランザクションで確定する。" }
         ],
         verification: { method: "対応する受入条件の自動検査と画面操作確認", evidence: "docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。" },
         traces: {
           design: ["docs/service/manual.md", "docs/service/screens-and-flows.md"],
-          implementation: ["frontend/src/App.svelte","frontend/src/lib/persistence.ts"],
-          tests: ["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"],
+          implementation: ["frontend/src/App.svelte", "frontend/src/lib/backup.ts", "backend/src/app/core/backup_service.py", "database/migrations/004_backup_restore.sql"],
+          tests: ["frontend/src/lib/backup.test.ts", "frontend/e2e/backup.spec.ts", "backend/tests/test_backup_api.py", "backend/tests/test_backup_database.py"],
           standards: [],
         },
-        lastChangedBy: "trace:2026-09-06:dev-v0.1",
+        lastChangedBy: "user:2026-09-06:full-relational-service",
         retirementReason: "",
         supersededBy: "",
         scopeName: "product",
@@ -1041,7 +1041,7 @@ module requirements {
       },
       {
         id: "REQ-SVC-PRIVACY-001",
-        revision: 2,
+        revision: 3,
         status: "active",
         kind: "data",
         title: "読取画像と全文を永続保存しない",
@@ -1052,7 +1052,7 @@ module requirements {
         sourceRefs: ["user:2026-09-05:recipeweave-service", "docs/service/manual.md", "docs/service/faq.md"],
         acceptanceCriteria: [
           { id: "AC-REQ-SVC-PRIVACY-001-1", given: "レシートを読み取っている", when_: "登録・キャンセル・画面終了が完了する", expected: "画像とOCR全文をメモリから破棄し、店舗名・レシート上の購入日時を永続保存しない。選択前から端末にある写真は削除しない。" },
-          { id: "AC-REQ-SVC-PRIVACY-001-2", given: "登録履歴と保存データを確認する", when_: "端末内の永続データを検査する", expected: "食材・数量・単位・登録日時・登録ID・画像ハッシュ・購入内容署名・必要な状態履歴だけを保存し、元画像や全文を復元できる形で保持しない。" }
+          { id: "AC-REQ-SVC-PRIVACY-001-2", given: "登録履歴と保存データを確認する", when_: "サーバーの本人データと書き出し内容を検査する", expected: "食材・数量・単位・登録日時・登録ID・画像ハッシュ・購入内容署名・必要な状態履歴だけを保存し、元画像や全文を復元できる形で保持しない。" }
         ],
         verification: { method: "対応する受入条件の自動検査と画面操作確認", evidence: "docs/service/reviews の独立第2回机上レビューで仕様を確認済み。実装受入は未実施で、後続の実測証跡を追加する。" },
         traces: {
@@ -1061,7 +1061,7 @@ module requirements {
           tests: ["frontend/src/lib/domain.test.ts","frontend/src/App.test.ts"],
           standards: [],
         },
-        lastChangedBy: "trace:2026-09-06:dev-v0.1",
+        lastChangedBy: "user:2026-09-06:full-relational-service",
         retirementReason: "",
         supersededBy: "",
         scopeName: "product",

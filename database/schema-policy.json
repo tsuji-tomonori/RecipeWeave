@@ -535,6 +535,20 @@
       ],
       "source_rules": "調理前の購入確認。本人内安定キーで冪等化",
       "source_origin": "service-extension"
+    },
+    "backup_artifact": {
+      "retention": "audit",
+      "domain": "バックアップ復元",
+      "owner_path": ["user_id"],
+      "source_rules": "本人への発行事実を本文なしで保持する。汎用APIは読取りのみ。更新・削除は禁止し、本人消去時の匿名化だけを許可する。",
+      "source_origin": "service-extension"
+    },
+    "backup_restore_intent": {
+      "retention": "audit",
+      "domain": "バックアップ復元",
+      "owner_path": ["user_id"],
+      "source_rules": "確認済みの本人・本文・現在版・期限は不変。専用の復元処理で一度だけ使用し、全置換と同じトランザクションで確定する。汎用APIは読取りのみ。",
+      "source_origin": "service-extension"
     }
   },
   "column_evolutions": {

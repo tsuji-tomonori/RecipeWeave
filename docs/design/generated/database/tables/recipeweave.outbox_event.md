@@ -39,6 +39,7 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q903_append_outbox.sql |
 | entity_outbox_event_get | R | backend/src/app/apis/entities/outbox_event_get/sql/001_get.sql |
 | entity_outbox_event_list | R | backend/src/app/apis/entities/outbox_event_list/sql/001_list.sql |
 | entity_source_record_create | C | backend/src/app/entities/sql/outbox.sql |

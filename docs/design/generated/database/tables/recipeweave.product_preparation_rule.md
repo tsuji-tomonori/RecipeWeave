@@ -45,6 +45,13 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_product_preparation_rule.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_product_preparation_rule.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_product_preparation_rule.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_product_preparation_rule.sql |
 | entity_product_preparation_rule_create | C | backend/src/app/apis/entities/product_preparation_rule_create/sql/001_create.sql |
 | entity_product_preparation_rule_get | R | backend/src/app/apis/entities/product_preparation_rule_get/sql/001_get.sql |
 | entity_product_preparation_rule_list | R | backend/src/app/apis/entities/product_preparation_rule_list/sql/001_list.sql |

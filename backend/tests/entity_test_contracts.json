@@ -444,7 +444,9 @@
         "entity_user_food_get",
         "entity_user_pantry_food_get",
         "entity_pantry_consumption_get",
-        "entity_user_shopping_check_get"
+        "entity_user_shopping_check_get",
+        "entity_backup_artifact_get",
+        "entity_backup_restore_intent_get"
       ],
       "factor": "不可視行",
       "given": "対象がないか所有者が違う",

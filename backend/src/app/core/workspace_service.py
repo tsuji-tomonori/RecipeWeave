@@ -9,7 +9,8 @@ from uuid import UUID, uuid4, uuid5
 from fastapi import HTTPException
 from psycopg import Connection
 
-from app.core.identity import Identity, local_auth_enabled
+from app.core.catalog_preview import catalog_preview_enabled
+from app.core.identity import Identity
 from app.core.models import AppSnapshot, Food, MealItem
 from app.core.operation_queries import OperationQueries
 from app.core.workspace_models import (
@@ -263,7 +264,7 @@ class WorkspaceService:
         version = q.run(
             "q010_recipe",
             recipe_id=identifier(item.recipe_id),
-            preview=local_auth_enabled(),
+            preview=catalog_preview_enabled(),
             requested_version_id=identifier(item.recipe_version_id)
             if item.recipe_version_id
             else None,
@@ -326,7 +327,7 @@ class WorkspaceService:
 
     def _save_recipe(self, name: str, request: RevisionRequest, row_id: UUID) -> AppSnapshot:
         q = self.begin(name, request)
-        rows = q.run("q001_recipe", recipe_id=row_id, preview=local_auth_enabled())
+        rows = q.run("q001_recipe", recipe_id=row_id, preview=catalog_preview_enabled())
         if not rows:
             raise HTTPException(404, "料理が公開されていません")
         q.run(

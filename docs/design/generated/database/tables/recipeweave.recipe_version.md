@@ -62,6 +62,8 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q300_reference_recipe_version.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q300_reference_recipe_version.sql |
 | entity_menu_item_create | R | backend/src/app/apis/entities/menu_item_create/sql/003_reference_recipe_version_id.sql |
 | entity_menu_item_update | R | backend/src/app/apis/entities/menu_item_update/sql/003_reference_recipe_version_id.sql |
 | entity_recipe_version_create | C | backend/src/app/apis/entities/recipe_version_create/sql/001_create.sql |
@@ -84,6 +86,10 @@
 | save_recipe | R | backend/src/app/apis/workspace/save_recipe/sql/q001_recipe.sql |
 | unsave_recipe | R | backend/src/app/apis/workspace/unsave_recipe/sql/q001_recipe.sql |
 | update_menu_item | R | backend/src/app/apis/workspace/update_menu_item/sql/q010_recipe.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q005_menu.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q007_saved.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q012_tasks.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q005_menu.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q007_saved.sql |

@@ -233,7 +233,7 @@ def test_recipe_history_reference_is_verified_before_write(
     operation_id: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Given未公開版への参照権なし When履歴を書込 Then新規履歴で認可を作れない。"""
-    monkeypatch.setattr("app.core.entity_service.local_auth_enabled", lambda: False)
+    monkeypatch.setattr("app.core.entity_service.catalog_preview_enabled", lambda: False)
     target = service("user")
     reference = MagicMock(return_value=[])
     query = MagicMock()

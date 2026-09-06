@@ -184,6 +184,7 @@ WHERE id = %(menu_id)s AND user_id = %(user_id)s RETURNING revision;
 | 対象表 | CRUD | 参照・書込列 |
 |---|---|---|
 | recipeweave.menu_item | R | id, menu_id, position, recipe_version_id, servings |
+| recipeweave.recipe_ingredient | R | recipe_version_id, scaling_rule_id |
 | recipeweave.recipe_step | R | attention, duration_max_s, id, recipe_version_id, scaling_rule_id, step_no |
 | recipeweave.recipe_version | R | base_servings, id, recipe_id |
 | recipeweave.scaling_rule | R | batch_capacity, id, max_servings, min_servings, mode |
@@ -204,8 +205,20 @@ SELECT
     st.attention,
     sc.mode AS scaling_mode,
     sc.batch_capacity,
-    sc.min_servings,
-    sc.max_servings
+    GREATEST(sc.min_servings, (
+        SELECT MAX(ingredient_rule.min_servings)
+        FROM recipeweave.recipe_ingredient AS ingredient
+        INNER JOIN recipeweave.scaling_rule AS ingredient_rule
+            ON ingredient.scaling_rule_id = ingredient_rule.id
+        WHERE ingredient.recipe_version_id = rv.id
+    )) AS min_servings,
+    LEAST(sc.max_servings, (
+        SELECT MIN(ingredient_rule.max_servings)
+        FROM recipeweave.recipe_ingredient AS ingredient
+        INNER JOIN recipeweave.scaling_rule AS ingredient_rule
+            ON ingredient.scaling_rule_id = ingredient_rule.id
+        WHERE ingredient.recipe_version_id = rv.id
+    )) AS max_servings
 FROM recipeweave.menu_item AS mi
 INNER JOIN recipeweave.recipe_version AS rv ON mi.recipe_version_id = rv.id
 INNER JOIN recipeweave.recipe_step AS st ON rv.id = st.recipe_version_id
@@ -371,15 +384,21 @@ VALUES (
 
 | 対象表 | CRUD | 参照・書込列 |
 |---|---|---|
-| recipeweave.session_task | C | batch_no, id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id |
+| recipeweave.session_task | C | batch_no, confirmed_duration_s, duration_source, id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id |
 
-バインド変数: end, item_id, row_id, session_id, start, step_id
+バインド変数: confirmed_duration_s, duration_source, end, item_id, row_id, session_id, start, step_id
 
 ```sql
 -- 計画済み工程を独立したタスク行へ保存する。
 INSERT INTO recipeweave.session_task
-(id, session_id, menu_item_id, step_id, batch_no, planned_start_s, planned_end_s, status)
-VALUES (%(row_id)s, %(session_id)s, %(item_id)s, %(step_id)s, 1, %(start)s, %(end)s, 'pending');
+(
+    id, session_id, menu_item_id, step_id, batch_no, planned_start_s, planned_end_s, status,
+    duration_source, confirmed_duration_s
+)
+VALUES (
+    %(row_id)s, %(session_id)s, %(item_id)s, %(step_id)s, 1, %(start)s, %(end)s, 'pending',
+    %(duration_source)s, %(confirmed_duration_s)s
+);
 ```
 
 ## backend/src/app/apis/workspace/create_cooking_session/sql/q027_dependency.sql
@@ -843,9 +862,10 @@ LIMIT 1;
 |---|---|---|
 | recipeweave.menu_item | R | id, position, recipe_version_id |
 | recipeweave.recipe | R | id, title |
-| recipeweave.recipe_step | R | attention, duration_max_s, id, instruction, step_no, title |
+| recipeweave.recipe_step | R | attention, duration_max_s, id, instruction, scaling_rule_id, step_no, title |
 | recipeweave.recipe_version | R | id, recipe_id |
-| recipeweave.session_task | R | id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id, timer_duration_s, timer_started_at |
+| recipeweave.scaling_rule | R | id, mode |
+| recipeweave.session_task | R | confirmed_duration_s, duration_source, id, menu_item_id, planned_end_s, planned_start_s, session_id, status, step_id, timer_duration_s, timer_started_at |
 
 バインド変数: session_id
 
@@ -857,6 +877,8 @@ SELECT
     t.step_id,
     t.planned_start_s,
     t.planned_end_s,
+    t.duration_source,
+    t.confirmed_duration_s,
     t.status,
     t.timer_started_at,
     t.timer_duration_s,
@@ -865,11 +887,13 @@ SELECT
     st.title,
     st.instruction,
     st.attention,
-    st.duration_max_s
+    st.duration_max_s,
+    scaling.mode AS scaling_mode
 FROM recipeweave.session_task AS t INNER JOIN recipeweave.menu_item AS mi ON t.menu_item_id = mi.id
 INNER JOIN recipeweave.recipe_version AS rv ON mi.recipe_version_id = rv.id
 INNER JOIN recipeweave.recipe AS r ON rv.recipe_id = r.id
 INNER JOIN recipeweave.recipe_step AS st ON t.step_id = st.id
+INNER JOIN recipeweave.scaling_rule AS scaling ON st.scaling_rule_id = scaling.id
 WHERE t.session_id = %(session_id)s
 ORDER BY t.planned_start_s, mi.position, st.step_no, t.id;
 ```

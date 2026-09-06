@@ -30,6 +30,8 @@
 | actual_end_at | anyOf(string (date-time), null) | 任意 | 追加制約なし | 実完了 |
 | actual_start_at | anyOf(string (date-time), null) | 任意 | 追加制約なし | 実開始 |
 | batch_no | integer | 必須 | exclusiveMinimum=0.0 | 容量分割した回 |
+| confirmed_duration_s | anyOf(integer, null) | 任意 | 追加制約なし | 利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない |
+| duration_source | string | 必須 | enum=["recipe_rule", "user_estimate"] | 計画時間の根拠。料理の時間規則または利用者が確認した見積り |
 | menu_item_id | string (uuid) | 必須 | 追加制約なし | 料理 |
 | planned_end_s | integer | 必須 | 追加制約なし | 終了相対秒 |
 | planned_start_s | integer | 必須 | minimum=0.0 | 開始相対秒 |
@@ -52,7 +54,9 @@ SessionTaskRow
 | actual_end_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 実完了 |
 | actual_start_at | anyOf(string (date-time), null) | 必須 | 追加制約なし | 実開始 |
 | batch_no | integer | 必須 | exclusiveMinimum=0.0 | 容量分割した回 |
+| confirmed_duration_s | anyOf(integer, null) | 必須 | 追加制約なし | 利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない |
 | created_at | string (date-time) | 必須 | 追加制約なし | 作成日時(UTC) |
+| duration_source | string | 必須 | enum=["recipe_rule", "user_estimate"] | 計画時間の根拠。料理の時間規則または利用者が確認した見積り |
 | etag | string | 必須 | pattern="^[0-9]+$" | 更新・削除時のIf-Matchに使う行版 |
 | id | string (uuid) | 必須 | 追加制約なし | 不変の行識別子 |
 | menu_item_id | string (uuid) | 必須 | 追加制約なし | 料理 |

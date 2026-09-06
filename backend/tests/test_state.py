@@ -35,7 +35,7 @@ def test_database_configuration_fails_closed(monkeypatch: pytest.MonkeyPatch) ->
 def test_database_failure_rolls_back_outer_transaction(monkeypatch: pytest.MonkeyPatch) -> None:
     """要求処理の失敗を接続contextへ渡し、途中までのDB変更を確定しない。"""
     monkeypatch.setattr(db, "get_settings", lambda: AppSettings(database_url="postgresql://test"))
-    with patch("app.core.db.psycopg.connect") as connect:
+    with patch("app.core.db.psycopg.Connection.connect") as connect:
         generator = cast(Generator[Any, None, None], db.get_database())
         next(generator)
         with pytest.raises(ValueError, match="business failure"):

@@ -45,6 +45,8 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q300_reference_unit.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q300_reference_unit.sql |
 | entity_unit_create | C | backend/src/app/apis/entities/unit_create/sql/001_create.sql |
 | entity_unit_get | R | backend/src/app/apis/entities/unit_get/sql/001_get.sql |
 | entity_unit_list | R | backend/src/app/apis/entities/unit_list/sql/001_list.sql |
@@ -69,6 +71,12 @@
 | update_cooking_session | R | backend/src/app/apis/workspace/update_cooking_session/sql/q006_totals.sql |
 | update_menu_item | R | backend/src/app/apis/workspace/update_menu_item/sql/q011_ingredients.sql |
 | update_pantry_lot | R | backend/src/app/apis/workspace/update_pantry_lot/sql/q001_resolve_form.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q002_lots.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q003_consumption.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q009_custom_foods.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q010_shopping.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q014_totals.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q002_lots.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q003_consumption.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |

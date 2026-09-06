@@ -60,7 +60,7 @@
 | menu_ingredient_override | 献立 | 献立別材料確定 | 8 | 8 | [実DDL仕様](tables/recipeweave.menu_ingredient_override.md) |
 | kitchen_resource | 献立 | キッチンの実資源 | 7 | 8 | [実DDL仕様](tables/recipeweave.kitchen_resource.md) |
 | cooking_session | 献立 | 調理計画実行 | 9 | 10 | [実DDL仕様](tables/recipeweave.cooking_session.md) |
-| session_task | 献立 | 展開済み工程 | 11 | 13 | [実DDL仕様](tables/recipeweave.session_task.md) |
+| session_task | 献立 | 展開済み工程 | 11 | 15 | [実DDL仕様](tables/recipeweave.session_task.md) |
 | task_dependency | 献立 | 献立展開後依存 | 7 | 7 | [実DDL仕様](tables/recipeweave.task_dependency.md) |
 | resource_reservation | 献立 | 資源の予約 | 7 | 7 | [実DDL仕様](tables/recipeweave.resource_reservation.md) |
 | ingredient_total | 献立 | 献立材料集計結果 | 9 | 11 | [実DDL仕様](tables/recipeweave.ingredient_total.md) |

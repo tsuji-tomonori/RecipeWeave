@@ -83,6 +83,8 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q300_reference_recipe_ingredient.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q300_reference_recipe_ingredient.sql |
 | entity_recipe_ingredient_create | C | backend/src/app/apis/entities/recipe_ingredient_create/sql/001_create.sql |
 | entity_recipe_ingredient_get | R | backend/src/app/apis/entities/recipe_ingredient_get/sql/001_get.sql |
 | entity_recipe_ingredient_list | R | backend/src/app/apis/entities/recipe_ingredient_list/sql/001_list.sql |
@@ -92,9 +94,12 @@
 | random_recipe | R | backend/src/app/apis/recipes/random_recipe/sql/001_random_recipe.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/add_menu_item/sql/q011_ingredients.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/create_cooking_session/sql/q011_ingredients.sql |
+| create_cooking_session | R | backend/src/app/apis/workspace/create_cooking_session/sql/q020_steps.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/create_cooking_session/sql/q024_ingredients.sql |
 | get_workspace | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
+| preview_cooking_plan | R | backend/src/app/apis/workspace/preview_cooking_plan/sql/q001_steps.sql |
 | update_menu_item | R | backend/src/app/apis/workspace/update_menu_item/sql/q011_ingredients.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q006_ingredients.sql |

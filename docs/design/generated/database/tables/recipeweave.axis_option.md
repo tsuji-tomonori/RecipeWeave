@@ -48,6 +48,8 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q300_reference_axis_option.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q300_reference_axis_option.sql |
 | entity_axis_option_create | C | backend/src/app/apis/entities/axis_option_create/sql/001_create.sql |
 | entity_axis_option_get | R | backend/src/app/apis/entities/axis_option_get/sql/001_get.sql |
 | entity_axis_option_list | R | backend/src/app/apis/entities/axis_option_list/sql/001_list.sql |

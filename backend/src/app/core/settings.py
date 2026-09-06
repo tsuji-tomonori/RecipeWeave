@@ -24,6 +24,7 @@ class AppSettings(BaseSettings):
     database_host: str = ""
     database_name: str = "recipeweave"
     database_sslmode: Literal["require"] = "require"
+    allow_catalog_preview: bool = False
     auth_mode: Literal["cognito", "local"] = "cognito"
     local_auth_secret: str = ""
     local_auth_password: str = ""

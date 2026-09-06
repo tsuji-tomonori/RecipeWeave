@@ -21,6 +21,14 @@
     {
       "path": "database/migrations/003_service_operations.sql",
       "sha256": "4797f6c116c7872f52f96a5f05ecab70a5386b10603c662877d1988bc947015a"
+    },
+    {
+      "path": "database/migrations/004_backup_restore.sql",
+      "sha256": "5e07c5e123f78fa1721647635dbb56af318d9c9948b46d8ae3019edf6a54ebca"
+    },
+    {
+      "path": "database/migrations/005_manual_duration.sql",
+      "sha256": "4c42721e70692842d3ba14abbaea7e75b26d1e01314f2fbf2730f543c5102e6c"
     }
   ],
   "tables": [
@@ -9474,7 +9482,8 @@
           "enum": [],
           "checks": [
             "planned_start_s >= 0",
-            "planned_end_s >= planned_start_s"
+            "planned_end_s >= planned_start_s",
+            " (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL) OR ( duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL AND planned_end_s - planned_start_s = confirmed_duration_s ) "
           ]
         },
         {
@@ -9486,7 +9495,8 @@
           "description": "終了相対秒",
           "enum": [],
           "checks": [
-            "planned_end_s >= planned_start_s"
+            "planned_end_s >= planned_start_s",
+            " (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL) OR ( duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL AND planned_end_s - planned_start_s = confirmed_duration_s ) "
           ]
         },
         {
@@ -9555,6 +9565,37 @@
           "checks": [
             " timer_duration_s IS NULL OR timer_duration_s >= 0 ",
             " timer_started_at IS NULL OR timer_duration_s IS NOT NULL "
+          ],
+          "source_origin": "service-extension"
+        },
+        {
+          "name": "duration_source",
+          "type": "text",
+          "nullable": false,
+          "default": "'recipe_rule'",
+          "primary_key": false,
+          "description": "計画時間の根拠。料理の時間規則または利用者が確認した見積り",
+          "enum": [
+            "recipe_rule",
+            "user_estimate"
+          ],
+          "checks": [
+            "duration_source IN ('recipe_rule', 'user_estimate')",
+            " (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL) OR ( duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL AND planned_end_s - planned_start_s = confirmed_duration_s ) "
+          ],
+          "source_origin": "service-extension"
+        },
+        {
+          "name": "confirmed_duration_s",
+          "type": "integer",
+          "nullable": true,
+          "default": null,
+          "primary_key": false,
+          "description": "利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない",
+          "enum": [],
+          "checks": [
+            "confirmed_duration_s IS NULL OR confirmed_duration_s BETWEEN 1 AND 86400",
+            " (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL) OR ( duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL AND planned_end_s - planned_start_s = confirmed_duration_s ) "
           ],
           "source_origin": "service-extension"
         }
@@ -9629,7 +9670,10 @@
         "LENGTH(BTRIM(status)) BETWEEN 1 AND 20000",
         "status IN ('pending', 'running', 'completed', 'skipped')",
         " timer_duration_s IS NULL OR timer_duration_s >= 0 ",
-        " timer_started_at IS NULL OR timer_duration_s IS NOT NULL "
+        " timer_started_at IS NULL OR timer_duration_s IS NOT NULL ",
+        "duration_source IN ('recipe_rule', 'user_estimate')",
+        "confirmed_duration_s IS NULL OR confirmed_duration_s BETWEEN 1 AND 86400",
+        " (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL) OR ( duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL AND planned_end_s - planned_start_s = confirmed_duration_s ) "
       ],
       "indexes": [
         {
@@ -13927,6 +13971,295 @@
         "user_id"
       ],
       "source_rules": "調理前の購入確認。本人内安定キーで冪等化",
+      "source_origin": "service-extension"
+    },
+    {
+      "name": "backup_artifact",
+      "description": "本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持する",
+      "source": {
+        "file": "database/migrations/004_backup_restore.sql",
+        "number": 1,
+        "sha256": "79c6a245bf4032232a35c7398f41c40a9ea29e8d9823263896a25ced1337d32a",
+        "sql": "CREATE TABLE recipeweave.backup_artifact (\n    id UUID NOT NULL PRIMARY KEY,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n    user_id UUID,\n    body_sha256 TEXT NOT NULL,\n    format_version INTEGER NOT NULL,\n    UNIQUE (user_id, body_sha256, format_version),\n    CHECK (body_sha256 ~ '^[0-9a-f]{64}$'),\n    CHECK (format_version = 2)\n)"
+      },
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": null,
+          "primary_key": true,
+          "description": "バックアップ本文に含める不変の発行識別子",
+          "enum": [],
+          "checks": []
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "NOW()",
+          "primary_key": false,
+          "description": "サーバーによる発行日時（UTC）",
+          "enum": [],
+          "checks": []
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": true,
+          "default": null,
+          "primary_key": false,
+          "description": "発行先の本人。利用者消去後だけNULLへ匿名化する",
+          "enum": [],
+          "checks": []
+        },
+        {
+          "name": "body_sha256",
+          "type": "text",
+          "nullable": false,
+          "default": null,
+          "primary_key": false,
+          "description": "発行識別子を含む正規化済み本文全体のSHA-256",
+          "enum": [],
+          "checks": [
+            "body_sha256 ~ '^[0-9a-f]{64}$'"
+          ]
+        },
+        {
+          "name": "format_version",
+          "type": "integer",
+          "nullable": false,
+          "default": null,
+          "primary_key": false,
+          "description": "対応するバックアップの形式版。現在は2",
+          "enum": [],
+          "checks": [
+            "format_version = 2"
+          ]
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "unique_constraints": [
+        {
+          "columns": [
+            "user_id",
+            "body_sha256",
+            "format_version"
+          ],
+          "nulls_not_distinct": false,
+          "definition": "UNIQUE (user_id, body_sha256, format_version)"
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "fk_backup_artifact_user_id",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_table": "app_user",
+          "referenced_columns": [
+            "id"
+          ],
+          "on_delete": "SET NULL",
+          "on_update": "RESTRICT",
+          "deferrable": true,
+          "initially_deferred": true,
+          "definition": "ALTER TABLE recipeweave.backup_artifact ADD CONSTRAINT fk_backup_artifact_user_id FOREIGN KEY (user_id) REFERENCES recipeweave.app_user (id) ON DELETE SET NULL ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+        }
+      ],
+      "checks": [
+        "body_sha256 ~ '^[0-9a-f]{64}$'",
+        "format_version = 2"
+      ],
+      "indexes": [
+        {
+          "name": "ix_backup_artifact_user_id",
+          "unique": false,
+          "definition": "(user_id)",
+          "sql": "CREATE INDEX ix_backup_artifact_user_id ON recipeweave.backup_artifact (user_id)"
+        }
+      ],
+      "retention": "audit",
+      "domain": "バックアップ復元",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "本人への発行事実を本文なしで保持する。汎用APIは読取りのみ。更新・削除は禁止し、本人消去時の匿名化だけを許可する。",
+      "source_origin": "service-extension"
+    },
+    {
+      "name": "backup_restore_intent",
+      "description": "復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費する",
+      "source": {
+        "file": "database/migrations/004_backup_restore.sql",
+        "number": 10,
+        "sha256": "a91f2bf584e7a625b77730a71e3de18000853e40ec0a6d4aa7098b6cd2a9152c",
+        "sql": "CREATE TABLE recipeweave.backup_restore_intent (\n    id UUID NOT NULL PRIMARY KEY,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n    user_id UUID,\n    artifact_id UUID NOT NULL,\n    body_sha256 TEXT NOT NULL,\n    current_revision BIGINT NOT NULL,\n    expires_at TIMESTAMPTZ NOT NULL,\n    consumed_at TIMESTAMPTZ,\n    CHECK (body_sha256 ~ '^[0-9a-f]{64}$'),\n    CHECK (current_revision >= 0),\n    CHECK (expires_at > created_at AND expires_at <= created_at + INTERVAL '15 minutes'),\n    CHECK (consumed_at IS NULL OR (consumed_at >= created_at AND consumed_at < expires_at))\n)"
+      },
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "nullable": false,
+          "default": null,
+          "primary_key": true,
+          "description": "確認画面へ返す不変の復元確認識別子",
+          "enum": [],
+          "checks": []
+        },
+        {
+          "name": "created_at",
+          "type": "timestamptz",
+          "nullable": false,
+          "default": "NOW()",
+          "primary_key": false,
+          "description": "復元内容を検証して確認記録を発行した日時（UTC）",
+          "enum": [],
+          "checks": [
+            "expires_at > created_at AND expires_at <= created_at + INTERVAL '15 minutes'",
+            "consumed_at IS NULL OR (consumed_at >= created_at AND consumed_at < expires_at)"
+          ]
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": true,
+          "default": null,
+          "primary_key": false,
+          "description": "復元する本人。利用者消去後だけNULLへ匿名化する",
+          "enum": [],
+          "checks": []
+        },
+        {
+          "name": "artifact_id",
+          "type": "uuid",
+          "nullable": false,
+          "default": null,
+          "primary_key": false,
+          "description": "本人へ発行したバックアップ証拠の識別子",
+          "enum": [],
+          "checks": []
+        },
+        {
+          "name": "body_sha256",
+          "type": "text",
+          "nullable": false,
+          "default": null,
+          "primary_key": false,
+          "description": "確認した本文全体のSHA-256。発行記録と一致する",
+          "enum": [],
+          "checks": [
+            "body_sha256 ~ '^[0-9a-f]{64}$'"
+          ]
+        },
+        {
+          "name": "current_revision",
+          "type": "bigint",
+          "nullable": false,
+          "default": null,
+          "primary_key": false,
+          "description": "確認時の現在データの更新版。復元直前にも同じ値であることを検査する",
+          "enum": [],
+          "checks": [
+            "current_revision >= 0"
+          ]
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamptz",
+          "nullable": false,
+          "default": null,
+          "primary_key": false,
+          "description": "確認の有効期限。発行から最大15分",
+          "enum": [],
+          "checks": [
+            "expires_at > created_at AND expires_at <= created_at + INTERVAL '15 minutes'",
+            "consumed_at IS NULL OR (consumed_at >= created_at AND consumed_at < expires_at)"
+          ]
+        },
+        {
+          "name": "consumed_at",
+          "type": "timestamptz",
+          "nullable": true,
+          "default": null,
+          "primary_key": false,
+          "description": "復元と同一トランザクションで確定する使用日時。取消・再使用は不可",
+          "enum": [],
+          "checks": [
+            "consumed_at IS NULL OR (consumed_at >= created_at AND consumed_at < expires_at)"
+          ]
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "unique_constraints": [],
+      "foreign_keys": [
+        {
+          "name": "fk_backup_restore_intent_user_id",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_table": "app_user",
+          "referenced_columns": [
+            "id"
+          ],
+          "on_delete": "SET NULL",
+          "on_update": "RESTRICT",
+          "deferrable": true,
+          "initially_deferred": true,
+          "definition": "ALTER TABLE recipeweave.backup_restore_intent ADD CONSTRAINT fk_backup_restore_intent_user_id FOREIGN KEY (user_id) REFERENCES recipeweave.app_user (id) ON DELETE SET NULL ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+        },
+        {
+          "name": "fk_backup_restore_intent_artifact_id",
+          "columns": [
+            "artifact_id"
+          ],
+          "referenced_table": "backup_artifact",
+          "referenced_columns": [
+            "id"
+          ],
+          "on_delete": "RESTRICT",
+          "on_update": "RESTRICT",
+          "deferrable": true,
+          "initially_deferred": true,
+          "definition": "ALTER TABLE recipeweave.backup_restore_intent ADD CONSTRAINT fk_backup_restore_intent_artifact_id FOREIGN KEY (artifact_id) REFERENCES recipeweave.backup_artifact (id) ON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+        }
+      ],
+      "checks": [
+        "body_sha256 ~ '^[0-9a-f]{64}$'",
+        "current_revision >= 0",
+        "expires_at > created_at AND expires_at <= created_at + INTERVAL '15 minutes'",
+        "consumed_at IS NULL OR (consumed_at >= created_at AND consumed_at < expires_at)"
+      ],
+      "indexes": [
+        {
+          "name": "ix_backup_restore_intent_user_id",
+          "unique": false,
+          "definition": "(user_id)",
+          "sql": "CREATE INDEX ix_backup_restore_intent_user_id ON recipeweave.backup_restore_intent (user_id)"
+        },
+        {
+          "name": "ix_backup_restore_intent_artifact_id",
+          "unique": false,
+          "definition": "( artifact_id )",
+          "sql": "CREATE INDEX ix_backup_restore_intent_artifact_id ON recipeweave.backup_restore_intent ( artifact_id )"
+        },
+        {
+          "name": "ix_backup_restore_intent_pending",
+          "unique": false,
+          "definition": "(user_id, expires_at) WHERE consumed_at IS NULL",
+          "sql": "CREATE INDEX ix_backup_restore_intent_pending ON recipeweave.backup_restore_intent (user_id, expires_at) WHERE consumed_at IS NULL"
+        }
+      ],
+      "retention": "audit",
+      "domain": "バックアップ復元",
+      "owner_path": [
+        "user_id"
+      ],
+      "source_rules": "確認済みの本人・本文・現在版・期限は不変。専用の復元処理で一度だけ使用し、全置換と同じトランザクションで確定する。汎用APIは読取りのみ。",
       "source_origin": "service-extension"
     }
   ],
@@ -22888,6 +23221,270 @@
       "number": 287,
       "sha256": "ad817ead42a508b651c22be15c2ee6be91c5bba0c45d29fe1004d1683ad01ed8",
       "sql": "ALTER TABLE recipeweave.axis_option\nADD CONSTRAINT axis_option_label_wire_length CHECK (CHAR_LENGTH(label) <= 500)"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 1,
+      "sha256": "79c6a245bf4032232a35c7398f41c40a9ea29e8d9823263896a25ced1337d32a",
+      "sql": "CREATE TABLE recipeweave.backup_artifact (\n    id UUID NOT NULL PRIMARY KEY,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n    user_id UUID,\n    body_sha256 TEXT NOT NULL,\n    format_version INTEGER NOT NULL,\n    UNIQUE (user_id, body_sha256, format_version),\n    CHECK (body_sha256 ~ '^[0-9a-f]{64}$'),\n    CHECK (format_version = 2)\n)"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 2,
+      "sha256": "ecd7f01b825ecaa98ea4766a89e06588bf52006f4eab910f1e74b0423faa80ec",
+      "sql": "COMMENT ON TABLE recipeweave.backup_artifact IS '本人へ発行したバックアップの証拠。本文を保存せず、削除後も匿名化した発行記録を保持する'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 3,
+      "sha256": "616687bb6fb69a364bc53eaa19db606904f9a967bccaba3acf148a9aaf516d64",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_artifact.id IS 'バックアップ本文に含める不変の発行識別子'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 4,
+      "sha256": "6d8053dab33a6eda458eed61e64fb9ee797aff421c772f8a018a00a767f0c786",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_artifact.created_at IS 'サーバーによる発行日時（UTC）'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 5,
+      "sha256": "35e436809fa65202da5d5fa0f4f5817c232911bb67cdb63e52d12d6c588e2adb",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_artifact.user_id IS '発行先の本人。利用者消去後だけNULLへ匿名化する'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 6,
+      "sha256": "fa3efddba574dd4b4b4a310f95daba011167fd757f49a104ad92025b1261e112",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_artifact.body_sha256 IS '発行識別子を含む正規化済み本文全体のSHA-256'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 7,
+      "sha256": "0632f98aecebef7e5bd6652f638f9564829390e7420a8cbf2de0096c56975127",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_artifact.format_version IS '対応するバックアップの形式版。現在は2'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 8,
+      "sha256": "3b1b7aacd449a6feea897ffb3bb9afeb5fa73dd1dc6128a997bb679e9227c51b",
+      "sql": "ALTER TABLE recipeweave.backup_artifact ADD CONSTRAINT fk_backup_artifact_user_id\nFOREIGN KEY (user_id) REFERENCES recipeweave.app_user (id)\nON DELETE SET NULL ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 9,
+      "sha256": "084d84b9c4c6f6a9b3e7db63394979d9b70ec3bc78fd1959ddad77c00621b3ef",
+      "sql": "CREATE INDEX ix_backup_artifact_user_id ON recipeweave.backup_artifact (user_id)"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 10,
+      "sha256": "a91f2bf584e7a625b77730a71e3de18000853e40ec0a6d4aa7098b6cd2a9152c",
+      "sql": "CREATE TABLE recipeweave.backup_restore_intent (\n    id UUID NOT NULL PRIMARY KEY,\n    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),\n    user_id UUID,\n    artifact_id UUID NOT NULL,\n    body_sha256 TEXT NOT NULL,\n    current_revision BIGINT NOT NULL,\n    expires_at TIMESTAMPTZ NOT NULL,\n    consumed_at TIMESTAMPTZ,\n    CHECK (body_sha256 ~ '^[0-9a-f]{64}$'),\n    CHECK (current_revision >= 0),\n    CHECK (expires_at > created_at AND expires_at <= created_at + INTERVAL '15 minutes'),\n    CHECK (consumed_at IS NULL OR (consumed_at >= created_at AND consumed_at < expires_at))\n)"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 11,
+      "sha256": "165c47208768d9d9b277352a3580cbaee953b809a0d2c170a0f47591449b711d",
+      "sql": "COMMENT ON TABLE recipeweave.backup_restore_intent IS '復元内容の確認記録。本人・本文・確認時の更新版・期限を固定し、一度だけ消費する'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 12,
+      "sha256": "2a66bef7f30d8c03126aed3bac2e911f9052b7e7fece8be1e00f392140cf74ef",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_restore_intent.id IS '確認画面へ返す不変の復元確認識別子'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 13,
+      "sha256": "4311082f60240acd3e67339c192888eb3ed1a88298ca58ccc61c2b1ded43f6c2",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_restore_intent.created_at IS '復元内容を検証して確認記録を発行した日時（UTC）'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 14,
+      "sha256": "103e2b3dc44ff8b42b366242fdbf68d2857e80e79e484cda819646dc5d970f11",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_restore_intent.user_id IS '復元する本人。利用者消去後だけNULLへ匿名化する'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 15,
+      "sha256": "57dd4fb94aada333d7178b245cf72e7012a4d96b6301d8107610b15d6311232a",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_restore_intent.artifact_id IS '本人へ発行したバックアップ証拠の識別子'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 16,
+      "sha256": "e64b383e49d1f1ff2e6827c83551e521611d88988fa251dbe6fb3c26cec02b4c",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_restore_intent.body_sha256 IS '確認した本文全体のSHA-256。発行記録と一致する'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 17,
+      "sha256": "3c728e526022e84a02f1371e319b5608a8e408f4f0826524e2b2c1dabf189171",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_restore_intent.current_revision\nIS '確認時の現在データの更新版。復元直前にも同じ値であることを検査する'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 18,
+      "sha256": "68803a4c7cd4c5cd6467a7f034bf9932380da76a61e5ffd0d949e425bf688030",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_restore_intent.expires_at IS '確認の有効期限。発行から最大15分'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 19,
+      "sha256": "fac929a6b43634f65a67a7abd5e862d573630e236a226264d2ce834c77812649",
+      "sql": "COMMENT ON COLUMN recipeweave.backup_restore_intent.consumed_at\nIS '復元と同一トランザクションで確定する使用日時。取消・再使用は不可'"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 20,
+      "sha256": "efcd4542be8a2947c8b21d02131096771b5bb97179d33225b7bd0b785828f92b",
+      "sql": "ALTER TABLE recipeweave.backup_restore_intent ADD CONSTRAINT fk_backup_restore_intent_user_id\nFOREIGN KEY (user_id) REFERENCES recipeweave.app_user (id)\nON DELETE SET NULL ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 21,
+      "sha256": "d73c05583f93d2730ddfd9e2bceb0bc31c7587ef280400c3867aa98b24b2feff",
+      "sql": "ALTER TABLE recipeweave.backup_restore_intent ADD CONSTRAINT fk_backup_restore_intent_artifact_id\nFOREIGN KEY (artifact_id) REFERENCES recipeweave.backup_artifact (id)\nON DELETE RESTRICT ON UPDATE RESTRICT DEFERRABLE INITIALLY DEFERRED"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 22,
+      "sha256": "58aae0aa53b3a9cb12aecdcec482cca181319895fbb5133052d51ebe207855ef",
+      "sql": "CREATE INDEX ix_backup_restore_intent_user_id ON recipeweave.backup_restore_intent (user_id)"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 23,
+      "sha256": "a9c942590102a67849f02baf0452933536860b0344b575d8a5d598cc206d570b",
+      "sql": "CREATE INDEX ix_backup_restore_intent_artifact_id ON recipeweave.backup_restore_intent (\n    artifact_id\n)"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 24,
+      "sha256": "d16d6db1087a1a014f6b927c9a0239e96ef6e7bf907904046770939e714b81a5",
+      "sql": "CREATE INDEX ix_backup_restore_intent_pending\nON recipeweave.backup_restore_intent (user_id, expires_at) WHERE consumed_at IS NULL"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 25,
+      "sha256": "8e228d9db256c84e94bfac0174651b4df264a863e63facacf9241ac075ec7730",
+      "sql": "CREATE FUNCTION recipeweave.guard_backup_artifact() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nBEGIN\n    IF TG_OP = 'INSERT' THEN\n        IF NEW.user_id IS NULL THEN\n            RAISE EXCEPTION 'バックアップの発行先を省略できません' USING ERRCODE = '23514';\n        END IF;\n        RETURN NEW;\n    END IF;\n    IF TG_OP = 'UPDATE' AND OLD.user_id IS NOT NULL AND NEW.user_id IS NULL\n       AND (to_jsonb(NEW) - 'user_id') = (to_jsonb(OLD) - 'user_id')\n       AND NOT EXISTS (SELECT 1 FROM recipeweave.app_user WHERE id = OLD.user_id) THEN\n        RETURN NEW;\n    END IF;\n    RAISE EXCEPTION 'バックアップ発行記録は追記専用です' USING ERRCODE = '23514';\nEND;\n$$"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 26,
+      "sha256": "50ef6c371b5ae0d47e976b4aeac3e8263becc340a9f4d237a8b365d1c0817db3",
+      "sql": "CREATE FUNCTION recipeweave.guard_backup_restore_intent() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    issued recipeweave.backup_artifact%ROWTYPE;\n    workspace_revision bigint;\nBEGIN\n    IF TG_OP = 'DELETE' THEN\n        RAISE EXCEPTION '復元確認記録は削除できません' USING ERRCODE = '23514';\n    END IF;\n    IF TG_OP = 'UPDATE' AND OLD.user_id IS NOT NULL AND NEW.user_id IS NULL\n       AND (to_jsonb(NEW) - 'user_id') = (to_jsonb(OLD) - 'user_id')\n       AND NOT EXISTS (SELECT 1 FROM recipeweave.app_user WHERE id = OLD.user_id) THEN\n        RETURN NEW;\n    END IF;\n    IF NEW.user_id IS NULL THEN\n        RAISE EXCEPTION '復元する本人を省略できません' USING ERRCODE = '23514';\n    END IF;\n    SELECT * INTO issued FROM recipeweave.backup_artifact WHERE id = NEW.artifact_id FOR KEY SHARE;\n    IF NOT FOUND OR issued.user_id IS DISTINCT FROM NEW.user_id\n       OR issued.body_sha256 <> NEW.body_sha256 THEN\n        RAISE EXCEPTION 'バックアップの本人または本文が発行記録と一致しません' USING ERRCODE = '23514';\n    END IF;\n    SELECT revision INTO workspace_revision FROM recipeweave.workspace_revision\n    WHERE user_id = NEW.user_id FOR UPDATE;\n    IF NOT FOUND OR workspace_revision <> NEW.current_revision THEN\n        RAISE EXCEPTION '確認後に現在データが変更されています。もう一度確認してください' USING ERRCODE = '23514';\n    END IF;\n    IF clock_timestamp() >= NEW.expires_at THEN\n        RAISE EXCEPTION '復元確認の有効期限が切れています' USING ERRCODE = '23514';\n    END IF;\n    IF TG_OP = 'INSERT' THEN\n        IF NEW.consumed_at IS NOT NULL THEN\n            RAISE EXCEPTION '復元確認を使用済みとして発行できません' USING ERRCODE = '23514';\n        END IF;\n        RETURN NEW;\n    END IF;\n    IF OLD.consumed_at IS NOT NULL OR NEW.consumed_at IS NULL\n       OR NEW.consumed_at > clock_timestamp()\n       OR (to_jsonb(NEW) - 'consumed_at') <> (to_jsonb(OLD) - 'consumed_at') THEN\n        RAISE EXCEPTION '復元確認は変更できず、一度だけ使用できます' USING ERRCODE = '23514';\n    END IF;\n    RETURN NEW;\nEND;\n$$"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 27,
+      "sha256": "062eee99c6d00d3adcf42eb5ce1a547549e75b81fb3ad5db869e120447b20109",
+      "sql": "CREATE TRIGGER backup_artifact_append_only BEFORE INSERT OR UPDATE OR DELETE\nON recipeweave.backup_artifact\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_backup_artifact()"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 28,
+      "sha256": "f01a6d8937287b393d943312250d3d7fcd75509b43368bf79775e979f02b504e",
+      "sql": "CREATE TRIGGER backup_intent_single_use BEFORE INSERT OR UPDATE OR DELETE\nON recipeweave.backup_restore_intent\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_backup_restore_intent()"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 29,
+      "sha256": "e455ac63a25f6d78ef8c718fab97ee2e49e00f4341ddbcc739be9503ce0d7a92",
+      "sql": "ALTER TABLE recipeweave.backup_artifact ENABLE ROW LEVEL SECURITY"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 30,
+      "sha256": "2b239142508048473210727b1a3aea697a88eb8c93abbcd4848a3267ddb519f6",
+      "sql": "ALTER TABLE recipeweave.backup_artifact FORCE ROW LEVEL SECURITY"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 31,
+      "sha256": "b9fc8d201929e02126eb9fcf2b4a0de1579f3d909200e44bf84796e837cdf18b",
+      "sql": "CREATE POLICY backup_evidence_owner ON recipeweave.backup_artifact\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 32,
+      "sha256": "70f5bcb058c73e1ebe67235d625fd8eef9b720679f851369962bd7656a356fea",
+      "sql": "ALTER TABLE recipeweave.backup_restore_intent ENABLE ROW LEVEL SECURITY"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 33,
+      "sha256": "440aff2849cb82770794368939c28007b285fb22b037029769b7db6feea9dbed",
+      "sql": "ALTER TABLE recipeweave.backup_restore_intent FORCE ROW LEVEL SECURITY"
+    },
+    {
+      "file": "database/migrations/004_backup_restore.sql",
+      "number": 34,
+      "sha256": "636a53e6be2618ac4709174eb1f17e2961ed505e8c98e37aa468ed2a37d4375a",
+      "sql": "CREATE POLICY backup_evidence_owner ON recipeweave.backup_restore_intent\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)"
+    },
+    {
+      "file": "database/migrations/005_manual_duration.sql",
+      "number": 1,
+      "sha256": "f74e451fc9cfa64d6470375686442c6e9e47eea513a305c522f443e491027c43",
+      "sql": "ALTER TABLE recipeweave.session_task\nADD COLUMN duration_source TEXT NOT NULL DEFAULT 'recipe_rule'"
+    },
+    {
+      "file": "database/migrations/005_manual_duration.sql",
+      "number": 2,
+      "sha256": "7ea493bad7356556a5700ad7a00d49fa64b2e1dc684c3e52130256307552c412",
+      "sql": "COMMENT ON COLUMN recipeweave.session_task.duration_source\nIS '計画時間の根拠。料理の時間規則または利用者が確認した見積り'"
+    },
+    {
+      "file": "database/migrations/005_manual_duration.sql",
+      "number": 3,
+      "sha256": "1a730be31446316f1b4881ddf5b74f95f7c3864d75968ce9ee4229e4b26b7cec",
+      "sql": "ALTER TABLE recipeweave.session_task ADD COLUMN confirmed_duration_s INTEGER"
+    },
+    {
+      "file": "database/migrations/005_manual_duration.sql",
+      "number": 4,
+      "sha256": "f14c77dcf0cb782fba09537d2d81798b6696e17f501578f67e17592f595dc1ee",
+      "sql": "COMMENT ON COLUMN recipeweave.session_task.confirmed_duration_s\nIS '利用者が確認した工程の見積り秒数。実測値ではなく、計画後は変更しない'"
+    },
+    {
+      "file": "database/migrations/005_manual_duration.sql",
+      "number": 5,
+      "sha256": "1fe4989690b2ae51215f4020334ceb8f37b0ab3d6709e18212bc20815bdc39cd",
+      "sql": "ALTER TABLE recipeweave.session_task ADD CONSTRAINT duration_source_values\nCHECK (duration_source IN ('recipe_rule', 'user_estimate'))"
+    },
+    {
+      "file": "database/migrations/005_manual_duration.sql",
+      "number": 6,
+      "sha256": "6197276bf68fbd4e48fb469d13c559cd5cb11163fe9990bae390f4b69db47d14",
+      "sql": "ALTER TABLE recipeweave.session_task ADD CONSTRAINT confirmed_duration_bounds\nCHECK (confirmed_duration_s IS NULL OR confirmed_duration_s BETWEEN 1 AND 86400)"
+    },
+    {
+      "file": "database/migrations/005_manual_duration.sql",
+      "number": 7,
+      "sha256": "f2f2949c24f160e14c33b466c8d17a15be98a462a94aa232670ad23f0f9606c3",
+      "sql": "ALTER TABLE recipeweave.session_task ADD CONSTRAINT duration_confirmation_matches_plan\nCHECK (\n    (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL)\n    OR (\n        duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL\n        AND planned_end_s - planned_start_s = confirmed_duration_s\n    )\n)"
+    },
+    {
+      "file": "database/migrations/005_manual_duration.sql",
+      "number": 8,
+      "sha256": "cd3903d2859587fb1477b260fa25ceda2b87fb83ace9919f182f6345b5770548",
+      "sql": "CREATE FUNCTION recipeweave.guard_confirmed_task_plan() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nBEGIN\n    IF NEW.duration_source = 'user_estimate' AND NOT EXISTS (\n        SELECT 1 FROM recipeweave.recipe_step step\n        JOIN recipeweave.scaling_rule rule ON rule.id = step.scaling_rule_id\n        WHERE step.id = NEW.step_id AND rule.mode = 'manual'\n    ) THEN\n        RAISE EXCEPTION '利用者の時間見積りは手動確認が必要な工程だけに指定できます' USING ERRCODE = '23514';\n    END IF;\n    IF TG_OP = 'UPDATE' THEN\n        IF NEW.duration_source IS DISTINCT FROM OLD.duration_source\n           OR NEW.confirmed_duration_s IS DISTINCT FROM OLD.confirmed_duration_s\n           OR NEW.planned_start_s IS DISTINCT FROM OLD.planned_start_s\n           OR NEW.planned_end_s IS DISTINCT FROM OLD.planned_end_s THEN\n            RAISE EXCEPTION '確定した工程の時間根拠・見積り・計画時刻は変更できません' USING ERRCODE = '23514';\n        END IF;\n        IF OLD.duration_source = 'user_estimate' AND (\n            NEW.step_id <> OLD.step_id OR NEW.menu_item_id <> OLD.menu_item_id\n            OR NEW.session_id <> OLD.session_id OR NEW.batch_no <> OLD.batch_no\n        ) THEN\n            RAISE EXCEPTION '時間を確認した工程・献立・実行・バッチは変更できません' USING ERRCODE = '23514';\n        END IF;\n    END IF;\n    RETURN NEW;\nEND;\n$$"
+    },
+    {
+      "file": "database/migrations/005_manual_duration.sql",
+      "number": 9,
+      "sha256": "8d06527d71ad7dcf69968892abc5c19c18bad9aaf16c4435c3901f702afb4915",
+      "sql": "CREATE TRIGGER confirmed_task_plan_immutable BEFORE INSERT OR UPDATE ON recipeweave.session_task\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_confirmed_task_plan()"
+    },
+    {
+      "file": "database/migrations/005_manual_duration.sql",
+      "number": 10,
+      "sha256": "322465f1d511e0cc1211795ec83cdcb3d81a53cd40e6656915b99618bfaf097f",
+      "sql": "DO $$\nDECLARE\n    v_source_id uuid := '9decf898-19cd-5c03-b3e2-947d838c06bd';\n    new_rule_id uuid := '9b2b5a4c-18db-5694-b175-96f9f2717e7c';\nBEGIN\n    IF NOT EXISTS (SELECT 1 FROM recipeweave.source_record WHERE id = v_source_id) THEN\n        RETURN;\n    END IF;\n    INSERT INTO recipeweave.scaling_rule (\n        id, name, mode, min_servings, max_servings, batch_capacity,\n        round_mode, round_increment, source_id\n    ) VALUES (\n        new_rule_id,\n        '人数変更時は利用者の時間見積りが必要（1〜1000は入力範囲・物理容量は別途確認）',\n        'manual', 1, 1000, NULL, 'none', 0.01, v_source_id\n    ) ON CONFLICT (id) DO NOTHING;\n    IF NOT EXISTS (\n        SELECT 1 FROM recipeweave.scaling_rule r\n        WHERE r.id = new_rule_id AND r.mode = 'manual'\n        AND r.name = '人数変更時は利用者の時間見積りが必要（1〜1000は入力範囲・物理容量は別途確認）'\n        AND r.min_servings = 1 AND r.max_servings = 1000 AND r.batch_capacity IS NULL\n        AND r.round_mode = 'none' AND r.round_increment = 0.01 AND r.source_id = v_source_id\n    ) THEN\n        RAISE EXCEPTION '移行先の時間規則IDに異なる定義があります' USING ERRCODE = '23514';\n    END IF;\n    UPDATE recipeweave.recipe_step step SET scaling_rule_id = new_rule_id\n    FROM recipeweave.recipe_version version\n    WHERE step.recipe_version_id = version.id AND version.status = 'draft'\n    AND step.scaling_rule_id = 'aa59a90d-0a79-5f69-95a9-7857ffe94fad'\n    AND version.id IN (\n        'fcb0b2fa-f387-5a51-8bed-0b8f0a539e36', '0f3cb194-c9ef-5025-a738-227a3e712b0b',\n        'bdcd3054-68c1-58f2-b544-bce1eda0b005', '5f21b805-9f20-508f-a7ca-a9cb7e4e1107',\n        'f29a4fca-63ba-57be-8b93-a55e87132917', '519749b7-2259-56f0-ae91-840f24558453',\n        '30509788-f24f-564e-8e32-70ced25efd69', '9a8ba1c3-7df7-5a7f-87dd-043538c39d37'\n    );\nEND;\n$$"
     }
   ],
   "database_contracts": [
@@ -23246,6 +23843,23 @@
     "ALTER TABLE recipeweave.recipe_step\nADD CONSTRAINT recipe_step_instruction_wire_length CHECK (CHAR_LENGTH(instruction) <= 5000)",
     "ALTER TABLE recipeweave.recipe_ingredient\nADD CONSTRAINT recipe_ingredient_note_wire_length CHECK (CHAR_LENGTH(note) <= 500)",
     "ALTER TABLE recipeweave.resource_type\nADD CONSTRAINT resource_type_name_wire_length CHECK (CHAR_LENGTH(name) <= 500)",
-    "ALTER TABLE recipeweave.axis_option\nADD CONSTRAINT axis_option_label_wire_length CHECK (CHAR_LENGTH(label) <= 500)"
+    "ALTER TABLE recipeweave.axis_option\nADD CONSTRAINT axis_option_label_wire_length CHECK (CHAR_LENGTH(label) <= 500)",
+    "CREATE FUNCTION recipeweave.guard_backup_artifact() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nBEGIN\n    IF TG_OP = 'INSERT' THEN\n        IF NEW.user_id IS NULL THEN\n            RAISE EXCEPTION 'バックアップの発行先を省略できません' USING ERRCODE = '23514';\n        END IF;\n        RETURN NEW;\n    END IF;\n    IF TG_OP = 'UPDATE' AND OLD.user_id IS NOT NULL AND NEW.user_id IS NULL\n       AND (to_jsonb(NEW) - 'user_id') = (to_jsonb(OLD) - 'user_id')\n       AND NOT EXISTS (SELECT 1 FROM recipeweave.app_user WHERE id = OLD.user_id) THEN\n        RETURN NEW;\n    END IF;\n    RAISE EXCEPTION 'バックアップ発行記録は追記専用です' USING ERRCODE = '23514';\nEND;\n$$",
+    "CREATE FUNCTION recipeweave.guard_backup_restore_intent() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nDECLARE\n    issued recipeweave.backup_artifact%ROWTYPE;\n    workspace_revision bigint;\nBEGIN\n    IF TG_OP = 'DELETE' THEN\n        RAISE EXCEPTION '復元確認記録は削除できません' USING ERRCODE = '23514';\n    END IF;\n    IF TG_OP = 'UPDATE' AND OLD.user_id IS NOT NULL AND NEW.user_id IS NULL\n       AND (to_jsonb(NEW) - 'user_id') = (to_jsonb(OLD) - 'user_id')\n       AND NOT EXISTS (SELECT 1 FROM recipeweave.app_user WHERE id = OLD.user_id) THEN\n        RETURN NEW;\n    END IF;\n    IF NEW.user_id IS NULL THEN\n        RAISE EXCEPTION '復元する本人を省略できません' USING ERRCODE = '23514';\n    END IF;\n    SELECT * INTO issued FROM recipeweave.backup_artifact WHERE id = NEW.artifact_id FOR KEY SHARE;\n    IF NOT FOUND OR issued.user_id IS DISTINCT FROM NEW.user_id\n       OR issued.body_sha256 <> NEW.body_sha256 THEN\n        RAISE EXCEPTION 'バックアップの本人または本文が発行記録と一致しません' USING ERRCODE = '23514';\n    END IF;\n    SELECT revision INTO workspace_revision FROM recipeweave.workspace_revision\n    WHERE user_id = NEW.user_id FOR UPDATE;\n    IF NOT FOUND OR workspace_revision <> NEW.current_revision THEN\n        RAISE EXCEPTION '確認後に現在データが変更されています。もう一度確認してください' USING ERRCODE = '23514';\n    END IF;\n    IF clock_timestamp() >= NEW.expires_at THEN\n        RAISE EXCEPTION '復元確認の有効期限が切れています' USING ERRCODE = '23514';\n    END IF;\n    IF TG_OP = 'INSERT' THEN\n        IF NEW.consumed_at IS NOT NULL THEN\n            RAISE EXCEPTION '復元確認を使用済みとして発行できません' USING ERRCODE = '23514';\n        END IF;\n        RETURN NEW;\n    END IF;\n    IF OLD.consumed_at IS NOT NULL OR NEW.consumed_at IS NULL\n       OR NEW.consumed_at > clock_timestamp()\n       OR (to_jsonb(NEW) - 'consumed_at') <> (to_jsonb(OLD) - 'consumed_at') THEN\n        RAISE EXCEPTION '復元確認は変更できず、一度だけ使用できます' USING ERRCODE = '23514';\n    END IF;\n    RETURN NEW;\nEND;\n$$",
+    "CREATE TRIGGER backup_artifact_append_only BEFORE INSERT OR UPDATE OR DELETE\nON recipeweave.backup_artifact\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_backup_artifact()",
+    "CREATE TRIGGER backup_intent_single_use BEFORE INSERT OR UPDATE OR DELETE\nON recipeweave.backup_restore_intent\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_backup_restore_intent()",
+    "ALTER TABLE recipeweave.backup_artifact ENABLE ROW LEVEL SECURITY",
+    "ALTER TABLE recipeweave.backup_artifact FORCE ROW LEVEL SECURITY",
+    "CREATE POLICY backup_evidence_owner ON recipeweave.backup_artifact\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
+    "ALTER TABLE recipeweave.backup_restore_intent ENABLE ROW LEVEL SECURITY",
+    "ALTER TABLE recipeweave.backup_restore_intent FORCE ROW LEVEL SECURITY",
+    "CREATE POLICY backup_evidence_owner ON recipeweave.backup_restore_intent\nUSING (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n) WITH CHECK (\n    CURRENT_SETTING('recipeweave.role', TRUE) = 'admin'\n    OR user_id = NULLIF(CURRENT_SETTING('recipeweave.user_id', TRUE), '')::UUID\n)",
+    "ALTER TABLE recipeweave.session_task\nADD COLUMN duration_source TEXT NOT NULL DEFAULT 'recipe_rule'",
+    "ALTER TABLE recipeweave.session_task ADD COLUMN confirmed_duration_s INTEGER",
+    "ALTER TABLE recipeweave.session_task ADD CONSTRAINT duration_source_values\nCHECK (duration_source IN ('recipe_rule', 'user_estimate'))",
+    "ALTER TABLE recipeweave.session_task ADD CONSTRAINT confirmed_duration_bounds\nCHECK (confirmed_duration_s IS NULL OR confirmed_duration_s BETWEEN 1 AND 86400)",
+    "ALTER TABLE recipeweave.session_task ADD CONSTRAINT duration_confirmation_matches_plan\nCHECK (\n    (duration_source = 'recipe_rule' AND confirmed_duration_s IS NULL)\n    OR (\n        duration_source = 'user_estimate' AND confirmed_duration_s IS NOT NULL\n        AND planned_end_s - planned_start_s = confirmed_duration_s\n    )\n)",
+    "CREATE FUNCTION recipeweave.guard_confirmed_task_plan() RETURNS TRIGGER\nLANGUAGE plpgsql AS $$\nBEGIN\n    IF NEW.duration_source = 'user_estimate' AND NOT EXISTS (\n        SELECT 1 FROM recipeweave.recipe_step step\n        JOIN recipeweave.scaling_rule rule ON rule.id = step.scaling_rule_id\n        WHERE step.id = NEW.step_id AND rule.mode = 'manual'\n    ) THEN\n        RAISE EXCEPTION '利用者の時間見積りは手動確認が必要な工程だけに指定できます' USING ERRCODE = '23514';\n    END IF;\n    IF TG_OP = 'UPDATE' THEN\n        IF NEW.duration_source IS DISTINCT FROM OLD.duration_source\n           OR NEW.confirmed_duration_s IS DISTINCT FROM OLD.confirmed_duration_s\n           OR NEW.planned_start_s IS DISTINCT FROM OLD.planned_start_s\n           OR NEW.planned_end_s IS DISTINCT FROM OLD.planned_end_s THEN\n            RAISE EXCEPTION '確定した工程の時間根拠・見積り・計画時刻は変更できません' USING ERRCODE = '23514';\n        END IF;\n        IF OLD.duration_source = 'user_estimate' AND (\n            NEW.step_id <> OLD.step_id OR NEW.menu_item_id <> OLD.menu_item_id\n            OR NEW.session_id <> OLD.session_id OR NEW.batch_no <> OLD.batch_no\n        ) THEN\n            RAISE EXCEPTION '時間を確認した工程・献立・実行・バッチは変更できません' USING ERRCODE = '23514';\n        END IF;\n    END IF;\n    RETURN NEW;\nEND;\n$$",
+    "CREATE TRIGGER confirmed_task_plan_immutable BEFORE INSERT OR UPDATE ON recipeweave.session_task\nFOR EACH ROW EXECUTE FUNCTION recipeweave.guard_confirmed_task_plan()"
   ]
 }

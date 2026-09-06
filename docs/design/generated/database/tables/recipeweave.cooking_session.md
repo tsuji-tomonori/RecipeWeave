@@ -49,6 +49,23 @@
 
 | operationId | CRUD | SQL |
 |---|---|---|
+| export_backup | R | backend/src/app/apis/backup/export_backup/sql/q010_export_tables.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q010_export_tables.sql |
+| preview_backup | D | backend/src/app/apis/backup/preview_backup/sql/q100_delete_cooking_session.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_ingredient_total.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_resource_reservation.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_session_task.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_shopping_item.sql |
+| preview_backup | R | backend/src/app/apis/backup/preview_backup/sql/q100_delete_task_dependency.sql |
+| preview_backup | C | backend/src/app/apis/backup/preview_backup/sql/q200_insert_cooking_session.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q010_export_tables.sql |
+| restore_backup | D | backend/src/app/apis/backup/restore_backup/sql/q100_delete_cooking_session.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_ingredient_total.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_resource_reservation.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_session_task.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_shopping_item.sql |
+| restore_backup | R | backend/src/app/apis/backup/restore_backup/sql/q100_delete_task_dependency.sql |
+| restore_backup | C | backend/src/app/apis/backup/restore_backup/sql/q200_insert_cooking_session.sql |
 | entity_cooking_session_create | C | backend/src/app/apis/entities/cooking_session_create/sql/001_create.sql |
 | entity_cooking_session_delete | D | backend/src/app/apis/entities/cooking_session_delete/sql/001_delete.sql |
 | entity_cooking_session_get | R | backend/src/app/apis/entities/cooking_session_get/sql/001_get.sql |
@@ -90,6 +107,7 @@
 | update_cooking_session | R | backend/src/app/apis/workspace/update_cooking_session/sql/q001_current.sql |
 | update_cooking_session | R | backend/src/app/apis/workspace/update_cooking_session/sql/q002_tasks.sql |
 | update_cooking_session | U | backend/src/app/apis/workspace/update_cooking_session/sql/q003_progress.sql |
+| restore_backup | R | backend/src/app/apis/workspace/get_workspace/sql/q011_session.sql |
 | add_menu_item | R | backend/src/app/apis/workspace/get_workspace/sql/q011_session.sql |
 | commit_receipt | R | backend/src/app/apis/workspace/get_workspace/sql/q011_session.sql |
 | create_cooking_session | R | backend/src/app/apis/workspace/get_workspace/sql/q011_session.sql |
