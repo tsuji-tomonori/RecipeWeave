@@ -20,6 +20,10 @@
 
 Svelte/Viteは今回の静的・操作中心の画面に対する実装判断。CornellNoteWebv2のリポジトリは確認時に空であり、別会話の完全なプロンプトに準拠したとは主張しない。既知のCloudFront/S3、API Gateway、Lambda FastAPI、Aurora DSQL、CDK、マイグレーションの方針に合わせる。
 
+AWSのService → Data参照は `@aws-cdk/core:defaultCrossStackReferences: strong` を明示する。同一リージョンではCloudFormation Export / Importを使い、consumerが利用しているData stackの単独削除を防ぐ。Dataのtermination protection、DSQL / Cognitoの削除保護・Retainも維持する。参照変更時はconsumerから先に更新する。[CDK ReferenceStrength](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.ReferenceStrength.html)
+
+CloudFrontは現時点では既定の `*.cloudfront.net` ドメインと証明書を使う。この場合viewer向けsecurity policyは `TLSv1` に固定され、CDKの `minimumProtocolVersion` は効かないため指定しない。HTTPSへの誘導・APIのHTTPS専用制御は維持するが、TLS 1.2を最低版として強制したとは扱わない。最低TLS版の指定が必要な公開構成では、独自ドメインと `us-east-1` のACM証明書を用意し、`domainNames` / `certificate` とともに有効なsecurity policyを指定して実接続を確認する。AWS実配備、ドメイン・証明書の取得は今回未実施である。[CloudFront ViewerCertificate](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-properties-cloudfront-distribution-viewercertificate.html)
+
 ## 保存されるデータ
 
 画面と計算の型の正本は `frontend/src/lib/types.ts`。数量は `{value: number | null, unit}` とし、`null` と0を区別する。レシピの標準分量、利用者が調整した分量、献立に入れた時点の分量を別に持つ。

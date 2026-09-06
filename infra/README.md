@@ -14,6 +14,8 @@ GitHub Pages の Dev は、8 品のサンプル・端末内 OCR・同じブラ�
 
 DSQL / Cognito はサービスコードと分けます。再生成できる静的配布物の S3 は、OAC の Distribution ARN 制約と同じ Service stack に置き、相互参照の循環を避けます。S3 読み出しは、この CloudFront Distribution のサービス主体だけに許可します。
 
+`@aws-cdk/core:defaultCrossStackReferences` は `strong` に明示します。同一リージョンの Service → Data 参照を CloudFormation Export / Import で結び、利用中の Data stack が単独で削除されることを防ぎます。これは Data stack の termination protection、各データ資源の削除保護・Retain と併用します。参照を外す場合は consumer を先に更新し、export の利用がなくなったことを確認します。[CDK ReferenceStrength](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.ReferenceStrength.html)
+
 AWS CDK v2 ライブラリ `2.268.0`、CLI `2.1140.0` と関連ツールを `package.json` / `package-lock.json` に固定しています。TypeScript `strict` を有効にし、明示的 `any` を禁止します。CDK 自身の任意プロパティ型と互換性がない `exactOptionalPropertyTypes` は使用しません。
 
 ## API と認証
@@ -32,6 +34,8 @@ User Pool Client は secret を持たず、SRP 認証と refresh token を許可
 state は `{ version, snapshot }` を返し、更新は `{ expectedVersion, snapshot }` を送ります。版が競合した場合は `409` を返します。利用者 ID は認証 token の `sub` から決まり、リクエストが指定した任意の ID を使いません。
 
 CloudFront は API の viewer `Host` を origin host に置き換えます。private state は共有 cache に保存しません。エラー応答の独立した最小 TTL も 0 秒にし、元の status を保ちます。SPA は hash route を使い、認証エラーの `403` を HTML `200` に置き換える全体的な error fallback は設けません。同じ CloudFront origin からの API 利用を前提とし、CORS wildcard はありません。
+
+現構成は CloudFront が発行する `*.cloudfront.net` のドメインと既定証明書を使います。この証明書では viewer 向け security policy が `TLSv1` に固定され、`minimumProtocolVersion` を指定しても有効になりません。そのため無効な指定は置かず、TLS 1.2 を最低版として強制しているとは扱いません。viewer の HTTPS 利用制御と origin の HTTPS 接続は維持します。TLS 最低版を明示的に引き上げる場合は、独自ドメイン、対応する `us-east-1` の ACM 証明書、Distribution の `domainNames` / `certificate` / `minimumProtocolVersion` を揃えて配備し、実接続を検証します。今回、ドメイン・証明書の取得や AWS 実配備は行っていません。[CloudFront ViewerCertificate の仕様](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-properties-cloudfront-distribution-viewercertificate.html)
 
 ## 検査と実アセット
 

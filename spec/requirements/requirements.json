@@ -1,5 +1,5 @@
 {
-  "catalog_revision": 4,
+  "catalog_revision": 5,
   "product": "RecipeWeave",
   "requirements": [
     {
@@ -2199,11 +2199,11 @@
       "action": "maintain",
       "category": "nonfunctional",
       "id": "REQ-DEV-QUALITY-001",
-      "last_changed_by": "trace:2026-09-06:dev-v0.1",
+      "last_changed_by": "trace:2026-09-06:migration-boundary-tests",
       "object": "採用した配備とデータ移行に対応する再現可能な検証証跡",
       "rationale": "インフラやDB移行をコードと検査で扱い、実装と設計文書の乖離、およびローカル検査と実環境受入の混同を防ぐ。",
       "retirement_reason": "",
-      "revision": 2,
+      "revision": 3,
       "scope": "project",
       "source_refs": [
         "user:2026-09-05:cornellnoteweb-development",
@@ -2236,6 +2236,7 @@
         "tests": [
           "backend/tests/test_generation.py",
           "backend/tests/test_dsql.py",
+          "backend/tests/test_migrations.py",
           "infra/test/core.test.ts",
           "infra/test/stack.test.ts"
         ]

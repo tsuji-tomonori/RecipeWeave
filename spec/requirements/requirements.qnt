@@ -62,7 +62,7 @@ module requirements {
 
   pure val requirementsSource: Catalog = {
     schemaVersion: 1,
-    catalogRevision: 4,
+    catalogRevision: 5,
     product: "RecipeWeave",
     updatedAt: "2026-09-06",
     requirements: [
@@ -1210,7 +1210,7 @@ module requirements {
       },
       {
         id: "REQ-DEV-QUALITY-001",
-        revision: 2,
+        revision: 3,
         status: "active",
         kind: "operational",
         title: "配備・移行・生成設計の検証契約を維持する",
@@ -1229,10 +1229,10 @@ module requirements {
         traces: {
           design: ["docs/design/ADR-0001-service-dev.md"],
           implementation: ["infra/lib/data-stack.ts","infra/lib/service-stack.ts","infra/lib/github-deploy-stack.ts","backend/tools/package_lambda.py","database/migrate.py","database/migrations/manifest.manual.json","database/migrations/001_user_state.sql","backend/src/app/integrations/state/dsql_provider.py","backend/src/app/tools/generate.py","tools/generate_service_design.py","tools/check_generated_service.py",".github/workflows/dev.yml"],
-          tests: ["backend/tests/test_generation.py","backend/tests/test_dsql.py","infra/test/core.test.ts","infra/test/stack.test.ts"],
+          tests: ["backend/tests/test_generation.py","backend/tests/test_dsql.py","backend/tests/test_migrations.py","infra/test/core.test.ts","infra/test/stack.test.ts"],
           standards: [],
         },
-        lastChangedBy: "trace:2026-09-06:dev-v0.1",
+        lastChangedBy: "trace:2026-09-06:migration-boundary-tests",
         retirementReason: "",
         supersededBy: "",
         scopeName: "project",

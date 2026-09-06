@@ -212,7 +212,6 @@ export class ServiceStack extends Stack {
     };
     this.distribution = new cloudfront.Distribution(this, "Web", {
       defaultRootObject: "index.html",
-      minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
       // Error responses have an independent minimum TTL. Zero it without
       // changing status codes or serving an HTML fallback for API failures.
       errorResponses: [400, 403, 404, 405, 414, 500, 501, 502, 503, 504].map(

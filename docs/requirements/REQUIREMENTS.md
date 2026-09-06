@@ -2,7 +2,7 @@
 # RecipeWeave 要件一覧
 
 - スキーマ版: 1
-- カタログ版: 4
+- カタログ版: 5
 - Product(JSON): <code>"RecipeWeave"</code>
 - 更新日(JSON): <code>"2026-09-06"</code>
 - 正本: `spec/requirements/requirements.qnt`
@@ -51,7 +51,7 @@
 | <code>"REQ-SVC-CAPABILITY-001"</code> | 2 | 有効 | 品質 | 提供状態表示は、実際に利用できる機能と未提供機能を**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-SVC-PAGES-001"</code> | 2 | 有効 | 運用 | 開発配布工程は、検査対象の変更版と対応したDevプレビューを**提供する**（<code>"provide"</code>） | 対応する受入条件の自動検査と画面操作確認 |
 | <code>"REQ-DEV-ARCH-001"</code> | 2 | 有効 | 制約 | RecipeWeaveの開発基盤は、ADR-0001で採用した構成に従う実装プロファイルを**提供する**（<code>"provide"</code>） | 構成コード・API契約の検査、認証と利用者分離の対象試験、実配備記録の照合 |
-| <code>"REQ-DEV-QUALITY-001"</code> | 2 | 有効 | 運用 | RecipeWeaveの開発工程は、採用した配備とデータ移行に対応する再現可能な検証証跡を**維持する**（<code>"maintain"</code>） | CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー |
+| <code>"REQ-DEV-QUALITY-001"</code> | 3 | 有効 | 運用 | RecipeWeaveの開発工程は、採用した配備とデータ移行に対応する再現可能な検証証跡を**維持する**（<code>"maintain"</code>） | CDKと移行の対象検査、生成設計の再生成/drift確認、版に対応する受入証跡のレビュー |
 
 ## REQ-DOMAIN-001: semantic food identity
 
@@ -1447,8 +1447,8 @@ RecipeWeaveの開発工程は、採用した配備とデータ移行に対応す
 根拠: インフラやDB移行をコードと検査で扱い、実装と設計文書の乖離、およびローカル検査と実環境受入の混同を防ぐ。
 根拠(JSON): <code>"インフラやDB移行をコードと検査で扱い、実装と設計文書の乖離、およびローカル検査と実環境受入の混同を防ぐ。"</code>
 
-項目版: 2 / 状態: `active` / 種別: `operational`
-変更識別子: <code>"trace:2026-09-06:dev-v0.1"</code>
+項目版: 3 / 状態: `active` / 種別: `operational`
+変更識別子: <code>"trace:2026-09-06:migration-boundary-tests"</code>
 分類: scope=<code>"project"</code> / category=<code>"nonfunctional"</code>
 
 受入条件:
@@ -1468,7 +1468,7 @@ RecipeWeaveの開発工程は、採用した配備とデータ移行に対応す
 トレース(JSON List、順序保持):
 - 設計: <code>["docs/design/ADR-0001-service-dev.md"]</code>
 - 実装: <code>["infra/lib/data-stack.ts","infra/lib/service-stack.ts","infra/lib/github-deploy-stack.ts","backend/tools/package_lambda.py","database/migrate.py","database/migrations/manifest.manual.json","database/migrations/001_user_state.sql","backend/src/app/integrations/state/dsql_provider.py","backend/src/app/tools/generate.py","tools/generate_service_design.py","tools/check_generated_service.py",".github/workflows/dev.yml"]</code>
-- テスト: <code>["backend/tests/test_generation.py","backend/tests/test_dsql.py","infra/test/core.test.ts","infra/test/stack.test.ts"]</code>
+- テスト: <code>["backend/tests/test_generation.py","backend/tests/test_dsql.py","backend/tests/test_migrations.py","infra/test/core.test.ts","infra/test/stack.test.ts"]</code>
 - 参照資料: <code>[]</code>
 廃止理由: <code>""</code>
 後継要件: <code>""</code>
