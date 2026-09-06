@@ -25,7 +25,7 @@ npm ci --prefix documentation
 uv run --locked python tools/start_database.py
 uv run --locked --package recipeweave-api app-docs
 npm run build --prefix frontend
-uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64
+uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64 --verify-reproducible
 npm run synth --prefix infra
 uv run --locked python -m recipeweave_generator.design
 uv run --locked python tools/generate_service_design.py
@@ -33,6 +33,8 @@ uv run --locked python tools/quality.py
 ```
 
 事前に `MIGRATION_DATABASE_URL` を管理者、`DATABASE_URL` と `TEST_DATABASE_URL` をアプリロール、`ENVIRONMENT=test` に設定します。公開ローカル資格情報の設定例は [compose.yaml](../compose.yaml) にあります。実DB試験で接続設定がなければ必須CIは失敗します。単体試験を成功させて実DB未実行を受入済みとは扱いません。
+
+配備資材の構築にはCIと同じuv 0.11.33を使用します。Lambda構築はPython起動スクリプトの絶対パスを可搬なshebangへそろえ、wheelのRECORDも実バイトに合わせます。handlerの独立importはbytecodeを作らず、資材が変化しないことを検査します。`--verify-reproducible` は別ディレクトリへの再構築と全ファイルのSHA-256一致を必須にします。Dev用の設計を再生成するときは、画面の `VITE_AUTH_MODE=cognito`・`VITE_CATALOG_PREVIEW=true` とAPI/Cognitoの公開設定もCIにそろえます。構築したCDKテンプレートの全バイトhashは設計に残し、設定変更時も正規再生成してGitへ反映します。
 
 ## CIとGitHub Pages
 

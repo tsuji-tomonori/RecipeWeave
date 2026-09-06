@@ -275,11 +275,11 @@ sequenceDiagram
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Function->>Callee: hashlib.sha256(b#39;private-catalog-v1#39;).hexdigest()
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-    Function->>Callee: q.run(#39;q019_private_release#39;, release_id=release_id, user_id=self.user_id, version=f#39;private:{self.user_id}#39;, manifest=hashlib.sha256(b#39;private-catalog-v1#39;).hexdigest())
+    Function->>Callee: q.run(             #34;q019_private_release#34;,             release_id=release_id,             user_id=self.user_id,             version=f#34;private:{self.user_id}#34;,             manifest=hashlib.sha256(b#34;private-catalog-v1#34;).hexdigest(),         )
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Function->>Callee: food.name.strip()
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-    Function->>Callee: q.run(#39;q020_custom_food#39;, food_id=food_id, code=f#39;USER-{food_id}#39;, name=food.name.strip(), user_id=self.user_id, release_id=release_id)
+    Function->>Callee: q.run(             #34;q020_custom_food#34;,             food_id=food_id,             code=f#34;USER-{food_id}#34;,             name=food.name.strip(),             user_id=self.user_id,             release_id=release_id,         )
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Function->>Callee: uuid4()
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）

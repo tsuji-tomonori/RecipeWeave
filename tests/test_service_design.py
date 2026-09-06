@@ -2,7 +2,11 @@
 
 import ast
 import copy
+import os
 import shutil
+import site
+import subprocess
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -60,6 +64,63 @@ def test_local_function_body_has_scoped_sequence_and_is_not_executed_at_definiti
     path.write_text("def execute():\n    def nested(value=database.lookup()):\n        pass\n")
     with pytest.raises(DesignError, match="定義時評価"):
         function_sections(path, tmp_path)
+
+
+def test_fstring_source_preserves_quotes_without_changing_flow(tmp_path: Path) -> None:
+    source = (
+        "def execute(rows):\n"
+        '    plain = "value"\n'
+        "    with transaction():\n"
+        "        mapped = {\n"
+        "            f\"{row['menu_item_id']}:{row['step_id']}\": row\n"
+        "            for row in rows\n"
+        "        }\n"
+        "        if mapped:\n"
+        "            return mapped\n"
+    )
+    path = tmp_path / "functions.py"
+    path.write_text(source)
+    diagrams, _ = function_sections(path, tmp_path)
+    diagram = diagrams[0]
+    assert "f#34;{row[#39;menu_item_id#39;]}:{row[#39;step_id#39;]}#34;" in diagram
+    assert "plain = #39;value#39;" in diagram
+    assert "context開始: transaction()" in diagram
+    assert "alt mapped" in diagram
+    assert "break この経路の関数終了: return" in diagram
+
+
+def test_cooking_sequence_is_identical_across_python_patches_and_hash_seeds() -> None:
+    """使用可能な3.12パッチ版と独立プロセスで、実APIの図をバイト照合する。"""
+    interpreters = {Path(sys.executable)}
+    alternate = Path("/usr/bin/python3.12")
+    if alternate.is_file():
+        interpreters.add(alternate)
+    program = (
+        "import ast,sys; from pathlib import Path; from tools.design.flow import render_sequences; "
+        "assert Path(ast.__file__).is_relative_to(sys.base_prefix); "
+        "root=Path.cwd(); "
+        "page,_=render_sequences(root/'backend/src/app/apis/workspace/update_cooking_session',"
+        "root,'update_cooking_session'); print(page,end='')"
+    )
+    results = []
+    for interpreter in sorted(interpreters):
+        for seed in ("0", "42", "random"):
+            result = subprocess.run(
+                [str(interpreter), "-c", program],
+                cwd=ROOT,
+                env={
+                    **os.environ,
+                    "PYTHONHASHSEED": seed,
+                    # 依存だけを共有し、比較対象の標準ライブラリastを入れ替えない。
+                    "PYTHONPATH": os.pathsep.join(site.getsitepackages()),
+                },
+                capture_output=True,
+                check=True,
+                timeout=30,
+            )
+            assert b"by_key" in result.stdout
+            results.append(result.stdout)
+    assert all(item == results[0] for item in results)
 
 
 def test_actual_inventory_and_all_operation_documents(openapi: dict) -> None:

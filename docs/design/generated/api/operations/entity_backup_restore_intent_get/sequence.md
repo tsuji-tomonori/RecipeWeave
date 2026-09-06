@@ -21,7 +21,7 @@ sequenceDiagram
     Function->>Callee: execute(EntityService(database, identity), row_id)
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Note over Function: result = execute(EntityService(database, identity), row_id)
-    Note over Function: response.headers[#39;ETag#39;] = f#39;#34;{result.etag}#34;#39;
+    Note over Function: response.headers[#34;ETag#34;] = f#39;#34;{result.etag}#34;#39;
     break この経路の関数終了: return
         Function-->>Caller: result
     end
@@ -278,7 +278,7 @@ sequenceDiagram
     else 条件が偽
         Function->>Callee: uuid4()
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-        Function->>Callee: append_outbox(self.connection, {#39;row_id#39;: uuid4(), #39;event_type#39;: f#39;{spec.table}.{spec.action}#39;, #39;aggregate_id#39;: row_id})
+        Function->>Callee: append_outbox(                 self.connection,                 {                     #34;row_id#34;: uuid4(),                     #34;event_type#34;: f#34;{spec.table}.{spec.action}#34;,                     #34;aggregate_id#34;: row_id,                 },             )
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     end
 ```

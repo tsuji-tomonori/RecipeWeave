@@ -26,6 +26,8 @@ description: RecipeWeaveのAPI・DB・SQL・設計生成器を変更するとき
 
 `uv run python tools/generate_service_design.py`をプロジェクトの生成入口、同じコマンドの`--check`を差分検査の入口とする。API用の`app-docs`生成と、インフラ用の既存CDK合成を先に完了させる。対象の構成や配布物がなければ準備不足として報告し、架空の合成結果を作らない。
 
+CDK資材を変更するときは`backend/tools/package_lambda.py --verify-reproducible`で別出力先との全バイト一致を確認し、画面もCIと同じ公開設定で構築する。import検証のbytecodeや起動スクリプトの絶対パスを配備資材へ持ち込まない。設計の実合成入力hashとDevのclean-tree検査を残し、環境差による生成差分を無視する例外は設けない。
+
 変更に応じて、次のうち失敗を検出できる検査を選ぶ。
 
 - 同一入力で2回生成したときの全出力のbyte一致。

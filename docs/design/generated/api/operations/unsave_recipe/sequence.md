@@ -247,7 +247,7 @@ sequenceDiagram
     end
     Function->>Callee: uuid4()
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-    Function->>Callee: q.run(#39;q002_event#39;, row_id=uuid4(), user_id=self.user_id, version_id=rows[0][#39;id#39;], request_key=f#39;{name}:{request.expected_version}:{row_id}#39;)
+    Function->>Callee: q.run(             #34;q002_event#34;,             row_id=uuid4(),             user_id=self.user_id,             version_id=rows[0][#34;id#34;],             request_key=f#34;{name}:{request.expected_version}:{row_id}#34;,         )
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Function->>Callee: self.finish(q)
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）

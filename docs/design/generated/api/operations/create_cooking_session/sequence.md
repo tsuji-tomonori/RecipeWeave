@@ -206,9 +206,9 @@ sequenceDiagram
     Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
     Note over Function: task_ids: dict[tuple[UUID, UUID], UUID] = {}
     loop task in plan
-        Function->>Callee: uuid5(session_id, f#39;task:{task.item_id}:{task.step_id}#39;)
+        Function->>Callee: uuid5(session_id, f#34;task:{task.item_id}:{task.step_id}#34;)
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）
-        Note over Function: task_id = uuid5(session_id, f#39;task:{task.item_id}:{task.step_id}#39;)
+        Note over Function: task_id = uuid5(session_id, f#34;task:{task.item_id}:{task.step_id}#34;)
         Note over Function: task_ids[task.item_id, task.step_id] = task_id
         Function->>Callee: q.run(#39;q026_task#39;, row_id=task_id, session_id=session_id, item_id=task.item_id, step_id=task.step_id, start=task.start, end=task.end, duration_source=task.duration_source, confirmed_duration_s=task.confirmed_duration_s)
         Callee-->>Function: 呼出結果（例外は呼出元へ伝播）

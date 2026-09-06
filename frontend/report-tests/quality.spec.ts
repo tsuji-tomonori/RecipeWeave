@@ -18,8 +18,39 @@ async function step(
       try {
         if (page.isClosed())
           throw new Error("証跡撮影前にページが閉じられました。");
+        if (!actionFailed) {
+          // Mermaid の枠が見えた直後は描画中のため、SVG と文字の配置が終わるまで待つ。
+          // 描画エラーは撮影して後続の検証で失敗させ、診断に必要な画面を残す。
+          await page.waitForFunction(
+            async () => {
+              await document.fonts.ready;
+              const ready = Array.from(
+                document.querySelectorAll<HTMLElement>(".mermaid"),
+              ).every((diagram) => {
+                if (diagram.dataset.renderError === "true") return true;
+                const svg = diagram.querySelector("svg");
+                const bounds = svg?.getBoundingClientRect();
+                return !!bounds && bounds.width > 0 && bounds.height > 0;
+              });
+              if (!ready) return false;
+              await new Promise<void>((resolve) => {
+                requestAnimationFrame(() =>
+                  requestAnimationFrame(() => resolve()),
+                );
+              });
+              return document.fonts.status === "loaded";
+            },
+            undefined,
+            { timeout: 15000 },
+          );
+        }
         const path = info.outputPath(`${kind}-${info.attachments.length}.png`);
-        await page.screenshot({ path, fullPage: false, timeout: 5000 });
+        await page.screenshot({
+          path,
+          fullPage: false,
+          animations: "disabled",
+          timeout: 15000,
+        });
         await info.attach(`${kind}: ${description}`, {
           path,
           contentType: "image/png",

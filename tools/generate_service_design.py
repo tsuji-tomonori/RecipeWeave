@@ -200,6 +200,7 @@ def build_outputs(root: Path = ROOT) -> dict[str, str]:
     for directory, patterns in {
         "backend/src": ("*.py", "*.sql", "*.json"),
         "backend/tests": ("*.py", "*.json"),
+        "backend/tools": ("*.py",),
         "database": ("*.py", "*.sql", "*.json"),
         "tools/design": ("*.py",),
         "data/samples": ("*.json",),

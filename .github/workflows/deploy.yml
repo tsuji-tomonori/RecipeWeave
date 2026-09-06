@@ -31,6 +31,7 @@ jobs:
       - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           python-version: '3.12'
+          version: '0.11.33'
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '24'
@@ -44,7 +45,7 @@ jobs:
           npm ci --prefix frontend
           npm ci --prefix infra
           npm run build --prefix frontend
-          uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64
+          uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64 --verify-reproducible
       - name: インフラを合成・差分確認・配備する
         working-directory: infra
         env:

@@ -22,7 +22,21 @@ def label(value: str) -> str:
 
 
 def expression(node: ast.AST | None) -> str:
-    return ast.unparse(node) if node is not None else "None"
+    if node is None:
+        return "None"
+    original = getattr(node, "_design_fstring_source", None)
+    return original if isinstance(original, str) else ast.unparse(node)
+
+
+def preserve_fstring_source(node: ast.AST, source: str) -> bool:
+    """f-stringを含む式だけ原文を保持し、Pythonパッチ版による引用符の変更を避ける。"""
+    children = [preserve_fstring_source(child, source) for child in ast.iter_child_nodes(node)]
+    contains_fstring = isinstance(node, ast.JoinedStr) or any(children)
+    if contains_fstring:
+        original = ast.get_source_segment(source, node)
+        if original is not None:
+            node._design_fstring_source = original
+    return contains_fstring
 
 
 def validate_tree(node: ast.AST, source: str) -> None:
@@ -177,7 +191,9 @@ def function_sections(
     path: Path, root: Path, allowed: set[str] | None = None
 ) -> tuple[list[str], list[list[object]]]:
     source = str(path.relative_to(root))
-    parsed = ast.parse(read_source(path, root), filename=source)
+    source_text = read_source(path, root)
+    parsed = ast.parse(source_text, filename=source)
+    preserve_fstring_source(parsed, source_text)
     diagrams = []
     functions = []
     candidates = [
