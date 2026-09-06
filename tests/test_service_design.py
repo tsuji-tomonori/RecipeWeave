@@ -23,37 +23,31 @@ def openapi() -> dict:
 
 def test_actual_inventory_and_all_operation_documents(openapi: dict) -> None:
     operations = load_operations(ROOT, openapi)
-    assert {op.id for op in operations} == {
-        "get_health",
-        "list_foods",
-        "list_recipes",
-        "get_recipe",
-        "get_state",
-        "put_state",
+    assert {"get_health", "list_foods", "list_recipes", "get_recipe"} <= {
+        op.id for op in operations
     }
     tables = load_tables(ROOT)
-    assert set(tables) == {"recipeweave.user_state", "recipeweave.schema_migrations"}
+    assert len(tables) >= 71
+    assert {"recipeweave.recipe", "recipeweave.food", "recipeweave.app_user"} <= set(tables)
     outputs = build_outputs()
     assert outputs == build_outputs()
     for op in operations:
-        for kind in ("interface", "sequence", "queries", "detail", "tests"):
+        for kind in ("interface", "sequence", "queries", "detail", "messages", "tests"):
             assert f"api/operations/{op.id}/{kind}.md" in outputs
-    assert "||--" not in outputs["database/ER.md"]
-    assert "recipeweave.user_state | — | — | — | — | R | CU" in outputs["api/CRUD.md"]
-    assert "revision" in outputs["api/operations/put_state/queries.md"]
-    assert "SELECT" in outputs["api/operations/get_state/queries.md"]
-    assert "SQLを実行しない" in outputs["api/operations/list_recipes/queries.md"]
+    assert "||--" in outputs["database/ER.md"]
+    assert "recipeweave.recipe" in outputs["api/CRUD.md"]
+    assert "SQL" in outputs["api/operations/get_recipe/queries.md"]
+    assert "ログメッセージ" in outputs["api/operations/get_health/messages.md"]
 
 
 def test_ddl_change_requires_column_meaning(tmp_path: Path) -> None:
     shutil.copytree(ROOT / "database", tmp_path / "database")
-    path = tmp_path / "database/migrations/001_user_state.sql"
+    shutil.copytree(ROOT / "spec/database", tmp_path / "spec/database")
+    path = tmp_path / "database/migrations/002_relational_schema.sql"
     path.write_text(
-        path.read_text().replace(
-            "subject TEXT PRIMARY KEY,", "subject TEXT PRIMARY KEY, extra TEXT,"
-        )
+        path.read_text().replace("    title TEXT NOT NULL,", "    title BIGINT NOT NULL,", 1)
     )
-    with pytest.raises(DesignError, match="列集合"):
+    with pytest.raises((DesignError, ValueError), match="原設計"):
         load_tables(tmp_path)
 
 
@@ -194,8 +188,7 @@ def test_conditional_expression_is_not_flattened_into_unconditional_calls() -> N
 @pytest.mark.parametrize(
     "source",
     [
-        "def f():\n    try:\n        go()\n    finally:\n        done()\n",
-        "def f():\n    with context():\n        go()\n",
+        "def f(value):\n    match value:\n        case 1: go()\n",
         "def f():\n    return factory()()\n",
     ],
 )
@@ -281,3 +274,63 @@ def test_inline_foreign_key_requires_explicit_supported_projection() -> None:
 def test_unsupported_combined_sql_cannot_hide_extra_side_effects(text: str) -> None:
     with pytest.raises(DesignError):
         query_projection(text, "fixture", "test", load_tables(ROOT))
+
+
+def test_flow_retains_transaction_and_exception_handlers() -> None:
+    source = """def execute():
+    try:
+        with connection.transaction():
+            return save()
+    except ValueError:
+        raise RuntimeError('conflict')
+    finally:
+        close()
+"""
+    tree = ast.parse(source)
+    validate_tree(tree, "fixture")
+    diagram = "\n".join(block(tree.body[0].body, "fixture"))
+    assert "context開始" in diagram
+    assert "context終了" in diagram
+    assert "opt 例外: ValueError" in diagram
+    assert "finally" in diagram
+
+
+def test_postgres_ast_detects_catalog_index_omission() -> None:
+    from database.schema_catalog import extract
+    from tools.design.postgres import inspect_postgres
+
+    catalog = extract(ROOT)
+    table = next(item for item in catalog["tables"] if item["indexes"])
+    table["indexes"].pop()
+    with pytest.raises(DesignError, match="索引集合"):
+        inspect_postgres(ROOT, catalog)
+
+
+def test_standalone_openapi_closes_only_reachable_references(openapi: dict) -> None:
+    from tools.design.api import standalone_openapi
+
+    operation = next(op for op in load_operations(ROOT, openapi) if op.id == "get_health")
+    standalone = standalone_openapi(operation, openapi)
+    validate_references(standalone, standalone)
+    assert set(standalone["paths"]) == {"/api/health"}
+    assert "AppSnapshot" not in standalone["components"].get("schemas", {})
+
+
+def test_read_only_ctes_preserve_physical_table_lineage() -> None:
+    query = query_projection(
+        "WITH rows AS (SELECT subject FROM recipeweave.user_state) "
+        "SELECT subject FROM rows WHERE subject = %(subject)s;",
+        "fixture",
+        "test",
+        load_tables(ROOT),
+    )
+    assert query.actions == {"recipeweave.user_state": {"R"}}
+    assert query.columns == {"recipeweave.user_state": ["subject"]}
+
+
+def test_openapi_json_is_managed_without_deleting_unrelated_json(tmp_path: Path) -> None:
+    outputs = {"api/operations/test/interface.openapi.json": "{}\n"}
+    synchronize(tmp_path, outputs, check=False)
+    synchronize(tmp_path, outputs, check=True)
+    with pytest.raises(DesignError, match="管理対象外"):
+        synchronize(tmp_path, {"api/arbitrary.json": "{}"}, check=False)

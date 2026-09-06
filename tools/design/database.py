@@ -2,7 +2,8 @@
 
 import ast
 import json
-from dataclasses import dataclass, field
+import re
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 import sqlglot
@@ -29,6 +30,10 @@ class Table:
     constraints: list[str]
     foreign_keys: list[tuple[list[str], str, list[str]]]
     description: str = ""
+    indexes: list[dict] = field(default_factory=list)
+    foreign_key_specs: list[dict] = field(default_factory=list)
+    domain: str = "共通"
+    retention: str = "未指定"
 
 
 @dataclass
@@ -39,6 +44,7 @@ class Query:
     actions: dict[str, set[str]]
     parameters: list[str]
     columns: dict[str, list[str]] = field(default_factory=dict)
+    condition: str = "このSQLの呼出し経路で実行"
 
 
 def sql_name(node: exp.Table) -> str:
@@ -150,7 +156,7 @@ def project_table(statement: exp.Expression, source: str) -> Table | None:
     return Table(sql_name(schema.this), source, columns, constraints, foreign_keys)
 
 
-def load_tables(root: Path) -> dict[str, Table]:
+def load_legacy_tables(root: Path) -> dict[str, Table]:
     tables: dict[str, Table] = {}
     for source, text in ddl_sources(root):
         item = project_table(parse_one(text, source), source)
@@ -181,14 +187,81 @@ def load_tables(root: Path) -> dict[str, Table]:
     return tables
 
 
+def load_tables(root: Path) -> dict[str, Table]:
+    if not (root / "database/schema-policy.json").exists():
+        return load_legacy_tables(root)
+    from database.schema_catalog import extract
+
+    from .postgres import inspect_postgres
+
+    catalog = extract(root)
+    projection = inspect_postgres(root, catalog)
+    tables = {}
+    for item in catalog["tables"]:
+        name = "recipeweave." + item["name"]
+        columns = [
+            Column(
+                col["name"],
+                col["type"],
+                col["nullable"],
+                (["PRIMARY KEY"] if col["primary_key"] else []) + col["checks"],
+                str(col["default"]) if col["default"] is not None else "なし",
+                col["description"],
+            )
+            for col in item["columns"]
+        ]
+        constraints = ["CHECK (" + text + ")" for text in item["checks"]]
+        constraints += [
+            "UNIQUE "
+            + ("NULLS NOT DISTINCT " if value.get("nulls_not_distinct") else "")
+            + "("
+            + ", ".join(value["columns"])
+            + ")"
+            for value in item["unique_constraints"]
+        ]
+        constraints += ["PRIMARY KEY (" + ", ".join(item["primary_key"]) + ")"]
+        tables[name] = Table(
+            name,
+            projection["tables"][item["name"]]["source"],
+            columns,
+            constraints,
+            [
+                (fk["columns"], "recipeweave." + fk["referenced_table"], fk["referenced_columns"])
+                for fk in item["foreign_keys"]
+            ],
+            item["description"],
+            item["indexes"],
+            item["foreign_keys"],
+            item.get("domain", "共通"),
+            item.get("retention", "未指定"),
+        )
+    # 移行台帳はPython内の実CREATE文から従来同様に取り込む。
+    for source, text in ddl_sources(root):
+        if source.startswith("database/migrate.py:"):
+            item = project_table(parse_one(text, source), source)
+            if item is not None:
+                metadata = json.loads(read_source(root / "database/design.manual.json", root))[
+                    "tables"
+                ][item.name]
+                item.description = metadata["description"]
+                for column in item.columns:
+                    column.description = metadata["columns"][column.name]
+                tables[item.name] = item
+    return tables
+
+
 def query_projection(text: str, source: str, operation: str, tables: dict[str, Table]) -> Query:
     stmt = parse_one(text, source)
-    kinds = {exp.Select: "R", exp.Insert: "C", exp.Update: "U", exp.Delete: "D"}
+    kinds = {
+        exp.Select: "R",
+        exp.SetOperation: "R",
+        exp.Insert: "C",
+        exp.Update: "U",
+        exp.Delete: "D",
+    }
     action = next((value for kind, value in kinds.items() if isinstance(stmt, kind)), None)
     if action is None or stmt.find(exp.Star):
         raise DesignError(f"対応する明示列のCRUD文が必要です: {source}")
-    if stmt.args.get("with_") is not None:
-        raise DesignError(f"CTEのSQL投影は未対応です: {source}")
     conflict = stmt.args.get("conflict")
     if conflict is not None and conflict.args.get("expressions"):
         raise DesignError(f"ON CONFLICTによる更新の投影は未対応です: {source}")
@@ -197,7 +270,29 @@ def query_projection(text: str, source: str, operation: str, tables: dict[str, T
         for node in stmt.walk()
     ):
         raise DesignError(f"入れ子のDML投影は未対応です: {source}")
-    references = list(stmt.find_all(exp.Table))
+    from sqlglot.optimizer.qualify import qualify
+    from sqlglot.optimizer.scope import Scope, traverse_scope
+
+    schema = {}
+    for name, item in tables.items():
+        namespace, short = name.rsplit(".", 1)
+        schema.setdefault(namespace, {})[short] = {c.name: c.data_type for c in item.columns} | {
+            "xmin": "xid"
+        }
+    try:
+        resolved = qualify(
+            stmt.copy(),
+            dialect="postgres",
+            schema=schema,
+            infer_schema=False,
+            validate_qualify_columns=True,
+        )
+    except sqlglot.errors.SqlglotError as exc:
+        raise DesignError(f"SQL列の名前解決に失敗しました: {source}: {exc}") from exc
+    cte_names = {cte.alias for cte in resolved.find_all(exp.CTE)}
+    references = [
+        ref for ref in resolved.find_all(exp.Table) if ref.db or ref.name not in cte_names
+    ]
     aliases = {ref.alias_or_name: sql_name(ref) for ref in references}
     actions: dict[str, set[str]] = {}
     for ref in references:
@@ -205,29 +300,57 @@ def query_projection(text: str, source: str, operation: str, tables: dict[str, T
         if name not in tables:
             raise DesignError(f"未定義テーブルです: {source}: {name}")
         actions.setdefault(name, set()).add("R")
-    target = stmt.this.this if isinstance(stmt.this, exp.Schema) else stmt.this
+    target = resolved.this.this if isinstance(resolved.this, exp.Schema) else resolved.this
     target_name = sql_name(target) if isinstance(target, exp.Table) else None
     if action != "R" and target_name:
         actions[target_name] = {action}
         if any(
             sql_name(ref) == target_name
-            for select in stmt.find_all(exp.Select)
+            for select in resolved.find_all(exp.Select)
             for ref in select.find_all(exp.Table)
         ):
             actions[target_name].add("R")
     columns: dict[str, list[str]] = {}
-    for column in stmt.find_all(exp.Column):
-        candidates = [aliases.get(column.table, column.table)] if column.table else list(actions)
+    scopes = {id(scope.expression): scope for scope in traverse_scope(resolved)}
+    output_aliases = {alias.alias for alias in resolved.find_all(exp.Alias)}
+    for column in resolved.find_all(exp.Column):
+        parent = column.find_ancestor(exp.Select)
+        scope = scopes.get(id(parent)) if parent is not None else None
+        selected = None
+        current = scope
+        while current is not None and selected is None:
+            selected = current.sources.get(column.table)
+            current = current.parent
+        if isinstance(selected, Scope):
+            # 派生表の列はqualifyが検査し、元表の列はそのscopeの実Columnから別途拾う。
+            continue
+        if isinstance(selected, exp.Table):
+            candidates = [sql_name(selected)]
+        elif column.table:
+            if column.table not in aliases:
+                # UNNEST等の表関数の出力。qualifyで宣言名との一致を確認済み。
+                continue
+            candidates = [aliases[column.table]]
+        elif target_name:
+            candidates = [target_name]
+        else:
+            candidates = list(actions)
         matches = [
             name
             for name in candidates
-            if name in tables and column.name in {c.name for c in tables[name].columns}
+            if name in tables and column.name in ({c.name for c in tables[name].columns} | {"xmin"})
         ]
+        if (
+            not column.table
+            and column.name in output_aliases
+            and isinstance(column.parent, exp.Ordered)
+        ):
+            continue
         if len(matches) != 1:
             raise DesignError(f"未定義または曖昧な列です: {source}: {column.sql()}")
         columns.setdefault(matches[0], []).append(column.name)
-    if isinstance(stmt, exp.Insert) and isinstance(stmt.this, exp.Schema) and target_name:
-        for col in stmt.this.expressions:
+    if isinstance(resolved, exp.Insert) and isinstance(resolved.this, exp.Schema) and target_name:
+        for col in resolved.this.expressions:
             if col.name not in {c.name for c in tables[target_name].columns}:
                 raise DesignError(f"INSERT先の列が存在しません: {source}: {col.name}")
             columns.setdefault(target_name, []).append(col.name)
@@ -256,6 +379,58 @@ def load_queries(root: Path, tables: dict[str, Table], slugs: dict[str, str]) ->
                 read_source(path, root), str(path.relative_to(root)), slugs[slug], tables
             )
         )
+    inventory = root / "backend/src/app/entities/operation_inventory.json"
+    if inventory.exists():
+        data = json.loads(read_source(inventory, root))
+        entries = data.get("operations", []) if isinstance(data, dict) else data
+        for operation in entries:
+            if operation["action"] not in {"create", "update", "delete"}:
+                continue
+            for filename in ("audit.sql", "outbox.sql", "workspace.sql"):
+                if filename == "outbox.sql" and operation["owned"]:
+                    continue
+                if filename == "workspace.sql" and not operation["owned"]:
+                    continue
+                path = root / "backend/src/app/entities/sql" / filename
+                result.append(
+                    query_projection(
+                        read_source(path, root),
+                        str(path.relative_to(root)),
+                        operation["operation_id"],
+                        tables,
+                    )
+                )
+    for slug, operation in sorted(slugs.items()):
+        if slug.startswith("generation/"):
+            for filename in ("audit.sql", "outbox.sql"):
+                path = root / "backend/src/app/entities/sql" / filename
+                result.append(
+                    query_projection(
+                        read_source(path, root), str(path.relative_to(root)), operation, tables
+                    )
+                )
+    authentication = [query for query in result if "/auth/get_me/sql/" in query.source]
+    for slug, operation in sorted(slugs.items()):
+        if slug.startswith(("entities/", "workspace/", "generation/")):
+            result.extend(
+                replace(
+                    query,
+                    operation=operation,
+                    condition=(
+                        "認証依存の初期化時。同一主体の初回INSERTのみ作成し、既存行はDO NOTHING。"
+                    ),
+                )
+                for query in authentication
+            )
+        elif slug.startswith("recipes/"):
+            result.extend(
+                replace(
+                    query,
+                    operation=operation,
+                    condition="preview=trueで開発用認証を行う場合のみ。通常の公開検索では実行しない。",
+                )
+                for query in authentication
+            )
     return result
 
 
@@ -278,13 +453,29 @@ def render_database(tables: dict[str, Table], queries: list[Query]) -> dict[str,
         alias = name.replace(".", "_")
         er.append(f"    {alias} {{")
         for col in item.columns:
-            data_type = col.data_type.replace(" ", "_").replace("(", "_").replace(")", "")
+            data_type = re.sub(r"[^A-Za-z0-9_]", "_", col.data_type)
             key = " PK" if any("PRIMARY KEY" in c for c in col.constraints) else ""
             er.append(f"        {data_type} {col.name}{key}")
         er.append("    }")
         for local, target, _ in item.foreign_keys:
-            # この記号は外部キーの存在を示し、実データ件数を推定しない。
-            er.append(f'    {target.replace(".", "_")} ||--o{{ {alias} : "{",".join(local)}"')
+            required = all(not column.nullable for column in item.columns if column.name in local)
+            parent_end = "||" if required else "|o"
+            # 子側の最大件数はFK列全体の一意制約の有無から導く。
+            primary = {
+                column.name
+                for column in item.columns
+                if any("PRIMARY KEY" in rule for rule in column.constraints)
+            }
+            unique = set(local) == primary or any(
+                rule.startswith("UNIQUE")
+                and set(re.findall(r"[a-z_][a-z_0-9]*", rule.partition("(")[2])) == set(local)
+                for rule in item.constraints
+            )
+            child_end = "o|" if unique else "o{"
+            er.append(
+                f"    {target.replace('.', '_')} {parent_end}--{child_end} {alias} : "
+                f'"{",".join(local)}"'
+            )
     er.append("```")
     outputs["database/ER.md"] = document(
         "物理ER図",
@@ -325,11 +516,46 @@ def render_database(tables: dict[str, Table], queries: list[Query]) -> dict[str,
                 ),
                 "## 表制約\n\n"
                 + ("\n".join(f"- `{c}`" for c in item.constraints) or "列制約以外の追加制約なし。"),
+                "## 索引\n\n"
+                + (
+                    table(
+                        ["名称", "一意", "定義"],
+                        [
+                            [index["name"], index["unique"], index["definition"]]
+                            for index in item.indexes
+                        ],
+                    )
+                    if item.indexes
+                    else "独立索引なし。主キー・一意制約の索引は表制約を参照。"
+                ),
+                "## 外部キー\n\n"
+                + (
+                    table(
+                        ["名称", "列", "参照先", "削除", "更新", "遅延検査"],
+                        [
+                            [
+                                fk["name"],
+                                ", ".join(fk["columns"]),
+                                fk["referenced_table"]
+                                + "("
+                                + ", ".join(fk["referenced_columns"])
+                                + ")",
+                                fk["on_delete"],
+                                fk.get("on_update", "RESTRICT"),
+                                fk.get("deferrable", False),
+                            ]
+                            for fk in item.foreign_key_specs
+                        ],
+                    )
+                    if item.foreign_key_specs
+                    else "外部キーなし。"
+                ),
+                "保持・所属領域: " + item.retention + " / " + item.domain,
                 "## 利用API\n\n"
                 + (
                     table(["operationId", "CRUD", "SQL"], access)
                     if access
-                    else "APIからのアクセスなし。マイグレーション実行時のみ利用する。"
+                    else "APIからのアクセスなし。運用上の用途・旧表の保持は定義元を参照する。"
                 ),
             ],
         )

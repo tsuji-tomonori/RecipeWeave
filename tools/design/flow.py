@@ -27,10 +27,7 @@ def expression(node: ast.AST | None) -> str:
 
 def validate_tree(node: ast.AST, source: str) -> None:
     rejected = (
-        ast.Try,
         ast.TryStar,
-        ast.With,
-        ast.AsyncWith,
         ast.Match,
         ast.Yield,
         ast.YieldFrom,
@@ -78,6 +75,33 @@ def block(statements: list[ast.stmt], source: str, indent: str = "    ") -> list
                 lines.append(f"{indent}else 条件が偽")
                 lines += block(node.orelse, source, indent + "    ")
             lines.append(f"{indent}end")
+        elif isinstance(node, ast.Try):
+            lines.append(f"{indent}rect rgb(244, 247, 246)")
+            lines.append(f"{indent}Note over Function: try: 例外発生時は一致するexceptへ移る")
+            lines += block(node.body, source, indent + "    ")
+            lines.append(f"{indent}end")
+            for handler in node.handlers:
+                lines.append(f"{indent}opt 例外: {label(expression(handler.type))}")
+                lines += block(handler.body, source, indent + "    ")
+                lines.append(f"{indent}end")
+            if node.orelse:
+                lines.append(f"{indent}opt 例外なし")
+                lines += block(node.orelse, source, indent + "    ")
+                lines.append(f"{indent}end")
+            if node.finalbody:
+                lines.append(f"{indent}Note over Function: finally: 成否にかかわらず後処理")
+                lines += block(node.finalbody, source, indent)
+        elif isinstance(node, ast.With | ast.AsyncWith):
+            for item in node.items:
+                lines += render_expression(item.context_expr, indent)
+                lines.append(
+                    f"{indent}Note over Function: context開始: "
+                    f"{label(expression(item.context_expr))}"
+                )
+            lines += block(node.body, source, indent)
+            lines.append(f"{indent}Note over Function: context終了: return・例外時も終了処理")
+        elif isinstance(node, ast.Import | ast.ImportFrom):
+            lines.append(f"{indent}Note over Function: {label(expression(node))}")
         elif isinstance(node, ast.For | ast.While):
             if isinstance(node, ast.For):
                 title = f"{expression(node.target)} in {expression(node.iter)}"
@@ -124,13 +148,22 @@ def block(statements: list[ast.stmt], source: str, indent: str = "    ") -> list
     return lines
 
 
-def function_sections(path: Path, root: Path) -> tuple[list[str], list[list[object]]]:
+def function_sections(
+    path: Path, root: Path, allowed: set[str] | None = None
+) -> tuple[list[str], list[list[object]]]:
     source = str(path.relative_to(root))
     parsed = ast.parse(read_source(path, root), filename=source)
     diagrams = []
     functions = []
-    for fn in parsed.body:
-        if not isinstance(fn, ast.FunctionDef | ast.AsyncFunctionDef):
+    candidates = [
+        node for node in parsed.body if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef)
+    ]
+    for cls in (node for node in parsed.body if isinstance(node, ast.ClassDef)):
+        candidates += [
+            node for node in cls.body if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef)
+        ]
+    for fn in candidates:
+        if allowed is not None and fn.name not in allowed:
             continue
         validate_tree(fn, source)
         if any(
@@ -155,7 +188,7 @@ def function_sections(path: Path, root: Path) -> tuple[list[str], list[list[obje
             f"    Caller->>Function: {label(signature)}",
         ]
         lines += block(fn.body, source)
-        lines += ["```", "", "#### 対応する実装", "", "```python", ast.unparse(fn), "```"]
+        lines += ["```"]
         diagrams.append("\n".join(lines))
     return diagrams, functions
 
@@ -163,8 +196,28 @@ def function_sections(path: Path, root: Path) -> tuple[list[str], list[list[obje
 def render_sequences(directory: Path, root: Path, operation_id: str) -> tuple[str, str]:
     diagrams = []
     functions = []
-    for filename in ("router.py", "functions.py"):
-        found, rows = function_sections(directory / filename, root)
+    paths = [directory / filename for filename in ("router.py", "functions.py")]
+    if directory.parent.name == "entities":
+        paths.append(root / "backend/src/app/core/entity_service.py")
+    if directory.parent.name == "workspace":
+        paths.append(root / "backend/src/app/core/workspace_service.py")
+        if "cooking_session" in directory.name:
+            paths.append(root / "backend/src/app/core/cooking_service.py")
+    if directory.parent.name == "generation":
+        paths += [
+            root / "backend/src/app/core/entity_generation.py",
+            root / "backend/src/app/core/entity_service.py",
+        ]
+    for path in paths:
+        allowed = None
+        if path.parent != directory:
+            from types import SimpleNamespace
+
+            from .details import selected_functions
+
+            op = SimpleNamespace(directory=directory)
+            allowed = {name.rsplit(".", 1)[-1] for name, _ in selected_functions(root, op, path)}
+        found, rows = function_sections(path, root, allowed)
         diagrams += found
         functions += rows
     sequence = document(
@@ -172,7 +225,7 @@ def render_sequences(directory: Path, root: Path, operation_id: str) -> tuple[st
         [
             "対象はrouter.py・functions.pyの各関数。呼出元・関数・呼出先の3者で、関数内の分岐と反復を示す。"
             "関数間を推測で展開せず、呼出先の名前をそのまま記載する。内包表記・短絡評価は条件付き式のまま残す。"
-            "FastAPIの依存解決、middleware、連携ポートの実装内部はこの図の対象外で、詳細設計と定義元を参照する。"
+            "エンティティAPIは共有EntityServiceも含める。FastAPIの依存解決、middleware、DBドライバー内部はこの図の対象外。try/except/else/finallyとcontext境界を保持する。"
             "continue/breakは注記位置で該当経路を終了し、次の反復/ループ外へ進む。",
             *diagrams,
         ],

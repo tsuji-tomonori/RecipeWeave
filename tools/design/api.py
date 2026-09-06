@@ -10,7 +10,9 @@ from typing import Any
 
 from .common import DesignError, document, read_source, table
 from .database import Query, Table
+from .details import render_detail, render_messages
 from .flow import render_sequences
+from .test_contracts import factor_section
 
 METHODS = {"get", "post", "put", "patch", "delete", "options", "head"}
 
@@ -100,8 +102,8 @@ def load_operations(root: Path, spec: dict[str, Any]) -> list[Operation]:
             ):
                 raise DesignError(f"パス変数とパラメーター定義が一致しません: {key}")
             security = item.get("security", spec.get("security", []))
-            public = contract["authentication"] == "public"
-            if public != (not security):
+            public = contract["authentication"].startswith("public")
+            if public != (not security or {} in security):
                 raise DesignError(f"OpenAPIと認証メタデータが一致しません: {key}")
             merged = dict(item)
             merged["parameters"] = list(parameters.values())
@@ -119,6 +121,47 @@ def load_operations(root: Path, spec: dict[str, Any]) -> list[Operation]:
     if contracts:
         raise DesignError(f"実ルートに存在しない操作メタデータ: {sorted(contracts)}")
     return operations
+
+
+def standalone_openapi(op: Operation, spec: dict[str, Any]) -> dict[str, Any]:
+    """この操作から到達する参照だけを閉包し、単独で読めるOpenAPIを作る。"""
+    components: dict[str, Any] = {}
+    seen: set[str] = set()
+
+    def collect(value: Any) -> None:
+        if isinstance(value, dict):
+            reference = value.get("$ref")
+            if reference and reference not in seen:
+                seen.add(reference)
+                parts = reference.split("/")
+                if len(parts) != 4 or parts[:2] != ["#", "components"]:
+                    raise DesignError(f"操作単位でのOpenAPI参照に未対応です: {reference}")
+                resolved = dereference({"$ref": reference}, spec)
+                components.setdefault(parts[2], {})[parts[3]] = resolved
+                collect(resolved)
+            for child in value.values():
+                collect(child)
+        elif isinstance(value, list):
+            for child in value:
+                collect(child)
+
+    collect(op.spec)
+    security = op.spec.get("security", spec.get("security", []))
+    for requirement in security:
+        for name in requirement:
+            scheme = spec.get("components", {}).get("securitySchemes", {}).get(name)
+            if scheme is None:
+                raise DesignError(f"認証schemeが未定義です: {name}")
+            components.setdefault("securitySchemes", {})[name] = scheme
+    result = {
+        "openapi": spec["openapi"],
+        "info": spec["info"],
+        "paths": {op.path: {op.method.lower(): op.spec}},
+        "components": components,
+    }
+    if "servers" in spec:
+        result["servers"] = spec["servers"]
+    return result
 
 
 def schema_type(schema: dict[str, Any]) -> str:
@@ -266,6 +309,7 @@ def render_interface(op: Operation, spec: dict[str, Any]) -> str:
             "## リクエスト本文\n\n" + "\n\n".join(request),
             "## レスポンス\n\n" + "\n\n".join(responses),
             "## 操作のサンプル\n\n```python\n" + samples_path.read_text().rstrip() + "\n```",
+            "[Swagger互換のOpenAPI JSON](interface.openapi.json)",
             "[共有モデルの全仕様](../../MODELS.md) / [共通エラー](../../ERRORS.md)",
             "## このAPIのOpenAPI定義\n\n```json\n"
             + json.dumps(op.spec, ensure_ascii=False, indent=2, sort_keys=True)
@@ -344,21 +388,27 @@ def render_api(
     )
     crud_rows = []
     for name in sorted(tables):
-        cells = []
         for op in operations:
             actions = set().union(
                 *(q.actions.get(name, set()) for q in queries if q.operation == op.id)
             )
-            cells.append("".join(c for c in "CRUD" if c in actions) or "—")
-        crud_rows.append([name, *cells])
+            if actions:
+                crud_rows.append(
+                    [
+                        name,
+                        f"[{op.id}](operations/{op.id}/detail.md)",
+                        *("✓" if letter in actions else "—" for letter in "CRUD"),
+                    ]
+                )
     outputs["api/CRUD.md"] = document(
         "テーブルとAPIのCRUD対応",
         [
-            "C=INSERT、R=SELECT、U=UPDATE、D=DELETE。WHERE/RETURNINGを独立したRへ水増ししない。"
-            "各APIのsql/配下を所有元とし、SQL ASTの対象表・副問い合わせから導出する。",
-            table(["テーブル", *(op.id for op in operations)], crud_rows),
-            "SQLがないAPIはJSONサンプルまたは稼働確認を使う。"
-            "移行台帳への運用処理はAPI CRUDと分ける。",
+            "C=INSERT、R=SELECT、U=UPDATE、D=DELETE。SQL ASTから実対象を導出し、"
+            "WHERE/RETURNINGを独立したRへ水増ししない。"
+            "監査とアウトボックスの共有SQLも書込み操作に対応づける。",
+            "数百APIを横一列へ並べず、表ごとに関連APIと4操作を縦に表示する。",
+            table(["テーブル", "API", "C", "R", "U", "D"], crud_rows),
+            "移行台帳等、APIから参照しない表の運用処理は個別テーブル仕様を参照する。",
         ],
     )
     models = []
@@ -404,6 +454,9 @@ def render_api(
             [
                 *(
                     f"## {q.source}\n\n"
+                    + "実行条件: "
+                    + q.condition
+                    + "\n\n"
                     + table(
                         ["対象表", "CRUD", "参照・書込列"],
                         [
@@ -429,26 +482,17 @@ def render_api(
                 "利用者入力はパラメーターとして渡し、SQL文字列へ連結しない。",
             ],
         )
-        contract_rows = [
-            [name, op.contract[name]]
-            for name in ("authentication", "idempotency", "transaction", "effects")
-        ]
-        outputs[f"{prefix}/detail.md"] = document(
-            f"詳細設計: {op.id}",
-            [
-                table(["項目", "仕様"], contract_rows),
-                "## 関数の責務\n\n" + functions,
-                "## 依存解決の定義\n\n```python\n"
-                + read_source(root / "backend/src/app/core/dependencies.py", root).rstrip()
-                + "\n```",
-                "## 関連する仕様\n\n[インターフェース](interface.md) / [シーケンス](sequence.md) / "
-                "[SQL](queries.md) / [検証](tests.md)",
-            ],
+        outputs[f"{prefix}/detail.md"] = render_detail(root, op, owned, tables, spec)
+        outputs[f"{prefix}/messages.md"] = render_messages(root, op)
+        operation_spec = standalone_openapi(op, spec)
+        outputs[f"{prefix}/interface.openapi.json"] = (
+            json.dumps(operation_spec, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
         )
         tests = test_sources(root, op)
         outputs[f"{prefix}/tests.md"] = document(
-            f"検証仕様: {op.id}",
+            f"要因別単体テスト仕様: {op.id}",
             [
+                factor_section(root, op),
                 "次の一覧は対象HTTPメソッドとURLを明示的に呼ぶテストの静的抽出。"
                 "テスト成功や全要件の受入完了を意味しない。間接fixture経由の対応を名前だけで推定しない。",
                 table(["テストnode", "説明", "表明"], tests)
@@ -457,4 +501,21 @@ def render_api(
                 "宣言応答: " + ", ".join(sorted(op.spec["responses"])),
             ],
         )
+    navigation = " / ".join(
+        f"[{label}]({name}.md)"
+        for name, label in [
+            ("detail", "詳細"),
+            ("interface", "入出力"),
+            ("messages", "ログ"),
+            ("queries", "SQL"),
+            ("sequence", "シーケンス"),
+            ("tests", "要因別試験"),
+        ]
+    )
+    for name, content in list(outputs.items()):
+        if name.startswith("api/operations/") and name.endswith(".md"):
+            heading, separator, body = content.partition("\n\n")
+            outputs[name] = (
+                heading + separator + navigation + " / [API一覧](../../README.md)\n\n" + body
+            )
     return outputs

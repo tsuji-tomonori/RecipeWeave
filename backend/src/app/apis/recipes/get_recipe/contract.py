@@ -7,8 +7,8 @@ CONTRACT = OperationContract(
     path="/api/recipes/{recipe_id}",
     summary="料理の材料と工程を表示する",
     authentication="public",
-    errors=(404, 422),
+    errors=(401, 403, 404, 422, 503),
     idempotency="読取専用",
-    transaction="なし",
-    effects="なし",
+    transaction="要求単位の読取トランザクション",
+    effects="正規化されたレシピ・材料・工程・分類の参照",
 )

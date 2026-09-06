@@ -42,6 +42,10 @@ class CognitoVerifier:
         self._keys = keys if keys is not None else CognitoSigningKeys(issuer)
 
     def subject(self, token: str) -> str:
+        """検証したクレームから主体を返す。"""
+        return str(self.claims(token)["sub"])
+
+    def claims(self, token: str) -> dict[str, object]:
         """subを使う前に署名・発行者・有効期限・用途・アプリクライアントを検証する。"""
         try:
             header = jwt.get_unverified_header(token)
@@ -72,4 +76,4 @@ class CognitoVerifier:
             or not 1 <= len(subject) <= 128
         ):
             raise AuthenticationError("invalid access token claims")
-        return subject
+        return payload

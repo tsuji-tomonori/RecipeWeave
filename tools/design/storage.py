@@ -12,7 +12,10 @@ def owned(name: str) -> bool:
     return (
         not path.is_absolute()
         and ".." not in path.parts
-        and path.suffix == ".md"
+        and (
+            path.suffix == ".md"
+            or (path.name == "interface.openapi.json" and path.parts[0] == "api")
+        )
         and (name in TOP_LEVEL or path.parts[0] in {"api", "database"})
     )
 
@@ -56,7 +59,7 @@ def synchronize(directory: Path, outputs: dict[str, str], *, check: bool) -> Non
     for name in sorted(changed):
         path = directory / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        temporary = path.with_suffix(".md.tmp")
+        temporary = path.with_suffix(path.suffix + ".tmp")
         ensure_safe(temporary)
         temporary.write_text(outputs[name], encoding="utf-8")
         temporary.replace(path)

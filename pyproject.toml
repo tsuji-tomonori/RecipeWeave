@@ -17,6 +17,7 @@ dev = [
   "boto3-stubs[dsql]>=1.40,<2",
   "sqlglot>=27,<31",
   "sqlfluff==4.3.0",
+  "pglast>=7,<9",
 ]
 
 [tool.ruff]

@@ -11,9 +11,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi.testclient import TestClient
 
 from app.core import dependencies
-from app.core.models import AppSnapshot
 from app.integrations.auth.cognito_provider import CognitoVerifier
-from app.integrations.state.memory_provider import MemoryStateRepository
 from app.main import create_app
 
 ISSUER = "https://cognito-idp.ap-northeast-1.amazonaws.com/ap-northeast-1_TEST"
@@ -55,11 +53,6 @@ def verifier(private_key: rsa.RSAPrivateKey) -> CognitoVerifier:
     return CognitoVerifier(ISSUER, CLIENT_ID, FixedKeys(private_key.public_key()))
 
 
-@pytest.fixture
-def repository() -> MemoryStateRepository:
-    return MemoryStateRepository()
-
-
 class HttpTestClient(Protocol):
     """Starletteのhttpx/httpx2移行に対応する、小さなHTTPクライアント境界。"""
 
@@ -68,6 +61,21 @@ class HttpTestClient(Protocol):
         url: str,
         *,
         params: dict[str, str | list[str]] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> httpx.Response: ...
+
+    def post(
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json: object = None,
+    ) -> httpx.Response: ...
+
+    def delete(
+        self,
+        url: str,
+        *,
         headers: dict[str, str] | None = None,
     ) -> httpx.Response: ...
 
@@ -82,37 +90,14 @@ class HttpTestClient(Protocol):
 
 
 @pytest.fixture
-def client(
-    monkeypatch: pytest.MonkeyPatch, verifier: CognitoVerifier, repository: MemoryStateRepository
-) -> Iterator[HttpTestClient]:
+def client(monkeypatch: pytest.MonkeyPatch, verifier: CognitoVerifier) -> Iterator[HttpTestClient]:
+    """署名検証は専用試験で確認し、このfixtureではHTTP入力境界を分離する。"""
+    from unittest.mock import MagicMock
+
+    from app.core.db import get_database
+
     monkeypatch.setattr(dependencies, "get_verifier", lambda: verifier)
     app = create_app()
-    app.dependency_overrides[dependencies.get_state_repository] = lambda: repository
+    app.dependency_overrides[get_database] = MagicMock
     with TestClient(app) as test_client:
         yield cast(HttpTestClient, test_client)
-
-
-@pytest.fixture
-def snapshot() -> AppSnapshot:
-    return AppSnapshot.model_validate(
-        {
-            "schemaVersion": 1,
-            "version": 3,
-            "lots": [],
-            "imports": [],
-            "drafts": {},
-            "meal": [],
-            "saved": [],
-            "shoppingChecks": [],
-            "cooking": None,
-            "settings": {"excludedFoodIds": [], "pantryFoodIds": [], "equipment": []},
-            "customFoods": [],
-            "search": {
-                "selectedFoodIds": [],
-                "match": "all",
-                "maxMinutes": None,
-                "noShopping": False,
-                "equipment": [],
-            },
-        }
-    )

@@ -1,0 +1,450 @@
+[
+  {
+    "legacyId": "tomato",
+    "foodCode": "food_88f91799ac",
+    "definition": null,
+    "aliases": [
+      "とまと"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "eggplant",
+    "foodCode": "food_91d45dd5e9",
+    "definition": null,
+    "aliases": [
+      "ナス",
+      "茄子"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "cabbage",
+    "foodCode": "food_0639aa3cee",
+    "definition": null,
+    "aliases": [
+      "きゃべつ"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "egg",
+    "foodCode": "food_7cd14b25a8",
+    "definition": null,
+    "aliases": [
+      "たまご",
+      "玉子",
+      "タマゴ"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "tofu",
+    "foodCode": "bootstrap_tofu",
+    "definition": {
+      "id": "bootstrap_tofu",
+      "name": "豆腐",
+      "kind": "processed",
+      "state": "ready",
+      "unit": "g",
+      "category": "豆・加工品",
+      "availability": "common"
+    },
+    "aliases": [
+      "とうふ",
+      "絹豆腐",
+      "木綿豆腐",
+      "絹ごし豆腐"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "tuna",
+    "foodCode": "bootstrap_tuna",
+    "definition": {
+      "id": "bootstrap_tuna",
+      "name": "ツナ",
+      "kind": "processed",
+      "state": "ready",
+      "unit": "g",
+      "category": "缶詰",
+      "availability": "common"
+    },
+    "aliases": [
+      "ツナ缶",
+      "シーチキン",
+      "まぐろ油漬"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "corn",
+    "foodCode": "bootstrap_corn",
+    "definition": {
+      "id": "bootstrap_corn",
+      "name": "コーン",
+      "kind": "processed",
+      "state": "ready",
+      "unit": "g",
+      "category": "野菜",
+      "availability": "common"
+    },
+    "aliases": [
+      "とうもろこし",
+      "スイートコーン"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "mushroom",
+    "foodCode": "food_c4eaaa453a",
+    "definition": null,
+    "aliases": [
+      "ぶなしめじ",
+      "ブナシメジ",
+      "きのこ"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "rice",
+    "foodCode": "bootstrap_rice",
+    "definition": {
+      "id": "bootstrap_rice",
+      "name": "ごはん",
+      "kind": "processed",
+      "state": "cooked",
+      "unit": "g",
+      "category": "主食",
+      "availability": "common"
+    },
+    "aliases": [
+      "ご飯",
+      "パックごはん",
+      "白飯"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "yakisoba",
+    "foodCode": "bootstrap_yakisoba",
+    "definition": {
+      "id": "bootstrap_yakisoba",
+      "name": "カップ焼きそば",
+      "kind": "kit",
+      "state": "dry",
+      "unit": "個",
+      "category": "即席食品",
+      "availability": "common"
+    },
+    "aliases": [
+      "カップやきそば",
+      "カップ焼そば"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "cheese",
+    "foodCode": "bootstrap_cheese",
+    "definition": {
+      "id": "bootstrap_cheese",
+      "name": "チーズ",
+      "kind": "processed",
+      "state": "ready",
+      "unit": "g",
+      "category": "卵・乳製品",
+      "availability": "common"
+    },
+    "aliases": [
+      "とろけるチーズ",
+      "スライスチーズ"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "wakame",
+    "foodCode": "food_5a0da2643b",
+    "definition": null,
+    "aliases": [
+      "わかめ",
+      "カットワカメ",
+      "ワカメ"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "onion",
+    "foodCode": "food_becf1c4a15",
+    "definition": null,
+    "aliases": [
+      "たまねぎ",
+      "タマネギ",
+      "玉葱"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "chicken",
+    "foodCode": "bootstrap_chicken",
+    "definition": {
+      "id": "bootstrap_chicken",
+      "name": "鶏肉",
+      "kind": "basic",
+      "state": "raw",
+      "unit": "g",
+      "category": "肉",
+      "availability": "common"
+    },
+    "aliases": [
+      "とり肉",
+      "鶏もも",
+      "若鶏",
+      "鶏むね"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "pork",
+    "foodCode": "bootstrap_pork",
+    "definition": {
+      "id": "bootstrap_pork",
+      "name": "豚肉",
+      "kind": "basic",
+      "state": "raw",
+      "unit": "g",
+      "category": "肉",
+      "availability": "common"
+    },
+    "aliases": [
+      "豚こま",
+      "豚バラ"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "beef",
+    "foodCode": "bootstrap_beef",
+    "definition": {
+      "id": "bootstrap_beef",
+      "name": "牛肉",
+      "kind": "basic",
+      "state": "raw",
+      "unit": "g",
+      "category": "肉",
+      "availability": "common"
+    },
+    "aliases": [
+      "牛こま"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "carrot",
+    "foodCode": "food_73e2d88788",
+    "definition": null,
+    "aliases": [
+      "人参",
+      "ニンジン"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "potato",
+    "foodCode": "food_e2ce6e0700",
+    "definition": null,
+    "aliases": [
+      "ジャガイモ",
+      "馬鈴薯"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "spinach",
+    "foodCode": "food_ccce9c0c2e",
+    "definition": null,
+    "aliases": [
+      "ほうれんそう"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "broccoli",
+    "foodCode": "food_bed0d9d62a",
+    "definition": null,
+    "aliases": [
+      "ぶろっこりー"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "milk",
+    "foodCode": "food_ce72cd6b4e",
+    "definition": null,
+    "aliases": [
+      "ミルク"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "butter",
+    "foodCode": "food_07507f45f2",
+    "definition": null,
+    "aliases": [
+      "無塩バター"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "oil",
+    "foodCode": "bootstrap_oil",
+    "definition": {
+      "id": "bootstrap_oil",
+      "name": "油",
+      "kind": "processed",
+      "state": "ready",
+      "unit": "g",
+      "category": "調味料",
+      "availability": "common"
+    },
+    "aliases": [
+      "サラダ油",
+      "米油"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "soy-sauce",
+    "foodCode": "bootstrap_soy-sauce",
+    "definition": {
+      "id": "bootstrap_soy-sauce",
+      "name": "醤油",
+      "kind": "processed",
+      "state": "ready",
+      "unit": "ml",
+      "category": "調味料",
+      "availability": "common"
+    },
+    "aliases": [
+      "しょうゆ",
+      "正油"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "salt",
+    "foodCode": "food_9f9ffe8089",
+    "definition": null,
+    "aliases": [
+      "食塩"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "pepper",
+    "foodCode": "bootstrap_pepper",
+    "definition": {
+      "id": "bootstrap_pepper",
+      "name": "こしょう",
+      "kind": "processed",
+      "state": "dry",
+      "unit": "g",
+      "category": "調味料",
+      "availability": "common"
+    },
+    "aliases": [
+      "胡椒",
+      "コショウ"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "curry-powder",
+    "foodCode": "food_2f39dbf3af",
+    "definition": null,
+    "aliases": [
+      "カレーパウダー"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "sesame-oil",
+    "foodCode": "food_11fe52492a",
+    "definition": null,
+    "aliases": [
+      "胡麻油"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "stock",
+    "foodCode": "bootstrap_stock",
+    "definition": {
+      "id": "bootstrap_stock",
+      "name": "顆粒だし",
+      "kind": "processed",
+      "state": "ready",
+      "unit": "g",
+      "category": "調味料",
+      "availability": "common"
+    },
+    "aliases": [
+      "和風だし",
+      "だしの素"
+    ],
+    "sourceExplanation": "既存サンプルの曖昧な食品概念は特定商品・部位へ勝手に統合しない。"
+  },
+  {
+    "legacyId": "water",
+    "foodCode": "food_8ffbf19293",
+    "definition": null,
+    "aliases": [
+      "飲料水"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "mayonnaise",
+    "foodCode": "food_5f0ba38697",
+    "definition": null,
+    "aliases": [
+      "マヨ"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "lemon",
+    "foodCode": "food_c0eb888575",
+    "definition": null,
+    "aliases": [
+      "レモン果汁"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "frozen-udon",
+    "foodCode": "food_47326358b2",
+    "definition": null,
+    "aliases": [
+      "冷凍讃岐うどん"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "retort-curry",
+    "foodCode": "food_36521f4d57",
+    "definition": null,
+    "aliases": [
+      "カレー中辛"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  },
+  {
+    "legacyId": "deli-croquette",
+    "foodCode": "food_f91edacca9",
+    "definition": null,
+    "aliases": [
+      "コロッケ"
+    ],
+    "sourceExplanation": "原カタログの同じ食品へ対応。"
+  }
+]

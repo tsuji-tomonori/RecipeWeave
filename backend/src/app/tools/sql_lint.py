@@ -41,7 +41,7 @@ def run_sqlfluff(
         text=True,
         capture_output=True,
         cwd=root,
-        timeout=60,
+        timeout=300,
         check=False,
     )
 
@@ -60,7 +60,17 @@ def inspect_sql(root: Path = ROOT) -> list[str]:
     if not api_sql or not migration_sql:
         errors.append("検査対象のAPI SQLまたは移行SQLが見つかりません。")
         return errors
-    result = run_sqlfluff(["lint", *[str(path) for path in [*api_sql, *migration_sql]]], root=root)
+    shared_sql = sorted((root / "backend/src/app/entities/sql").glob("*.sql"))
+    result = run_sqlfluff(
+        [
+            "lint",
+            "--processes",
+            "4",
+            "--disable-progress-bar",
+            *[str(path) for path in [*api_sql, *shared_sql, *migration_sql]],
+        ],
+        root=root,
+    )
     if result.returncode:
         errors.append(result.stdout + result.stderr)
 

@@ -9,14 +9,24 @@ import { assertBuiltAsset } from "../lib/service-stack.js";
 
 const env = { account: "111122223333", region: "us-east-1" };
 
-test("retains protected user data", () => {
+test("利用者DBを暗号化・削除保護し非公開2AZに保持する", () => {
   const data = new DataStack(new App(), "TestData", { env });
   const dataTemplate = Template.fromStack(data);
   assert.equal(data.terminationProtection, true);
-  dataTemplate.hasResource("AWS::DSQL::Cluster", {
-    Properties: { DeletionProtectionEnabled: true },
+  dataTemplate.hasResource("AWS::RDS::DBCluster", {
+    Properties: Match.objectLike({
+      Engine: "aurora-postgresql",
+      DeletionProtection: true,
+      StorageEncrypted: true,
+      BackupRetentionPeriod: 14,
+    }),
     DeletionPolicy: "Retain",
     UpdateReplacePolicy: "Retain",
+  });
+  dataTemplate.resourceCountIs("AWS::DSQL::Cluster", 0);
+  dataTemplate.resourceCountIs("AWS::RDS::DBInstance", 2);
+  dataTemplate.allResourcesProperties("AWS::RDS::DBInstance", {
+    PubliclyAccessible: false,
   });
   dataTemplate.hasResource("AWS::Cognito::UserPool", {
     Properties: Match.objectLike({ DeletionProtection: "ACTIVE" }),

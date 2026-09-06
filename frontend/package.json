@@ -11,7 +11,9 @@
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
     "build": "node scripts/prepare-ocr.mjs && node ../tools/build-service-docs.mjs && vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "test:e2e": "playwright test",
+    "test:quality": "playwright test --config quality.config.ts"
   },
   "dependencies": {
     "@tesseract.js-data/jpn": "1.0.0",
@@ -20,6 +22,7 @@
     "tesseract.js": "7.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@sveltejs/vite-plugin-svelte": "7.3.0",
     "@testing-library/svelte": "^5.4.2",
     "@testing-library/user-event": "^14.6.7",

@@ -14,7 +14,8 @@
   aria-label={`${recipe.name}を見る`}
 >
   <img
-    src={`${import.meta.env.BASE_URL}food/${recipe.id}.png`}
+    src={recipe.imageUrl ||
+      `${import.meta.env.BASE_URL}food/recipe-placeholder.svg`}
     alt={recipe.name}
     loading="lazy"
   />

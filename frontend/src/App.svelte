@@ -49,15 +49,9 @@
   } from "./lib/types";
   import { UNITS } from "./lib/types";
   import * as D from "./lib/domain";
-  import {
-    loadState,
-    transact,
-    exportBackup,
-    parseBackup,
-    restoreBackup,
-    inspectRecovery,
-    recoverBackup,
-  } from "./lib/persistence";
+  import { exportBackup } from "./lib/persistence";
+  import * as API from "./lib/api";
+  import { completeLogin, localMode, loginCognito, logout } from "./lib/auth";
   import {
     parseReceipt,
     receiptSignature,
@@ -71,7 +65,18 @@
   } from "./lib/ocr";
   const base = import.meta.env.BASE_URL;
   let appState = $state.raw<AppState>(D.createInitialState());
-  let recoveryToken: ReturnType<typeof inspectRecovery> | null = null;
+  let user = $state<API.User | null>(null);
+  let loading = $state(true);
+  let busy = $state(false);
+  let username = $state("");
+  let password = $state("");
+  let catalogRecipes = $state.raw<Recipe[]>([]);
+  let catalogFoods = $state.raw<Food[]>([]);
+  let resultRecipes = $state.raw<Recipe[]>([]);
+  let searchBusy = $state(false);
+  let resultTotal = $state(0);
+  let resultOffset = $state(0);
+  let afterLogin = { route: "home", id: "" };
   let storageIssue = $state("");
   let route = $state("home");
   let routeId = $state("");
@@ -84,7 +89,6 @@
   let randomId = $state("");
   let modal = $state("");
   let selectedHistory = $state("");
-  let backup = $state.raw<AppState | null>(null);
   let modalRoot = $state<HTMLDivElement>();
   let editLot = $state("");
   let editCandidate = $state("");
@@ -106,7 +110,6 @@
   let ocrProgress = $state(0);
   let ocrStatus = $state("");
   let ocrError = $state("");
-  let sampleReceipt = $state(false);
   let imageHash = $state("");
   let signature = $state("");
   let pendingImportId = $state("");
@@ -116,7 +119,6 @@
   let ocrTask: OcrTask | null = null;
   let captureInput = $state<HTMLInputElement>();
   let fileInput = $state<HTMLInputElement>();
-  let backupInput = $state<HTMLInputElement>();
   let deduct = $state(false);
   let consumption = $state<ConsumptionRequest[]>([]);
   let now = $state(Date.now());
@@ -128,7 +130,7 @@
   let excludedFoods = $state<string[]>([]);
   let pantryFoods = $state<string[]>([]);
   let equipment = $state<string[]>([]);
-  const foods = $derived([...D.allFoods(appState), ...receiptCustomFoods]);
+  const foods = $derived([...new Map([...catalogFoods, ...appState.customFoods, ...receiptCustomFoods].map((food) => [food.id, food])).values()]);
   const activeLots = $derived(
     appState.lots
       .filter((l) => l.status === "active")
@@ -136,13 +138,19 @@
   );
   const selectedFoods = $derived(appState.search.selectedFoodIds);
   const currentRecipe = $derived(
-    routeId ? D.RECIPES.find((r) => r.id === routeId) : undefined,
+    routeId ? catalogRecipes.find((r) => r.id === routeId) : undefined,
   );
   const draft = $derived(
     currentRecipe ? D.getDraft(appState, currentRecipe.id) : null,
   );
-  const searchResults = $derived(D.searchRecipes(appState));
-  const random = $derived(D.RECIPES.find((r) => r.id === randomId));
+  const searchResults = $derived(
+    resultRecipes.filter(
+      (recipe) =>
+        !appState.search.noShopping ||
+        !recipeStock(recipe).rows.some((row) => row.status === "buy"),
+    ),
+  );
+  const random = $derived(catalogRecipes.find((r) => r.id === randomId));
   const shopping = $derived(D.shoppingList(appState));
   const visibleFoods = $derived(
     foods.filter(
@@ -233,7 +241,24 @@
   ): Promise<boolean> {
     const work = writeQueue.then(async () => {
       try {
-        appState = await transact(appState, mutator);
+        const next = mutator(structuredClone(appState));
+        if (!user) {
+          const temporaryOnly =
+            JSON.stringify({
+              ...next,
+              search: appState.search,
+              drafts: appState.drafts,
+            }) === JSON.stringify(appState);
+          if (!temporaryOnly) {
+            navigate("login");
+            return false;
+          }
+          appState = next;
+        } else {
+          busy = true;
+          appState = await API.saveState(appState, next);
+        }
+        catalogRecipes = [...D.RECIPES];
         error = "";
         if (message) notify(message);
         return true;
@@ -242,7 +267,10 @@
           e instanceof Error
             ? e.message
             : "保存できませんでした。もう一度お試しください。";
+        if (e instanceof API.ApiError && e.status === 401) user = null;
         return false;
+      } finally {
+        busy = false;
       }
     });
     writeQueue = work;
@@ -279,6 +307,26 @@
   function readRoute() {
     const parts = window.location.hash.replace(/^#\/?/, "").split("/");
     const next = parts[0] || "home";
+    if (
+      !loading &&
+      !user &&
+      [
+        "fridge",
+        "receipt",
+        "history",
+        "meal",
+        "shopping",
+        "saved",
+        "cooking",
+        "complete",
+        "settings",
+        "plan",
+      ].includes(next)
+    ) {
+      afterLogin = { route: next, id: parts[1] || "" };
+      navigate("login");
+      return;
+    }
     const nextKey = `/${next}${parts[1] ? "/" + parts[1] : ""}`;
     const scrollMode =
       pendingScrollMode ?? (activeRouteKey ? "restore" : "top");
@@ -293,6 +341,16 @@
     }
     route = next;
     routeId = parts[1] || "";
+    if (!loading && next === "results") void refreshResults();
+    if (!loading && next === "detail" && routeId)
+      void API.loadRecipe(routeId)
+        .then(() => {
+          catalogRecipes = [...D.RECIPES];
+        })
+        .catch((e: unknown) => {
+          error =
+            e instanceof Error ? e.message : "料理を読み込めませんでした。";
+        });
     error = "";
     query = "";
     modal = "";
@@ -335,11 +393,41 @@
         ...s,
         search: { ...s.search, selectedFoodIds: [...new Set(ids)] },
       }));
+    await writeQueue;
     navigate("results");
+    await refreshResults();
   }
-  function chooseRandom() {
-    const next = D.randomRecipe(appState, randomId);
-    randomId = next?.id ?? "";
+  async function refreshResults(offset = 0) {
+    searchBusy = true;
+    try {
+      const result = await API.findRecipes(
+        appState.search,
+        appState.settings.excludedFoodIds,
+        offset,
+      );
+      resultRecipes = result.items;
+      resultTotal = result.total;
+      resultOffset = result.offset;
+      catalogRecipes = [...D.RECIPES];
+    } catch (e) {
+      error = e instanceof Error ? e.message : "料理を読み込めませんでした。";
+    } finally {
+      searchBusy = false;
+    }
+  }
+  async function chooseRandom() {
+    try {
+      const recipe = await API.randomRecipe(
+        appState.settings.excludedFoodIds,
+        randomId,
+      );
+      catalogRecipes = [...D.RECIPES];
+      randomId = recipe.id;
+    } catch (e) {
+      if (e instanceof API.ApiError && e.status === 404) randomId = "";
+      else
+        error = e instanceof Error ? e.message : "料理を読み込めませんでした。";
+    }
   }
   function openRecipe(r: Recipe) {
     recipeOrigins.set(r.id, { route, id: routeId });
@@ -533,18 +621,6 @@
       );
     }
   }
-  function sampleStock() {
-    change((s) => {
-      let next = s;
-      for (const [foodId, value, unit] of [
-        ["eggplant", null, "g"],
-        ["egg", 1, "個"],
-        ["tofu", 300, "g"],
-      ] as [string, number | null, Unit][])
-        next = D.addStock(next, { foodId, quantity: { value, unit } });
-      return next;
-    }, "サンプル在庫3件を追加しました。");
-  }
   function toggleLot(id: string) {
     selectedLots = selectedLots.includes(id)
       ? selectedLots.filter((x) => x !== id)
@@ -588,7 +664,6 @@
       if (receiptPreview) URL.revokeObjectURL(receiptPreview);
       receiptPreview = URL.createObjectURL(file);
       receiptFile = file;
-      sampleReceipt = false;
       receiptPhase = "upload";
     } catch (e) {
       ocrError = e instanceof Error ? e.message : "画像を開けませんでした。";
@@ -610,7 +685,6 @@
     receiptPhase = "upload";
     ocrError = "";
     pendingImportId = "";
-    sampleReceipt = false;
   }
   function cancelReceipt() {
     if (candidates.length) {
@@ -655,18 +729,6 @@
     }
     ocrError = "読み取りをキャンセルしました。在庫は変更していません。";
   }
-  async function sampleRead() {
-    await clearReceipt();
-    sampleReceipt = true;
-    candidates = parseReceipt(
-      "トマト 198円\nたまご 248円\nキヌ 98円\nレジ袋 5円\n合計 549円",
-      foods,
-    );
-    imageHash =
-      "0fcebd21f7378b58478e92976604aa0cf1c773595984bf5943eef01ade00dc9c";
-    pendingImportId = crypto.randomUUID();
-    receiptPhase = "review";
-  }
   function toggleCandidate(id: string) {
     candidates = candidates.map((c) =>
       c.id === id ? { ...c, selected: !c.selected } : c,
@@ -689,9 +751,15 @@
     if (registrationBusy) return;
     registrationBusy = true;
     const id = pendingImportId || crypto.randomUUID();
-    const ok = await change((s) =>
-      D.commitReceipt(
-        { ...s, customFoods: [...s.customFoods, ...receiptCustomFoods] },
+    let ok = false;
+    try {
+      await writeQueue;
+      if (!user) {
+        navigate("login");
+        return;
+      }
+      appState = await API.commitReceipt(
+        appState,
         {
           id,
           imageHash,
@@ -699,8 +767,14 @@
           candidates: $state.snapshot(candidates),
           allowDuplicate,
         },
-      ),
-    );
+        receiptCustomFoods,
+      );
+      ok = true;
+    } catch (e) {
+      error = e instanceof Error ? e.message : "登録できませんでした。";
+    } finally {
+      registrationBusy = false;
+    }
     if (ok) {
       lastImportId = id;
       receiptPhase = "success";
@@ -723,7 +797,7 @@
     if (
       await change(
         (s) => D.undoImport(s, selectedHistory),
-        "今回の登録の残量を取り消しました。",
+        "取消可能な未使用・未編集分を取り消しました。",
       )
     ) {
       modal = "";
@@ -793,12 +867,19 @@
     navigate("complete");
   }
   async function finishCooking() {
-    if (
-      await change((s) =>
-        D.completeCooking(s, deduct, $state.snapshot(consumption)),
-      )
-    ) {
+    await writeQueue;
+    busy = true;
+    try {
+      appState = await API.completeCooking(
+        appState,
+        deduct,
+        $state.snapshot(consumption),
+      );
       completedMessage = true;
+    } catch (e) {
+      error = e instanceof Error ? e.message : "調理を完了できませんでした。";
+    } finally {
+      busy = false;
     }
   }
   function secondsLabel(seconds: number) {
@@ -831,7 +912,7 @@
     try {
       if (storageIssue)
         throw new Error(
-          "保存データを正常に読めないため、現在のデータとして書き出せません。正常なバックアップから復元してください。",
+          "保存データを正常に読めないため、現在のデータとして書き出せません。通信状態を確認して再読み込みしてください。",
         );
       const blob = new Blob([exportBackup(appState)], {
         type: "application/json",
@@ -846,35 +927,79 @@
       error = e instanceof Error ? e.message : "書き出しできませんでした。";
     }
   }
-  async function readBackup(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
+  async function refreshWorkspace() {
+    await writeQueue;
     try {
-      if (file.size > 10 * 1024 * 1024)
-        throw new Error("バックアップは10MB以下のJSONを選んでください。");
-      backup = parseBackup(await file.text());
-      modal = "backup";
-    } catch (e) {
-      error = e instanceof Error ? e.message : "このファイルは読み込めません。";
-    }
-    (event.target as HTMLInputElement).value = "";
-  }
-  async function confirmBackup() {
-    if (!backup) return;
-    try {
-      appState = storageIssue
-        ? await recoverBackup(
-            recoveryToken ?? inspectRecovery(),
-            $state.snapshot(backup),
-          )
-        : await restoreBackup(appState, $state.snapshot(backup));
+      if (user) {
+        const latest = await API.loadState();
+        appState = {
+          ...latest,
+          search: appState.search,
+          drafts: appState.drafts,
+        };
+        catalogRecipes = [...D.RECIPES];
+      }
       storageIssue = "";
-      backup = null;
-      modal = "";
-      chooseRandom();
-      notify("データを読み込みました。");
+      error = "";
     } catch (e) {
-      error = e instanceof Error ? e.message : "保存できませんでした。";
+      storageIssue =
+        e instanceof Error ? e.message : "保存内容を読み込めませんでした。";
+      if (e instanceof API.ApiError && e.status === 401) user = null;
+    }
+  }
+  async function signIn() {
+    busy = true;
+    error = "";
+    try {
+      if (!localMode) {
+        await loginCognito();
+        return;
+      }
+      user = await API.localLogin(username, password);
+      password = "";
+      const temporary = { search: appState.search, drafts: appState.drafts };
+      appState = { ...(await API.loadState()), ...temporary };
+      await refreshResults();
+      await chooseRandom();
+      catalogRecipes = [...D.RECIPES];
+      navigate(afterLogin.route, afterLogin.id);
+      afterLogin = { route: "home", id: "" };
+    } catch (e) {
+      error = e instanceof Error ? e.message : "ログインできませんでした。";
+    } finally {
+      busy = false;
+    }
+  }
+  function signOut() {
+    logout();
+    user = null;
+    appState = D.createInitialState();
+    navigate("home");
+  }
+  async function initialize() {
+    loading = true;
+    storageIssue = "";
+    try {
+      await completeLogin();
+      const [loadedFoods, loadedRecipes] = await Promise.all([
+        API.loadFoods(),
+        API.findRecipes(),
+      ]);
+      D.setCatalog(loadedFoods, loadedRecipes.items);
+      catalogFoods = loadedFoods;
+      catalogRecipes = loadedRecipes.items;
+      resultRecipes = loadedRecipes.items;
+      resultTotal = loadedRecipes.total;
+      user = await API.currentUser();
+      if (user) appState = await API.loadState();
+      catalogRecipes = [...D.RECIPES];
+      chooseRandom();
+    } catch (e) {
+      storageIssue =
+        e instanceof Error ? e.message : "データを読み込めませんでした。";
+    } finally {
+      loading = false;
+      readRoute();
     }
   }
   $effect(() => {
@@ -919,18 +1044,11 @@
     };
   });
   onMount(() => {
-    try {
-      appState = loadState();
-    } catch (e) {
-      storageIssue =
-        e instanceof Error ? e.message : "保存データを開けませんでした。";
-      try {
-        recoveryToken = inspectRecovery();
-      } catch {
-        recoveryToken = null;
-      }
-    }
-    chooseRandom();
+    void initialize();
+    const onFocus = () => {
+      if (user && !busy && !modal) void refreshWorkspace();
+    };
+    window.addEventListener("focus", onFocus);
     const previousRestoration = window.history.scrollRestoration;
     window.history.scrollRestoration = "manual";
     readRoute();
@@ -940,6 +1058,7 @@
       now = Date.now();
     }, 1000);
     return () => {
+      window.removeEventListener("focus", onFocus);
       window.removeEventListener("hashchange", readRoute);
       window.removeEventListener("scroll", rememberScroll);
       window.history.scrollRestoration = previousRestoration;
@@ -952,7 +1071,7 @@
 
 <svelte:head
   ><title
-    >{route === "home" ? "今日の一品、ここから。" : "RecipeWeave 試用版"} — RecipeWeave</title
+    >{route === "home" ? "今日の一品、ここから。" : "RecipeWeave"} — RecipeWeave</title
   ></svelte:head
 >
 <div class="app-shell" inert={modal ? true : undefined}>
@@ -966,7 +1085,12 @@
       ></button
     >
     <div class="top-actions">
-      <span class="dev-pill">DEV · SAMPLE 08</span><button
+      {#if user}<span class="dev-pill">{user.display_name}</span><button
+          class="text-button"
+          onclick={signOut}>ログアウト</button
+        >{:else}<button class="secondary" onclick={() => navigate("login")}
+          >ログイン</button
+        >{/if}<button
         class="icon-button"
         onclick={() => navigate("help")}
         aria-label="使い方・Q&A"><CircleHelp size={19} /></button
@@ -981,16 +1105,53 @@
     {#if storageIssue}<div class="notice error gap-bottom" role="alert">
         保存データを開けません：{storageIssue}<button
           class="text-button"
-          onclick={() => navigate("settings")}
-          >設定からバックアップを復元</button
+          onclick={initialize}>再読み込み</button
         >
       </div>{/if}
-    {#if error}<div class="notice error gap-bottom" role="alert">
-        {error}<button class="text-button" onclick={() => (error = "")}
-          >閉じる</button
+    {#if error && !modal}<div class="notice error gap-bottom" role="alert">
+        {error}<button class="text-button" onclick={refreshWorkspace}
+          >最新の内容を読み込む</button
+        ><button class="text-button" onclick={() => (error = "")}>閉じる</button
         >
       </div>{/if}
-    {#if route === "home"}
+    {#if loading}<section class="empty" role="status">
+        <CookingPot size={36} />
+        <h1>食材と料理を読み込んでいます</h1>
+      </section>
+    {:else if route === "login"}
+      <section class="desktop-narrow panel">
+        <span class="eyebrow">YOUR KITCHEN</span>
+        <h1>あなたの冷蔵庫へ。</h1>
+        <p class="subtitle">
+          ログインすると、食材・献立・調理の続きがどの端末からも開けます。
+        </p>
+        <form
+          class="stack gap-top"
+          onsubmit={(event) => {
+            event.preventDefault();
+            void signIn();
+          }}
+        >
+          {#if localMode}<label class="field"
+              >ユーザー名<input
+                autocomplete="username"
+                bind:value={username}
+                required
+              /></label
+            ><label class="field"
+              >パスワード<input
+                type="password"
+                autocomplete="current-password"
+                bind:value={password}
+                required
+              /></label
+            >{/if}
+          <button class="primary wide" type="submit" disabled={busy}
+            >{busy ? "ログイン中…" : "ログイン"}</button
+          >
+        </form>
+      </section>
+    {:else if route === "home"}
       <div class="home-title">
         <span class="eyebrow">A LITTLE CHOICE, A NEW DISH.</span>
         <h1>今日の一品、ここから。</h1>
@@ -1018,9 +1179,7 @@
             <span class="muted">いくつでも選べます</span>
           </div>
           <div class="food-grid">
-            {#each foods
-              .filter((f) => f.imageIndex !== null)
-              .slice(0, 12) as food}<FoodTile
+            {#each foods.slice(0, 12) as food}<FoodTile
                 {food}
                 selected={selectedFoods.includes(food.id)}
                 onselect={() => toggleFood(food.id)}
@@ -1079,7 +1238,7 @@
           <span class="hero-tag"
             ><Sparkles
               size={13}
-            />まずは8品のサンプルから。人数・分量は料理を選んだあとに。</span
+            />人数・分量は料理を選んだあとに、自由に調整できます。</span
           >
         </aside>
       </div>
@@ -1152,8 +1311,10 @@
         >
       </div>
       <p class="muted gap-bottom">
-        {searchResults.length}品のサンプル ·
-        人数と材料量は、料理を開いたあとで変更できます。
+        {searchBusy
+          ? "検索中…"
+          : `${resultTotal}品中 ${resultOffset + (searchResults.length ? 1 : 0)}〜${resultOffset + searchResults.length}品`}
+        · 人数と材料量は、料理を開いたあとで変更できます。
       </p>
       {#if searchResults.length}<div class="grid-results">
           {#each searchResults as recipe}<div>
@@ -1166,7 +1327,7 @@
           <Search size={38} />
           <h2>この条件の料理は、まだありません。</h2>
           <p>
-            今回は8品のサンプルです。食材を選び直すか、時間や買い足し条件を変更できます。
+            この条件に合う料理がありません。食材を選び直すか、時間や買い足し条件を変更できます。
           </p>
           <div class="row wrap" style="justify-content:center">
             <button class="primary" onclick={() => navigate("ingredients")}
@@ -1175,6 +1336,21 @@
               >条件を変える</button
             >
           </div>
+        </div>{/if}
+      {#if resultTotal > 50}<div
+          class="row between gap-top"
+          aria-label="料理のページ切り替え"
+        >
+          <button
+            class="secondary"
+            disabled={searchBusy || resultOffset === 0}
+            onclick={() => refreshResults(Math.max(0, resultOffset - 50))}
+            >前の50品</button
+          ><button
+            class="secondary"
+            disabled={searchBusy || resultOffset + 50 >= resultTotal}
+            onclick={() => refreshResults(resultOffset + 50)}>次の50品</button
+          >
         </div>{/if}
     {:else if route === "fridge"}
       <div class="page-header">
@@ -1244,9 +1420,7 @@
                 レシートからまとめて登録。<br
                 />ひとつずつ手入力でも、量はあとからでも。
               </p>
-              <button class="secondary" onclick={() => (modal = "sample-stock")}
-                >サンプル在庫を入れる</button
-              >
+
               <p class="check-note" style="margin-top:14px;margin-bottom:0">
                 明示して選んだときだけ見本の3件を追加します。
               </p>
@@ -1264,7 +1438,7 @@
             >
           </div>
           <p class="check-note">
-            このブラウザ内に保存します。数量が分からなくても登録できます。購入日は食品の期限として扱いません。
+            アカウントの冷蔵庫に保存します。数量が分からなくても登録できます。購入日は食品の期限として扱いません。
           </p>
         </aside>
       </div>
@@ -1286,9 +1460,7 @@
                     : "レシートから追加"}
             </h1>
           </div>
-          <span class="badge sample"
-            >{sampleReceipt ? "サンプル読取結果" : "この端末内で読取"}</span
-          >
+          <span class="badge sample">この端末内で読取</span>
         </div>
         {#if receiptPhase === "upload"}
           <p class="subtitle gap-bottom">
@@ -1350,10 +1522,6 @@
             onclick={runOcr}
             >{ocrError ? "もう一度読み取る" : "読み取る"}
             <ArrowRight size={19} /></button
-          ><button
-            class="text-button wide"
-            style="justify-content:center"
-            onclick={sampleRead}>サンプルで試す</button
           >
           <div class="notice gap-top">
             画像をサービスのサーバーへ送りません。読取用データの初回準備に少し時間がかかります。画像・読取全文は登録やキャンセル後に破棄します。
@@ -1385,9 +1553,7 @@
           <p class="subtitle gap-bottom">
             名前が違うときは「修正」。<br />量は、分かるものだけで大丈夫です。
           </p>
-          {#if sampleReceipt}<p class="notice gap-bottom">
-              これは操作確認用のサンプルです。実際のレシートを読み取った結果ではありません。
-            </p>{/if}
+
           <div class="list">
             {#each candidates.filter((c) => c.status !== "excluded") as c}<div
                 class="receipt-row"
@@ -1550,12 +1716,15 @@
           <section>
             <img
               class="recipe-hero"
-              src={`${base}food/${currentRecipe.id}.png`}
+              src={currentRecipe.imageUrl ||
+                `${base}food/recipe-placeholder.svg`}
               alt={currentRecipe.name}
             />
             <div class="row wrap gap-top">
               {#each currentRecipe.tags as tag}<span class="badge">{tag}</span
-                >{/each}<span class="badge sample">サンプル料理・画像</span>
+                >{/each}{#if currentRecipe.sample}<span class="badge sample"
+                  >未試作の開発確認用レシピ</span
+                >{/if}
             </div>
             <h1 class="recipe-detail-heading">{currentRecipe.name}</h1>
             <p class="subtitle">{currentRecipe.description}</p>
@@ -1710,7 +1879,7 @@
         <span class="badge">{appState.saved.length}品保存中</span>
       </div>
       {#if appState.saved.length}<div class="grid-results">
-          {#each appState.saved as id}{@const recipe = D.RECIPES.find(
+          {#each appState.saved as id}{@const recipe = catalogRecipes.find(
               (r) => r.id === id,
             )}{#if recipe}<RecipeCard
                 {recipe}
@@ -1769,7 +1938,8 @@
                 <div class="row">
                   <img
                     class="meal-thumb"
-                    src={`${base}food/${recipe.id}.png`}
+                    src={recipe.imageUrl ||
+                      `${base}food/recipe-placeholder.svg`}
                     alt={recipe.name}
                   />
                   <div style="flex:1">
@@ -1989,6 +2159,9 @@
           >
           <h1>{currentStep.title}</h1>
           <p>{currentStep.instruction}</p>
+          {#if currentStep.mode === "monitored"}<p class="notice warning">
+              火元を見守る工程です。調理場所を離れないでください。
+            </p>{/if}
           <div class="row wrap gap-top">
             <span class="chip"
               ><CookingPot size={16} />{currentStep.equipment.join("・") ||
@@ -2104,6 +2277,7 @@
                 </p>{/each}
             </div>{/if}<button
             class="primary wide gap-top"
+            disabled={busy}
             onclick={finishCooking}>完了 <Check size={20} /></button
           ><button class="text-button" onclick={() => navigate("cooking")}
             >工程に戻る</button
@@ -2169,35 +2343,18 @@
           <button class="primary wide" onclick={saveSettings}>変更を保存</button
           >
           <section class="panel">
-            <h2>このブラウザのデータ</h2>
+            <h2>アカウントのデータ</h2>
             <p class="subtitle">
-              冷蔵庫・保存・献立・調理状況などをこのブラウザに保存します。別端末への自動同期は、今回の試用版では未提供です。
+              冷蔵庫・保存・献立・調理状況をアカウントに保存します。別の端末でも、同じアカウントで続きから使えます。
             </p>
             <div class="row wrap gap-top">
               <button class="secondary" onclick={downloadBackup}
                 ><Download size={18} />データを書き出す</button
-              ><button class="secondary" onclick={() => backupInput?.click()}
-                ><Upload size={18} />データを読み込む</button
               >
             </div>
-            <input
-              class="visually-hidden"
-              type="file"
-              accept="application/json,.json"
-              bind:this={backupInput}
-              onchange={readBackup}
-              aria-label="バックアップを選ぶ"
-            />
             <p class="check-note gap-top">
-              安全な保存に必要なWeb
-              Locksを使えないブラウザでは、閲覧・書き出しのみ利用できます。最新版のブラウザでお試しください。読込みは、形式を検証した後に全置換の確認を表示します。ブラウザのデータ削除前には書き出しておいてください。
+              食材や献立の変更はサーバーに保存されます。通信に失敗した場合は内容を確認して再操作してください。同時に更新された場合は上書きせず、最新の内容を読み込みます。
             </p>
-            <button
-              class="text-button"
-              style="color:#b34b36"
-              onclick={() => (modal = "erase")}
-              ><Trash2 size={16} />この端末のデータを消去</button
-            >
           </section>
           <button class="secondary" onclick={() => navigate("help")}
             ><CircleHelp size={18} />使い方・Q&A</button
@@ -2234,19 +2391,19 @@
             ><ArrowRight /></a
           >
           <div class="panel">
-            <h2>試用版でできること</h2>
+            <h2>RecipeWeaveでできること</h2>
             <div class="list gap-top">
-              <p>✓ 8品のサンプル料理を、食材から検索</p>
+              <p>✓ データベースの料理を、食材から検索</p>
               <p>✓ レシート画像をこの端末内で文字読取</p>
               <p>✓ 冷蔵庫・保存・献立と、人数・材料量の調整</p>
               <p>✓ 調理手順・再開・終了時刻を保持するタイマー</p>
-              <p>✓ このブラウザの保存・JSON書き出しと復元</p>
+              <p>✓ アカウントで保存し、別端末から再開</p>
             </div>
             <div class="notice gap-top">
-              ログイン・端末間の自動同期は未提供です。タイマーは画面を閉じた状態で音による通知を行いません。切り方ガイドは図と文章で提供します。
+              ログインして使うと、在庫・献立・調理状況が保存されます。タイマーは画面を閉じた状態で音による通知を行いません。切り方ガイドは図と文章で提供します。
             </div>
             <p class="check-note gap-top">
-              画像と料理は操作を試すための見本です。任意の食材の組合せすべてを検索できる版ではありません。
+              「未試作」の料理は開発環境での確認用です。公開された料理の材料・工程を確認してから調理してください。
             </p>
           </div>
         </div>
@@ -2323,7 +2480,7 @@
                             ? "読み取りをやめますか？"
                             : modal === "guide"
                               ? "切り方ガイド"
-                              : "サンプル在庫を追加"}
+                              : "確認"}
         </h2>
         <button
           class="icon-button"
@@ -2337,6 +2494,11 @@
       {#if error}<p class="notice error gap-bottom" role="alert">
           {error}
         </p>{/if}
+      {#if error}<div class="notice error gap-bottom" role="alert">
+          {error}<button class="text-button" onclick={refreshWorkspace}
+            >最新の内容を読み込む</button
+          >
+        </div>{/if}
       {#if modal === "stock" || modal === "candidate"}
         {#if modal === "candidate"}<p class="notice gap-bottom">
             読取原文：{candidates.find((c) => c.id === editCandidate)?.rawText}
@@ -2405,7 +2567,7 @@
               }}>削除する</button
             >{:else}<button class="secondary" onclick={() => (modal = "")}
               >キャンセル</button
-            >{/if}<button class="primary" onclick={saveEdit}
+            >{/if}<button class="primary" disabled={busy} onclick={saveEdit}
             >{modal === "candidate"
               ? "確認して戻る"
               : editLot
@@ -2526,7 +2688,7 @@
           onclick={() => (modal = "duplicate")}>読取内容の確認に戻る</button
         >
       {:else if modal === "undo-import" && undoPreview}<p>
-          この登録で追加した、まだ使っていない残量だけを取り消します。以前からの在庫と使用履歴は残ります。
+          この登録のうち、まだ使用・編集していない食材を取り消します。使用・編集済みの食材と、以前からの在庫は残ります。
         </p>
         <div class="list gap-top">
           {#each undoPreview.lots as lot}<div class="panel">
@@ -2538,9 +2700,9 @@
                   ? D.quantityText(lot.quantity)
                   : "残量なし"}
               </p>
-              <p class="subtitle">取消後：この登録の残量なし</p>
+              <p class="subtitle">取消後：{lot.edited || lot.consumed.length || lot.status !== "active" ? "この食材は変更しません" : "この登録を取り消します"}</p>
               {#if lot.edited || lot.consumed.length}<span class="badge warning"
-                  >使用・編集済み：現在の残量を確認してください</span
+                  >使用・編集済みの食材は残ります</span
                 >{/if}
             </div>{/each}
         </div>
@@ -2553,68 +2715,6 @@
             >{undoPreview.alreadyUndone
               ? "取消済み"
               : "この内容で取り消す"}</button
-          >
-        </div>
-      {:else if modal === "backup" && backup}<p>
-          このブラウザの現在のデータを、ファイルの内容に置き換えます。合算はしません。
-        </p>
-        <div class="notice gap-top">
-          読込み内容：在庫 {backup.lots.filter((l) => l.status === "active")
-            .length}件、保存 {backup.saved.length}品、献立 {backup.meal
-            .length}品、登録履歴 {backup.imports.length}件
-        </div>
-        <p class="subtitle">
-          冷蔵庫・保存・献立・調理状況・設定が置換対象です。必要なら先に現在のデータを書き出してください。
-        </p>
-        <button class="text-button" onclick={downloadBackup}
-          >現在のデータを書き出す</button
-        >
-        <div class="modal-actions">
-          <button
-            class="secondary"
-            onclick={() => {
-              backup = null;
-              modal = "";
-            }}>キャンセル</button
-          ><button class="primary" onclick={confirmBackup}
-            >この内容で置き換える</button
-          >
-        </div>
-      {:else if modal === "erase"}<p>
-          このブラウザの冷蔵庫・献立・保存・履歴・調理・設定を消去します。元に戻すには書き出したバックアップが必要です。
-        </p>
-        <button class="text-button" onclick={downloadBackup}
-          >消去前にデータを書き出す</button
-        >
-        <div class="modal-actions">
-          <button class="secondary" onclick={() => (modal = "")}
-            >キャンセル</button
-          ><button
-            class="danger"
-            onclick={async () => {
-              try {
-                if (storageIssue) {
-                  appState = await recoverBackup(
-                    recoveryToken ?? inspectRecovery(),
-                    D.createInitialState(),
-                  );
-                  storageIssue = "";
-                  notify("このブラウザのデータを消去しました。");
-                } else if (
-                  !(await change(
-                    () => D.createInitialState(),
-                    "このブラウザのデータを消去しました。",
-                  ))
-                )
-                  return;
-                modal = "";
-                chooseRandom();
-                navigate("home");
-              } catch (e) {
-                error =
-                  e instanceof Error ? e.message : "消去できませんでした。";
-              }
-            }}>データを消去する</button
           >
         </div>
       {:else if modal === "cancel-receipt"}<p>
@@ -2714,20 +2814,7 @@
         <button class="primary wide gap-top" onclick={() => (modal = "")}
           >元の工程に戻る</button
         >
-      {:else if modal === "sample-stock"}<p>
-          操作を試すために、なす（数量不明）・卵（1個）・豆腐（300g）を追加します。実際の手持ちとは異なるサンプルです。
-        </p>
-        <div class="modal-actions">
-          <button class="secondary" onclick={() => (modal = "")}
-            >キャンセル</button
-          ><button
-            class="primary"
-            onclick={() => {
-              sampleStock();
-              modal = "";
-            }}>サンプル在庫を入れる</button
-          >
-        </div>{/if}
+      {/if}
     </div>
   </div>
 {/if}

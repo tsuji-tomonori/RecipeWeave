@@ -1,74 +1,94 @@
-# 設計書の自動生成と検証
+# 設計書の自動生成と品質証跡
 
-Dev Standardの「要件正本・実装からの設計生成・品質ゲート」に従う。
-参照元は `tsuji-tomonori/dev-standard` の `1b92caa53ecf42a431774e73c53838494d58c516`。
-要件は `spec/requirements/requirements.qnt`、実際のAPIはFastAPI、物理DBは移行DDLを正とする。
+Dev Standardの要件正本・実装由来の設計・必要な品質ゲートを維持する。
+今回の公開形式は `CornellNoteWebv2` の dev `aa680430d7b309a3ed478dc86d17e23198fd1089` を参照し、
+検索可能なStarlight設計サイト、実行結果一覧、日本語のGiven / When / Then画像を導入した。
+レシピサービスのアプリはPagesのトップ、品質証跡は `/quality/`、設計は `/quality/design/` に置く。
 
-## 生成対象
+## 実装と設計の正本
 
-| 入力 | 自動生成する仕様 |
+要件は `spec/requirements/requirements.qnt`、原DB計画はDriveから取得した
+`spec/database/source-sheet.json`、物理構造は `database/migrations/*.sql`、
+提供APIはFastAPIが実際に登録するルートとOpenAPIを正とする。
+初期の2表だけの実装は原DB計画の完了ではなかったため、元の71表を実装して照合対象に含める。
+追加表・補完列・移行台帳も実DDLから数え、期待件数を固定文字列で書き込まない。
+
+| 入力 | 自動生成する設計 |
 |---|---|
-| 移行SQLと移行台帳のCREATE TABLE | テーブル一覧・各表の列型、NULL、既定値、制約・ER図 |
-| `database/design.manual.json` | 表・列の日本語の意味。型や制約はここから生成しない |
-| 実FastAPI OpenAPIと各操作の`contract.py` | API一覧・入出力・認証・応答・共有モデル・enum・制約 |
-| 各APIの`sql/*.sql` | SQL本文・バインド変数・対象表と列・CRUDマトリクス |
-| 各操作の`router.py`と`functions.py` | 関数ごとのシーケンス・責務・対応する実装 |
-| 依存解決・例外handler・middleware | 詳細設計・共通エラー仕様 |
-| 対象メソッドとURLを明示するテスト | API別の検証仕様と表明一覧 |
-| サンプルJSON・フロント・CDK合成結果 | サービス一覧・CDK資源一覧 |
-| 入力ファイル・出力内容 | 生成物一覧・SHA-256マニフェスト |
+| PostgreSQL文法で解析した全移行、DDLから抽出したカタログ | 全テーブル一覧、列型・NULL・既定値・CHECK・一意性・外部キー・索引、ER |
+| DDLのCOMMENT、原設計との対応、保持方針 | テーブル・列の日本語の意味と保持区分 |
+| 実OpenAPIと操作メタデータ | API一覧、型・制約・enum、認証、要求・応答、単独のSwagger互換JSON |
+| 操作ごとのSQL、共有監査・アウトボックスSQL | SQL全文、バインド、実テーブルと列、縦方向のCRUD対応 |
+| router・functions・共有EntityServiceのAST | 入力→DBと値の出所→返却値の詳細設計、分岐とトランザクションのシーケンス |
+| 実logger呼出 | ログレベル、イベント本文、構造化項目、発生関数・位置 |
+| テスト関数・明示した要因対応 | 要因別のGiven / When / Thenと実在test node、表明 |
+| CDK合成結果、フロント実装、初期投入データ | 実装要素、配備定義、再現用データの記録 |
+| 全入力と出力 | 出力一覧、SHA-256マニフェスト |
 
-出力は [生成設計書の入口](generated/README.md)。`api/`・`database/`は生成専用。
-`generator.md`はレシピ生成器側の独立した生成コマンドが管理する。
+APIごとに **詳細・インターフェース・メッセージ・クエリ・シーケンス・要因別テストの6帳票** を生成する。
+詳細設計をソースコード全文の貼付で代替しない。ログはHTTPエラー本文を転記せず、実装された出力を載せる。
+SQLを持たない操作やログを持たない操作では、その事実を明示する。
 
-## 更新手順
+## 更新コマンド
 
-リポジトリのルートで実行する。依存は`uv.lock`と各`package-lock.json`に固定する。
+リポジトリのルートで実行する。Pythonはuv、Nodeは各package-lockに固定する。
+CDK合成と実OpenAPI・SQL呼出しの生成を先に完了する。
 
 ```sh
-uv sync --locked --all-packages
-uv run --locked --package recipeweave-api app-sql-lint
-uv run --locked --package recipeweave-api app-docs
-uv run --locked --package recipeweave-api python backend/tools/package_lambda.py --architecture x86_64
-npm run synth --prefix infra
-uv run --locked python -m recipeweave_generator.design
-uv run --locked python tools/generate_service_design.py
-uv run --locked python tools/generate_service_design.py --check
-uv run --locked pytest tests/test_service_design.py -q
+uv run python database/schema_catalog.py --check
+uv run python tools/generate_entity_apis.py --check
+uv run app-sql-lint
+uv run app-docs
+npm --prefix infra run synth
+uv run python -m recipeweave_generator.design
+uv run python tools/generate_service_design.py
+uv run python tools/generate_service_design.py --check
+uv run pytest tests/test_service_design.py tests/test_quality_reports.py
+python tools/report.py
+DOCS_BASE=/RecipeWeave/quality/design python tools/docs_site.py
 ```
 
-`--check`は書き込まない。生成コマンドは入力を全件検査してから管理対象を更新する。
-APIの削除で不要となった設計書は削除し、生成先のシンボリックリンクや管理対象外のファイルは拒否する。
-CIでは再生成後に`tools/check_generated_service.py`でGit差分も確認する。
-生成物の変更はソース変更と一緒にレビュー・コミットする。図だけを手で修正してはならない。
+出力入口は [生成設計書](generated/README.md)。API・DBの生成専用ディレクトリと管理対象の一覧ファイルだけを更新する。
+`--check`は一切書き込まず、差分・欠落・余剰を検出する。削除されたAPIの古い仕様は生成時に削除する。
+シンボリックリンク、管理範囲から外れるパス、未定義のOpenAPI参照を拒否する。
 
-## SQLと解析範囲
+## PostgreSQLの解析範囲
 
-APIのDBアクセスは`sql/*.sql`、型付き生成wrapper、psycopgプロバイダーを経由する。
-現実装はORMを使用していない。JSONカタログ参照・稼働確認APIに実行しないSQLを置かない。
-SQLFluffはPostgreSQL方言、psycopgの名前付きプレースホルダーを検査用の値で解析する。
-SQLGlotは構造・対象表・明示列を検査する。利用者の実データや接続情報は静的解析に渡さない。
+SQLFluff、SQLGlot、pglastを役割ごとに使う。
+SQLFluffはSQLの構文と記法、SQLGlotはAPIクエリの名前解決・対象表・列・CRUD、
+pglastは全移行のPostgreSQL構文を検査する。
+DDLカタログの表・列・外部キー・索引集合はpglastの文法木と照合し、抽出の漏れを成功扱いしない。
+CREATE TABLE以外の拡張、外部キー追加、索引、CHECK、関数、トリガー、RLSも移行契約として生成する。
+PL/pgSQL関数本体の意味は静的な一覧だけで証明せず、実PostgreSQLの移行・制約試験を別に実施する。
 
-物理表は現在2表。`user_state.payload`内部の配列や、将来のレシピDBの計画を物理表として扱わない。
-外部キーがなければER図に線を追加しない。DDL解析は明示列を持つCREATE TABLEを対象とし、
-ALTER・DROP・独立インデックス等が追加された時点で生成を停止する。対応投影と回帰試験を追加してから進める。
-既定値・列制約・表制約はSQL ASTから投影する。
-列内REFERENCES、CTE、入れ子DML、ON CONFLICTによる更新は未対応として拒否する。
-nullableな項目も分岐内の最小値・最大値をインターフェース表に表示する。
+CTE・副問い合わせ・集約・表関数の派生列はSQLGlotのscopeで解決し、派生表を物理表として数えない。
+PostgreSQLの `xmin` は競合判定用のシステム列として認識する。
+更新と同じトランザクションで行う監査・アウトボックスへのINSERTも各操作のCRUDへ含める。
+実装とSQLの列集合が不一致、未定義表、不正な列参照、未対応の複合DMLは生成を停止する。
 
-シーケンスは関数単位。if・for・while・return・raise・continue・breakを保持し、
-短絡評価・内包表記は条件付き式として残す。依存解決やプロバイダー内部を推測で展開しない。
-try/with/matchや動的な呼出先等は未対応として失敗する。対応する実装も併記する。
-テストの静的抽出は成功実績や全要件の受入完了を意味しない。CIの実行結果と併せて判断する。
+## 品質証跡の入力と公開
+
+| 実測ファイル | 公開内容 |
+|---|---|
+| `reports/quality.json` | 検査名・終了コード・実出力、失敗の理由 |
+| `reports/*-junit.xml`、`reports/pytest.xml`、`reports/vitest.json` | パラメーター展開後の単体・結合テスト一覧、失敗・スキップ |
+| `reports/playwright.json` | E2Eケース、各段階の日本語説明、取得したPNG |
+| `reports/python-coverage.json`、`reports/frontend-coverage/coverage-summary.json` | C0・C1とコード行のHTMLレポートへのリンク |
+| `reports/sqlfluff.json` | SQLの実指摘と対応するソース |
+
+Playwrightでは `Given: 日本語の前提`、`When: 日本語の操作`、`Then: 日本語の結果` の名前でPNGをattachする。
+各画像はその操作で取得したものを使う。未実行は未実行、未計測は未計測と表示し、0件を成功へ変換しない。
+成功したE2Eで3段階の画像が欠けている場合、品質レポート生成も「証跡不足」で失敗する。
+実装からの設計はコードとの一致を示す資料で、AWS実配備や実ログインの成功実績とは区別する。
+
+Starlightは検索・章一覧・ページ内見出し・Mermaidを備える。
+Markdown内部リンクは公開URLへ変換し、変換対象の欠落とビルド後の内部リンク切れを検出する。
+品質画面は全ケースを常時表示し、PC・スマートフォン別に選べる階層一覧と画像の原寸表示を用意する。
+GitHub Pagesではアプリ成果物へ `reports/` を `quality/` として組み込み、同じ検証対象コミットを表示する。
 
 ## 日本語とスキル
 
-手書きのコメント・docstring・設計上の説明は日本語にする。識別子、プロトコル値、外部仕様の引用は保持する。
-適用済み移行001と検証SQLはチェックサム保護のためバイト列を保持する。説明は`database/README.md`へ補記する。
-固定配布スキルとreceiptは変更せず、追加契約はリポジトリ内の`recipeweave-design-contract`スキルへ記載する。
-
-## devブランチと公開
-
-変更はfeatureからdevへのPRでレビューする。devのCIでも同じ生成・検証を実行する。
-GitHub Pagesへの公開は既存の`github-pages`環境の保護ルールに従う。
-ブランチが許可されていない場合は設定所有者の対応が必要で、別環境への付け替えや検査の無効化は行わない。
+手書きのコメント・docstring・人向け説明は日本語にする。識別子・外部仕様値は原表記を保持する。
+適用済み移行001のチェックサムは保持する。固定配布スキル・receiptのhashは書き換えず、
+プロジェクト固有の生成契約は `recipeweave-design-contract` へ追記する。
+公開は既存のGitHub環境保護に従い、検査の無効化や別環境への付け替えで回避しない。

@@ -1,0 +1,64 @@
+name: recipeweave
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.2-pg16
+    environment:
+      POSTGRES_USER: recipeweave_owner
+      POSTGRES_PASSWORD: recipeweave-local
+      POSTGRES_DB: recipeweave
+    ports: ['127.0.0.1:5432:5432']
+    volumes: ['postgres-data:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U recipeweave_owner -d recipeweave']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment: &local-environment
+      MIGRATION_DATABASE_URL: postgresql://recipeweave_owner:recipeweave-local@postgres:5432/recipeweave
+      DATABASE_URL: postgresql://recipeweave_app:recipeweave-local@postgres:5432/recipeweave
+      ENVIRONMENT: local
+      AUTH_MODE: local
+      LOCAL_AUTH_SECRET: recipeweave-local-only-secret-32-characters-minimum
+      LOCAL_AUTH_PASSWORD: recipeweave-local
+    command: ['python', 'tools/start_database.py']
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      <<: *local-environment
+      MIGRATION_DATABASE_URL: ''
+    ports: ['127.0.0.1:8000:8000']
+    healthcheck:
+      test: ['CMD', 'python', '-c', "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      API_PROXY_TARGET: http://api:8000
+      VITE_AUTH_MODE: local
+    ports: ['127.0.0.1:5173:5173']
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://127.0.0.1:5173').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+volumes:
+  postgres-data:

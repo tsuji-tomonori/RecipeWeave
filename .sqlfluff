@@ -11,6 +11,24 @@ param_style = pyformat
 subject = 'verified-subject'
 payload = '{}'
 revision = 1
+end = 120
+start = 0
+index = 0
+offset = 0
+actor_id = '00000000-0000-0000-0000-000000000001'
+reference_id = '00000000-0000-0000-0000-000000000001'
+after_id = '00000000-0000-0000-0000-000000000001'
+
+q = ''
+preview = FALSE
+recipe_id = '00000000-0000-0000-0000-000000000001'
+exclude_id = '00000000-0000-0000-0000-000000000002'
+max_minutes = 30
+selected_food_ids = '{}'
+excluded_food_ids = '{}'
+equipment = '{}'
+match = 'all'
+limit = 50
 
 [sqlfluff:rules:capitalisation.keywords]
 capitalisation_policy = upper
@@ -20,3 +38,8 @@ extended_capitalisation_policy = upper
 
 [sqlfluff:rules:capitalisation.types]
 extended_capitalisation_policy = upper
+
+# 原設計の列名に使われるPostgreSQLの非予約語を保持する。
+# 真の予約語offsetは対象外とし、引用符を必須にする。
+[sqlfluff:rules:references.keywords]
+ignore_words = name,version,alias,locale,label,mode,role,exclusive,strict,position,checked,action,valid,key

@@ -1,0 +1,336 @@
+import type {
+  AppState,
+  Food,
+  Recipe,
+  SearchFilters,
+  ReceiptCommit,
+  StockLot,
+  ConsumptionRequest,
+} from "./types";
+import { cacheRecipes } from "./domain";
+import { validateAppState } from "./persistence";
+import { clearToken, getToken, setToken, localMode } from "./auth";
+
+export interface User {
+  id: string;
+  display_name: string;
+  role: string;
+}
+export interface StateEnvelope {
+  version: number;
+  snapshot: AppState | null;
+}
+export interface RecipePage {
+  items: Recipe[];
+  total: number;
+  offset: number;
+  limit: number;
+}
+export class ApiError extends Error {
+  constructor(
+    public status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+const API_ROOT =
+  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(
+    /\/$/,
+    "",
+  ) ?? "";
+
+/** 失敗した更新を自動再送しない。重複登録や古い状態の上書きを防ぐ。 */
+export async function request<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> {
+  const headers = new Headers(options.headers);
+  const token = getToken();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (options.body) headers.set("Content-Type", "application/json");
+  let response: Response;
+  try {
+    response = await fetch(`${API_ROOT}${path}`, {
+      ...options,
+      headers,
+      cache: "no-store",
+      signal: options.signal ?? AbortSignal.timeout(20000),
+    });
+  } catch {
+    throw new ApiError(
+      0,
+      "サーバーに接続できません。通信状態を確認して、再読み込みしてください。入力中の内容は保持しています。",
+    );
+  }
+  if (!response.ok) {
+    if (response.status === 401) {
+      clearToken();
+      throw new ApiError(
+        401,
+        path === "/api/auth/local-login"
+          ? "ユーザー名またはパスワードが違います。"
+          : "ログインの有効期限が切れました。もう一度ログインしてください。",
+      );
+    }
+    if (response.status === 409 || response.status === 412)
+      throw new ApiError(
+        response.status,
+        "ほかの画面で更新されています。最新の内容を読み込んでから、もう一度操作してください。",
+      );
+    const body = (await response.json().catch(() => ({}))) as {
+      detail?: unknown;
+      message?: unknown;
+    };
+    const detail =
+      typeof body.detail === "string"
+        ? body.detail
+        : typeof body.message === "string"
+          ? body.message
+          : "";
+    throw new ApiError(
+      response.status,
+      detail ||
+        (response.status === 403
+          ? "この操作を行う権限がありません。"
+          : "処理を完了できませんでした。入力内容を確認してください。"),
+    );
+  }
+  return response.status === 204
+    ? (undefined as T)
+    : ((await response.json()) as T);
+}
+export async function localLogin(
+  username: string,
+  password: string,
+): Promise<User> {
+  const result = await request<{ access_token: string; user: User }>(
+    "/api/auth/local-login",
+    {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+    },
+  );
+  setToken(result.access_token);
+  return result.user;
+}
+export async function currentUser(): Promise<User | null> {
+  if (!getToken()) return null;
+  return request<User>("/api/me");
+}
+export async function loadFoods(): Promise<Food[]> {
+  const result = await request<{ items: Food[]; total: number }>("/api/foods");
+  return result.items;
+}
+export async function findRecipes(
+  filters?: SearchFilters,
+  excludedFoodIds: string[] = [],
+  offset = 0,
+): Promise<RecipePage> {
+  const params = new URLSearchParams({ limit: "50", offset: String(offset) });
+  if (localMode && getToken()) params.set("preview", "true");
+  if (filters) {
+    for (const id of filters.selectedFoodIds)
+      params.append("selectedFoodIds", id);
+    params.set("match", filters.match);
+    if (filters.maxMinutes !== null)
+      params.set("maxMinutes", String(filters.maxMinutes));
+    for (const equipment of filters.equipment)
+      params.append("equipment", equipment);
+  }
+  for (const id of excludedFoodIds) params.append("excludedFoodIds", id);
+  const result = await request<RecipePage>(`/api/recipes?${params}`);
+  cacheRecipes(result.items);
+  return result;
+}
+export async function randomRecipe(
+  excludedFoodIds: string[],
+  previousId = "",
+): Promise<Recipe> {
+  const params = new URLSearchParams();
+  if (localMode && getToken()) params.set("preview", "true");
+  if (previousId) params.set("excludeId", previousId);
+  for (const id of excludedFoodIds) params.append("excludedFoodIds", id);
+  const recipe = await request<Recipe>(`/api/recipes/random?${params}`);
+  cacheRecipes([recipe]);
+  return recipe;
+}
+export async function loadRecipe(id: string): Promise<Recipe> {
+  const recipe = await request<Recipe>(
+    `/api/recipes/${encodeURIComponent(id)}${localMode && getToken() ? "?preview=true" : ""}`,
+  );
+  cacheRecipes([recipe]);
+  return recipe;
+}
+/** 献立等が参照する料理を先に読んでから、画面用の集約を検証する。 */
+async function hydrateWorkspace(snapshot: AppState): Promise<AppState> {
+  const recipeIds = new Set([
+    ...snapshot.meal.map((item) => item.recipeId),
+    ...snapshot.saved,
+    ...Object.keys(snapshot.drafts),
+    ...(snapshot.cooking?.mealSnapshot.map((item) => item.recipeId) ?? []),
+  ]);
+  await Promise.all([...recipeIds].map(loadRecipe));
+  return validateAppState(snapshot);
+}
+export async function loadState(): Promise<AppState> {
+  return hydrateWorkspace(await request<AppState>("/api/workspace"));
+}
+const same = (a: unknown, b: unknown): boolean =>
+  JSON.stringify(a) === JSON.stringify(b);
+const stockInput = (lot: StockLot) => ({
+  foodId: lot.foodId,
+  quantity: lot.quantity,
+  form: lot.form,
+  location: lot.location,
+  priority: lot.priority,
+  expiresOn: lot.expiresOn,
+});
+
+/** 一回のUI操作を業務APIへ変換する。成功したrevisionを次の操作へ渡す。 */
+export async function saveState(
+  current: AppState,
+  next: AppState,
+): Promise<AppState> {
+  let result = current;
+  const mutate = async (path: string, method: string, body: object = {}) => {
+    result = await request<AppState>(path, {
+      method,
+      body: JSON.stringify({ ...body, expectedVersion: result.version }),
+    });
+  };
+  const newImports = next.imports.filter(
+    (entry) => !current.imports.some((old) => old.id === entry.id),
+  );
+  if (newImports.length)
+    throw new ApiError(422, "レシートは確認画面から登録してください。");
+  for (const food of next.customFoods.filter(
+    (item) => !current.customFoods.some((old) => old.id === item.id),
+  ))
+    await mutate("/api/foods/custom", "POST", { food });
+  for (const entry of next.imports) {
+    const old = current.imports.find((item) => item.id === entry.id);
+    if (old?.state === "registered" && entry.state === "undone")
+      await mutate(
+        `/api/receipts/${encodeURIComponent(entry.id)}/undo`,
+        "POST",
+      );
+  }
+  for (const lot of next.lots) {
+    if (lot.status === "undone") continue;
+    const old = current.lots.find((item) => item.id === lot.id);
+    if (!old)
+      await mutate("/api/pantry-lots", "POST", {
+        id: lot.id,
+        ...stockInput(lot),
+      });
+    else if (!same(old, lot)) {
+      if (lot.status === "deleted")
+        await mutate(
+          `/api/pantry-lots/${encodeURIComponent(lot.id)}`,
+          "DELETE",
+        );
+      else
+        await mutate(
+          `/api/pantry-lots/${encodeURIComponent(lot.id)}`,
+          "PATCH",
+          { ...stockInput(lot), restore: old.status === "deleted" },
+        );
+    }
+  }
+  for (const item of current.meal.filter(
+    (item) => !next.meal.some((value) => value.id === item.id),
+  ))
+    await mutate(
+      `/api/menus/current/items/${encodeURIComponent(item.id)}`,
+      "DELETE",
+    );
+  for (const item of next.meal) {
+    const old = current.meal.find((value) => value.id === item.id);
+    if (!old) await mutate("/api/menus/current/items", "POST", { item });
+    else if (!same(old, item))
+      await mutate(
+        `/api/menus/current/items/${encodeURIComponent(item.id)}`,
+        "PATCH",
+        { item },
+      );
+  }
+  for (const id of next.saved.filter((id) => !current.saved.includes(id)))
+    await mutate(`/api/saved-recipes/${encodeURIComponent(id)}`, "PUT");
+  for (const id of current.saved.filter((id) => !next.saved.includes(id)))
+    await mutate(`/api/saved-recipes/${encodeURIComponent(id)}`, "DELETE");
+  if (!same(current.settings, next.settings))
+    await mutate("/api/settings", "PUT", { settings: next.settings });
+  if (!same(current.shoppingChecks, next.shoppingChecks))
+    await mutate("/api/shopping-checks", "PUT", {
+      checks: next.shoppingChecks,
+    });
+  if (!same(current.cooking, next.cooking) && next.cooking)
+    await mutate(
+      current.cooking?.id === next.cooking.id
+        ? `/api/cooking-sessions/${encodeURIComponent(next.cooking.id)}`
+        : "/api/cooking-sessions",
+      current.cooking?.id === next.cooking.id ? "PATCH" : "POST",
+      { session: next.cooking },
+    );
+  // 検索条件と料理選択前の分量調整は、この画面だけの一時状態。
+  return {
+    ...(await hydrateWorkspace(result)),
+    search: next.search,
+    drafts: next.drafts,
+  };
+}
+export async function completeCooking(
+  current: AppState,
+  deduct: boolean,
+  consumption: ConsumptionRequest[],
+): Promise<AppState> {
+  if (!current.cooking) throw new ApiError(422, "進行中の調理がありません。");
+  const result = await request<AppState>(
+    `/api/cooking-sessions/${encodeURIComponent(current.cooking.id)}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        expectedVersion: current.version,
+        deduct,
+        session: {
+          ...current.cooking,
+          status: "completed",
+          consumptionResults: consumption.map((item) => ({
+            ...item,
+            applied: false,
+            reason: "利用者が入力した実使用量",
+            lotIds: [],
+          })),
+        },
+      }),
+    },
+  );
+  return {
+    ...(await hydrateWorkspace(result)),
+    search: current.search,
+    drafts: current.drafts,
+  };
+}
+export async function commitReceipt(
+  current: AppState,
+  input: ReceiptCommit,
+  customFoods: Food[],
+): Promise<AppState> {
+  const result = await request<AppState>("/api/receipts/commit", {
+    method: "POST",
+    body: JSON.stringify({
+      ...input,
+      // OCRの元の行や除外行はサーバーへ送らず、確認済みの食品と数量だけを渡す。
+      candidates: input.candidates.filter((candidate) => candidate.selected).map((candidate) => ({ ...candidate, rawText: "", reason: "利用者確認済み" })),
+      customFoods,
+      expectedVersion: current.version,
+    }),
+  });
+  return {
+    ...(await hydrateWorkspace(result)),
+    search: current.search,
+    drafts: current.drafts,
+  };
+}

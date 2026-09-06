@@ -1,0 +1,3 @@
+# generate_entity_apis.py による自動生成。直接編集しない。
+from app.entities.models import GenerationResultRow as GenerationResultRow
+from app.entities.models import GenerationResultWrite as GenerationResultWrite

@@ -28,10 +28,10 @@ def render(root: Path = ROOT) -> str:
         "`uv run python tools/generate_service_design.py` で生成、`--check` で差分検査。",
         "コードと配備定義の存在を示す。実配備・実機評価・OCR精度の実測を証明するものではない。",
         "",
-        "## サンプルデータ",
+        "## 再現用の旧サンプル入力",
         "",
         f"食材 {len(foods)} 件、料理 {len(recipes)} 件。"
-        "完成レシピの本番カタログとは別のDev用標本。",
+        "初期検証に用いた標本。公開APIの実データ取得元は各SQL仕様、正規化DBへの投入はdatabase/seed.pyを参照する。",
         "",
         "| ファイル | SHA-256 |",
         "|---|---|",
@@ -114,17 +114,61 @@ def build_outputs(root: Path = ROOT) -> dict[str, str]:
     queries = load_queries(root, tables, {op.slug: op.id for op in operations})
     outputs = {"service.md": render(root)}
     outputs.update(render_database(tables, queries))
+    if (root / "database/schema-policy.json").exists():
+        from database.schema_catalog import extract
+        from tools.design.postgres import inspect_postgres
+
+        catalog = extract(root)
+        contracts = inspect_postgres(root, catalog)["statements"]
+        original = json.loads(read_source(root / "spec/database/source-sheet.json", root))
+        mapping = []
+        for row in original["tabs"]["01_テーブル一覧"][1:]:
+            _, domain, name, meaning, expected_columns, *_ = row
+            physical = tables["recipeweave." + name]
+            mapping.append(
+                [
+                    name,
+                    domain,
+                    meaning,
+                    expected_columns,
+                    len(physical.columns),
+                    f"[実DDL仕様](tables/recipeweave.{name}.md)",
+                ]
+            )
+        outputs["database/SOURCE-MAPPING.md"] = document(
+            "Driveの原DB設計と物理実装の対応",
+            [
+                "原表を一つずつ実DDLへ照合する。原設計の全列型・NULL性もカタログ生成時に確認し、追加列と変更根拠はschema-policyのcolumn_evolutionsで明示する。",
+                table(["原テーブル", "領域", "意味", "原列数", "実列数", "物理実装"], mapping),
+                "移行台帳、レシート等の追加表は [全物理テーブル一覧](README.md) に含める。",
+            ],
+        )
+        outputs["database/CONTRACTS.md"] = document(
+            "移行・索引・DB内部契約",
+            [
+                "全移行をPostgreSQL文法で解析する。関数本体はソースとして示し、DB内実行の受入は結合テスト結果で確認する。",
+                table(["定義元", "SQL構文種別"], [[c["source"], c["kind"]] for c in contracts]),
+                *(
+                    f"## {c['source']}\n\n```sql\n{c['sql']}\n```"
+                    for c in contracts
+                    if c["kind"] not in {"CreateStmt", "IndexStmt"}
+                ),
+            ],
+        )
     outputs.update(render_api(root, operations, spec, tables, queries))
     outputs["README.md"] = document(
         "実装から自動生成した設計書",
         [
-            f"{len(tables)} テーブル・{len(operations)} API・{len(queries)} SQLを対象とする。",
-            "[テーブル一覧](database/README.md) / [ER図](database/ER.md) / "
+            f"{len(tables)} テーブル・{len(operations)} API・"
+            f"{len({q.source for q in queries})} SQLファイルを対象とする。"
+            f"共有呼出しを含むAPIとSQLの対応は {len(queries)} 件。",
+            "[原設計との対応](database/SOURCE-MAPPING.md) / [テーブル一覧](database/README.md) / "
+            "[ER図](database/ER.md) / "
             "[API一覧](api/README.md) / [CRUD](api/CRUD.md)",
             "[APIモデル・enum](api/MODELS.md) / [共通エラー](api/ERRORS.md) / "
             "[サービス・CDK](service.md) / [レシピ生成](generator.md)",
             "[出力一覧](REGISTRY.md) / [生成元・ハッシュ](MANIFEST.md)",
-            "APIごとのインターフェース・SQL・詳細・シーケンス・検証仕様はAPI一覧から参照できる。",
+            "APIごとのインターフェース・詳細設計・ログ・SQL・シーケンス・要因別テストの6帳票と、単独のSwagger互換JSONはAPI一覧から参照できる。",
             "生成方法と解析範囲は [開発者向け手順](../AUTOMATION.md) を参照。"
             "実装の存在を示す資料であり、未実施の本番接続や受入を完了扱いしない。",
         ],
@@ -152,11 +196,13 @@ def build_outputs(root: Path = ROOT) -> dict[str, str]:
         root / ".sqlfluff",
     }
     for directory, patterns in {
-        "backend/src": ("*.py", "*.sql"),
+        "backend/src": ("*.py", "*.sql", "*.json"),
         "backend/tests": ("*.py",),
         "database": ("*.py", "*.sql", "*.json"),
         "tools/design": ("*.py",),
         "data/samples": ("*.json",),
+        "database/seed_data": ("*.json",),
+        "spec/database": ("*.json",),
         "frontend/src": ("*.ts", "*.svelte"),
         "infra/lib": ("*.ts",),
         "infra/cdk.out": ("*.template.json",),

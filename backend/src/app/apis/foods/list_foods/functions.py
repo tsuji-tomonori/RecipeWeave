@@ -6,12 +6,6 @@ from .schemas import FoodsResponse
 
 
 def list_foods(catalog: CatalogPort, query: str) -> FoodsResponse:
-    """正規化した検索語に一致するサンプル食材名と別名を返す。"""
-    q = unicodedata.normalize("NFKC", query).casefold().strip()
-    items = [
-        f
-        for f in catalog.foods()
-        if not q
-        or any(q in unicodedata.normalize("NFKC", term).casefold() for term in [f.name, *f.aliases])
-    ]
-    return FoodsResponse(items=items, total=len(items))
+    """入力を正規化し、DBの食品・別名に対して検索する。"""
+    items, total = catalog.foods(unicodedata.normalize("NFKC", query).casefold().strip())
+    return FoodsResponse(items=items, total=total)

@@ -11,10 +11,84 @@ import {
 import { webcrypto } from "node:crypto";
 import App from "./App.svelte";
 import { createInitialState, getDraft, startCooking } from "./lib/domain";
-import { loadState, STORAGE_KEY } from "./lib/persistence";
+import * as D from "./lib/domain";
+import type { AppState, SearchFilters, ReceiptCommit, Food } from "./lib/types";
+import { fixtureFoods, fixtureRecipes } from "./test-fixtures";
+const backend = vi.hoisted(() => ({
+  state: null as AppState | null,
+  failLoad: false,
+}));
+vi.mock("./lib/auth", () => ({
+  completeLogin: async () => {},
+  localMode: true,
+  logout: () => {},
+  loginCognito: async () => {},
+}));
+vi.mock("./lib/api", async () => ({
+  ApiError: class extends Error {
+    status = 0;
+  },
+  currentUser: async () => ({
+    id: "alice",
+    display_name: "Alice",
+    role: "user",
+  }),
+  loadFoods: async () => {
+    if (backend.failLoad) throw new Error("サーバーに接続できません");
+    return fixtureFoods;
+  },
+  findRecipes: async (filters?: SearchFilters) => {
+    const items = filters
+      ? D.searchRecipes(backend.state!, filters)
+      : fixtureRecipes;
+    D.cacheRecipes(items);
+    return { items, total: items.length, offset: 0, limit: 50 };
+  },
+  randomRecipe: async (_excluded: string[], previous: string) => {
+    const recipe = D.randomRecipe(backend.state!, previous);
+    if (!recipe) throw new Error("対象なし");
+    return recipe;
+  },
+  loadRecipe: async (id: string) => D.getRecipe(id),
+  loadState: async () => structuredClone(backend.state!),
+  saveState: async (_old: AppState, next: AppState) => {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    backend.state = { ...structuredClone(next), version: next.version + 1 };
+    return structuredClone(backend.state);
+  },
+  completeCooking: async (
+    current: AppState,
+    deduct: boolean,
+    consumption: import("./lib/types").ConsumptionRequest[],
+  ) => {
+    backend.state = D.completeCooking(current, deduct, consumption);
+    return structuredClone(backend.state);
+  },
+  commitReceipt: async (
+    current: AppState,
+    input: ReceiptCommit,
+    customFoods: Food[],
+  ) => {
+    backend.state = D.commitReceipt({ ...current, customFoods }, input);
+    return structuredClone(backend.state);
+  },
+}));
+vi.mock("./lib/ocr", () => ({
+  validateReceiptImage: async () => {},
+  recognizeReceipt: () => ({
+    cancel: async () => {},
+    result: Promise.resolve(
+      "トマト 198円\nたまご 248円\nキヌ 98円\nレジ袋 5円\n合計 549円",
+    ),
+  }),
+}));
 
 beforeEach(() => {
   localStorage.clear();
+  sessionStorage.clear();
+  D.setCatalog(fixtureFoods, fixtureRecipes);
+  backend.state = createInitialState();
+  backend.failLoad = false;
   window.history.replaceState(null, "", "#/home");
   Object.defineProperty(globalThis, "crypto", {
     value: webcrypto,
@@ -62,7 +136,16 @@ const page = (route: string) => {
   window.history.replaceState(null, "", `#/${route}`);
   return render(App);
 };
-const saved = () => loadState();
+const saved = () => backend.state!;
+async function readReceipt() {
+  const input = await screen.findByLabelText("レシート画像を選ぶ");
+  const file = new File(["receipt"], "receipt.png", { type: "image/png" });
+  Object.defineProperty(file, "arrayBuffer", {
+    value: async () => new TextEncoder().encode("receipt").buffer,
+  });
+  await fireEvent.change(input, { target: { files: [file] } });
+  await click("読み取る");
+}
 
 describe("service flows through mounted Svelte UI (simulated DOM)", () => {
   it("selects full ingredient cards, keeps selected ingredients on return, and omits servings from search", async () => {
@@ -143,6 +226,7 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
     await fireEvent.scroll(window);
     await click("条件");
     await click("この条件で探す");
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     await waitFor(() =>
       expect(window.scrollTo).toHaveBeenLastCalledWith({
         top: 0,
@@ -158,7 +242,12 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
     );
     Object.defineProperty(window, "scrollY", { value: 520, writable: true });
     await fireEvent.scroll(window);
-    const dish = document.querySelector<HTMLButtonElement>(".discover .recipe-card")!;
+    await waitFor(() =>
+      expect(document.querySelector(".discover .recipe-card")).not.toBeNull(),
+    );
+    const dish = document.querySelector<HTMLButtonElement>(
+      ".discover .recipe-card",
+    )!;
     await fireEvent.click(dish);
     await screen.findByRole("button", { name: "この料理を作る" });
     await click("戻る");
@@ -188,7 +277,7 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
   it("starts a reloaded page at the top while retaining persisted search selections", async () => {
     const initial = createInitialState();
     initial.search.selectedFoodIds = ["eggplant", "egg"];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+    backend.state = initial;
     Object.defineProperty(window, "scrollY", { value: 900, writable: true });
     page("results");
     await screen.findByRole("heading", { name: "こんな一品、どう？" });
@@ -200,9 +289,9 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
     );
     expect(saved().search.selectedFoodIds).toEqual(["eggplant", "egg"]);
   });
-  it("registers only selected sample receipt foods, then reviews a duplicate without losing candidates", async () => {
+  it("registers only selected recognized receipt foods, then reviews a duplicate without losing candidates", async () => {
     page("receipt");
-    await click("サンプルで試す");
+    await readReceipt();
     await waitFor(() =>
       expect(
         screen.getByRole("button", { name: "この内容で登録" }),
@@ -222,7 +311,7 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
     await fireEvent.click(
       screen.getAllByRole("button", { name: "レシートから追加" })[0],
     );
-    await click("サンプルで試す");
+    await readReceipt();
     await click("この内容で登録");
     await waitFor(() => expect(screen.getByRole("dialog")).toBeTruthy());
     await click("履歴を見る");
@@ -239,7 +328,7 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
   });
   it("keeps corrected receipt names temporary until committing the receipt", async () => {
     page("receipt");
-    await click("サンプルで試す");
+    await readReceipt();
     await click("食材を選ぶ");
     const dialog = screen.getByRole("dialog");
     const select = within(dialog).getByLabelText("食材");
@@ -262,7 +351,7 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
   });
   it("starts cooking with the latest amount even while the quantity write is pending", async () => {
     page("detail/eggplant-egg");
-    const amount = screen.getByRole("spinbutton", { name: "なすの量" });
+    const amount = await screen.findByRole("spinbutton", { name: "なすの量" });
     await fireEvent.change(amount, { target: { value: "375" } });
     await click("この料理を作る");
     await waitFor(() =>
@@ -275,7 +364,7 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
     const started = startCooking(initial, [
       { ...getDraft(initial, "eggplant-egg"), id: "meal-test" },
     ]);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(started));
+    backend.state = started;
     page("complete");
     await waitFor(() =>
       expect(
@@ -320,7 +409,7 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
     const initial = createInitialState();
     initial.meal = [{ ...getDraft(initial, "eggplant-egg"), id: "meal-1" }];
     initial.settings.equipment = [];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+    backend.state = initial;
     page("plan");
     await waitFor(() =>
       expect(
@@ -329,12 +418,12 @@ describe("service flows through mounted Svelte UI (simulated DOM)", () => {
     );
     expect(screen.queryByRole("button", { name: "調理を始める" })).toBeNull();
   });
-  it("keeps damaged-storage errors visible after route initialization", async () => {
-    localStorage.setItem(STORAGE_KEY, "{broken");
+  it("keeps server connectivity errors visible after route initialization", async () => {
+    backend.failLoad = true;
     page("home");
     await waitFor(() =>
       expect(screen.getByText(/保存データを開けません/)).toBeTruthy(),
     );
-    expect(localStorage.getItem(STORAGE_KEY)).toBe("{broken");
+    expect(localStorage.length).toBe(0);
   });
 });

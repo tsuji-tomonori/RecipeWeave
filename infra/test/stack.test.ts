@@ -55,36 +55,24 @@ test("prohibits public static storage and restricts reads to its OAC distributio
   });
 });
 
-test("requires Cognito access-token scope on both private state methods", () => {
-  template.resourceCountIs("AWS::ApiGatewayV2::Route", 6);
-  for (const method of ["GET", "PUT"]) {
-    template.hasResourceProperties("AWS::ApiGatewayV2::Route", {
-      RouteKey: `${method} /api/state`,
-      AuthorizationType: "JWT",
-      AuthorizerId: Match.anyValue(),
-      AuthorizationScopes: ["aws.cognito.signin.user.admin"],
-    });
-  }
-  for (const path of [
-    "/api/health",
-    "/api/foods",
-    "/api/recipes",
-    "/api/recipes/{id}",
-  ]) {
-    template.hasResourceProperties("AWS::ApiGatewayV2::Route", {
-      RouteKey: `GET ${path}`,
-      AuthorizationType: "NONE",
-    });
-  }
+test("全APIをFastAPIの認証・所有権判定へ転送し本番local認証を許可しない", () => {
+  template.resourceCountIs("AWS::ApiGatewayV2::Route", 1);
+  template.hasResourceProperties("AWS::ApiGatewayV2::Route", {
+    RouteKey: "ANY /api/{proxy+}",
+  });
+  template.hasResourceProperties("AWS::Lambda::Function", {
+    Handler: "app.handler.handler",
+    Environment: {
+      Variables: Match.objectLike({
+        AUTH_MODE: "cognito",
+        ENVIRONMENT: "production",
+        DATABASE_SSLMODE: "require",
+      }),
+    },
+  });
   dataTemplate.hasResourceProperties("AWS::Cognito::UserPoolClient", {
     GenerateSecret: false,
     EnableTokenRevocation: true,
-    ExplicitAuthFlows: ["ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"],
-  });
-  template.hasResourceProperties("AWS::ApiGatewayV2::Authorizer", {
-    AuthorizerType: "JWT",
-    IdentitySource: ["$request.header.Authorization"],
-    JwtConfiguration: { Audience: Match.anyValue(), Issuer: Match.anyValue() },
   });
 });
 
@@ -115,72 +103,41 @@ test("never caches private state and forwards Authorization without the viewer H
       ].map((ErrorCode) => ({ ErrorCode, ErrorCachingMinTTL: 0 })),
     }),
   });
-  template.hasResourceProperties("AWS::CloudFront::CachePolicy", {
-    CachePolicyConfig: Match.objectLike({
-      MinTTL: 0,
-      DefaultTTL: 30,
-      MaxTTL: 60,
-      ParametersInCacheKeyAndForwardedToOrigin: Match.objectLike({
-        QueryStringsConfig: { QueryStringBehavior: "all" },
-        CookiesConfig: { CookieBehavior: "none" },
-        HeadersConfig: { HeaderBehavior: "none" },
-      }),
-    }),
-  });
 });
 
-test("separates cluster-scoped runtime access from migration administration", () => {
-  template.hasResourceProperties("AWS::IAM::Policy", {
-    PolicyDocument: Match.objectLike({
-      Statement: Match.arrayWith([
-        {
-          Action: "dsql:DbConnect",
-          Effect: "Allow",
-          Resource: { "Fn::ImportValue": Match.anyValue() },
-        },
-      ]),
-    }),
-    Roles: [{ Ref: Match.stringLikeRegexp("ApiServiceRole.*") }],
-  });
-  template.hasResourceProperties("AWS::IAM::Policy", {
-    PolicyDocument: {
-      Version: "2012-10-17",
-      Statement: [
-        {
-          Action: "dsql:DbConnectAdmin",
-          Effect: "Allow",
-          Resource: { "Fn::ImportValue": Match.anyValue() },
-        },
-      ],
-    },
-    Roles: [{ Ref: Match.stringLikeRegexp("DsqlMigrationRole.*") }],
-  });
-  template.hasResourceProperties("AWS::IAM::Role", {
-    AssumeRolePolicyDocument: {
-      Version: "2012-10-17",
-      Statement: [
-        {
-          Action: "sts:AssumeRole",
-          Effect: "Allow",
-          Principal: { AWS: { Ref: "MigrationOperatorArn" } },
-        },
-      ],
-    },
-    Description:
-      "DSQL schema migrations only; the API runtime cannot assume this role.",
-  });
+test("API実行と管理者移行を別Lambda・別secret権限に分離する", () => {
   template.hasResourceProperties("AWS::Lambda::Function", {
     Handler: "app.handler.handler",
     Runtime: "python3.12",
-    Architectures: ["x86_64"],
-    Environment: {
-      Variables: Match.objectLike({
-        STATE_BACKEND: "dsql",
-        DSQL_DATABASE_USER: "recipeweave_app",
-      }),
-    },
     ReservedConcurrentExecutions: 10,
+    VpcConfig: Match.objectLike({
+      SecurityGroupIds: Match.anyValue(),
+      SubnetIds: Match.anyValue(),
+    }),
   });
+  template.hasResourceProperties("AWS::Lambda::Function", {
+    Handler: "app.integrations.database.migration_handler.handler",
+    ReservedConcurrentExecutions: 1,
+    Timeout: 900,
+  });
+  const policies = template.findResources("AWS::IAM::Policy");
+  const apiPolicies = Object.values(policies).filter((value) =>
+    JSON.stringify(value.Properties.Roles).includes("ApiServiceRole"),
+  );
+  if (apiPolicies.length !== 1)
+    throw new Error("APIの権限が一つに定まりません");
+  const statements = apiPolicies[0]?.Properties.PolicyDocument.Statement as {
+    Action: string | string[];
+    Resource: unknown;
+  }[];
+  const secretStatements = statements.filter((value) =>
+    JSON.stringify(value.Action).includes("secretsmanager:GetSecretValue"),
+  );
+  if (
+    secretStatements.length !== 1 ||
+    JSON.stringify(secretStatements).includes("RelationalClusterSecret")
+  )
+    throw new Error("APIにDB管理者secretへの権限があります");
 });
 
 test("limits API load and avoids identity, tokens, images and request bodies in access logs", () => {

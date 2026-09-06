@@ -19,3 +19,12 @@ class AppSettings(BaseSettings):
     catalog_path: str = ""
     allowed_origins: str = ""
     max_request_bytes: int = Field(default=1048576, ge=1024, le=5242880)
+    database_url: str = ""
+    database_secret_arn: str = ""
+    database_host: str = ""
+    database_name: str = "recipeweave"
+    database_sslmode: Literal["require"] = "require"
+    auth_mode: Literal["cognito", "local"] = "cognito"
+    local_auth_secret: str = ""
+    local_auth_password: str = ""
+    environment: Literal["local", "test", "dev", "production"] = "production"

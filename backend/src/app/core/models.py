@@ -53,7 +53,7 @@ class RecipeStep(WireModel):
     title: ShortText
     instruction: Annotated[str, Field(max_length=5000)]
     minutes: PositiveAmount
-    mode: Literal["active", "passive"]
+    mode: Literal["active", "passive", "monitored"]
     equipment: Annotated[list[ShortText], Field(max_length=50)]
     guide: ShortText | None
 
@@ -69,7 +69,8 @@ class Recipe(WireModel):
     steps: Annotated[list[RecipeStep], Field(max_length=100)]
     arrangement_ids: Annotated[list[Identifier], Field(max_length=100)]
     tags: Annotated[list[ShortText], Field(max_length=100)]
-    sample: Literal[True]
+    sample: bool
+    image_url: ShortText | None = None
 
 
 class RecipeDraft(WireModel):

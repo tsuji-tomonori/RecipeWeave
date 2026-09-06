@@ -7,8 +7,8 @@ CONTRACT = OperationContract(
     path="/api/foods",
     summary="食材候補を検索する",
     authentication="public",
-    errors=(422,),
+    errors=(401, 422, 503),
     idempotency="読取専用",
-    transaction="なし",
-    effects="なし",
+    transaction="要求単位の読取トランザクション",
+    effects="食品・形態・分類・別名の参照",
 )

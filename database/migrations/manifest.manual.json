@@ -6,6 +6,18 @@
       "file": "001_user_state.sql",
       "kind": "ddl",
       "verify": "SELECT (SELECT (count(*) = 4 AND count(*) FILTER (WHERE column_name = 'subject' AND data_type = 'text' AND is_nullable = 'NO') = 1 AND count(*) FILTER (WHERE column_name = 'revision' AND data_type = 'bigint' AND is_nullable = 'NO') = 1 AND count(*) FILTER (WHERE column_name = 'payload' AND data_type = 'jsonb' AND is_nullable = 'NO') = 1 AND count(*) FILTER (WHERE column_name = 'updated_at' AND data_type = 'timestamp with time zone' AND is_nullable = 'NO') = 1) FROM information_schema.columns WHERE table_schema = 'recipeweave' AND table_name = 'user_state') AND EXISTS (SELECT 1 FROM pg_constraint c JOIN pg_class t ON t.oid=c.conrelid JOIN pg_namespace n ON n.oid=t.relnamespace WHERE n.nspname='recipeweave' AND t.relname='user_state' AND c.contype='p' AND pg_get_constraintdef(c.oid)='PRIMARY KEY (subject)')"
+    },
+    {
+      "id": "002_relational_schema",
+      "file": "002_relational_schema.sql",
+      "kind": "transaction",
+      "verify": "SELECT count(*) = 71 FROM information_schema.tables WHERE table_schema = 'recipeweave' AND table_name IN ('source_record', 'catalog_release', 'unit', 'food', 'food_alias', 'food_form', 'conversion', 'form_yield', 'product', 'product_version', 'product_component', 'allergen', 'food_allergen', 'product_allergen', 'nutrient', 'nutrition_fact', 'axis', 'axis_option', 'food_axis_option', 'recipe', 'recipe_version', 'recipe_option', 'scaling_rule', 'scaling_point', 'recipe_ingredient', 'operation', 'operation_parameter', 'recipe_step', 'step_parameter', 'material_node', 'step_input', 'step_dependency', 'resource_type', 'step_resource', 'media_asset', 'step_media', 'generation_policy', 'generation_job', 'generation_choice', 'generation_food', 'generation_result', 'compatibility_rule', 'validation_result', 'recipe_signature', 'recipe_similarity', 'app_user', 'user_preference', 'user_exclusion', 'user_recipe_event', 'menu', 'menu_item', 'menu_ingredient_override', 'kitchen_resource', 'cooking_session', 'session_task', 'task_dependency', 'resource_reservation', 'ingredient_total', 'pantry_lot', 'shopping_item', 'audit_event', 'outbox_event', 'product_preparation_rule', 'food_identity', 'food_identity_member', 'generation_template', 'generation_shard', 'candidate_attempt', 'recipe_search_document', 'recipe_embedding', 'generation_stratum_metric')"
+    },
+    {
+      "id": "003_service_operations",
+      "file": "003_service_operations.sql",
+      "kind": "transaction",
+      "verify": "SELECT count(*) = 7 FROM information_schema.tables WHERE table_schema = 'recipeweave' AND table_name IN ('receipt_import', 'receipt_line', 'workspace_revision', 'user_food', 'user_pantry_food', 'pantry_consumption', 'user_shopping_check')"
     }
   ]
 }

@@ -2,17 +2,15 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import {
   CfnOutput,
-  CfnParameter,
   Duration,
   RemovalPolicy,
   Stack,
   aws_apigatewayv2 as apigateway,
-  aws_apigatewayv2_authorizers as authorizers,
   aws_apigatewayv2_integrations as integrations,
   aws_cloudfront as cloudfront,
   aws_cloudfront_origins as origins,
-  aws_iam as iam,
   aws_lambda as lambda,
+  aws_ec2 as ec2,
   aws_logs as logs,
   aws_s3 as s3,
   aws_s3_deployment as deployment,
@@ -42,7 +40,7 @@ export class ServiceStack extends Stack {
   public readonly apiFunction: lambda.Function;
   public readonly httpApi: apigateway.HttpApi;
   public readonly distribution: cloudfront.Distribution;
-  public readonly migrationRole: iam.Role;
+  public readonly migrationFunction: lambda.Function;
 
   public constructor(scope: Construct, id: string, props: ServiceStackProps) {
     super(scope, id, props);
@@ -81,48 +79,54 @@ export class ServiceStack extends Stack {
       timeout: Duration.seconds(25),
       reservedConcurrentExecutions: 10,
       logGroup: functionLogs,
+      vpc: data.vpc,
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      securityGroups: [data.clientSecurityGroup],
       environment: {
-        STATE_BACKEND: "dsql",
-        DSQL_HOST: data.cluster.attrEndpoint,
-        DSQL_DATABASE_USER: "recipeweave_app",
+        ENVIRONMENT: "production",
+        AUTH_MODE: "cognito",
+        DATABASE_HOST: data.cluster.clusterEndpoint.hostname,
+        DATABASE_NAME: "recipeweave",
+        DATABASE_SSLMODE: "require",
+        DATABASE_SECRET_ARN: data.applicationSecret.secretArn,
         COGNITO_ISSUER: data.cognitoIssuer,
         COGNITO_CLIENT_ID: data.userPoolClient.userPoolClientId,
       },
     });
-    this.apiFunction.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: ["dsql:DbConnect"],
-        resources: [data.cluster.attrResourceArn],
+    data.applicationSecret.grantRead(this.apiFunction);
+    const migrationSecret = data.cluster.secret;
+    if (migrationSecret === undefined)
+      throw new Error("DB管理用secretがありません");
+    this.migrationFunction = new lambda.Function(this, "DatabaseMigration", {
+      runtime: lambda.Runtime.PYTHON_3_12,
+      architecture: lambda.Architecture.X86_64,
+      handler: "app.integrations.database.migration_handler.handler",
+      code: lambda.Code.fromAsset(lambdaAsset),
+      timeout: Duration.minutes(15),
+      memorySize: 1024,
+      reservedConcurrentExecutions: 1,
+      vpc: data.vpc,
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      securityGroups: [data.clientSecurityGroup],
+      logGroup: new logs.LogGroup(this, "MigrationLogs", {
+        retention: logs.RetentionDays.ONE_MONTH,
+        removalPolicy: RemovalPolicy.RETAIN,
       }),
-    );
-
-    const migrationOperatorArn = new CfnParameter(
-      this,
-      "MigrationOperatorArn",
-      {
-        type: "String",
-        description:
-          "Existing IAM operator role allowed to assume the dedicated DSQL migration role.",
-        allowedPattern: "^arn:aws:iam::[0-9]{12}:role/[A-Za-z0-9+=,.@_/-]+$",
+      environment: {
+        ENVIRONMENT: "production",
+        DATABASE_HOST: data.cluster.clusterEndpoint.hostname,
+        DATABASE_NAME: "recipeweave",
+        DATABASE_SSLMODE: "require",
+        DATABASE_SECRET_ARN: migrationSecret.secretArn,
+        APPLICATION_DATABASE_SECRET_ARN: data.applicationSecret.secretArn,
       },
-    );
-    this.migrationRole = new iam.Role(this, "DsqlMigrationRole", {
-      assumedBy: new iam.ArnPrincipal(migrationOperatorArn.valueAsString),
-      maxSessionDuration: Duration.hours(1),
-      description:
-        "DSQL schema migrations only; the API runtime cannot assume this role.",
     });
-    this.migrationRole.addToPolicy(
-      new iam.PolicyStatement({
-        actions: ["dsql:DbConnectAdmin"],
-        resources: [data.cluster.attrResourceArn],
-      }),
-    );
+    migrationSecret.grantRead(this.migrationFunction);
+    data.applicationSecret.grantRead(this.migrationFunction);
 
     this.httpApi = new apigateway.HttpApi(this, "HttpApi", {
       apiName: `${this.stackName}-api`,
-      description:
-        "RecipeWeave sample catalog and authenticated per-user state.",
+      description: "RecipeWeaveの実DBカタログ・認証済み利用者操作・管理API",
       createDefaultStage: false,
     });
     const accessLogs = new logs.LogGroup(this, "HttpAccessLogs", {
@@ -153,43 +157,14 @@ export class ServiceStack extends Stack {
       "FastApi",
       this.apiFunction,
     );
-    for (const path of [
-      "/api/health",
-      "/api/foods",
-      "/api/recipes",
-      "/api/recipes/{id}",
-    ]) {
-      this.httpApi.addRoutes({
-        path,
-        methods: [apigateway.HttpMethod.GET],
-        integration,
-      });
-    }
-    const jwtAuthorizer = new authorizers.HttpJwtAuthorizer(
-      "CognitoAccessToken",
-      data.cognitoIssuer,
-      {
-        jwtAudience: [data.userPoolClient.userPoolClientId],
-      },
-    );
+    // 追加された操作もFastAPIの同じ認証・管理者・所有権判定を通す。
+    // local-loginは本番環境でFastAPI自身が拒否する。
     this.httpApi.addRoutes({
-      path: "/api/state",
-      methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.PUT],
+      path: "/api/{proxy+}",
+      methods: [apigateway.HttpMethod.ANY],
       integration,
-      authorizer: jwtAuthorizer,
-      authorizationScopes: ["aws.cognito.signin.user.admin"],
     });
 
-    const catalogCache = new cloudfront.CachePolicy(this, "CatalogCache", {
-      minTtl: Duration.seconds(0),
-      defaultTtl: Duration.seconds(30),
-      maxTtl: Duration.seconds(60),
-      queryStringBehavior: cloudfront.CacheQueryStringBehavior.all(),
-      cookieBehavior: cloudfront.CacheCookieBehavior.none(),
-      headerBehavior: cloudfront.CacheHeaderBehavior.none(),
-      enableAcceptEncodingGzip: true,
-      enableAcceptEncodingBrotli: true,
-    });
     const staticCache = new cloudfront.CachePolicy(this, "StaticCache", {
       minTtl: Duration.seconds(0),
       defaultTtl: Duration.minutes(5),
@@ -226,9 +201,6 @@ export class ServiceStack extends Stack {
         compress: true,
       },
       additionalBehaviors: {
-        "/api/foods": { ...apiBase, cachePolicy: catalogCache },
-        "/api/recipes": { ...apiBase, cachePolicy: catalogCache },
-        "/api/recipes/*": { ...apiBase, cachePolicy: catalogCache },
         "/api/*": {
           ...apiBase,
           allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
@@ -258,12 +230,11 @@ export class ServiceStack extends Stack {
       value: `https://${this.distribution.distributionDomainName}`,
     });
     new CfnOutput(this, "ApiUrl", { value: this.httpApi.apiEndpoint });
-    const apiRole = this.apiFunction.role;
-    if (apiRole === undefined)
-      throw new Error("The API requires an execution role");
-    new CfnOutput(this, "DsqlAppIamArn", { value: apiRole.roleArn });
-    new CfnOutput(this, "DsqlMigrationIamArn", {
-      value: this.migrationRole.roleArn,
+    new CfnOutput(this, "MigrationFunctionName", {
+      value: this.migrationFunction.functionName,
+    });
+    new CfnOutput(this, "DistributionId", {
+      value: this.distribution.distributionId,
     });
     new CfnOutput(this, "WebBucketName", { value: webBucket.bucketName });
   }

@@ -66,7 +66,6 @@ def main() -> int:
         target / "app",
         ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "tools"),
     )
-    shutil.copytree(ROOT / "data/samples", target / "app/sample_data")
     entries = {
         str(path.relative_to(target)): hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted(target.rglob("*"))

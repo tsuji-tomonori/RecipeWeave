@@ -1,0 +1,3 @@
+# テスト証跡は実行ごとに収集し、CI artifactと品質サイトへ公開する。
+/test-results/
+/playwright-report/

@@ -1,17 +1,20 @@
-"""SQLラッパーとOpenAPIを決定的に生成し、書込みなしで差分を検出する。"""
+"""全操作のSQL呼出しとOpenAPIを決定的に生成し、書込みなしで差分を検出する。"""
 
 import argparse
 import hashlib
 import json
+import re
 import shutil
+import subprocess
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[4]
-API = ROOT / "backend" / "src" / "app" / "apis" / "state"
+API = ROOT / "backend/src/app/apis"
 
 
 def read_query(path: Path) -> str:
-    """PostgreSQL文を解析してラッパーを生成し、SELECT * を拒否する。"""
+    """PostgreSQL文を解析し、複文・不明構文・曖昧な全列投影を拒否する。"""
     import sqlglot
     from sqlglot import exp
 
@@ -21,91 +24,115 @@ def read_query(path: Path) -> str:
         raise ValueError(f"expected one SQL statement: {path}")
     if statements[0].find(exp.Star):
         raise ValueError(f"wildcard projection forbidden: {path}")
+    if statements[0].find(exp.Command):
+        raise ValueError(f"unsupported SQL statement: {path}")
     if not text.lstrip().startswith("--"):
         raise ValueError(f"missing SQL processing summary: {path}")
     return text
 
 
-def generate_outputs(openapi_only: bool = False) -> dict[Path, str]:
-    """宣言したSQLからラッパーを、実際のルートからOpenAPIを生成する。"""
-    from app.main import create_app
-
-    openapi = (
-        json.dumps(create_app().openapi(), ensure_ascii=False, indent=2, sort_keys=True) + "\n"
-    )
-    if openapi_only:
-        return {ROOT / "backend/openapi.gen.json": openapi}
-    select = read_query(API / "get_state/sql/001_select_state.sql")
-    insert = read_query(API / "put_state/sql/001_insert_state.sql")
-    update = read_query(API / "put_state/sql/002_update_state.sql")
-    digest = hashlib.sha256((select + insert + update).encode()).hexdigest()
-    header = f"# app-docs による自動生成。直接編集しない。\n# SQL の SHA256: {digest}\n"
-    get_source = (
-        header
-        + f'''from dataclasses import dataclass
+def query_module(queries: dict[str, str]) -> str:
+    """操作ごとの固定SQL集合を生成し、名前とパラメータの完全一致を実行時にも検査する。"""
+    digest = hashlib.sha256("".join(queries.values()).encode()).hexdigest()
+    literals = ",\n".join(f'    {name!r}: """{sql}"""' for name, sql in queries.items())
+    parameters = {
+        name: tuple(sorted(set(re.findall(r"%\((\w+)\)s", sql)))) for name, sql in queries.items()
+    }
+    return f'''# app-docs による自動生成。直接編集しない。
+# SQLのSHA256: {digest}
+from collections.abc import Mapping
+from typing import Any, LiteralString
 
 from psycopg import Connection
-from psycopg.rows import class_row
-from pydantic import JsonValue
 
-SELECT_STATE = """{select}"""
-
-
-@dataclass
-class StoredState:
-    revision: int
-    payload: dict[str, JsonValue]
+QUERIES: dict[str, LiteralString] = {{
+{literals}
+}}
+PARAMETERS: dict[str, tuple[str, ...]] = {parameters!r}
 
 
-def select_state(connection: Connection[tuple[object, ...]], subject: str) -> StoredState | None:
-    with connection.cursor(row_factory=class_row(StoredState)) as cursor:
-        cursor.execute(SELECT_STATE, {{"subject": subject}})
-        return cursor.fetchone()
+def execute(connection: Connection[dict[str, Any]], name: str,
+            params: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """許可された固定SQLだけに、宣言と一致する束縛値を別渡しする。"""
+    if name not in QUERIES or set(params) != set(PARAMETERS[name]):
+        raise ValueError("SQL名または束縛パラメータが操作契約にありません")
+    cursor = connection.execute(QUERIES[name], dict(params))
+    return list(cursor.fetchall()) if cursor.description is not None else []
+'''
+
+
+def single_module(sql: str) -> str:
+    """カタログ用の単一SQLにも同じ名前・値の検査契約を適用する。"""
+    source = query_module({"query": sql})
+    source = source.replace("def execute(", "def _execute(")
+    return (
+        source
+        + '''\n
+SQL = QUERIES["query"]
+
+
+def execute(connection: Connection[dict[str, Any]],
+            values: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """固定した単文SQLを実行する。"""
+    return _execute(connection, "query", values)
 '''
     )
-    put_source = (
-        header
-        + f'''from psycopg import Connection
-from psycopg.types.json import Jsonb
-from pydantic import JsonValue
-
-INSERT_STATE = """{insert}"""
-UPDATE_STATE = """{update}"""
 
 
-def insert_state(connection: Connection[tuple[object, ...]], subject: str,
-                 payload: dict[str, JsonValue]) -> None:
-    connection.execute(INSERT_STATE, {{"subject": subject, "payload": Jsonb(payload)}})
+def generate_outputs(openapi_only: bool = False) -> dict[Path, str]:
+    """実ルートのOpenAPIと、SQLを持つ全操作の呼出しを生成する。"""
+    from app.main import create_app
 
-
-def update_state(connection: Connection[tuple[object, ...]], subject: str,
-                 revision: int, payload: dict[str, JsonValue]) -> bool:
-    cursor = connection.execute(UPDATE_STATE, {{"subject": subject, "revision": revision,
-                                              "payload": Jsonb(payload)}})
-    return cursor.rowcount == 1
-'''
-    )
-    # 固定したフォーマッターで整形し、生成したPythonもRuffの規約に従わせる。
-    from subprocess import run
-
-    formatted: list[str] = []
+    outputs = {
+        ROOT / "backend/openapi.gen.json": json.dumps(
+            create_app().openapi(), ensure_ascii=False, indent=2, sort_keys=True
+        )
+        + "\n"
+    }
+    if openapi_only:
+        return outputs
+    for directory in sorted(API.glob("*/*/sql")):
+        queries = {path.stem: read_query(path) for path in sorted(directory.glob("*.sql"))}
+        if not queries or directory.relative_to(API).parts[0] == "entities":
+            continue
+        generated = directory.parent / "generated"
+        outputs[generated / "queries.py"] = query_module(queries)
+        for name, sql in queries.items():
+            module = "q" + name if name[0].isdigit() else name
+            outputs[generated / f"{module}.py"] = single_module(sql)
     formatter = shutil.which("ruff")
     if formatter is None:
         raise RuntimeError("locked Ruff formatter is required")
-    for source in (get_source, put_source):
-        result = run(  # noqa: S603 -- 固定したフォーマッターへ標準入力で渡し、シェルを使用しない
-            [formatter, "format", "--stdin-filename", "queries.py", "-"],
-            input=source,
-            text=True,
+    with TemporaryDirectory(prefix="app-docs-format-") as scratch:
+        temporary = Path(scratch)
+        targets = {
+            path: temporary / path.relative_to(ROOT) for path in outputs if path.suffix == ".py"
+        }
+        for path, target in targets.items():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(outputs[path])
+        subprocess.run(  # noqa: S603 -- 固定したRuffをシェルなしで起動する
+            [
+                formatter,
+                "check",
+                "--config",
+                str(ROOT / "backend/pyproject.toml"),
+                "--config",
+                'lint.isort.known-first-party=["app"]',
+                "--fix",
+                str(temporary),
+            ],
+            capture_output=True,
+            check=False,
+        )
+        subprocess.run(  # noqa: S603 -- 固定したRuffをシェルなしで起動する
+            [formatter, "format", "--config", str(ROOT / "backend/pyproject.toml"), str(temporary)],
             capture_output=True,
             check=True,
         )
-        formatted.append(result.stdout)
-    return {
-        API / "get_state/generated/queries.py": formatted[0],
-        API / "put_state/generated/queries.py": formatted[1],
-        ROOT / "backend/openapi.gen.json": openapi,
-    }
+        for path, target in targets.items():
+            outputs[path] = target.read_text()
+    return outputs
 
 
 def main() -> int:
@@ -116,6 +143,8 @@ def main() -> int:
     outputs = generate_outputs(openapi_only=args.openapi_only)
     stale: list[str] = []
     for path, text in outputs.items():
+        if path.is_symlink() or any(parent.is_symlink() for parent in path.parents):
+            raise ValueError(f"symlink output forbidden: {path}")
         if not path.is_file() or path.read_text() != text:
             if args.check:
                 stale.append(str(path.relative_to(ROOT)))

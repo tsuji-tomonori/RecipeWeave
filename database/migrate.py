@@ -1,7 +1,7 @@
-"""1トランザクション1DDL、チェックサム付き台帳、独立したDMLトランザクション。
+"""チェックサム付き移行台帳を維持し、PostgreSQLの正規化DDLを原子的に適用する。
 
---plan はAWS接続不要。--apply は DbConnectAdmin を持つ専用の移行用IAMロールで実行する。
-実行時Lambdaには DbConnect だけを付与する。
+--plan は接続不要。--apply は管理用DATABASE_URLで実行する。
+PL/pgSQL・遅延制約トリガーを使うため、サービスDBはPostgreSQL16を採用する。
 """
 
 import argparse
@@ -16,6 +16,7 @@ from typing import Literal, Protocol, cast
 
 import boto3
 import certifi
+import pglast
 import psycopg
 import sqlglot
 from botocore.config import Config
@@ -35,7 +36,7 @@ class Migration(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     id: str
     file: str
-    kind: Literal["ddl", "dml", "index"]
+    kind: Literal["ddl", "dml", "index", "transaction"]
     verify: str
 
 
@@ -64,8 +65,11 @@ def load_migrations(path: Path = ROOT / "migrations") -> list[PreparedMigration]
         seen.add(item.id)
         statement = source.read_text()
         parsed = statement.replace("INDEX ASYNC", "INDEX", 1) if item.kind == "index" else statement
-        if len(sqlglot.parse(parsed, read="postgres")) != 1:
-            raise ValueError("each migration must contain one SQL statement")
+        if item.kind == "transaction":
+            if not pglast.parse_sql(parsed):
+                raise ValueError("空のトランザクション移行は適用できません")
+        elif len(sqlglot.parse(parsed, read="postgres")) != 1:
+            raise ValueError("単文移行にはSQLを1文だけ定義してください")
         if len(sqlglot.parse(item.verify, read="postgres")) != 1:
             raise ValueError("each verification must contain one SQL query")
         checksum = hashlib.sha256((statement + "\n" + item.verify).encode()).hexdigest()
@@ -129,6 +133,17 @@ def apply_migrations(
             if not verified(connection, definition.verify):
                 raise ValueError(f"applied schema drift: {definition.id}")
             continue
+        if definition.kind == "transaction":
+            with connection.transaction():
+                connection.execute(item.statement.encode("utf-8"))
+                if not verified(connection, definition.verify):
+                    raise ValueError(f"移行後の構造検証に失敗しました: {definition.id}")
+                connection.execute(
+                    "INSERT INTO recipeweave.schema_migrations (id, checksum, applied_at) "
+                    "VALUES (%s, %s, CURRENT_TIMESTAMP)",
+                    (definition.id, item.checksum),
+                )
+            continue
         if not verified(connection, definition.verify):
             cursor = connection.execute(item.statement.encode("utf-8"))
             if definition.kind == "index":
@@ -184,13 +199,16 @@ def main() -> int:
             )
         )
         return 0
-    app_arn = os.environ["DSQL_APP_IAM_ARN"]
-    with connect_admin(
-        os.environ["DSQL_HOST"], os.environ.get("AWS_REGION", "ap-northeast-1")
-    ) as connection:
-        apply_migrations(connection, items)
-        grant_application(connection, app_arn)
-    print("Migrations and application grants completed.")
+    database_url = os.environ.get("DATABASE_URL")
+    if not database_url or not database_url.startswith(("postgresql://", "postgres://")):
+        raise ValueError("PostgreSQL管理用のDATABASE_URLを設定してください")
+    with psycopg.connect(database_url, autocommit=True, connect_timeout=10) as connection:
+        connection.execute("SELECT pg_advisory_lock(782345611)")
+        try:
+            apply_migrations(connection, items)
+        finally:
+            connection.execute("SELECT pg_advisory_unlock(782345611)")
+    print("PostgreSQL移行とチェックサム検証が完了しました。")
     return 0
 
 
