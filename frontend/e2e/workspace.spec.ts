@@ -132,7 +132,9 @@ test("ログインして実DBの食材を選び、料理の分量を変えて献
     "When",
     "食材から料理を検索し、選択後に人数を3人へ変える",
     async () => {
-      await page.getByRole("button", { name: "この1つで探す" }).click();
+      await page
+        .getByRole("button", { name: "選んだ食材で探す", exact: true })
+        .click();
       await expect(
         page.getByRole("heading", { name: "こんな一品、どう？" }),
       ).toBeVisible();
@@ -288,7 +290,9 @@ test("在庫を登録すると再読み込み・別のタブでも同じ在庫�
           .value,
       ).toBe(271);
       await expect(
-        other.getByText("271g", { exact: true }).last(),
+        other
+          .getByRole("button", { name: "なす 271g · 冷蔵", exact: true })
+          .last(),
       ).toBeVisible();
       await page.reload();
       expect(

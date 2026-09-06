@@ -33,6 +33,7 @@
     ChevronRight,
   } from "lucide-svelte";
   import FoodTile from "./lib/FoodTile.svelte";
+  import FoodSettings from "./lib/FoodSettings.svelte";
   import RecipeCard from "./lib/RecipeCard.svelte";
   import type {
     PlannedStep,
@@ -1531,10 +1532,15 @@
           placeholder="例：なす、ツナ、カップ焼きそば"
         /></label
       >
-      <div class="row wrap gap-bottom">
+      <div
+        class="category-tabs gap-bottom"
+        role="group"
+        aria-label="食材のカテゴリ"
+      >
         {#each categories as c}<button
             class="chip"
             class:on={category === c}
+            aria-pressed={category === c}
             onclick={() => (category = c)}>{c}</button
           >{/each}
       </div>
@@ -2641,36 +2647,24 @@
             <p class="subtitle gap-bottom">
               検索・アレンジ・偶然の一品に反映します。加工食品は商品の原材料も確認してください。
             </p>
-            <div class="settings-options">
-              {#each foods as food}<button
-                  class="chip"
-                  class:on={excludedFoods.includes(food.id)}
-                  aria-pressed={excludedFoods.includes(food.id)}
-                  onclick={() =>
-                    (excludedFoods = toggleList(excludedFoods, food.id))}
-                  >{excludedFoods.includes(food.id)
-                    ? "✓ "
-                    : ""}{food.name}</button
-                >{/each}
-            </div>
+            <FoodSettings
+              {foods}
+              selected={excludedFoods}
+              label="食べられない食材"
+              onselect={(id) => (excludedFoods = toggleList(excludedFoods, id))}
+            />
           </section>
           <section class="panel">
             <h2>常備調味料</h2>
             <p class="subtitle gap-bottom">
               家にある種類の目安です。実際に足りる量かは調理前に確認します。
             </p>
-            <div class="settings-options">
-              {#each foods.filter((f) => f.pantry) as food}<button
-                  class="chip"
-                  class:on={pantryFoods.includes(food.id)}
-                  aria-pressed={pantryFoods.includes(food.id)}
-                  onclick={() =>
-                    (pantryFoods = toggleList(pantryFoods, food.id))}
-                  >{pantryFoods.includes(food.id)
-                    ? "✓ "
-                    : ""}{food.name}</button
-                >{/each}
-            </div>
+            <FoodSettings
+              foods={foods.filter((food) => food.pantry)}
+              selected={pantryFoods}
+              label="常備調味料"
+              onselect={(id) => (pantryFoods = toggleList(pantryFoods, id))}
+            />
           </section>
           <section class="panel">
             <h2>使う器具</h2>
