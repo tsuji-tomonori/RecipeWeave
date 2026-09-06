@@ -295,13 +295,13 @@ def test_history_cannot_be_created_to_gain_unpublished_recipe_access(
         )
 
     path = "/api/entities/" + table
-    monkeypatch.setattr("app.core.entity_service.local_auth_enabled", lambda: False)
+    monkeypatch.setattr("app.core.entity_service.catalog_preview_enabled", lambda: False)
     rejected = database_client.post(path, headers=headers("alice"), json=history_body("alice", 1))
     assert rejected.status_code == 403, rejected.text
     detail = "/api/recipes/" + recipe.json()["id"]
     assert database_client.get(detail, headers=headers("alice")).status_code == 404
 
-    monkeypatch.setattr("app.core.entity_service.local_auth_enabled", lambda: True)
+    monkeypatch.setattr("app.core.entity_service.catalog_preview_enabled", lambda: True)
     accepted = database_client.post(path, headers=headers("alice"), json=history_body("alice", 1))
     assert accepted.status_code == 201, accepted.text
     withdrawal = database_client.put(
@@ -312,7 +312,7 @@ def test_history_cannot_be_created_to_gain_unpublished_recipe_access(
     assert withdrawal.status_code == 200, withdrawal.text
     new_owner = database_client.post(path, headers=headers("bob"), json=history_body("bob", 1))
     assert new_owner.status_code == 403, new_owner.text
-    monkeypatch.setattr("app.core.entity_service.local_auth_enabled", lambda: False)
+    monkeypatch.setattr("app.core.entity_service.catalog_preview_enabled", lambda: False)
     retained = database_client.post(path, headers=headers("alice"), json=history_body("alice", 2))
     assert retained.status_code == 201, retained.text
     assert database_client.get(detail, headers=headers("alice")).status_code == 200

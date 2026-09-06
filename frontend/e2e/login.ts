@@ -2,6 +2,11 @@ import { expect, test, type Page } from "@playwright/test";
 
 /** CI専用の合成利用者でログインし、失敗時はトークンを除いた画面・API診断を残す。 */
 export async function login(page: Page, username = "alice") {
+  const pageErrors: string[] = [];
+  const recordError = (error: Error) => {
+    if (pageErrors.length < 20) pageErrors.push(error.message);
+  };
+  page.on("pageerror", recordError);
   await page.goto("/#/login");
   await page.getByLabel("ユーザー名", { exact: true }).fill(username);
   await page
@@ -36,20 +41,26 @@ export async function login(page: Page, username = "alice") {
         }
       });
       const diagnostic = JSON.stringify(
-        { username, route: new URL(page.url()).hash, alerts, workspace: state },
+        {
+          username,
+          route: new URL(page.url()).hash,
+          alerts,
+          pageErrors,
+          workspace: state,
+        },
         null,
         2,
       );
       console.error("ログイン後の画面診断（合成データ）", diagnostic);
-      await test
-        .info()
-        .attach("ログイン後の画面・API診断", {
-          body: diagnostic,
-          contentType: "application/json",
-        });
+      await test.info().attach("ログイン後の画面・API診断", {
+        body: diagnostic,
+        contentType: "application/json",
+      });
     } catch (diagnosticError) {
       console.error("ログイン診断の取得失敗", String(diagnosticError));
     }
     throw cause;
+  } finally {
+    page.off("pageerror", recordError);
   }
 }

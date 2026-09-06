@@ -6,6 +6,7 @@ import {
   setCatalog,
   startCooking,
   getDraft,
+  RECIPES,
 } from "./domain";
 import {
   ApiError,
@@ -19,6 +20,7 @@ import {
   previewDatabaseBackup,
   restoreDatabaseBackup,
   previewCookingPlan,
+  randomRecipe,
 } from "./api";
 import { getToken, setToken } from "./auth";
 import { fixtureFoods, fixtureRecipes } from "../test-fixtures";
@@ -34,6 +36,28 @@ afterEach(() => {
 });
 
 describe("実APIへの要求と失敗時の扱い", () => {
+  it("ランダムAPIのitemだけを料理として使い、候補ゼロで料理キャッシュを壊さない", async () => {
+    setCatalog(fixtureFoods, []);
+    const recipe = fixtureRecipes[0];
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ item: null, total: 0 })),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ item: recipe, total: 8 })),
+      );
+    vi.stubGlobal("fetch", fetcher);
+    expect(await randomRecipe([])).toBeNull();
+    expect(RECIPES).toEqual([]);
+    expect(await randomRecipe([])).toEqual(recipe);
+    expect(RECIPES).toEqual([recipe]);
+    expect(
+      RECIPES.every(
+        (item) => typeof item.id === "string" && Array.isArray(item.tags),
+      ),
+    ).toBe(true);
+  });
   it("本人が確認した時間は段取りと調理開始に送り、開始後の進捗更新では変更しない", async () => {
     const current = createInitialState();
     const next = startCooking(current, [

@@ -559,7 +559,7 @@
         randomId,
       );
       catalogRecipes = [...D.RECIPES];
-      randomId = recipe.id;
+      randomId = recipe?.id ?? "";
     } catch (e) {
       if (e instanceof API.ApiError && e.status === 404) randomId = "";
       else

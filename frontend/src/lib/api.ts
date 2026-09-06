@@ -171,14 +171,17 @@ export async function findRecipes(
 export async function randomRecipe(
   excludedFoodIds: string[],
   previousId = "",
-): Promise<Recipe> {
+): Promise<Recipe | null> {
   const params = new URLSearchParams();
   if (requestCatalogPreview()) params.set("preview", "true");
   if (previousId) params.set("excludeId", previousId);
   for (const id of excludedFoodIds) params.append("excludedFoodIds", id);
-  const recipe = await request<Recipe>(`/api/recipes/random?${params}`);
-  cacheRecipes([recipe]);
-  return recipe;
+  const response = await request<{ item: Recipe | null; total: number }>(
+    `/api/recipes/random?${params}`,
+  );
+  // 候補ゼロも正常な応答。包みのオブジェクトを料理としてキャッシュしない。
+  if (response.item) cacheRecipes([response.item]);
+  return response.item;
 }
 export async function loadRecipe(
   id: string,

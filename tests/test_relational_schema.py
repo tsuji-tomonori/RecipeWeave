@@ -330,6 +330,26 @@ def task_context(connection: psycopg.Connection[Any], recipe: dict[str, UUID]) -
         "UPDATE recipeweave.recipe_step SET scaling_rule_id=%s WHERE id=%s",
         (manual_rule, recipe["step"]),
     )
+    role_axis = insert(
+        connection,
+        "axis",
+        code="dish_role",
+        name="献立内の役割",
+        purpose="presentation",
+        selection="single",
+        release_id=recipe["release"],
+        status="active",
+    )
+    role = insert(
+        connection,
+        "axis_option",
+        axis_id=role_axis,
+        code="main",
+        label="主菜",
+        definition="献立の中心となる料理",
+        status="active",
+    )
+    insert(connection, "recipe_option", recipe_version_id=recipe["version"], option_id=role)
     user = insert(
         connection,
         "app_user",
@@ -344,6 +364,7 @@ def task_context(connection: psycopg.Connection[Any], recipe: dict[str, UUID]) -
         "menu_item",
         menu_id=menu,
         recipe_version_id=recipe["version"],
+        role_option_id=role,
         servings=2,
         position=1,
     )
